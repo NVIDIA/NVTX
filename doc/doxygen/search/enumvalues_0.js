@@ -1,0 +1,20 @@
+var searchData=
+[
+  ['nvtx_5fcolor_5fargb',['NVTX_COLOR_ARGB',['../group___g_e_n_e_r_a_l.html#ggad03fafe52eed68d119c1c4ea6e92a521a63a59d87ec996a2eb620e26e37bd705e',1,'nvToolsExt.h']]],
+  ['nvtx_5fcolor_5funknown',['NVTX_COLOR_UNKNOWN',['../group___g_e_n_e_r_a_l.html#ggad03fafe52eed68d119c1c4ea6e92a521a7925dcdd1d707cb5db39f830eba5bf9e',1,'nvToolsExt.h']]],
+  ['nvtx_5fmessage_5ftype_5fascii',['NVTX_MESSAGE_TYPE_ASCII',['../group___g_e_n_e_r_a_l.html#ggaf74d5ab5269ee3c1de7aa0059ca31c46aad30a1fb6651b7f2c36d8d19ade74576',1,'nvToolsExt.h']]],
+  ['nvtx_5fmessage_5ftype_5fregistered',['NVTX_MESSAGE_TYPE_REGISTERED',['../group___g_e_n_e_r_a_l.html#ggaf74d5ab5269ee3c1de7aa0059ca31c46a4dfd8514ece4f6d1b0aa350b882950ea',1,'nvToolsExt.h']]],
+  ['nvtx_5fmessage_5ftype_5funicode',['NVTX_MESSAGE_TYPE_UNICODE',['../group___g_e_n_e_r_a_l.html#ggaf74d5ab5269ee3c1de7aa0059ca31c46aac3516268f6c4b3f188b551ac5e1688b',1,'nvToolsExt.h']]],
+  ['nvtx_5fmessage_5funknown',['NVTX_MESSAGE_UNKNOWN',['../group___g_e_n_e_r_a_l.html#ggaf74d5ab5269ee3c1de7aa0059ca31c46ac0d2f55b27e96f691a06efc5c7c4c134',1,'nvToolsExt.h']]],
+  ['nvtx_5fpayload_5ftype_5fdouble',['NVTX_PAYLOAD_TYPE_DOUBLE',['../group___e_v_e_n_t___a_t_t_r_i_b_u_t_e_s.html#gga2cd77099163a1997f5adff5457e6e5d7a77fdb6810a8a4a55bdce8775977993b4',1,'nvToolsExt.h']]],
+  ['nvtx_5fpayload_5ftype_5ffloat',['NVTX_PAYLOAD_TYPE_FLOAT',['../group___e_v_e_n_t___a_t_t_r_i_b_u_t_e_s.html#gga2cd77099163a1997f5adff5457e6e5d7ac19a6bd5c48c97f46a1474ed64509fe8',1,'nvToolsExt.h']]],
+  ['nvtx_5fpayload_5ftype_5fint32',['NVTX_PAYLOAD_TYPE_INT32',['../group___e_v_e_n_t___a_t_t_r_i_b_u_t_e_s.html#gga2cd77099163a1997f5adff5457e6e5d7a35672e4d7c924aa3d7ff9a61d4874e88',1,'nvToolsExt.h']]],
+  ['nvtx_5fpayload_5ftype_5fint64',['NVTX_PAYLOAD_TYPE_INT64',['../group___e_v_e_n_t___a_t_t_r_i_b_u_t_e_s.html#gga2cd77099163a1997f5adff5457e6e5d7ac48f6e938e3bdeaf7fdf65a1fb61f532',1,'nvToolsExt.h']]],
+  ['nvtx_5fpayload_5ftype_5funsigned_5fint32',['NVTX_PAYLOAD_TYPE_UNSIGNED_INT32',['../group___e_v_e_n_t___a_t_t_r_i_b_u_t_e_s.html#gga2cd77099163a1997f5adff5457e6e5d7aac1bc824559448716960c00e4b4a0b70',1,'nvToolsExt.h']]],
+  ['nvtx_5fpayload_5ftype_5funsigned_5fint64',['NVTX_PAYLOAD_TYPE_UNSIGNED_INT64',['../group___e_v_e_n_t___a_t_t_r_i_b_u_t_e_s.html#gga2cd77099163a1997f5adff5457e6e5d7ac97c31e807ae3a2c64ea7e07cd7cdb9b',1,'nvToolsExt.h']]],
+  ['nvtx_5fpayload_5funknown',['NVTX_PAYLOAD_UNKNOWN',['../group___e_v_e_n_t___a_t_t_r_i_b_u_t_e_s.html#gga2cd77099163a1997f5adff5457e6e5d7a79a07a8c0ddee984d2ad47c4dd77fe81',1,'nvToolsExt.h']]],
+  ['nvtx_5fresource_5ftype_5fgeneric_5fhandle',['NVTX_RESOURCE_TYPE_GENERIC_HANDLE',['../group___r_e_s_o_u_r_c_e___n_a_m_i_n_g.html#ggabaaf30c7cfd72033a5521de326eacdabab9172fba948d1b324be487c212f6090b',1,'nvToolsExt.h']]],
+  ['nvtx_5fresource_5ftype_5fgeneric_5fpointer',['NVTX_RESOURCE_TYPE_GENERIC_POINTER',['../group___r_e_s_o_u_r_c_e___n_a_m_i_n_g.html#ggabaaf30c7cfd72033a5521de326eacdabac874caafa9e3038f4c3302917278f57f',1,'nvToolsExt.h']]],
+  ['nvtx_5fresource_5ftype_5fgeneric_5fthread_5fnative',['NVTX_RESOURCE_TYPE_GENERIC_THREAD_NATIVE',['../group___r_e_s_o_u_r_c_e___n_a_m_i_n_g.html#ggabaaf30c7cfd72033a5521de326eacdabad7cc4f337d6271605c43cac23f2fa65f',1,'nvToolsExt.h']]],
+  ['nvtx_5fresource_5ftype_5fgeneric_5fthread_5fposix',['NVTX_RESOURCE_TYPE_GENERIC_THREAD_POSIX',['../group___r_e_s_o_u_r_c_e___n_a_m_i_n_g.html#ggabaaf30c7cfd72033a5521de326eacdaba3a4a3e315e274f7d1665b2b4b47dbebb',1,'nvToolsExt.h']]]
+];
