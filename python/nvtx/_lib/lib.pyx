@@ -49,7 +49,7 @@ cdef class EventAttributes:
 
         
 cdef class DomainHandle:
-    cdef dict __dict__
+    cdef unicode _name
     cdef nvtxDomainHandle_t c_obj
 
     def __init__(self, unicode name=None):
