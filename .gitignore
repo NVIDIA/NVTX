@@ -29,4 +29,4 @@ share/python-wheels/
 .installed.cfg
 *.egg
 MANIFEST
-python/nvtx/_lib/
+python/nvtx/_lib/*.c
