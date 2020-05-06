@@ -21,6 +21,8 @@ def color_to_hex(color="blue"):
     """
     Convert color to ARGB hex value.
     """
+    if isinstance(color, int):
+        return color
     if color in _NVTX_COLORS:
         return _NVTX_COLORS[color]
     try:
