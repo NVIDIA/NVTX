@@ -30,3 +30,4 @@ share/python-wheels/
 *.egg
 MANIFEST
 python/nvtx/_lib/*.c
+python/docs/_build/
