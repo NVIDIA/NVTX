@@ -1,5 +1,5 @@
 Reference
 =========
 
-.. automodule:: nvtx
+.. automodule:: nvtx.nvtx
    :members:
