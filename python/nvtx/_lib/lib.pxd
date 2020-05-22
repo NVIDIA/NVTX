@@ -86,3 +86,8 @@ cdef extern from "nvtx3/nvToolsExt.h" nogil:
         nvtxDomainHandle_t domain,
         nvtxRangeId_t
     )
+
+    cdef void nvtxDomainMarkEx(
+        nvtxDomainHandle_t domain,
+        const nvtxEventAttributes_t* eventAttrib
+    )

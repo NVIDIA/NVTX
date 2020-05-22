@@ -88,3 +88,7 @@ def push_range(EventAttributes attributes, DomainHandle domain):
 
 def pop_range(DomainHandle domain):
     nvtxDomainRangePop(domain.c_obj)
+
+
+def mark(EventAttributes attributes, DomainHandle domain):
+    nvtxDomainMarkEx(domain.c_obj, &attributes.c_obj)

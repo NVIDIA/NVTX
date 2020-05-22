@@ -7,6 +7,7 @@ from nvtx._lib import (
     EventAttributes,
     pop_range as libnvtx_pop_range,
     push_range as libnvtx_push_range,
+    mark as libnvtx_mark
 )
 
 
@@ -32,7 +33,7 @@ class annotate(ContextDecorator):
             Supports `matplotlib` colors if it is available.
         domain : str, optional
             Name of a domain under which the code range is scoped.
-            The default domain is called "NVTX".
+            The default domain name is "NVTX".
 
         Examples
         --------
@@ -88,20 +89,39 @@ class _annotate_nop:
         return func
 
 
+def mark(message=None, color="blue", domain=None):
+    """
+    Mark an instantaneous event.
+
+    Parameters
+    ----------
+    message : str
+        A message associatedn with the event.
+    color : str, color, optional
+        Color associated with the event.
+    domain : str, optional
+        Name of a domain under which the event is scoped.
+        The default domain name is "NVTX".
+    """
+    attributes = EventAttributes(message, color)
+    domain = Domain(domain)
+    libnvtx_mark(attributes, domain.handle)
+
+
 def push_range(message=None, color="blue", domain=None):
     """
     Mark the beginning of a code range.
 
     Parameters
     ----------
-    message : str
+    message : str, optional
         A message associated with the annotated code range.
-    color : str, color
+    color : str, color, optional
         A color associated with the annotated code range.
         Supports
-    domain : str
+    domain : str, optional
         Name of a domain under which the code range is scoped.
-        The default domain is called "NVTX".
+        The default domain name is "NVTX".
 
     Examples
     --------
@@ -119,7 +139,7 @@ def pop_range(domain=None):
 
     Parameters
     ----------
-    domain : str
+    domain : str, optional
         The domain under which the code range is scoped. The default
         domain is "NVTX".
     """
