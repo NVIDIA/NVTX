@@ -36,7 +36,7 @@ name of the function being decorated:
 mark
 ----
 
-The ``mark()` function marks an instantaneous event in the execution of a program.
+The ``mark()`` function marks an instantaneous event in the execution of a program.
 For example, you may want to mark when an exceptional event occurs:
 ::
 
@@ -64,12 +64,12 @@ This allows grouping related annotations together.
    time.sleep(1)
 
 
-   @nvtx.annotate(color="green", domain="Domain_1")
+   @nvtx.annotate(color="green", domain="Domain_2")
    def func_2():
    time.sleep(1)
 
 
-   @nvtx.annotate(color="red", domain="Domain_2")
+   @nvtx.annotate(color="red", domain="Domain_1")
    def func_3():
    time.sleep(1)
 
