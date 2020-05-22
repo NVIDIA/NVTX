@@ -19,8 +19,7 @@ of Python programs for the purposes of debugging and optimization.
 A quick example
 ===============
 
-The ``annotate()`` function is used to annotate a function or a snippet of code.
-It can be used both as a decorator or a context manager:
+Here is an example of code annotated with ``nvtx``:
 ::
 
    # demo.py
@@ -38,9 +37,14 @@ It can be used both as a decorator or a context manager:
 
 
 Adding ``nvtx`` annotations to your code doesn't achieve anything by itself.
-To derive something useful from annotated code, you'll need to use a third-party application
-such as `Nsight Systems <https://developer.nvidia.com/nsight-systems>`_, which
-helps you visualize the execution of your code:
+To derive something useful from annotated code,
+you'll need to use a third-party application that supports NVTX annotations.
+
+`Nsight Systems <https://developer.nvidia.com/nsight-systems>`_ is one such application,
+which displays annotated code ranges and events in a timeline.
+This is incredibly useful for debugging and optimization.
+
+Running the annotated Python program through Nsight Systems:
 ::
 
    nsight-sys profile -t nvtx python demo.py

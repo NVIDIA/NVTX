@@ -5,5 +5,5 @@ from nvtx._lib.lib import (
     EventAttributes,
     pop_range,
     push_range,
-    markp
+    mark
 )
