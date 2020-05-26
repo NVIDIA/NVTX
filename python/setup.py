@@ -31,7 +31,7 @@ extensions = [
 
 setup(
     name="nvtx",
-    version="0.1",
+    version="0.1dev",
     description="PyNVTX - Python code annotation library",
     url="https://github.com/NVIDIA/nvtx",
     author="NVIDIA Corporation",
