@@ -7,6 +7,7 @@ from nvtx.utils.cached import CachedInstanceMeta
 cdef extern from "Python.h":
     wchar_t* PyUnicode_AsWideCharString(object, Py_ssize_t *)
 
+
 def initialize():
     nvtxInitialize(NULL)
 
@@ -27,7 +28,10 @@ cdef class EventAttributes:
         self.c_obj.colorType = NVTX_COLOR_ARGB
         self.c_obj.color = color_to_hex(self._color)
         self.c_obj.messageType = NVTX_MESSAGE_TYPE_UNICODE
-        self.c_obj.message.unicode = PyUnicode_AsWideCharString(self._message, NULL)
+        self.c_obj.message.unicode = PyUnicode_AsWideCharString(
+            self._message,
+            NULL
+        )
 
     @property
     def message(self):
@@ -36,7 +40,10 @@ cdef class EventAttributes:
     @message.setter
     def message(self, unicode value):
         self._message = value
-        self.c_obj.message.unicode = PyUnicode_AsWideCharString(self._message, NULL)
+        self.c_obj.message.unicode = PyUnicode_AsWideCharString(
+            self._message,
+            NULL
+        )
 
     @property
     def color(self):
@@ -47,7 +54,7 @@ cdef class EventAttributes:
         self._color = value
         self.c_obj.color = color_to_hex(self._color)
 
-        
+
 cdef class DomainHandle:
     cdef unicode _name
     cdef nvtxDomainHandle_t c_obj
@@ -64,7 +71,7 @@ cdef class DomainHandle:
 
     def name(self):
         return self._name
-            
+
     def __dealloc__(self):
         nvtxDomainDestroy(self.c_obj)
 

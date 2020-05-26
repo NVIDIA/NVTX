@@ -21,9 +21,7 @@ extensions = [
     Extension(
         "*",
         sources=cython_files,
-        include_dirs=[
-            os.path.dirname(sysconfig.get_path("include")),
-        ],
+        include_dirs=[os.path.dirname(sysconfig.get_path("include")),],
         library_dirs=[get_python_lib()],
         language="c",
     )

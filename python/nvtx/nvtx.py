@@ -5,9 +5,9 @@ from contextlib import ContextDecorator
 from nvtx._lib import (
     Domain,
     EventAttributes,
+    mark as libnvtx_mark,
     pop_range as libnvtx_pop_range,
     push_range as libnvtx_push_range,
-    mark as libnvtx_mark
 )
 
 
