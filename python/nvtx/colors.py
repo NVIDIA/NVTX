@@ -17,10 +17,12 @@ _NVTX_COLORS = {
 
 
 @functools.lru_cache()
-def color_to_hex(color="blue"):
+def color_to_hex(color=None):
     """
     Convert color to ARGB hex value.
     """
+    if color is None:
+        color = "blue"
     if isinstance(color, int):
         return color
     if color in _NVTX_COLORS:

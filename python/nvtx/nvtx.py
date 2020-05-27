@@ -16,7 +16,7 @@ class annotate(ContextDecorator):
     Annotate code ranges using a context manager or a decorator.
     """
 
-    def __init__(self, message=None, color="blue", domain=None):
+    def __init__(self, message=None, color=None, domain=None):
         """
         Annotate a function or a code range.
 

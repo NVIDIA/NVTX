@@ -17,7 +17,7 @@ cdef class EventAttributes:
     cdef object _color
     cdef nvtxEventAttributes_t c_obj
 
-    def __init__(self, unicode message=None, color="blue"):
+    def __init__(self, unicode message=None, color=None):
         if message is None:
             message = ""
         self._message = message
