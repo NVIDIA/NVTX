@@ -1,11 +1,14 @@
 # Copyright (c) 2020, NVIDIA CORPORATION.
 
+from libc.stddef cimport wchar_t
+
 from nvtx._lib.lib cimport *
 from nvtx.colors import color_to_hex
 from nvtx.utils.cached import CachedInstanceMeta
 
 cdef extern from "Python.h":
     wchar_t* PyUnicode_AsWideCharString(object, Py_ssize_t *)
+    void PyMem_Free(void *p)
 
 
 def initialize():
@@ -16,22 +19,27 @@ cdef class EventAttributes:
     cdef unicode _message
     cdef object _color
     cdef nvtxEventAttributes_t c_obj
+    cdef wchar_t* c_name
+
 
     def __init__(self, unicode message=None, color=None):
         if message is None:
             message = ""
         self._message = message
         self._color = color
+
+        self.c_name = PyUnicode_AsWideCharString(
+            self._message,
+            NULL
+        )
+
         self.c_obj = nvtxEventAttributes_t(0)
         self.c_obj.version = NVTX_VERSION
         self.c_obj.size = NVTX_EVENT_ATTRIB_STRUCT_SIZE
         self.c_obj.colorType = NVTX_COLOR_ARGB
         self.c_obj.color = color_to_hex(self._color)
         self.c_obj.messageType = NVTX_MESSAGE_TYPE_UNICODE
-        self.c_obj.message.unicode = PyUnicode_AsWideCharString(
-            self._message,
-            NULL
-        )
+        self.c_obj.message.unicode = self.c_name
 
     @property
     def message(self):
@@ -40,6 +48,7 @@ cdef class EventAttributes:
     @message.setter
     def message(self, unicode value):
         self._message = value
+        PyMem_Free(self.c_name)
         self.c_obj.message.unicode = PyUnicode_AsWideCharString(
             self._message,
             NULL
@@ -54,16 +63,21 @@ cdef class EventAttributes:
         self._color = value
         self.c_obj.color = color_to_hex(self._color)
 
+    def __dealloc(self):
+        PyMem_Free(self.c_name)
+
 
 cdef class DomainHandle:
     cdef unicode _name
     cdef nvtxDomainHandle_t c_obj
+    cdef wchar_t* c_name
 
     def __init__(self, unicode name=None):
         if name is not None:
             self._name = name
+            self.c_name = PyUnicode_AsWideCharString(self._name, NULL)
             self.c_obj = nvtxDomainCreateW(
-                PyUnicode_AsWideCharString(self._name, NULL)
+                self.c_name
             )
         else:
             self._name = None
@@ -73,6 +87,7 @@ cdef class DomainHandle:
         return self._name
 
     def __dealloc__(self):
+        PyMem_Free(self.c_name)
         nvtxDomainDestroy(self.c_obj)
 
 
