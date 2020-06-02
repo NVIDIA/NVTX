@@ -13,15 +13,13 @@ def initialize():
 
 
 cdef class EventAttributes:
-    cdef unicode _message
+    cdef bytes _message
     cdef object _color
     cdef nvtxEventAttributes_t c_obj
 
-    def __init__(self, unicode message=None, color=None):
-        if message is None:
-            message = ""
-        self._message = message
+    def __init__(self, object message=None, color=None):
         self._color = color
+        self.message = message
         self.c_obj = nvtxEventAttributes_t(0)
         self.c_obj.version = NVTX_VERSION
         self.c_obj.size = NVTX_EVENT_ATTRIB_STRUCT_SIZE
@@ -32,10 +30,14 @@ cdef class EventAttributes:
 
     @property
     def message(self):
-        return self._message
+        return self._message.decode()
 
     @message.setter
-    def message(self, unicode value):
+    def message(self, object value):
+        if value is None:
+            value = b""
+        if not isinstance(value, bytes):
+            value = value.encode()
         self._message = value
         self.c_obj.message.ascii = self._message
 
@@ -50,12 +52,12 @@ cdef class EventAttributes:
 
 
 cdef class DomainHandle:
-    cdef unicode _name
+    cdef bytes _name
     cdef nvtxDomainHandle_t c_obj
 
-    def __init__(self, unicode name=None):
+    def __init__(self, object name=None):
         if name is not None:
-            self._name = name
+            self._name = name.encode()
             self.c_obj = nvtxDomainCreateA(
                 self._name
             )
