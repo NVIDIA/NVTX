@@ -69,7 +69,7 @@ cdef extern from "nvtx3/nvToolsExt.h" nogil:
 
     ctypedef nvtxEventAttributes_v2 nvtxEventAttributes_t
 
-    cdef nvtxDomainHandle_t nvtxDomainCreateW(const wchar_t* name)
+    cdef nvtxDomainHandle_t nvtxDomainCreateA(const char* name)
     cdef void nvtxDomainDestroy(nvtxDomainHandle_t domain)
 
     cdef int nvtxDomainRangePushEx(

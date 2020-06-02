@@ -5,7 +5,7 @@ from nvtx.colors import color_to_hex
 from nvtx.utils.cached import CachedInstanceMeta
 
 cdef extern from "Python.h":
-    wchar_t* PyUnicode_AsWideCharString(object, Py_ssize_t *)
+    const char* PyUnicode_AsUTF8(object)
 
 
 def initialize():
@@ -27,11 +27,8 @@ cdef class EventAttributes:
         self.c_obj.size = NVTX_EVENT_ATTRIB_STRUCT_SIZE
         self.c_obj.colorType = NVTX_COLOR_ARGB
         self.c_obj.color = color_to_hex(self._color)
-        self.c_obj.messageType = NVTX_MESSAGE_TYPE_UNICODE
-        self.c_obj.message.unicode = PyUnicode_AsWideCharString(
-            self._message,
-            NULL
-        )
+        self.c_obj.messageType = NVTX_MESSAGE_TYPE_ASCII
+        self.c_obj.message.ascii = self._message
 
     @property
     def message(self):
@@ -40,10 +37,7 @@ cdef class EventAttributes:
     @message.setter
     def message(self, unicode value):
         self._message = value
-        self.c_obj.message.unicode = PyUnicode_AsWideCharString(
-            self._message,
-            NULL
-        )
+        self.c_obj.message.ascii = self._message
 
     @property
     def color(self):
@@ -62,8 +56,8 @@ cdef class DomainHandle:
     def __init__(self, unicode name=None):
         if name is not None:
             self._name = name
-            self.c_obj = nvtxDomainCreateW(
-                PyUnicode_AsWideCharString(self._name, NULL)
+            self.c_obj = nvtxDomainCreateA(
+                self._name
             )
         else:
             self._name = None
