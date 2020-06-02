@@ -4,9 +4,6 @@ from nvtx._lib.lib cimport *
 from nvtx.colors import color_to_hex
 from nvtx.utils.cached import CachedInstanceMeta
 
-cdef extern from "Python.h":
-    const char* PyUnicode_AsUTF8(object)
-
 
 def initialize():
     nvtxInitialize(NULL)
