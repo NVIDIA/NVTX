@@ -1,8 +1,14 @@
 # Copyright (c) 2020, NVIDIA CORPORATION.
 
+from libc.stdint cimport uint32_t
+
 from nvtx._lib.lib cimport *
 from nvtx.colors import color_to_hex
 from nvtx.utils.cached import CachedInstanceMeta
+
+
+cpdef bytes _to_bytes(object s):
+    return s if isinstance(s, bytes) else s.encode()
 
 
 def initialize():
@@ -10,11 +16,8 @@ def initialize():
 
 
 cdef class EventAttributes:
-    cdef bytes _message
-    cdef object _color
-    cdef nvtxEventAttributes_t c_obj
 
-    def __init__(self, object message=None, color=None):
+    def __init__(self, object message=None, color=None, category=None):
         self._color = color
         self.message = message
         self.c_obj = nvtxEventAttributes_t(0)
@@ -24,6 +27,8 @@ cdef class EventAttributes:
         self.c_obj.color = color_to_hex(self._color)
         self.c_obj.messageType = NVTX_MESSAGE_TYPE_ASCII
         self.c_obj.message.ascii = self._message
+        if category is not None:
+            self.c_obj.category = category
 
     @property
     def message(self):
@@ -33,9 +38,7 @@ cdef class EventAttributes:
     def message(self, object value):
         if value is None:
             value = b""
-        if not isinstance(value, bytes):
-            value = value.encode()
-        self._message = value
+        self._message = _to_bytes(value)
         self.c_obj.message.ascii = self._message
 
     @property
@@ -49,28 +52,25 @@ cdef class EventAttributes:
 
 
 cdef class DomainHandle:
-    cdef bytes _name
-    cdef nvtxDomainHandle_t c_obj
 
     def __init__(self, object name=None):
         if name is not None:
-            self._name = name.encode()
+            self._name = _to_bytes(name)
             self.c_obj = nvtxDomainCreateA(
                 self._name
             )
         else:
-            self._name = None
+            self._name = b""
             self.c_obj = NULL
 
     def name(self):
-        return self._name
+        return self._name.decode()
 
     def __dealloc__(self):
         nvtxDomainDestroy(self.c_obj)
 
 
 cdef class RangeId:
-    cdef nvtxRangeId_t c_obj
 
     def __cinit__(self, uint64_t range_id):
         self.c_obj = range_id
@@ -80,6 +80,24 @@ class Domain(metaclass=CachedInstanceMeta):
     def __init__(self, name=None):
         self.name = name
         self.handle = DomainHandle(name)
+        self.categories = {}
+
+    def get_category_id(self, name):
+        """
+        Returns the category ID corresponding to the category `name`.
+        If no category `name` exists, it is added to the domain,
+        and the corresponding id.
+        """
+        cdef DomainHandle dh = self.handle
+        if name not in self.categories:
+            category_id = len(self.categories) + 1
+            self.categories[name] = category_id
+            nvtxDomainNameCategoryA(
+                dh.c_obj,
+                category_id,
+                _to_bytes(name)
+            )
+        return self.categories[name]
 
 
 def push_range(EventAttributes attributes, DomainHandle domain):

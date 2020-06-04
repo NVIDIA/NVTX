@@ -91,3 +91,24 @@ cdef extern from "nvtx3/nvToolsExt.h" nogil:
         nvtxDomainHandle_t domain,
         const nvtxEventAttributes_t* eventAttrib
     )
+
+    cdef void nvtxDomainNameCategoryA(
+        nvtxDomainHandle_t domain,
+        uint32_t category,
+        const char* name
+    )
+
+
+cdef class EventAttributes:
+    cdef bytes _message
+    cdef object _color
+    cdef nvtxEventAttributes_t c_obj
+
+
+cdef class DomainHandle:
+    cdef bytes _name
+    cdef nvtxDomainHandle_t c_obj
+
+
+cdef class RangeId:
+    cdef nvtxRangeId_t c_obj

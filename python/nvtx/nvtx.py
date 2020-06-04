@@ -16,7 +16,7 @@ class annotate(ContextDecorator):
     Annotate code ranges using a context manager or a decorator.
     """
 
-    def __init__(self, message=None, color=None, domain=None):
+    def __init__(self, message=None, color=None, domain=None, category=None):
         """
         Annotate a function or a code range.
 
@@ -32,8 +32,12 @@ class annotate(ContextDecorator):
             A color associated with the annotated code range.
             Supports `matplotlib` colors if it is available.
         domain : str, optional
-            Name of a domain under which the code range is scoped.
-            The default domain name is "NVTX".
+            A string specifying the domain under which the code range is
+            scoped. The default domain is named "NVTX".
+        category : str, optional
+            A string specifying the category within the domain under which
+            the code range is scoped. If unspecified, the code range is not
+            associated with a category.
 
         Examples
         --------
@@ -52,8 +56,15 @@ class annotate(ContextDecorator):
         ...    time.sleep(10)
         ...
         """
-        self.attributes = EventAttributes(message, color)
+
         self.domain = Domain(domain)
+
+        category_id = (
+            self.domain.get_category_id(category)
+            if category is not None
+            else None
+        )
+        self.attributes = EventAttributes(message, color, category_id)
 
     def __reduce__(self):
         return (
@@ -100,8 +111,12 @@ def mark(message=None, color="blue", domain=None):
     color : str, color, optional
         Color associated with the event.
     domain : str, optional
-        Name of a domain under which the event is scoped.
-        The default domain name is "NVTX".
+        A string specifuing the domain under which the event is scoped.
+        The default domain is named "NVTX".
+    category : str, optional
+        A string specifying the category within the domain under which
+        the event is scoped. If unspecified, the event is not associated
+        with a category.
     """
     attributes = EventAttributes(message, color)
     domain = Domain(domain)

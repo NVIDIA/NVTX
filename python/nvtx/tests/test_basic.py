@@ -93,4 +93,57 @@ def test_domain_reuse():
 
     c = nvtx._lib.Domain("y")
     assert a is not c
-    
+
+
+@pytest.mark.parametrize(
+    "message",
+    [
+        None,
+        "",
+        "x",
+        "abc",
+        "abc def"
+    ]
+)
+@pytest.mark.parametrize(
+    "color",
+    [
+        None,
+        "red",
+        "green",
+        "blue"
+    ]
+)
+@pytest.mark.parametrize(
+    "domain",
+    [
+        None,
+        "",
+        "x",
+        "abc",
+        "abc def"
+    ]
+)
+@pytest.mark.parametrize(
+    "category",
+    [
+        None,
+        "",
+        "y"
+        "x",
+        "abc",
+        "abc def"
+    ]
+)
+def test_categories_basic(message, color, domain, category):
+    with nvtx.annotate(message=message, domain=domain, category=category):
+        pass
+
+
+def test_get_category_id():
+    dom = nvtx._lib.Domain("foo")
+    id1 = dom.get_category_id("bar")
+    id2 = dom.get_category_id("bar")
+    assert id1 == id2
+    id3 = dom.get_category_id("baz")
+    assert id2 != id3
