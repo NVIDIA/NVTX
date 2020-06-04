@@ -3,6 +3,7 @@
 import functools
 
 _NVTX_COLORS = {
+    None: 0x0000FF,  # blue
     "green": 0x008000,
     "blue": 0x0000FF,
     "yellow": 0xFFFF00,
@@ -21,8 +22,6 @@ def color_to_hex(color=None):
     """
     Convert color to ARGB hex value.
     """
-    if color is None:
-        color = "blue"
     if isinstance(color, int):
         return color
     if color in _NVTX_COLORS:
