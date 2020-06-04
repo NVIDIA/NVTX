@@ -63,6 +63,7 @@ cdef class DomainHandle:
             self._name = b""
             self.c_obj = NULL
 
+    @property
     def name(self):
         return self._name.decode()
 
