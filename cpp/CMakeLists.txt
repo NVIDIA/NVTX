@@ -56,6 +56,10 @@ if(CMAKE_COMPILER_IS_GNUCXX)
     endif(CMAKE_CXX11_ABI)
 endif(CMAKE_COMPILER_IS_GNUCXX)
 
+# Build options
+option(BUILD_TESTS "Configure CMake to build tests" OFF)
+option(BUILD_BENCHMARKS "Configure CMake to build (google) benchmarks" ON)
+
 ###################################################################################################
 # - cmake modules ---------------------------------------------------------------------------------
 
@@ -71,13 +75,29 @@ include(CheckLibraryExists)
 include(CTest)
 include(ConfigureGoogleTest)
 
-if(GTEST_FOUND)
-    message(STATUS "Google C++ Testing Framework (Google Test) found in ${GTEST_ROOT}")
-    include_directories(${GTEST_INCLUDE_DIR})
-    add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/tests)
-else()
-    message(AUTHOR_WARNING "Google C++ Testing Framework (Google Test) not found: automated tests are disabled.")
-endif(GTEST_FOUND)
+if(BUILD_TESTS)
+    if(GTEST_FOUND)
+        message(STATUS "Google C++ Testing Framework (Google Test) found in ${GTEST_ROOT}")
+        include_directories(${GTEST_INCLUDE_DIR})
+        add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/tests)
+    else()
+        message(AUTHOR_WARNING "Google C++ Testing Framework (Google Test) not found: automated tests are disabled.")
+    endif(GTEST_FOUND)
+endif(BUILD_TESTS)
+
+###################################################################################################
+# - add google benchmark --------------------------------------------------------------------------
+
+if(BUILD_BENCHMARKS)
+  include(ConfigureGoogleBenchmark)
+  if(GBENCH_FOUND)
+    message(STATUS "Google C++ Benchmarking Framework (Google Benchmark) found in ${GBENCH_ROOT}")
+    include_directories(${GBENCH_INCLUDE_DIR})
+    add_subdirectory(${CMAKE_SOURCE_DIR}/benchmarks)
+  else()
+    message(AUTHOR_WARNING "Google C++ Benchmarking Framework (Google Benchmark) not found: automated tests are disabled.")
+  endif(GBENCH_FOUND)
+endif(BUILD_BENCHMARKS)
 
 
 ###################################################################################################
