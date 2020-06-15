@@ -46,12 +46,12 @@ link_directories("${CMAKE_CUDA_IMPLICIT_LINK_DIRECTORIES}" # CMAKE_CUDA_IMPLICIT
 ###################################################################################################
 
 ###################################################################################################
-# - test benchmark --------------------------------------------------------------------------------
+# - example benchmark --------------------------------------------------------------------------------
 
-set(TEST_BENCH_SRC
-  "${CMAKE_CURRENT_SOURCE_DIR}/test/test_benchmark.cpp")
+set(EXAMPLE_BENCH_SRC
+  "${CMAKE_CURRENT_SOURCE_DIR}/example/example_benchmark.cpp")
 
-ConfigureBench(TEST_BENCH "${TEST_BENCH_SRC}")
+ConfigureBench(EXAMPLE_BENCH "${EXAMPLE_BENCH_SRC}")
 
 
 ###################################################################################################
