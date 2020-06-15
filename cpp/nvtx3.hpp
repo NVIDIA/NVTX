@@ -1557,6 +1557,7 @@ class event_attributes {
         NVTX_COLOR_UNKNOWN,             // color type
         0,                              // color value
         NVTX_PAYLOAD_UNKNOWN,           // payload type
+        0,                              // reserved 4B
         0,                              // payload value (union)
         NVTX_MESSAGE_UNKNOWN,           // message type
         0                               // message value (union)
