@@ -57,7 +57,7 @@ if(CMAKE_COMPILER_IS_GNUCXX)
 endif(CMAKE_COMPILER_IS_GNUCXX)
 
 # Build options
-option(BUILD_TESTS "Configure CMake to build tests" OFF)
+option(BUILD_TESTS "Configure CMake to build tests" ON)
 option(BUILD_BENCHMARKS "Configure CMake to build (google) benchmarks" ON)
 
 ###################################################################################################
