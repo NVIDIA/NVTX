@@ -1235,8 +1235,8 @@ class registered_string {
    */
   nvtxStringHandle_t get_handle() const noexcept { return handle_; }
 
-  registered_string()                          = delete;
-  ~registered_string()                         = default;
+  registered_string()                         = delete;
+  ~registered_string()                        = default;
   registered_string(registered_string const&) = default;
   registered_string& operator=(registered_string const&) = default;
   registered_string(registered_string&&)                 = default;
@@ -2043,7 +2043,7 @@ inline void mark(event_attributes const& attr) noexcept
  * `domain::global` to  indicate that the global NVTX domain should be used.
  */
 #define NVTX3_FUNC_RANGE_IN(D)                                                 \
-  static ::nvtx3::registered_string<D> const nvtx3_func_name__{__func__};     \
+  static ::nvtx3::registered_string<D> const nvtx3_func_name__{__func__};      \
   static ::nvtx3::event_attributes const nvtx3_func_attr__{nvtx3_func_name__}; \
   ::nvtx3::domain_thread_range<D> const nvtx3_range__{nvtx3_func_attr__};
 
