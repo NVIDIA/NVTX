@@ -14,9 +14,10 @@
  * limitations under the License.
  */
 
+
 #include <gtest/gtest.h>
 
-#include <nvToolsExtSync.h>
+#include <nvtx3/nvToolsExtSync.h>
 #include <nvtx3.hpp>
 
 #include <cupti.h>
