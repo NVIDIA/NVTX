@@ -1063,7 +1063,12 @@ class named_category final : public category {
    */
   named_category(id_type id, char const* name) noexcept : category{id}
   {
+#ifndef NVTX_DISABLE
     nvtxDomainNameCategoryA(domain::get<D>(), get_id(), name);
+#else
+    (void)id;
+    (void)name;
+#endif
   };
 
   /**
@@ -1078,7 +1083,12 @@ class named_category final : public category {
    */
   named_category(id_type id, wchar_t const* name) noexcept : category{id}
   {
+#ifndef NVTX_DISABLE
     nvtxDomainNameCategoryW(domain::get<D>(), get_id(), name);
+#else
+    (void)id;
+    (void)name;
+#endif
   };
 };
 
@@ -1707,7 +1717,11 @@ class domain_thread_range {
    */
   explicit domain_thread_range(event_attributes const& attr) noexcept
   {
+#ifndef NVTX_DISABLE
     nvtxDomainRangePushEx(domain::get<D>(), attr.get());
+#else
+    (void)attr;
+#endif
   }
 
   /**
@@ -1761,7 +1775,12 @@ class domain_thread_range {
   /**
    * @brief Destroy the domain_thread_range, ending the NVTX range event.
    */
-  ~domain_thread_range() noexcept { nvtxDomainRangePop(domain::get<D>()); }
+  ~domain_thread_range() noexcept
+  {
+#ifndef NVTX_DISABLE
+    nvtxDomainRangePop(domain::get<D>());
+#endif
+  }
 };
 
 /**
@@ -1823,7 +1842,12 @@ struct range_handle {
 template <typename D = domain::global>
 range_handle start_range(event_attributes const& attr) noexcept
 {
+#ifndef NVTX_DISABLE
   return range_handle{nvtxDomainRangeStartEx(domain::get<D>(), attr.get())};
+#else
+  (void)attr;
+  return range_handle{};
+#endif
 }
 
 /**
@@ -1860,7 +1884,12 @@ template <typename First,
             not std::is_same<event_attributes, typename std::decay<First>>::value>>
 range_handle start_range(First const& first, Args const&... args) noexcept
 {
+#ifndef NVTX_DISABLE
   return start_range(event_attributes{first, args...});
+#else
+  (void)first;
+  return range_handle{};
+#endif
 }
 
 /**
@@ -1875,7 +1904,14 @@ range_handle start_range(First const& first, Args const&... args) noexcept
  *
  * @param r Handle to a range started by a prior call to `start_range`.
  */
-void end_range(range_handle r) { nvtxRangeEnd(r.get_value()); }
+void end_range(range_handle r)
+{
+#ifndef NVTX_DISABLE
+  nvtxRangeEnd(r.get_value());
+#else
+  (void)r;
+#endif
+}
 
 /**
  * @brief A RAII object for creating a NVTX range within a domain that can
@@ -2009,7 +2045,11 @@ using process_range = domain_process_range<>;
 template <typename D = nvtx3::domain::global>
 inline void mark(event_attributes const& attr) noexcept
 {
+#ifndef NVTX_DISABLE
   nvtxDomainMarkEx(domain::get<D>(), attr.get());
+#else
+  (void)(attr);
+#endif
 }
 
 }  // namespace nvtx3
@@ -2042,10 +2082,14 @@ inline void mark(event_attributes const& attr) noexcept
  * `domain` to which the `registered_string` belongs. Else,
  * `domain::global` to  indicate that the global NVTX domain should be used.
  */
+#ifndef NVTX_DISABLE
 #define NVTX3_FUNC_RANGE_IN(D)                                                 \
   static ::nvtx3::registered_string<D> const nvtx3_func_name__{__func__};      \
   static ::nvtx3::event_attributes const nvtx3_func_attr__{nvtx3_func_name__}; \
   ::nvtx3::domain_thread_range<D> const nvtx3_range__{nvtx3_func_attr__};
+#else
+#define NVTX3_FUNC_RANGE_IN(D)
+#endif
 
 /**
  * @brief Convenience macro for generating a range in the global domain from the
