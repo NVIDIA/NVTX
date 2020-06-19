@@ -1760,12 +1760,21 @@ class domain_thread_range {
   {
   }
 
+
   /**
    * @brief Default constructor creates a `domain_thread_range` with no
    * message, color, payload, nor category.
    *
    */
   domain_thread_range() : domain_thread_range{event_attributes{}} {}
+
+  /**
+   * @brief Delete `operator new` to disallow heap allocated objects.
+   *
+   * `domain_thread_range` must follow RAII semantics to guarantee proper push/pop semantics.
+   *
+   */
+  void* operator new() = delete;
 
   domain_thread_range(domain_thread_range const&) = delete;
   domain_thread_range& operator=(domain_thread_range const&) = delete;
