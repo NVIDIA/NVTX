@@ -1950,7 +1950,8 @@ class domain_process_range {
    *
    * @param attr
    */
-  explicit domain_process_range(event_attributes const& attr) noexcept : handle_{start_range(attr)}
+  explicit domain_process_range(event_attributes const& attr) noexcept
+    : handle_{start_range<D>(attr)}
   {
   }
 
