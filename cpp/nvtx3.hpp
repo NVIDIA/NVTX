@@ -1983,7 +1983,7 @@ class domain_process_range {
    */
   ~domain_process_range()
   {
-    if (handle_) { end_range(*handle); }
+    if (handle_) { end_range(*handle_); }
   }
 
   /**
