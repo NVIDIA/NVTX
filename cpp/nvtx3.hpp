@@ -1776,7 +1776,7 @@ class domain_thread_range {
    * `domain_thread_range` must follow RAII semantics to guarantee proper push/pop semantics.
    *
    */
-  void* operator new() = delete;
+  void* operator new(std::size_t) = delete;
 
   domain_thread_range(domain_thread_range const&) = delete;
   domain_thread_range& operator=(domain_thread_range const&) = delete;
