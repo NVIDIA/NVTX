@@ -1811,7 +1811,7 @@ struct range_handle {
    * @brief Construct a `range_handle` from the given id.
    *
    */
-  constexpr range_handle(value_type id) noexcept : _range_id{id} {}
+  constexpr explicit range_handle(value_type id) noexcept : _range_id{id} {}
 
   /**
    * @brief Returns the `range_handle`'s value
