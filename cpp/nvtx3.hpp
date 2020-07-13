@@ -1951,7 +1951,7 @@ class domain_process_range {
    * @param attr
    */
   explicit domain_process_range(event_attributes const& attr) noexcept
-    : handle_{start_range<D>(attr)}
+    : handle_{new range_handle{start_range<D>(attr)}}
   {
   }
 
@@ -1980,10 +1980,7 @@ class domain_process_range {
    * @brief Destroy the `domain_process_range` ending the range.
    *
    */
-  ~domain_process_range() noexcept
-  {
-    if (not moved_from_) { end_range(handle_); }
-  }
+  ~domain_process_range() = default;
 
   /**
    * @brief Move constructor allows taking ownership of the NVTX range from
@@ -1991,10 +1988,7 @@ class domain_process_range {
    *
    * @param other
    */
-  domain_process_range(domain_process_range&& other) noexcept : handle_{other.handle_}
-  {
-    other.moved_from_ = true;
-  }
+  domain_process_range(domain_process_range&& other) = default;
 
   /**
    * @brief Move assignment operator allows taking ownership of an NVTX range
@@ -2003,11 +1997,7 @@ class domain_process_range {
    * @param other
    * @return domain_process_range&
    */
-  domain_process_range& operator=(domain_process_range&& other) noexcept
-  {
-    handle_           = other.handle_;
-    other.moved_from_ = true;
-  }
+  domain_process_range& operator=(domain_process_range&& other) = default;
 
   /// Copy construction is not allowed to prevent multiple objects from owning
   /// the same range handle
@@ -2018,12 +2008,8 @@ class domain_process_range {
   domain_process_range& operator=(domain_process_range const&) = delete;
 
  private:
-  range_handle handle_;     ///< Range handle used to correlate
-                            ///< the start/end of the range
-  bool moved_from_{false};  ///< Indicates if the object has had
-                            ///< it's contents moved from it,
-                            ///< indicating it should not attempt
-                            ///< to end the NVTX range.
+  std::unique_ptr<range_handle> handle_;  ///< Range handle used to correlate
+                                          ///< the start/end of the range
 };
 
 /**
