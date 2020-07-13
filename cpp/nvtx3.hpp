@@ -1914,7 +1914,7 @@ range_handle start_range(First const& first, Args const&... args) noexcept
  *
  * @param r Handle to a range started by a prior call to `start_range`.
  */
-void end_range(range_handle r)
+inline void end_range(range_handle r)
 {
 #ifndef NVTX_DISABLE
   nvtxRangeEnd(r.get_value());
