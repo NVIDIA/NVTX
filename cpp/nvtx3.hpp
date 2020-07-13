@@ -1980,7 +1980,10 @@ class domain_process_range {
    * @brief Destroy the `domain_process_range` ending the range.
    *
    */
-  ~domain_process_range() = default;
+  ~domain_process_range()
+  {
+    if (handle_) { end_range(*handle); }
+  }
 
   /**
    * @brief Move constructor allows taking ownership of the NVTX range from
@@ -2010,7 +2013,7 @@ class domain_process_range {
  private:
   std::unique_ptr<range_handle> handle_;  ///< Range handle used to correlate
                                           ///< the start/end of the range
-};
+};                                        // namespace nvtx3
 
 /**
  * @brief Alias for a `domain_process_range` in the global NVTX domain.
