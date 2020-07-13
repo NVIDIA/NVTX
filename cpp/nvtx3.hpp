@@ -34,6 +34,7 @@
 #include <nvtx3/nvToolsExt.h>
 
 #include <string>
+#include <type_traits>
 #include <utility>
 
 /**
@@ -529,7 +530,7 @@ namespace detail {
 template <typename T>
 constexpr auto has_name_member() noexcept -> decltype(T::name, bool())
 {
-  return (std::is_same<char const*, typename std::decay<decltype(T::name)>::type>::value or
+  return (std::is_same<char const*, typename std::decay<decltype(T::name)>::type>::value ||
           std::is_same<wchar_t const*, typename std::decay<decltype(T::name)>::type>::value);
 }
 }  // namespace detail
