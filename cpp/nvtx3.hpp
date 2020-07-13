@@ -34,6 +34,7 @@
 #include <nvtx3/nvToolsExt.h>
 
 #include <string>
+#include <utility>
 
 /**
  * @file nvtx3.hpp
@@ -1759,7 +1760,6 @@ class domain_thread_range {
     : domain_thread_range{event_attributes{first, args...}}
   {
   }
-
 
   /**
    * @brief Default constructor creates a `domain_thread_range` with no
