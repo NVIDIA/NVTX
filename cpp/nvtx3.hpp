@@ -1756,7 +1756,7 @@ class domain_thread_range {
   template <typename First,
             typename... Args,
             typename = typename std::enable_if<
-              not std::is_same<event_attributes, typename std::decay<First>>::value>>
+              !std::is_same<event_attributes, typename std::decay<First>>::value>>
   explicit domain_thread_range(First const& first, Args const&... args) noexcept
     : domain_thread_range{event_attributes{first, args...}}
   {
@@ -1891,7 +1891,7 @@ range_handle start_range(event_attributes const& attr) noexcept
 template <typename First,
           typename... Args,
           typename = typename std::enable_if<
-            not std::is_same<event_attributes, typename std::decay<First>>::value>>
+            !std::is_same<event_attributes, typename std::decay<First>>::value>>
 range_handle start_range(First const& first, Args const&... args) noexcept
 {
 #ifndef NVTX_DISABLE
@@ -1963,7 +1963,7 @@ class domain_process_range {
   template <typename First,
             typename... Args,
             typename = typename std::enable_if<
-              not std::is_same<event_attributes, typename std::decay<First>>::value>>
+              !std::is_same<event_attributes, typename std::decay<First>>::value>>
   explicit domain_process_range(First const& first, Args const&... args) noexcept
     : domain_process_range{event_attributes{first, args...}}
   {
