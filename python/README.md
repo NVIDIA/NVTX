@@ -35,3 +35,8 @@ pip install nvtx
 3. Visualize the results using the Nsight systems GUI:
 
    ![demo](docs/images/demo_timeline.png)
+
+## Documentation
+
+See [here](https://github.com/NVIDIA/NVTX/blob/dev/python/docs/basic.rst) for
+detailed docs.
