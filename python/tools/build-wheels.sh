@@ -11,7 +11,7 @@ function repair_wheel {
 }
 
 
-export C_INCLUDE_PATH=/io/include
+export C_INCLUDE_PATH=/io/c/include
 
 # Compile wheels
 for PY_VERSION in 36 37 38; do
