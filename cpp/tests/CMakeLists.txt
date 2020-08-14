@@ -23,16 +23,8 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CUDA_STANDARD 14)
 set(CMAKE_CUDA_STANDARD_REQUIRED ON)
 
-set(CUPTI_PATH "${CUDA_TOOLKIT_ROOT_DIR}/extras/CUPTI")
-
-find_library(CUPTI_LIBRARY cupti ${CUPTI_PATH}/lib64)
-
-# Set CUPTI_PATH preprocessor definition to allow injecting CUPTI into NVTX at runtime
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -DCUPTI_PATH=\"${CUPTI_LIBRARY}\"")
-
 ###################################################################################################
 # - compiler function -----------------------------------------------------------------------------
-
 
 function(ConfigureTest CMAKE_TEST_NAME CMAKE_TEST_SRC)
     add_executable(${CMAKE_TEST_NAME} ${CMAKE_TEST_SRC})
@@ -49,8 +41,7 @@ endfunction(ConfigureTest)
 
 include_directories("${GTEST_INCLUDE_DIR}"
                     "${CMAKE_CUDA_TOOLKIT_INCLUDE_DIRECTORIES}"
-                    "${CMAKE_SOURCE_DIR}"
-                    "${CUPTI_PATH}/include")
+                    "${CMAKE_SOURCE_DIR}")
 
 ###################################################################################################
 # - library paths ---------------------------------------------------------------------------------
