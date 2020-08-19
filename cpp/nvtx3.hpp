@@ -725,10 +725,20 @@ class domain {
   domain() = default;
 
   /**
-   * @brief Destroy the domain object, unregistering and freeing all domain
-   * specific resources.
+   * @brief Intentionally avoid calling nvtxDomainDestroy on the `domain` object.
+   *
+   * No currently-available tools attempt to free domain resources when the
+   * nvtxDomainDestroy function is called, due to the thread-safety and
+   * efficiency challenges of freeing thread-local storage for other threads.
+   * Since libraries may be disallowed from introducing static destructors,
+   * and destroying the domain is likely to have no effect, the destructor
+   * for `domain` intentionally chooses to not destroy the domain.
+   *
+   * In a situation where domain destruction is necessary, either manually
+   * call nvtxDomainDestroy on the domain's handle, or make a class that
+   * derives from `domain` and calls nvtxDomainDestroy in its destructor.
    */
-  ~domain() noexcept { nvtxDomainDestroy(_domain); }
+  ~domain() = default;
 
  private:
   nvtxDomainHandle_t const _domain{};  ///< The `domain`s NVTX handle
