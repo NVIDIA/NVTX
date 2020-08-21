@@ -15,7 +15,7 @@
  */
 #pragma once
 
-#if defined(NVTX3_MINOR_VERSION) and NVTX3_MINOR_VERSION < 0
+#if defined(NVTX3_MINOR_VERSION) && NVTX3_MINOR_VERSION < 0
 #error \
   "Trying to #include NVTX version 3 in a source file where an older NVTX version has already been included.  If you are not directly using NVTX (the NVIDIA Tools Extension library), you are getting this error because libraries you are using have included different versions of NVTX.  Suggested solutions are: (1) reorder #includes so the newest NVTX version is included first, (2) avoid using the conflicting libraries in the same .c/.cpp file, or (3) update the library using the older NVTX version to use the newer version instead."
 #endif
