@@ -2024,7 +2024,7 @@ class domain_process_range {
  private:
   std::unique_ptr<range_handle> handle_;  ///< Range handle used to correlate
                                           ///< the start/end of the range
-};                                        // namespace nvtx3
+};
 
 /**
  * @brief Alias for a `domain_process_range` in the global NVTX domain.
