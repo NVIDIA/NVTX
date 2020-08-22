@@ -2053,7 +2053,7 @@ using process_range = domain_process_range<>;
  * @param[in] attr `event_attributes` that describes the desired attributes
  * of the mark.
  */
-template <typename D = nvtx3::domain::global>
+template <typename D = domain::global>
 inline void mark(event_attributes const& attr) noexcept
 {
 #ifndef NVTX_DISABLE
