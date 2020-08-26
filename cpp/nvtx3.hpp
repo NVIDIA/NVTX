@@ -13,23 +13,83 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-#pragma once
 
-#if defined(NVTX3_MINOR_VERSION) and NVTX3_MINOR_VERSION < 0
-#error \
-  "Trying to #include NVTX version 3 in a source file where an older NVTX version has already been included.  If you are not directly using NVTX (the NVIDIA Tools Extension library), you are getting this error because libraries you are using have included different versions of NVTX.  Suggested solutions are: (1) reorder #includes so the newest NVTX version is included first, (2) avoid using the conflicting libraries in the same .c/.cpp file, or (3) update the library using the older NVTX version to use the newer version instead."
-#endif
+/* Temporary helper #defines, #undef'ed at end of header */
+#define NVTX3_CPP_VERSION_MAJOR 1
+#define NVTX3_CPP_VERSION_MINOR 0
 
-/**
- * @brief Semantic minor version number.
- *
- * Major version number is hardcoded into the "nvtx3" namespace/prefix.
- *
- * If this value is incremented, the above version include guard needs to be
- * updated.
- *
+/* This section handles the decision of whether to provide unversioned symbols.
+ * If NVTX3_CPP_REQUIRE_EXPLICIT_VERSION is #defined, unversioned symbols are
+ * not provided, and explicit-version symbols such as nvtx3::v1::thread_range
+ * and NVTX3_V1_FUNC_RANGE must be used.  By default, the first #include of this
+ * header will define the unversioned symbols such as nvtx3::thread_range and
+ * NVTX3_FUNC_RANGE.  Subsequently including a different major version of this
+ * header without #defining NVTX3_CPP_REQUIRE_EXPLICIT_VERSION triggers an error
+ * since the symbols would conflict.  Subsequently including of a different
+ * minor version within the same major version is allowed. Functionality of
+ * minor versions is cumulative, regardless of include order.
+ * 
+ * Since NVTX3_CPP_REQUIRE_EXPLICIT_VERSION allows all combinations of versions
+ * to coexist without problems within a translation unit, the recommended best
+ * practice for instrumenting header-based libraries with NVTX C++ Wrappers is
+ * is to #define NVTX3_CPP_REQUIRE_EXPLICIT_VERSION before including nvtx3.hpp,
+ * #undef it afterward, and only use explicit-version symbols.  This is not
+ * necessary in common cases, such as instrumenting a standalone application, or
+ * static/shared libraries in .cpp files or headers private to those projects.
  */
-#define NVTX3_MINOR_VERSION 0
+/* clang-format off */
+#if !defined(NVTX3_CPP_REQUIRE_EXPLICIT_VERSION)
+    /* Define macro used by all definitions in this header to indicate the
+     * unversioned symbols should be defined in addition to the versioned ones.
+     */
+    #define NVTX3_INLINE_THIS_VERSION
+
+    #if !defined(NVTX3_CPP_INLINED_VERSION_MAJOR)
+        /* First occurrence of this header in the translation unit.  Define macros
+         * indicating which version shall be used for unversioned symbols.
+         */
+
+        /**
+         * @brief Semantic major version number for NVTX C++ wrappers of unversioned symbols
+         *
+         * Breaking changes may occur between major versions, and different major versions
+         * cannot provide unversioned symbols in the same translation unit (.cpp file).
+         * 
+         * Note: If NVTX3_CPP_REQUIRE_EXPLICIT_VERSION is defined, this macro is not defined.
+         *
+         * Not to be confused with the version number of the NVTX core library.
+         */
+        #define NVTX3_CPP_INLINED_VERSION_MAJOR 1  // NVTX3_CPP_VERSION_MAJOR
+
+        /**
+         * @brief Semantic minor version number for NVTX C++ wrappers of unversioned symbols
+         *
+         * No breaking changes occur between minor versions -- minor version changes within
+         * a major version are purely additive.
+         *
+         * Note: If NVTX3_CPP_REQUIRE_EXPLICIT_VERSION is defined, this macro is not defined.
+         *
+         * Not to be confused with the version number of the NVTX core library.
+         */
+        #define NVTX3_CPP_INLINED_VERSION_MINOR 0  // NVTX3_CPP_VERSION_MINOR
+    #elif NVTX3_CPP_INLINED_VERSION_MAJOR != NVTX3_CPP_VERSION_MAJOR
+        /* Unsupported case -- cannot define unversioned symbols for different major versions
+         * in the same translation unit.
+         */
+        #error \
+          "Two different major versions of the NVTX C++ Wrappers are being included in a single .cpp file, with unversioned symbols enabled in both.  Only one major version can enable unversioned symbols in a .cpp file.  To disable unversioned symbols, #define NVTX3_CPP_REQUIRE_EXPLICIT_VERSION before #including nvtx3.hpp, and use the explicit-version symbols instead -- this is the preferred way to use nvtx3.hpp from a header file."
+    #elif (NVTX3_CPP_INLINED_VERSION_MAJOR == NVTX3_CPP_VERSION_MAJOR) && \
+      (NVTX3_CPP_INLINED_VERSION_MINOR < NVTX3_CPP_VERSION_MINOR)
+        /* An older minor version of the same major version already defined unversioned
+         * symbols.  The new features provided in this header will be inlined 
+         * redefine the minor version macro to this header's version.
+         */
+        #undef NVTX3_CPP_INLINED_VERSION_MINOR
+        #define NVTX3_CPP_INLINED_VERSION_MINOR 0  // NVTX3_CPP_VERSION_MINOR
+        // else, already have this version or newer, nothing to do
+    #endif
+#endif
+/* clang-format on */
 
 #include <nvtx3/nvToolsExt.h>
 
@@ -502,14 +562,30 @@
  *
  */
 
-/**
- * @brief Enables the use of constexpr when support for C++14 relaxed constexpr
+/* Temporary helper #defines, removed with #undef at end of header */
+
+/* Within this header, nvtx3::NVTX3_VERSION_NAMESPACE resolves to nvtx3::vX,
+ * where "X" is the major version number. */
+#define NVTX3_CONCAT(A, B) A##B
+#define NVTX3_NAMESPACE_FOR(VERSION) NVTX3_CONCAT(v, VERSION)
+#define NVTX3_VERSION_NAMESPACE NVTX3_NAMESPACE_FOR(NVTX3_CPP_VERSION_MAJOR)
+
+/* Avoid duplicating #if defined(NVTX3_INLINE_THIS_VERSION) for namespaces
+ * in each minor version by making a macro to use unconditionally, which
+ * resolves to "inline" or nothing as appropriate. */
+#if defined(NVTX3_INLINE_THIS_VERSION)
+#define NVTX3_INLINE_IF_REQUESTED inline
+#else
+#define NVTX3_INLINE_IF_REQUESTED
+#endif
+
+/* Enables the use of constexpr when support for C++14 relaxed constexpr
  * is present.
  *
  * Initializing a legacy-C (i.e., no constructor) union member requires
  * initializing in the constructor body. Non-empty constexpr constructors
- * require C++14 relaxed constexpr.
- *
+ * require C++14 relaxed constexpr.  In strict C++11 compilation, fall back
+ * to using non-constexpr constructors for classes with union members.
  */
 #if __cpp_constexpr >= 201304L
 #define NVTX3_RELAXED_CONSTEXPR constexpr
@@ -517,7 +593,16 @@
 #define NVTX3_RELAXED_CONSTEXPR
 #endif
 
+/* Implementation sections, enclosed in guard macros for each minor version */
+
+#ifndef NVTX3_CPP_DEFINITIONS_V1_0
+#define NVTX3_CPP_DEFINITIONS_V1_0
+
 namespace nvtx3 {
+
+NVTX3_INLINE_IF_REQUESTED namespace NVTX3_VERSION_NAMESPACE
+{
+
 namespace detail {
 
 /**
@@ -2024,7 +2109,7 @@ class domain_process_range {
  private:
   std::unique_ptr<range_handle> handle_;  ///< Range handle used to correlate
                                           ///< the start/end of the range
-};                                        // namespace nvtx3
+};
 
 /**
  * @brief Alias for a `domain_process_range` in the global NVTX domain.
@@ -2053,7 +2138,7 @@ using process_range = domain_process_range<>;
  * @param[in] attr `event_attributes` that describes the desired attributes
  * of the mark.
  */
-template <typename D = nvtx3::domain::global>
+template <typename D = domain::global>
 inline void mark(event_attributes const& attr) noexcept
 {
 #ifndef NVTX_DISABLE
@@ -2062,6 +2147,8 @@ inline void mark(event_attributes const& attr) noexcept
   (void)(attr);
 #endif
 }
+
+}  // namespace NVTX3_VERSION_NAMESPACE
 
 }  // namespace nvtx3
 
@@ -2094,12 +2181,12 @@ inline void mark(event_attributes const& attr) noexcept
  * `domain::global` to  indicate that the global NVTX domain should be used.
  */
 #ifndef NVTX_DISABLE
-#define NVTX3_FUNC_RANGE_IN(D)                                                 \
-  static ::nvtx3::registered_string<D> const nvtx3_func_name__{__func__};      \
-  static ::nvtx3::event_attributes const nvtx3_func_attr__{nvtx3_func_name__}; \
-  ::nvtx3::domain_thread_range<D> const nvtx3_range__{nvtx3_func_attr__};
+#define NVTX3_V1_FUNC_RANGE_IN(D)                                                  \
+  static ::nvtx3::v1::registered_string<D> const nvtx3_func_name__{__func__};      \
+  static ::nvtx3::v1::event_attributes const nvtx3_func_attr__{nvtx3_func_name__}; \
+  ::nvtx3::v1::domain_thread_range<D> const nvtx3_range__{nvtx3_func_attr__};
 #else
-#define NVTX3_FUNC_RANGE_IN(D)
+#define NVTX3_V1_FUNC_RANGE_IN(D)
 #endif
 
 /**
@@ -2124,4 +2211,58 @@ inline void mark(event_attributes const& attr) noexcept
  * } // Range ends on return from foo()
  * ```
  */
-#define NVTX3_FUNC_RANGE() NVTX3_FUNC_RANGE_IN(::nvtx3::domain::global)
+#define NVTX3_V1_FUNC_RANGE() NVTX3_V1_FUNC_RANGE_IN(::nvtx3::v1::domain::global)
+
+/* When inlining this version, versioned macros must have unversioned aliases.
+ * For each NVTX3_Vx_ #define, make an NVTX3_ alias of it here.*/
+#if defined(NVTX3_INLINE_THIS_VERSION)
+/* clang format off */
+#define NVTX3_FUNC_RANGE_IN   NVTX3_V1_FUNC_RANGE_IN
+#define NVTX3_FUNC_RANGE      NVTX3_V1_FUNC_RANGE
+/* clang format on */
+#endif
+
+#endif  // NVTX3_CPP_DEFINITIONS_V1_0
+
+/* Add functionality for new minor versions here, by copying the above section enclosed
+ * in #ifndef NVTX3_CPP_DEFINITIONS_Vx_y, and incrementing the minor version.  This code
+ * is an example of how additions for version 1.2 would look, indented for clarity.  Note
+ * that the versioned symbols and macros are always provided, and the unversioned symbols
+ * are only provided if NVTX3_INLINE_THIS_VERSION was defined at the top of this header.
+ *
+ * \code{.cpp}
+ * #ifndef NVTX3_CPP_DEFINITIONS_V1_2
+ * #define NVTX3_CPP_DEFINITIONS_V1_2
+ *     namespace nvtx3 {
+ *         NVTX3_INLINE_IF_REQUESTED namespace NVTX3_VERSION_NAMESPACE {
+ *             class new_class {};
+ *             inline void new_function() {}
+ *         }
+ *     }
+ *
+ *     // Macros must have the major version in their names:
+ *     #define NVTX3_V1_NEW_MACRO_A() ...
+ *     #define NVTX3_V1_NEW_MACRO_B() ...
+ *
+ *     // If inlining, make aliases for the macros with the version number omitted
+ *     #if defined(NVTX3_INLINE_THIS_VERSION)
+ *         #define NVTX3_NEW_MACRO_A NVTX3_V1_NEW_MACRO_A
+ *         #define NVTX3_NEW_MACRO_B NVTX3_V1_NEW_MACRO_B
+ *     #endif
+ * #endif // NVTX3_CPP_DEFINITIONS_V1_2
+ * \endcode
+ */
+
+/* Undefine all temporarily-defined unversioned macros, which would conflict with
+ * subsequent includes of different versions of this header. */
+#undef NVTX3_CPP_VERSION_MAJOR
+#undef NVTX3_CPP_VERSION_MINOR
+#undef NVTX3_CONCAT
+#undef NVTX3_NAMESPACE_FOR
+#undef NVTX3_VERSION_NAMESPACE
+#undef NVTX3_INLINE_IF_REQUESTED
+#undef NVTX3_RELAXED_CONSTEXPR
+
+#if defined(NVTX3_INLINE_THIS_VERSION)
+#undef NVTX3_INLINE_THIS_VERSION
+#endif
