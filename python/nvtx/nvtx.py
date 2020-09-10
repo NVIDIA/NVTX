@@ -12,6 +12,8 @@ from nvtx._lib import (
     mark as libnvtx_mark,
     pop_range as libnvtx_pop_range,
     push_range as libnvtx_push_range,
+    start_range as libnvtx_start_range,
+    end_range as libnvtx_end_range
 )
 
 
@@ -130,6 +132,7 @@ def push_range(message=None, color="blue", domain=None):
 
     Examples
     --------
+    >>> import time
     >>> import nvtx
     >>> nvtx.push_range("my_code_range", domain="my_domain")
     >>> time.sleep(1)
@@ -149,3 +152,46 @@ def pop_range(domain=None):
         domain is "NVTX".
     """
     libnvtx_pop_range(Domain(domain).handle)
+
+
+def start_range(message=None, color="blue", domain=None):
+    """
+    Mark the beginning of a code range.
+
+    Parameters
+    ----------
+    message : str, optional
+        A message associated with the annotated code range.
+    color : str, color, optional
+        A color associated with the annotated code range.
+        Supports
+    domain : str, optional
+        Name of a domain under which the code range is scoped.
+        The default domain name is "NVTX".
+
+    Examples
+    --------
+    >>> import time
+    >>> import nvtx
+    >>> marker_id = nvtx.start_range("my_code_range", domain="my_domain")
+    >>> time.sleep(1)
+    >>> nvtx.end_range(marker_id, domain="my_domain")
+    """
+    return libnvtx_start_range(
+        EventAttributes(message, color), Domain(domain).handle
+    )
+
+
+def end_range(marker_id, domain=None):
+    """
+    Mark the end of a code range that was started with `start_range`.
+
+    Parameters
+    ----------
+    marker_id : int
+        The NVTX range ID returned by the `start_range` function.
+    domain : str, optional
+        The domain under which the code range is scoped. The default
+        domain is "NVTX".
+    """
+    libnvtx_end_range(Domain(domain).handle, marker_id)
