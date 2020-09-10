@@ -8,6 +8,7 @@ from contextlib import ContextDecorator
 
 from nvtx._lib import (
     Domain,
+    RangeId,
     EventAttributes,
     mark as libnvtx_mark,
     pop_range as libnvtx_pop_range,
@@ -194,4 +195,4 @@ def end_range(marker_id, domain=None):
         The domain under which the code range is scoped. The default
         domain is "NVTX".
     """
-    libnvtx_end_range(Domain(domain).handle, marker_id)
+    libnvtx_end_range(Domain(domain).handle, RangeId(marker_id))

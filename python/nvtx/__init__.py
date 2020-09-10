@@ -7,4 +7,11 @@
 
 import os
 
-from nvtx.nvtx import annotate, pop_range, push_range, mark
+from nvtx.nvtx import (
+    annotate,
+    pop_range,
+    push_range,
+    start_range,
+    end_range,
+    mark
+)
