@@ -178,21 +178,23 @@ def start_range(message=None, color="blue", domain=None):
     >>> time.sleep(1)
     >>> nvtx.end_range(marker_id, domain="my_domain")
     """
-    return libnvtx_start_range(
+    marker_id = libnvtx_start_range(
         EventAttributes(message, color), Domain(domain).handle
     )
 
+    return RangeId(marker_id)
 
-def end_range(marker_id, domain=None):
+
+def end_range(range_id, domain=None):
     """
     Mark the end of a code range that was started with `start_range`.
 
     Parameters
     ----------
-    marker_id : int
-        The NVTX range ID returned by the `start_range` function.
+    range_id : `RangeId` object
+        The NVTX `RangeId` object returned by the `start_range` function.
     domain : str, optional
         The domain under which the code range is scoped. The default
         domain is "NVTX".
     """
-    libnvtx_end_range(Domain(domain).handle, RangeId(marker_id))
+    libnvtx_end_range(Domain(domain).handle, range_id)
