@@ -174,9 +174,9 @@ def start_range(message=None, color="blue", domain=None):
     --------
     >>> import time
     >>> import nvtx
-    >>> marker_id = nvtx.start_range("my_code_range", domain="my_domain")
+    >>> range_id = nvtx.start_range("my_code_range", domain="my_domain")
     >>> time.sleep(1)
-    >>> nvtx.end_range(marker_id, domain="my_domain")
+    >>> nvtx.end_range(range_id, domain="my_domain")
     """
     marker_id = libnvtx_start_range(
         EventAttributes(message, color), Domain(domain).handle
