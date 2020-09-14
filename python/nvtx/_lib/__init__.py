@@ -4,4 +4,13 @@
 # See https://llvm.org/LICENSE.txt for license information.
 # SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception
 
-from nvtx._lib.lib import Domain, EventAttributes, pop_range, push_range, mark
+from nvtx._lib.lib import (
+    Domain,
+    RangeId,
+    EventAttributes,
+    pop_range,
+    push_range,
+    start_range,
+    end_range,
+    mark
+)

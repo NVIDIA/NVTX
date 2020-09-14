@@ -113,5 +113,13 @@ def pop_range(DomainHandle domain):
     nvtxDomainRangePop(domain.c_obj)
 
 
+def start_range(EventAttributes attributes, DomainHandle domain):
+    return nvtxDomainRangeStartEx(domain.c_obj, &attributes.c_obj)
+
+
+def end_range(DomainHandle domain, RangeId range_id):
+    nvtxDomainRangeEnd(domain.c_obj, range_id.c_obj)
+
+
 def mark(EventAttributes attributes, DomainHandle domain):
     nvtxDomainMarkEx(domain.c_obj, &attributes.c_obj)
