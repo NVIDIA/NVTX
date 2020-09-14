@@ -75,12 +75,6 @@ cdef class DomainHandle:
         nvtxDomainDestroy(self.c_obj)
 
 
-cdef class RangeId:
-
-    def __cinit__(self, uint64_t range_id):
-        self.c_obj = range_id
-
-
 class Domain(metaclass=CachedInstanceMeta):
     def __init__(self, name=None):
         self.name = name
@@ -105,6 +99,15 @@ class Domain(metaclass=CachedInstanceMeta):
         return self.categories[name]
 
 
+cdef class RangeId:
+    """
+    Handle to code range created using start_range()
+    """
+    def __cinit__(self, nvtxRangeId_t range_id, DomainHandle domain):
+        self.c_obj = range_id
+        self.domain = domain
+
+
 def push_range(EventAttributes attributes, DomainHandle domain):
     nvtxDomainRangePushEx(domain.c_obj, &attributes.c_obj)
 
@@ -114,11 +117,13 @@ def pop_range(DomainHandle domain):
 
 
 def start_range(EventAttributes attributes, DomainHandle domain):
-    return nvtxDomainRangeStartEx(domain.c_obj, &attributes.c_obj)
+    cdef nvtxRangeId_t c_rng_id = nvtxDomainRangeStartEx(domain.c_obj, &attributes.c_obj)
+    rng_id = RangeId(c_rng_id, domain)
+    return rng_id
 
 
-def end_range(DomainHandle domain, RangeId range_id):
-    nvtxDomainRangeEnd(domain.c_obj, range_id.c_obj)
+def end_range(RangeId range_id):
+    nvtxDomainRangeEnd(range_id.domain.c_obj, range_id.c_obj)
 
 
 def mark(EventAttributes attributes, DomainHandle domain):

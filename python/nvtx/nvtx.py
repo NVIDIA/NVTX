@@ -8,7 +8,6 @@ from contextlib import ContextDecorator
 
 from nvtx._lib import (
     Domain,
-    RangeId,
     EventAttributes,
     mark as libnvtx_mark,
     pop_range as libnvtx_pop_range,
@@ -170,6 +169,10 @@ def start_range(message=None, color="blue", domain=None):
         Name of a domain under which the code range is scoped.
         The default domain name is "NVTX".
 
+    Returns
+    -------
+    An object of type `RangeId` that must be passed to the `end_range()` function.
+
     Examples
     --------
     >>> import time
@@ -182,19 +185,19 @@ def start_range(message=None, color="blue", domain=None):
         EventAttributes(message, color), Domain(domain).handle
     )
 
-    return RangeId(marker_id)
+    return marker_id
 
 
-def end_range(range_id, domain=None):
+def end_range(range_id):
     """
     Mark the end of a code range that was started with `start_range`.
 
     Parameters
     ----------
-    range_id : `RangeId` object
-        The NVTX `RangeId` object returned by the `start_range` function.
+    range_id : RangeId
+        The `RangeId` object returned by the `start_range` function.
     domain : str, optional
         The domain under which the code range is scoped. The default
         domain is "NVTX".
     """
-    libnvtx_end_range(Domain(domain).handle, range_id)
+    libnvtx_end_range(range_id)

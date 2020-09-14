@@ -116,3 +116,4 @@ cdef class DomainHandle:
 
 cdef class RangeId:
     cdef nvtxRangeId_t c_obj
+    cdef DomainHandle domain
