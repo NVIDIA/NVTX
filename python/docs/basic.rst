@@ -33,6 +33,24 @@ name of the function being decorated:
        pass
 
 
+start_range and end_range
+-------------------------
+
+In certain situations, it is impossible to use ``annotate()``,
+e.g., when a code range spans multiple functions.
+In such cases, the ``start_range()`` and ``end_range()`` functions
+can be used instead.
+
+The ``start_range()`` function is called at the beginning of a code range,
+and returns a handle. The handle is passed to the ``end_range()`` function,
+which is called at the end of the code range.
+
+::
+   rng = nvtx.start_range(message="my_message", color="blue")
+   # ... do something ... #
+   nvtx.end_range(rng)
+
+
 mark
 ----
 
@@ -127,7 +145,6 @@ Although `func_1` and `func_3` are both grouped
 under a category named `Cat_1`, they are unrelated
 as each domain maintains its own categories.
 
-Unlike domains, caetgories are not expensive to create and manage.
+Unlike domains, categories are not expensive to create and manage.
 Thus, you should prefer categories for maintaining several groups
 of annotations.
-
