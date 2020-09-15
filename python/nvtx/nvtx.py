@@ -110,8 +110,13 @@ def mark(message=None, color="blue", domain=None):
         the event is scoped. If unspecified, the event is not associated
         with a category.
     """
-    attributes = EventAttributes(message, color)
     domain = Domain(domain)
+    category_id = (
+        self.domain.get_category_id(category)
+        if category is not None
+        else None
+    )
+    attributes = EventAttributes(message, color, category_id)
     libnvtx_mark(attributes, domain.handle)
 
 
@@ -129,6 +134,10 @@ def push_range(message=None, color="blue", domain=None):
     domain : str, optional
         Name of a domain under which the code range is scoped.
         The default domain name is "NVTX".
+    category : str, optional
+        A string specifying the category within the domain under which
+        the event is scoped. If unspecified, the event is not associated
+        with a category.
 
     Examples
     --------
@@ -138,7 +147,13 @@ def push_range(message=None, color="blue", domain=None):
     >>> time.sleep(1)
     >>> nvtx.pop_range(domain="my_domain")
     """
-    libnvtx_push_range(EventAttributes(message, color), Domain(domain).handle)
+    domain = Domain(domain)
+    category_id = (
+        self.domain.get_category_id(category)
+        if category is not None
+        else None
+    )
+    libnvtx_push_range(EventAttributes(message, color, category_id), domain.handle)
 
 
 def pop_range(domain=None):
@@ -154,7 +169,7 @@ def pop_range(domain=None):
     libnvtx_pop_range(Domain(domain).handle)
 
 
-def start_range(message=None, color="blue", domain=None):
+def start_range(message=None, color="blue", domain=None, category=None):
     """
     Mark the beginning of a code range.
 
@@ -168,6 +183,10 @@ def start_range(message=None, color="blue", domain=None):
     domain : str, optional
         Name of a domain under which the code range is scoped.
         The default domain name is "NVTX".
+    category : str, optional
+        A string specifying the category within the domain under which
+        the event is scoped. If unspecified, the event is not associated
+        with a category.
 
     Returns
     -------
@@ -181,10 +200,15 @@ def start_range(message=None, color="blue", domain=None):
     >>> time.sleep(1)
     >>> nvtx.end_range(range_id, domain="my_domain")
     """
-    marker_id = libnvtx_start_range(
-        EventAttributes(message, color), Domain(domain).handle
+    domain = Domain(domain)
+    category_id = (
+        domain.get_category_id(category)
+        if category is not None
+        else None
     )
-
+    marker_id = libnvtx_start_range(
+        EventAttributes(message, color, category_id), domain.handle
+    )
     return marker_id
 
 
@@ -196,8 +220,5 @@ def end_range(range_id):
     ----------
     range_id : RangeId
         The `RangeId` object returned by the `start_range` function.
-    domain : str, optional
-        The domain under which the code range is scoped. The default
-        domain is "NVTX".
     """
     libnvtx_end_range(range_id)
