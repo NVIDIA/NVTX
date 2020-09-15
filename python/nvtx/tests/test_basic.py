@@ -153,3 +153,48 @@ def test_get_category_id():
     assert id1 == id2
     id3 = dom.get_category_id("baz")
     assert id2 != id3
+
+
+@pytest.mark.parametrize(
+    "message",
+    [
+        None,
+        "",
+        "x",
+        "abc",
+        "abc def"
+    ]
+)
+@pytest.mark.parametrize(
+    "color",
+    [
+        None,
+        "red",
+        "green",
+        "blue"
+    ]
+)
+@pytest.mark.parametrize(
+    "domain",
+    [
+        None,
+        "",
+        "x",
+        "abc",
+        "abc def"
+    ]
+)
+@pytest.mark.parametrize(
+    "category",
+    [
+        None,
+        "",
+        "y"
+        "x",
+        "abc",
+        "abc def"
+    ]
+)
+def test_start_end(message, color, domain, category):
+    rng = nvtx.start_range(message, color, domain, category)
+    nvtx.end_range(rng)
