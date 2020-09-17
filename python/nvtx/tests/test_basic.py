@@ -159,10 +159,7 @@ def test_get_category_id():
     "message",
     [
         None,
-        "",
-        "x",
         "abc",
-        "abc def"
     ]
 )
 @pytest.mark.parametrize(
@@ -170,8 +167,6 @@ def test_get_category_id():
     [
         None,
         "red",
-        "green",
-        "blue"
     ]
 )
 @pytest.mark.parametrize(
@@ -188,11 +183,7 @@ def test_get_category_id():
     "category",
     [
         None,
-        "",
-        "y"
-        "x",
         "abc",
-        "abc def"
     ]
 )
 def test_start_end(message, color, domain, category):
