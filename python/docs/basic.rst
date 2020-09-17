@@ -37,7 +37,7 @@ start_range and end_range
 -------------------------
 
 In certain situations, it is impossible to use ``annotate()``,
-e.g., when a code range spans multiple functions.
+e.g., when a code range spans multiple functions or in asynchronous code.
 In such cases, the ``start_range()`` and ``end_range()`` functions
 can be used instead.
 
