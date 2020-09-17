@@ -173,10 +173,7 @@ def test_get_category_id():
     "domain",
     [
         None,
-        "",
-        "x",
         "abc",
-        "abc def"
     ]
 )
 @pytest.mark.parametrize(
