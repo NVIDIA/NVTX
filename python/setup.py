@@ -60,5 +60,6 @@ setup(
     package_data=dict.fromkeys(
         find_packages(include=["nvtx._lib*"]), ["*.pxd"],
     ),
+    license_files=["LICENSE.txt"],
     zip_safe=False,
 )
