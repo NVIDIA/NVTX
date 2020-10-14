@@ -1,7 +1,7 @@
 
 #include <benchmark/benchmark.h>
 
-#include <nvtx3.hpp>
+#include <nvtx3/nvtx3.hpp>
 
 /**
  * Measure cost of not reusing the same `event_attributes` object
