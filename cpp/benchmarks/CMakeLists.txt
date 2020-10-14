@@ -15,8 +15,6 @@
 #=============================================================================
 cmake_minimum_required(VERSION 3.12 FATAL_ERROR)
 
-project(NVTX_BENCHS LANGUAGES C CXX CUDA)
-
 CPMAddPackage(
   NAME benchmark
   GITHUB_REPOSITORY google/benchmark
@@ -47,16 +45,6 @@ function(ConfigureBench CMAKE_BENCH_NAME CMAKE_BENCH_SRC)
     set_target_properties(${CMAKE_BENCH_NAME} PROPERTIES
                             RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/gbenchmarks")
 endfunction(ConfigureBench)
-
-###################################################################################################
-# - include paths ---------------------------------------------------------------------------------
-
-include_directories("${CMAKE_CUDA_TOOLKIT_INCLUDE_DIRECTORIES}")
-
-###################################################################################################
-# - library paths ---------------------------------------------------------------------------------
-
-link_directories("${CMAKE_CUDA_IMPLICIT_LINK_DIRECTORIES}") # CMAKE_CUDA_IMPLICIT_LINK_DIRECTORIES is an undocumented/unsupported variable containing the link directories for nvcc
 
 ###################################################################################################
 ### test sources ##################################################################################
