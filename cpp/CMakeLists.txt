@@ -15,9 +15,7 @@
 #=============================================================================
 cmake_minimum_required(VERSION 3.12 FATAL_ERROR)
 
-project(NVTX VERSION 0.1.0 LANGUAGES C CXX CUDA)
-
-find_package(CUDA REQUIRED)
+project(NVTX VERSION 0.1.0 LANGUAGES CXX)
 
 ###################################################################################################
 # - build type ------------------------------------------------------------------------------------
@@ -34,15 +32,16 @@ if(NOT CMAKE_BUILD_TYPE AND NOT CMAKE_CONFIGURATION_TYPES)
     "Debug" "Release" "MinSizeRel" "RelWithDebInfo")
 endif()
 
+
 ###################################################################################################
-# - compiler options ------------------------------------------------------------------------------
+# - nvtx target -----------------------------------------------------------------------------------
+add_library(nvtx3-cpp INTERFACE)
+target_include_directories(nvtx3-cpp INTERFACE
+                           "$<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>"
+                           "$<INSTALL_INTERFACE:include>")
 
-set(CMAKE_CXX_STANDARD 11)
-set(CMAKE_CXX_STANDARD_REQUIRED ON)
-
-if(CMAKE_COMPILER_IS_GNUCXX)
-    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Werror")
-endif(CMAKE_COMPILER_IS_GNUCXX)
+target_compile_features(nvtx3-cpp INTERFACE cxx_std_11)                           
+target_link_libraries(nvtx3-cpp INTERFACE ${CMAKE_DL_LIBS})
 
 # Build options
 option(BUILD_TESTS "Configure CMake to build tests" ON)
