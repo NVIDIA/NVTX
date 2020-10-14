@@ -17,6 +17,8 @@ cmake_minimum_required(VERSION 3.12 FATAL_ERROR)
 
 project(NVTX VERSION 0.1.0 LANGUAGES CXX)
 
+include(cmake/CPM.cmake)
+
 ###################################################################################################
 # - build type ------------------------------------------------------------------------------------
 
@@ -59,17 +61,8 @@ include(CheckLibraryExists)
 ###################################################################################################
 # - add gtest -------------------------------------------------------------------------------------
 
-include(CTest)
-include(ConfigureGoogleTest)
-
 if(BUILD_TESTS)
-    if(GTEST_FOUND)
-        message(STATUS "Google C++ Testing Framework (Google Test) found in ${GTEST_ROOT}")
-        include_directories(${GTEST_INCLUDE_DIR})
-        add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/tests)
-    else()
-        message(AUTHOR_WARNING "Google C++ Testing Framework (Google Test) not found: automated tests are disabled.")
-    endif(GTEST_FOUND)
+    add_subdirectory(tests)
 endif(BUILD_TESTS)
 
 ###################################################################################################

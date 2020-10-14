@@ -17,6 +17,18 @@ cmake_minimum_required(VERSION 3.12 FATAL_ERROR)
 
 project(NVTX_TESTS LANGUAGES C CXX CUDA)
 
+include(CTest)
+
+CPMAddPackage(
+  NAME GTest
+  GITHUB_REPOSITORY google/googletest
+  GIT_TAG release-1.10.0
+  VERSION 1.10.0
+  GIT_SHALLOW TRUE
+  OPTIONS "INSTALL_GTEST OFF"
+  # googletest >= 1.10.0 provides a cmake config file -- use it if it exists
+  FIND_PACKAGE_ARGUMENTS "CONFIG")
+
 ###################################################################################################
 # - compiler function -----------------------------------------------------------------------------
 
@@ -33,15 +45,13 @@ endfunction(ConfigureTest)
 ###################################################################################################
 # - include paths ---------------------------------------------------------------------------------
 
-include_directories("${GTEST_INCLUDE_DIR}"
-                    "${CMAKE_CUDA_TOOLKIT_INCLUDE_DIRECTORIES}")
+include_directories( "${CMAKE_CUDA_TOOLKIT_INCLUDE_DIRECTORIES}")
 
 ###################################################################################################
 # - library paths ---------------------------------------------------------------------------------
 
-link_directories("${CMAKE_CUDA_IMPLICIT_LINK_DIRECTORIES}" # CMAKE_CUDA_IMPLICIT_LINK_DIRECTORIES is an undocumented/unsupported variable containing the link directories for nvcc
-                 "${CMAKE_BINARY_DIR}/lib"
-                 "${GTEST_LIBRARY_DIR}")
+link_directories("${CMAKE_CUDA_IMPLICIT_LINK_DIRECTORIES}"
+                 "${CMAKE_BINARY_DIR}/lib")
 
 ###################################################################################################
 ### test sources ##################################################################################
