@@ -49,24 +49,10 @@ target_link_libraries(nvtx3-cpp INTERFACE ${CMAKE_DL_LIBS})
 option(BUILD_TESTS "Configure CMake to build tests" ON)
 option(BUILD_BENCHMARKS "Configure CMake to build (google) benchmarks" ON)
 
-###################################################################################################
-# - cmake modules ---------------------------------------------------------------------------------
-
-set(CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/cmake/Modules/" ${CMAKE_MODULE_PATH})
-
-include(FeatureSummary)
-include(CheckIncludeFiles)
-include(CheckLibraryExists)
-
-###################################################################################################
-# - add gtest -------------------------------------------------------------------------------------
 
 if(BUILD_TESTS)
     add_subdirectory(tests)
 endif(BUILD_TESTS)
-
-###################################################################################################
-# - add google benchmark --------------------------------------------------------------------------
 
 if(BUILD_BENCHMARKS)
     add_subdirectory(benchmarks)
