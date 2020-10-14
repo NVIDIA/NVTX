@@ -15,7 +15,7 @@
 #=============================================================================
 cmake_minimum_required(VERSION 3.12 FATAL_ERROR)
 
-project(NVTX VERSION 0.1.0 LANGUAGES CXX)
+project(NVTX-CPP VERSION 0.1.0 LANGUAGES CXX)
 
 include(cmake/CPM.cmake)
 
@@ -34,6 +34,8 @@ if(NOT CMAKE_BUILD_TYPE AND NOT CMAKE_CONFIGURATION_TYPES)
     "Debug" "Release" "MinSizeRel" "RelWithDebInfo")
 endif()
 
+# Include the nvtx-c directory to access the nvtx-c CMake target
+add_subdirectory(nvtx-c)
 
 ###################################################################################################
 # - nvtx target -----------------------------------------------------------------------------------
@@ -43,12 +45,11 @@ target_include_directories(nvtx3-cpp INTERFACE
                            "$<INSTALL_INTERFACE:include>")
 
 target_compile_features(nvtx3-cpp INTERFACE cxx_std_11)                           
-target_link_libraries(nvtx3-cpp INTERFACE ${CMAKE_DL_LIBS})
+target_link_libraries(nvtx3-cpp INTERFACE nvtx3-c)
 
 # Build options
 option(BUILD_TESTS "Configure CMake to build tests" ON)
 option(BUILD_BENCHMARKS "Configure CMake to build (google) benchmarks" ON)
-
 
 if(BUILD_TESTS)
     add_subdirectory(tests)
@@ -57,7 +58,6 @@ endif(BUILD_TESTS)
 if(BUILD_BENCHMARKS)
     add_subdirectory(benchmarks)
 endif(BUILD_BENCHMARKS)
-
 
 ###################################################################################################
 # - build doxygen ---------------------------------------------------------------------------------
