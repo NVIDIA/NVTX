@@ -18,14 +18,6 @@ cmake_minimum_required(VERSION 3.12 FATAL_ERROR)
 project(NVTX_BENCHS LANGUAGES C CXX CUDA)
 
 ###################################################################################################
-# - compiler options ------------------------------------------------------------------------------
-set(CMAKE_CXX_STANDARD 14)
-set(CMAKE_CXX_STANDARD_REQUIRED ON)
-
-set(CMAKE_CUDA_STANDARD 14)
-set(CMAKE_CUDA_STANDARD_REQUIRED ON)
-
-###################################################################################################
 # - compiler function -----------------------------------------------------------------------------
 
 function(ConfigureBench CMAKE_BENCH_NAME CMAKE_BENCH_SRC)
