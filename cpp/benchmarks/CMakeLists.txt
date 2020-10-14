@@ -32,7 +32,7 @@ function(ConfigureBench CMAKE_BENCH_NAME CMAKE_BENCH_SRC)
     add_executable(${CMAKE_BENCH_NAME}
                    ${CMAKE_BENCH_SRC})
     set_target_properties(${CMAKE_BENCH_NAME} PROPERTIES POSITION_INDEPENDENT_CODE ON)
-    target_link_libraries(${CMAKE_BENCH_NAME} benchmark benchmark_main pthread dl)
+    target_link_libraries(${CMAKE_BENCH_NAME} benchmark benchmark_main pthread nvtx3-cpp)
     set_target_properties(${CMAKE_BENCH_NAME} PROPERTIES
                             RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/gbenchmarks")
 endfunction(ConfigureBench)
@@ -41,10 +41,7 @@ endfunction(ConfigureBench)
 # - include paths ---------------------------------------------------------------------------------
 
 include_directories("${CMAKE_CUDA_TOOLKIT_INCLUDE_DIRECTORIES}"
-                    "${CMAKE_SOURCE_DIR}/include"
-                    "${CMAKE_SOURCE_DIR}"
-                    "${GBENCH_INCLUDE_DIR}"
-                    "${CMAKE_CURRENT_SOURCE_DIR}")
+                    "${GBENCH_INCLUDE_DIR}")
 
 ###################################################################################################
 # - library paths ---------------------------------------------------------------------------------
