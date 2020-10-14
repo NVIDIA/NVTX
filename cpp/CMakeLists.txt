@@ -69,14 +69,7 @@ endif(BUILD_TESTS)
 # - add google benchmark --------------------------------------------------------------------------
 
 if(BUILD_BENCHMARKS)
-  include(ConfigureGoogleBenchmark)
-  if(GBENCH_FOUND)
-    message(STATUS "Google C++ Benchmarking Framework (Google Benchmark) found in ${GBENCH_ROOT}")
-    include_directories(${GBENCH_INCLUDE_DIR})
-    add_subdirectory(${CMAKE_SOURCE_DIR}/benchmarks)
-  else()
-    message(AUTHOR_WARNING "Google C++ Benchmarking Framework (Google Benchmark) not found: automated tests are disabled.")
-  endif(GBENCH_FOUND)
+    add_subdirectory(benchmarks)
 endif(BUILD_BENCHMARKS)
 
 

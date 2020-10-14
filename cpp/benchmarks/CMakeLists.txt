@@ -17,6 +17,25 @@ cmake_minimum_required(VERSION 3.12 FATAL_ERROR)
 
 project(NVTX_BENCHS LANGUAGES C CXX CUDA)
 
+CPMAddPackage(
+  NAME benchmark
+  GITHUB_REPOSITORY google/benchmark
+  VERSION 1.5.2
+  GIT_SHALLOW TRUE
+  OPTIONS
+    "BENCHMARK_ENABLE_TESTING Off"
+    "BENCHMARK_ENABLE_INSTALL Off"
+    # The REGEX feature test fails when gbench's cmake is run under CPM w/ gcc5.4 because it doesn't assume C++11
+    # Additionally, attempting to set the CMAKE_CXX_VERSION here doesn't propogate to the feature test build
+    # Therefore, we just disable the feature test and assume platforms we care about have a regex impl available
+    "RUN_HAVE_STD_REGEX 0" #
+)
+
+if (benchmark_ADDED)
+  # patch google benchmark target
+  set_target_properties(benchmark PROPERTIES CXX_STANDARD 11)
+endif()
+
 ###################################################################################################
 # - compiler function -----------------------------------------------------------------------------
 
@@ -32,16 +51,12 @@ endfunction(ConfigureBench)
 ###################################################################################################
 # - include paths ---------------------------------------------------------------------------------
 
-include_directories("${CMAKE_CUDA_TOOLKIT_INCLUDE_DIRECTORIES}"
-                    "${GBENCH_INCLUDE_DIR}")
+include_directories("${CMAKE_CUDA_TOOLKIT_INCLUDE_DIRECTORIES}")
 
 ###################################################################################################
 # - library paths ---------------------------------------------------------------------------------
 
-link_directories("${CMAKE_CUDA_IMPLICIT_LINK_DIRECTORIES}" # CMAKE_CUDA_IMPLICIT_LINK_DIRECTORIES is an undocumented/unsupported variable containing the link directories for nvcc
-                 "${CMAKE_BINARY_DIR}/lib"
-                 "${CMAKE_BINARY_DIR}"
-                 "${GBENCH_LIBRARY_DIR}")
+link_directories("${CMAKE_CUDA_IMPLICIT_LINK_DIRECTORIES}") # CMAKE_CUDA_IMPLICIT_LINK_DIRECTORIES is an undocumented/unsupported variable containing the link directories for nvcc
 
 ###################################################################################################
 ### test sources ##################################################################################
