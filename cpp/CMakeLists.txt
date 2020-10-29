@@ -44,7 +44,7 @@ target_include_directories(nvtx3-cpp INTERFACE
                            "$<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>"
                            "$<INSTALL_INTERFACE:include>")
 
-target_compile_features(nvtx3-cpp INTERFACE cxx_std_11)                           
+target_compile_features(nvtx3-cpp INTERFACE cxx_std_14)                           
 target_link_libraries(nvtx3-cpp INTERFACE nvtx3-c)
 
 # Build options
