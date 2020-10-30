@@ -13,11 +13,9 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #=============================================================================
-cmake_minimum_required(VERSION 3.14 FATAL_ERROR)
+cmake_minimum_required(VERSION 3.12 FATAL_ERROR)
 
-project(NVTX-CPP VERSION 0.1.0 LANGUAGES CXX)
-
-include(cmake/CPM.cmake)
+project(NVTX-C VERSION 0.1.0 LANGUAGES C)
 
 ###################################################################################################
 # - build type ------------------------------------------------------------------------------------
@@ -34,36 +32,12 @@ if(NOT CMAKE_BUILD_TYPE AND NOT CMAKE_CONFIGURATION_TYPES)
     "Debug" "Release" "MinSizeRel" "RelWithDebInfo")
 endif()
 
-# Include the nvtx-c directory to access the nvtx-c CMake target
-add_subdirectory(nvtx-c)
-
 ###################################################################################################
 # - nvtx target -----------------------------------------------------------------------------------
-add_library(nvtx3-cpp INTERFACE)
-target_include_directories(nvtx3-cpp INTERFACE
+add_library(nvtx3-c INTERFACE)
+target_include_directories(nvtx3-c INTERFACE
                            "$<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>"
                            "$<INSTALL_INTERFACE:include>")
+target_link_libraries(nvtx3-c INTERFACE ${CMAKE_DL_LIBS})
 
-target_compile_features(nvtx3-cpp INTERFACE cxx_std_14)                           
-target_link_libraries(nvtx3-cpp INTERFACE nvtx3-c)
 
-# Build options
-option(BUILD_TESTS "Configure CMake to build tests" ON)
-option(BUILD_BENCHMARKS "Configure CMake to build (google) benchmarks" ON)
-
-if(BUILD_TESTS)
-    add_subdirectory(tests)
-endif(BUILD_TESTS)
-
-if(BUILD_BENCHMARKS)
-    add_subdirectory(benchmarks)
-endif(BUILD_BENCHMARKS)
-
-###################################################################################################
-# - build doxygen ---------------------------------------------------------------------------------
-add_custom_command(OUTPUT BUILD_DOXYGEN
-                   WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
-                   COMMAND doxygen doxygen/Doxyfile
-                   VERBATIM)
-
-add_custom_target(docs DEPENDS BUILD_DOXYGEN)

@@ -16,7 +16,7 @@
 
 #include <gtest/gtest.h>
 
-#include <nvtx3.hpp>
+#include <nvtx3/nvtx3.hpp>
 
 struct NVTX_Test : public ::testing::Test {
 };
