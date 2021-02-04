@@ -186,3 +186,71 @@ def test_get_category_id():
 def test_start_end(message, color, domain, category):
     rng = nvtx.start_range(message, color, domain, category)
     nvtx.end_range(rng)
+
+
+
+
+@pytest.mark.parametrize(
+    "message",
+    [
+        None,
+        "abc",
+    ]
+)
+@pytest.mark.parametrize(
+    "color",
+    [
+        None,
+        "red",
+    ]
+)
+@pytest.mark.parametrize(
+    "domain",
+    [
+        None,
+        "abc",
+    ]
+)
+@pytest.mark.parametrize(
+    "category",
+    [
+        None,
+        "abc",
+    ]
+)
+def test_push_pop(message, color, domain, category):
+    nvtx.push_range(message, color, domain, category)
+    nvtx.pop_range()
+    
+
+
+@pytest.mark.parametrize(
+    "message",
+    [
+        None,
+        "abc",
+    ]
+)
+@pytest.mark.parametrize(
+    "color",
+    [
+        None,
+        "red",
+    ]
+)
+@pytest.mark.parametrize(
+    "domain",
+    [
+        None,
+        "abc",
+    ]
+)
+@pytest.mark.parametrize(
+    "category",
+    [
+        None,
+        "abc",
+    ]
+)
+def test_mark(message, color, domain, category):
+    nvtx.mark(message, color, domain, category)
