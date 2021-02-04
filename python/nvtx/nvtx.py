@@ -92,7 +92,7 @@ class annotate(ContextDecorator):
         return super().__call__(func)
 
 
-def mark(message=None, color="blue", domain=None):
+def mark(message=None, color="blue", domain=None, category=None):
     """
     Mark an instantaneous event.
 
@@ -112,7 +112,7 @@ def mark(message=None, color="blue", domain=None):
     """
     domain = Domain(domain)
     category_id = (
-        self.domain.get_category_id(category)
+        domain.get_category_id(category)
         if category is not None
         else None
     )
@@ -120,7 +120,7 @@ def mark(message=None, color="blue", domain=None):
     libnvtx_mark(attributes, domain.handle)
 
 
-def push_range(message=None, color="blue", domain=None):
+def push_range(message=None, color="blue", domain=None, category=None):
     """
     Mark the beginning of a code range.
 
@@ -149,7 +149,7 @@ def push_range(message=None, color="blue", domain=None):
     """
     domain = Domain(domain)
     category_id = (
-        self.domain.get_category_id(category)
+        domain.get_category_id(category)
         if category is not None
         else None
     )
