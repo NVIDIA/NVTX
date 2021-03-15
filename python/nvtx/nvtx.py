@@ -4,7 +4,7 @@
 # See https://llvm.org/LICENSE.txt for license information.
 # SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception
 
-from contextlib import ContextDecorator
+import os
 from functools import wraps
 
 from nvtx._lib import (
@@ -16,6 +16,8 @@ from nvtx._lib import (
     start_range as libnvtx_start_range,
     end_range as libnvtx_end_range
 )
+
+from nvtx.utils.nop import NullContextDecorator, disable
 
 
 class annotate:
@@ -231,3 +233,19 @@ def end_range(range_id):
         The `RangeId` object returned by the `start_range` function.
     """
     libnvtx_end_range(range_id)
+
+
+def enabled():
+    """
+    Returns True if nvtx is enabled.
+    """
+    return not os.getenv("NVTX_DISABLE", False)
+
+
+if not enabled():
+    annotate = NullContextDecorator
+    pop_range = disable(pop_range)
+    push_range = disable(push_range)
+    start_range = disable(start_range)
+    end_range = disable(end_range)
+    mark = disable(mark)
