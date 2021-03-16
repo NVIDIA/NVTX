@@ -20,6 +20,8 @@ from nvtx._lib import (
 )
 
 
+_ENABLED = not os.getenv("NVTX_DISABLE", False)
+
 class annotate:
     """
     Annotate code ranges using a context manager or a decorator.
@@ -239,7 +241,7 @@ def enabled():
     """
     Returns True if nvtx is enabled.
     """
-    return not os.getenv("NVTX_DISABLE", False)
+    return _ENABLED
 
 
 if not enabled():
