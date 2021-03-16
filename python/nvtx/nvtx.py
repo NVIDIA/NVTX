@@ -251,10 +251,8 @@ if not enabled():
 
     # Could use a decorator here but overheads are significant enough
     # not to. See https://github.com/NVIDIA/NVTX/pull/24 for discussion.
-    _default = object()
-
-    def mark(message=_default, color=_default, domain=_default, category=_default): pass
-    def push_range(message=_default, color=_default, domain=_default, category=_default): pass
-    def pop_range(domain=_default): pass
-    def start_range(message=_default, color=_default, domain=_default, category=_default): pass
+    def mark(message=None, color=None, domain=None, category=None): pass
+    def push_range(message=None, color=None, domain=None, category=None): pass
+    def pop_range(domain=None): pass
+    def start_range(message=None, color=None, domain=None, category=None): pass
     def end_range(range_id): pass
