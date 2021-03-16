@@ -19,8 +19,6 @@ from nvtx._lib import (
     end_range as libnvtx_end_range
 )
 
-from nvtx.utils.nop import NullContextDecorator, disable
-
 
 class annotate:
     """
@@ -251,6 +249,8 @@ if not enabled():
         def __call__(self, func):
             return func
 
+    # Could use a decorator here but overheads are significant enough
+    # not to. See https://github.com/NVIDIA/NVTX/pull/24 for discussion.
     def mark(message=None, color="blue", domain=None, category=None): pass
     def push_range(message=None, color="blue", domain=None, category=None): pass
     def pop_range(domain=None): pass
