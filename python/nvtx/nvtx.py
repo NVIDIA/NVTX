@@ -4,7 +4,9 @@
 # See https://llvm.org/LICENSE.txt for license information.
 # SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception
 
+import contextlib
 import os
+
 from functools import wraps
 
 from nvtx._lib import (
@@ -243,9 +245,14 @@ def enabled():
 
 
 if not enabled():
-    annotate = NullContextDecorator
-    pop_range = disable(pop_range)
-    push_range = disable(push_range)
-    start_range = disable(start_range)
-    end_range = disable(end_range)
-    mark = disable(mark)
+    class annotate(contextlib.nullcontext):
+        def __init__(self, *args, **kwargs):
+            pass
+        def __call__(self, func):
+            return func
+
+    def mark(message=None, color="blue", domain=None, category=None): pass
+    def push_range(message=None, color="blue", domain=None, category=None): pass
+    def pop_range(domain=None): pass
+    def start_range(message=None, color="blue", domain=None, category=None): pass
+    def end_range(range_id): pass
