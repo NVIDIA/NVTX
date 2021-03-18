@@ -2155,7 +2155,7 @@ class domain_process_range {
    *
    * @param other The range to take ownership of
    */
-  constexpr domain_process_range(domain_process_range&& other) noexcept = default;
+  domain_process_range(domain_process_range&& other) noexcept = default;
 
   /**
    * @brief Move assignment operator allows taking ownership of an NVTX range
@@ -2163,7 +2163,7 @@ class domain_process_range {
    *
    * @param other The range to take ownership of
    */
-  constexpr domain_process_range& operator=(domain_process_range&& other) noexcept = default;
+  domain_process_range& operator=(domain_process_range&& other) noexcept = default;
 
   /// Copy construction is not allowed to prevent multiple objects from owning
   /// the same range handle
