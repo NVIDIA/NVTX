@@ -1889,6 +1889,9 @@ struct range_handle {
   /// Type used for the handle's value
   using value_type = nvtxRangeId_t;
 
+  /// Sentinel value for a null handle that corresponds to no range
+  static constexpr value_type null_handle = nvtxRangeId_t{0};
+
   /**
    * @brief Construct a `range_handle` from the given id.
    *
