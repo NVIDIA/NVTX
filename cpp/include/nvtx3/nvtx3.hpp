@@ -2031,20 +2031,48 @@ template <typename D = domain::global>
 class domain_process_range {
  public:
   /**
-   * @brief Construct a new domain process range object
+   * @brief Construct a new domain process range object with the specified event attributes
    *
-   * @param attr
+   * Example:
+   * \code{cpp}
+   * nvtx3::event_attributes attr{"msg", nvtx3::rgb{127,255,0}};
+   * nvtx3::domain_process_range<> range{attr}; // Creates a range with message contents
+   *                                            // "msg" and green color
+   * \endcode
+   *
+   * @param[in] attr `event_attributes` that describes the desired attributes
+   * of the range.
    */
   explicit domain_process_range(event_attributes const& attr) noexcept
-    : handle_{new range_handle{start_range<D>(attr)}}
+    : handle_{start_range<D>(attr)}
   {
   }
 
   /**
-   * @brief Construct a new domain process range object
+   * @brief Constructs a `domain_process_range` from the constructor arguments
+   * of an `event_attributes`.
    *
-   * @param first
-   * @param args
+   * Forwards the arguments `first, args...` to construct an
+   * `event_attributes` object. The `event_attributes` object is then
+   * associated with the `domain_process_range`.
+   *
+   * For more detail, see `event_attributes` documentation.
+   *
+   * Example:
+   * ```
+   * // Creates a range with message "message" and green color
+   * nvtx3::domain_process_range<> r{"message", nvtx3::rgb{127,255,0}};
+   * ```
+   *
+   * @note To prevent making needless copies of `event_attributes` objects,
+   * this constructor is disabled when the first argument is an
+   * `event_attributes` object, instead preferring the explicit
+   * `domain_thread_range(event_attributes const&)` constructor.
+   *
+   * @param[in] first First argument to forward to the `event_attributes`
+   * constructor.
+   * @param[in] args Variadic parameter pack of additional arguments to
+   * forward.
    */
   template <typename First,
             typename... Args,
@@ -2056,7 +2084,8 @@ class domain_process_range {
   }
 
   /**
-   * @brief Construct a new domain process range object
+   * @brief Default constructor creates a `domain_process_range` with no
+   * message, color, payload, nor category.
    *
    */
   constexpr domain_process_range() noexcept : domain_process_range{event_attributes{}} {}
