@@ -2143,10 +2143,7 @@ class domain_process_range {
    * @brief Destroy the `domain_process_range` ending the range.
    *
    */
-  ~domain_process_range() noexcept
-  {
-    if (handle_.get_value() != range_handle::null_handle) { end_range(handle_); }
-  }
+  ~domain_process_range() noexcept = default;
 
   /**
    * @brief Move constructor allows taking ownership of the NVTX range from
@@ -2154,10 +2151,7 @@ class domain_process_range {
    *
    * @param other The range to take ownership of
    */
-  constexpr domain_process_range(domain_process_range&& other) noexcept : handle_{other.handle_}
-  {
-    other.handle_ = range_handle::null_handle;
-  }
+  constexpr domain_process_range(domain_process_range&& other) noexcept = default;
 
   /**
    * @brief Move assignment operator allows taking ownership of an NVTX range
@@ -2165,12 +2159,7 @@ class domain_process_range {
    *
    * @param other The range to take ownership of
    */
-  constexpr domain_process_range& operator=(domain_process_range&& other) noexcept
-  {
-    handle_       = other.handle_;
-    other.handle_ = range_handle::null_handle;
-    return *this;
-  }
+  constexpr domain_process_range& operator=(domain_process_range&& other) noexcept = default;
 
   /// Copy construction is not allowed to prevent multiple objects from owning
   /// the same range handle
@@ -2181,8 +2170,12 @@ class domain_process_range {
   domain_process_range& operator=(domain_process_range const&) = delete;
 
  private:
-  range_handle handle_;  ///< Range handle used to correlate
-                         ///< the start/end of the range
+  struct end_range_handle {
+    using pointer = range_handle;  /// Override the pointer type of the unique_ptr
+    void operator()(range_handle h) const noexcept { end_range(h); }
+  };
+  std::unique_ptr<range_handle, end_range_handle> handle_;  ///< Range handle used to correlate
+                                                            ///< the start/end of the range
 };
 
 /**
