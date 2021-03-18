@@ -1949,7 +1949,7 @@ struct range_handle {
  * @param lhs The first range_handle to compare
  * @param rhs The second range_handle to compare
  */
-constexpr bool operator==(range_handle lhs, range_handle rhs)
+constexpr bool operator==(range_handle lhs, range_handle rhs) noexcept
 {
   return lhs.get_value() == rhs.get_value();
 }
@@ -1960,7 +1960,7 @@ constexpr bool operator==(range_handle lhs, range_handle rhs)
  * @param lhs The first range_handle to compare
  * @param rhs The second range_handle to compare
  */
-constexpr bool operator!=(range_handle lhs, range_handle rhs) { return !(lhs == rhs); }
+constexpr bool operator!=(range_handle lhs, range_handle rhs) noexcept { return !(lhs == rhs); }
 
 /**
  * @brief Manually begin an NVTX range.
