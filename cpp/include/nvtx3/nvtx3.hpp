@@ -97,6 +97,7 @@
 #include <string>
 #include <type_traits>
 #include <utility>
+#include <cstddef>
 
 /**
  * @file nvtx3.hpp
@@ -1883,6 +1884,8 @@ using thread_range = domain_thread_range<>;
 
 /**
  * @brief Handle used for correlating explicit range start and end events.
+ * 
+ * A handle is "null" if it does not correspond to any range.
  *
  */
 struct range_handle {
@@ -1899,6 +1902,33 @@ struct range_handle {
   constexpr explicit range_handle(value_type id) noexcept : _range_id{id} {}
 
   /**
+   * @brief Constructs a null range handle.
+   *
+   */
+  constexpr range_handle() noexcept = default;
+
+  /**
+   * @brief Checks whether this handle is null
+   * 
+   * Provides contextual conversion to `bool`.
+   * 
+   * \code{cpp}
+   * range_handle handle{};
+   * if(handle){...}
+   * \endcode
+   *
+   */
+  constexpr explicit operator bool() const noexcept { return get_value() != null_handle; };
+
+  /**
+   * @brief Implicit conversion from `nullptr` constructs a null handle.
+   *
+   * Satisfies the "NullablePointer" requirement to make `range_handle` comparable with `nullptr`.
+   *
+   */
+  constexpr range_handle(std::nullptr_t) noexcept {}
+
+  /**
    * @brief Returns the `range_handle`'s value
    *
    * @return value_type The handle's value
@@ -1906,8 +1936,27 @@ struct range_handle {
   constexpr value_type get_value() const noexcept { return _range_id; }
 
  private:
-  value_type _range_id{};  ///< The underlying NVTX range id
+  value_type _range_id{null_handle};  ///< The underlying NVTX range id
 };
+
+/**
+ * @brief Compares two range_handles for equality
+ * 
+ * @param lhs The first range_handle to compare
+ * @param rhs The second range_handle to compare
+ */
+constexpr bool operator==(range_handle lhs, range_handle rhs)
+{
+  return lhs.get_value() == rhs.get_value();
+}
+
+/**
+ * @brief Compares two range_handles for inequality
+ * 
+ * @param lhs The first range_handle to compare
+ * @param rhs The second range_handle to compare
+ */
+constexpr bool operator!=(range_handle lhs, range_handle rhs) { return !(lhs == rhs); }
 
 /**
  * @brief Manually begin an NVTX range.
