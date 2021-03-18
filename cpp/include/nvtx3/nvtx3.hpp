@@ -1892,8 +1892,6 @@ struct range_handle {
   /// Type used for the handle's value
   using value_type = nvtxRangeId_t;
 
-  /// Sentinel value for a null handle that corresponds to no range
-  static constexpr value_type null_handle = nvtxRangeId_t{0};
 
   /**
    * @brief Construct a `range_handle` from the given id.
@@ -1918,7 +1916,7 @@ struct range_handle {
    * \endcode
    *
    */
-  constexpr explicit operator bool() const noexcept { return get_value() != null_handle; };
+  constexpr explicit operator bool() const noexcept { return get_value() != null_range_id; };
 
   /**
    * @brief Implicit conversion from `nullptr` constructs a null handle.
@@ -1936,7 +1934,10 @@ struct range_handle {
   constexpr value_type get_value() const noexcept { return _range_id; }
 
  private:
-  value_type _range_id{null_handle};  ///< The underlying NVTX range id
+  /// Sentinel value for a null handle that corresponds to no range
+  static constexpr value_type null_range_id = nvtxRangeId_t{0};
+
+  value_type _range_id{null_range_id};  ///< The underlying NVTX range id
 };
 
 /**
