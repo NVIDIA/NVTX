@@ -1902,6 +1902,9 @@ struct range_handle {
   /**
    * @brief Constructs a null range handle.
    *
+   * A null range_handle corresponds to no range. Calling `end_range` on a null handle is undefined
+   * behavior.
+   *
    */
   constexpr range_handle() noexcept = default;
 
