@@ -57,7 +57,7 @@ static void BM_C_scoped_range(::benchmark::State& state)
   }
   nvtxDomainDestroy(domain);
 }
-BENCHMARK(BM_C_global_range);
+BENCHMARK(BM_C_scoped_range);
 
 ///< Measure cost of the func range macro
 static void BM_func_range(::benchmark::State& state)
