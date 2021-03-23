@@ -4,7 +4,10 @@
 # See https://llvm.org/LICENSE.txt for license information.
 # SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception
 
-from contextlib import ContextDecorator
+import contextlib
+import os
+
+from functools import wraps
 
 from nvtx._lib import (
     Domain,
@@ -17,7 +20,9 @@ from nvtx._lib import (
 )
 
 
-class annotate(ContextDecorator):
+_ENABLED = not os.getenv("NVTX_DISABLE", False)
+
+class annotate:
     """
     Annotate code ranges using a context manager or a decorator.
     """
@@ -89,7 +94,15 @@ class annotate(ContextDecorator):
     def __call__(self, func):
         if not self.attributes.message:
             self.attributes.message = func.__name__
-        return super().__call__(func)
+
+        @wraps(func)
+        def inner(*args, **kwargs):
+            libnvtx_push_range(self.attributes, self.domain.handle)
+            result = func(*args, **kwargs)
+            libnvtx_pop_range(self.domain.handle)
+            return result
+
+        return inner
 
 
 def mark(message=None, color="blue", domain=None, category=None):
@@ -222,3 +235,26 @@ def end_range(range_id):
         The `RangeId` object returned by the `start_range` function.
     """
     libnvtx_end_range(range_id)
+
+
+def enabled():
+    """
+    Returns True if nvtx is enabled.
+    """
+    return _ENABLED
+
+
+if not enabled():
+    class annotate(contextlib.nullcontext):
+        def __init__(self, *args, **kwargs):
+            pass
+        def __call__(self, func):
+            return func
+
+    # Could use a decorator here but overheads are significant enough
+    # not to. See https://github.com/NVIDIA/NVTX/pull/24 for discussion.
+    def mark(message=None, color=None, domain=None, category=None): pass
+    def push_range(message=None, color=None, domain=None, category=None): pass
+    def pop_range(domain=None): pass
+    def start_range(message=None, color=None, domain=None, category=None): pass
+    def end_range(range_id): pass
