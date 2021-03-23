@@ -14,5 +14,6 @@ def main():
 
     sys.setprofile(profiler)
     run_path(script_file)
+    sys.setprofile(None)
 
 main()
