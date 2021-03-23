@@ -5,8 +5,6 @@
 # SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception
 
 
-import os
-
 from nvtx.nvtx import (
     annotate,
     pop_range,
@@ -15,3 +13,5 @@ from nvtx.nvtx import (
     end_range,
     mark
 )
+
+from nvtx._profiler import profiler

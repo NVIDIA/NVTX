@@ -1,19 +1,18 @@
 import sys
 from runpy import run_path
-
-
-def profiler(frame, event, args):
-    from nvtx import push_range, pop_range
-
-    if event == "call":
-        push_range(message=frame.f_code.co_name)
-    if event == "return":
-        pop_range()
-    return None
+from optparse import OptionParser
 
 def main():
-    script_file = sys.argv[1]
-    sys.argv = sys.argv[1:]
+    from nvtx import profiler
+
+    usage = "nvtx script args ..."
+    parser = OptionParser(usage)
+    options, args = parser.parse_args()
+    script_file = args[0]
+
+    sys.argv = args
+
+    sys.setprofile(profiler)
     run_path(script_file)
 
 main()
