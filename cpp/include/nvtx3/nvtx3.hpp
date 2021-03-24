@@ -1826,7 +1826,7 @@ class domain_thread_range {
    * @brief Constructs a `domain_thread_range` from the constructor arguments
    * of an `event_attributes`.
    *
-   * Forwards the arguments `first, args...` to construct an
+   * Forwards the arguments `args...` to construct an
    * `event_attributes` object. The `event_attributes` object is then
    * associated with the `domain_thread_range`.
    *
@@ -1838,23 +1838,13 @@ class domain_thread_range {
    * nvtx3::domain_thread_range<> r{"message", nvtx3::rgb{127,255,0}};
    * ```
    *
-   * @note To prevent making needless copies of `event_attributes` objects,
-   * this constructor is disabled when the first argument is an
-   * `event_attributes` object, instead preferring the explicit
-   * `domain_thread_range(event_attributes const&)` constructor.
-   *
-   * @param[in] first First argument to forward to the `event_attributes`
-   * constructor.
-   * @param[in] args Variadic parameter pack of additional arguments to
-   * forward.
+   * @param[in] args Arguments to used to construct an `event_attributes` associated with this
+   * range.
    *
    */
-  template <typename First,
-            typename... Args,
-            typename = typename std::enable_if<
-              !std::is_same<event_attributes, typename std::decay<First>>::value>>
-  explicit domain_thread_range(First const& first, Args const&... args) noexcept
-    : domain_thread_range{event_attributes{first, args...}}
+  template <typename... Args>
+  explicit domain_thread_range(Args const&... args) noexcept
+    : domain_thread_range{event_attributes{args...}}
   {
   }
 
@@ -1959,39 +1949,32 @@ range_handle start_range(event_attributes const& attr) noexcept
 /**
  * @brief Manually begin an NVTX range.
  *
- * Explicitly begins an NVTX range and returns a unique handle. To end the
- * range, pass the handle to `end_range()`.
+ * Explicitly begins an NVTX range and returns a unique handle. To end the range, pass the handle to
+ * `end_range()`.
  *
- * Forwards the arguments `first, args...` to construct an  `event_attributes`
- * object. The `event_attributes` object is then  associated with the range.
+ * Passes the arguments `args...` to construct an  `event_attributes` associated with the range.
  *
  * For more detail, see `event_attributes` documentation.
  *
  * Example:
- * ```
- * nvtx3::range_handle h = nvxt3::start_range("msg", nvtx3::rgb{127,255,0}); //
- * Begin range
+ * \code{cpp}
+ * nvtx3::range_handle h = nvxt3::start_range("msg", nvtx3::rgb{127,255,0}); // Begin range
  * ...
  * nvtx3::end_range(h); // Ends the range
- * ```
+ * \endcode
  *
  * `start_range/end_range` are the most explicit and lowest level APIs provided
  * for creating ranges.  Use of `nvtx3::domain_process_range` should be
  * preferred unless one is unable to tie the range to the lifetime of an object.
  *
- * @param first[in] First argument to pass to an `event_attributes`
- * @param args[in] Variadiac parameter pack of the rest of the arguments for an
- * `event_attributes`.
+ * @param args[in] Variadiac parameter pack of the arguments for an `event_attributes`.
  * @return Unique handle to be passed to `end_range` to end the range.
  */
-template <typename First,
-          typename... Args,
-          typename = typename std::enable_if<
-            !std::is_same<event_attributes, typename std::decay<First>>::value>>
-range_handle start_range(First const& first, Args const&... args) noexcept
+template <typename... Args>
+range_handle start_range(Args const&... args) noexcept
 {
 #ifndef NVTX_DISABLE
-  return start_range(event_attributes{first, args...});
+  return start_range(event_attributes{args...});
 #else
   (void)first;
   return range_handle{};
