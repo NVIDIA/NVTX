@@ -580,6 +580,20 @@
 #define NVTX3_INLINE_IF_REQUESTED
 #endif
 
+/* Enables the use of constexpr when support for C++14 relaxed constexpr
+ * is present.
+ *
+ * Initializing a legacy-C (i.e., no constructor) union member requires
+ * initializing in the constructor body. Non-empty constexpr constructors
+ * require C++14 relaxed constexpr.  In strict C++11 compilation, fall back
+ * to using non-constexpr constructors for classes with union members.
+ */
+#if __cpp_constexpr >= 201304L
+#define NVTX3_RELAXED_CONSTEXPR constexpr
+#else
+#define NVTX3_RELAXED_CONSTEXPR
+#endif
+
 /* Implementation sections, enclosed in guard macros for each minor version */
 
 #ifndef NVTX3_CPP_DEFINITIONS_V1_0
@@ -1388,7 +1402,7 @@ class message {
    *
    * @param msg The contents of the message
    */
-  constexpr message(char const* msg) noexcept : type_{NVTX_MESSAGE_TYPE_ASCII}
+  NVTX3_RELAXED_CONSTEXPR message(char const* msg) noexcept : type_{NVTX_MESSAGE_TYPE_ASCII}
   {
     value_.ascii = msg;
   }
@@ -1415,7 +1429,7 @@ class message {
    *
    * @param msg The contents of the message
    */
-  constexpr message(wchar_t const* msg) noexcept : type_{NVTX_MESSAGE_TYPE_UNICODE}
+  NVTX3_RELAXED_CONSTEXPR message(wchar_t const* msg) noexcept : type_{NVTX_MESSAGE_TYPE_UNICODE}
   {
     value_.unicode = msg;
   }
@@ -1446,7 +1460,7 @@ class message {
    * @param msg The message that has already been registered with NVTX.
    */
   template <typename D>
-  constexpr message(registered_string<D> const& msg) noexcept
+  NVTX3_RELAXED_CONSTEXPR message(registered_string<D> const& msg) noexcept
     : type_{NVTX_MESSAGE_TYPE_REGISTERED}
   {
     value_.registered = msg.get_handle();
@@ -1456,13 +1470,13 @@ class message {
    * @brief Return the union holding the value of the message.
    *
    */
-  constexpr value_type get_value() const noexcept { return value_; }
+  NVTX3_RELAXED_CONSTEXPR value_type get_value() const noexcept { return value_; }
 
   /**
    * @brief Return the type information about the value the union holds.
    *
    */
-  constexpr nvtxMessageType_t get_type() const noexcept { return type_; }
+  NVTX3_RELAXED_CONSTEXPR nvtxMessageType_t get_type() const noexcept { return type_; }
 
  private:
   nvtxMessageType_t const type_{};  ///< message type
@@ -1495,7 +1509,7 @@ class payload {
    *
    * @param value Value to use as contents of the payload
    */
-  constexpr explicit payload(int64_t value) noexcept
+  NVTX3_RELAXED_CONSTEXPR explicit payload(int64_t value) noexcept
     : type_{NVTX_PAYLOAD_TYPE_INT64}, value_{}
   {
     value_.llValue = value;
@@ -1506,7 +1520,7 @@ class payload {
    *
    * @param value Value to use as contents of the payload
    */
-  constexpr explicit payload(int32_t value) noexcept
+  NVTX3_RELAXED_CONSTEXPR explicit payload(int32_t value) noexcept
     : type_{NVTX_PAYLOAD_TYPE_INT32}, value_{}
   {
     value_.iValue = value;
@@ -1517,7 +1531,7 @@ class payload {
    *
    * @param value Value to use as contents of the payload
    */
-  constexpr explicit payload(uint64_t value) noexcept
+  NVTX3_RELAXED_CONSTEXPR explicit payload(uint64_t value) noexcept
     : type_{NVTX_PAYLOAD_TYPE_UNSIGNED_INT64}, value_{}
   {
     value_.ullValue = value;
@@ -1528,7 +1542,7 @@ class payload {
    *
    * @param value Value to use as contents of the payload
    */
-  constexpr explicit payload(uint32_t value) noexcept
+  NVTX3_RELAXED_CONSTEXPR explicit payload(uint32_t value) noexcept
     : type_{NVTX_PAYLOAD_TYPE_UNSIGNED_INT32}, value_{}
   {
     value_.uiValue = value;
@@ -1540,7 +1554,7 @@ class payload {
    *
    * @param value Value to use as contents of the payload
    */
-  constexpr explicit payload(float value) noexcept
+  NVTX3_RELAXED_CONSTEXPR explicit payload(float value) noexcept
     : type_{NVTX_PAYLOAD_TYPE_FLOAT}, value_{}
   {
     value_.fValue = value;
@@ -1552,7 +1566,7 @@ class payload {
    *
    * @param value Value to use as contents of the payload
    */
-  constexpr explicit payload(double value) noexcept
+  NVTX3_RELAXED_CONSTEXPR explicit payload(double value) noexcept
     : type_{NVTX_PAYLOAD_TYPE_DOUBLE}, value_{}
   {
     value_.dValue = value;
@@ -1562,13 +1576,13 @@ class payload {
    * @brief Return the union holding the value of the payload
    *
    */
-  constexpr value_type get_value() const noexcept { return value_; }
+  NVTX3_RELAXED_CONSTEXPR value_type get_value() const noexcept { return value_; }
 
   /**
    * @brief Return the information about the type the union holds.
    *
    */
-  constexpr nvtxPayloadType_t get_type() const noexcept { return type_; }
+  NVTX3_RELAXED_CONSTEXPR nvtxPayloadType_t get_type() const noexcept { return type_; }
 
  private:
   nvtxPayloadType_t const type_;  ///< Type of the payload value
@@ -1668,7 +1682,7 @@ class event_attributes {
    *
    */
   template <typename... Args>
-  constexpr explicit event_attributes(category const& c, Args const&... args) noexcept
+  NVTX3_RELAXED_CONSTEXPR explicit event_attributes(category const& c, Args const&... args) noexcept
     : event_attributes(args...)
   {
     attributes_.category = c.get_id();
@@ -1682,7 +1696,7 @@ class event_attributes {
    *
    */
   template <typename... Args>
-  constexpr explicit event_attributes(color const& c, Args const&... args) noexcept
+  NVTX3_RELAXED_CONSTEXPR explicit event_attributes(color const& c, Args const&... args) noexcept
     : event_attributes(args...)
   {
     attributes_.color     = c.get_value();
@@ -1697,7 +1711,7 @@ class event_attributes {
    *
    */
   template <typename... Args>
-  constexpr explicit event_attributes(payload const& p, Args const&... args) noexcept
+  NVTX3_RELAXED_CONSTEXPR explicit event_attributes(payload const& p, Args const&... args) noexcept
     : event_attributes(args...)
   {
     attributes_.payload     = p.get_value();
@@ -1712,7 +1726,7 @@ class event_attributes {
    *
    */
   template <typename... Args>
-  constexpr explicit event_attributes(message const& m, Args const&... args) noexcept
+  NVTX3_RELAXED_CONSTEXPR explicit event_attributes(message const& m, Args const&... args) noexcept
     : event_attributes(args...)
   {
     attributes_.message     = m.get_value();
@@ -1813,7 +1827,7 @@ class domain_thread_range {
    * @brief Constructs a `domain_thread_range` from the constructor arguments
    * of an `event_attributes`.
    *
-   * Forwards the arguments `first, args...` to construct an
+   * Forwards the arguments `args...` to construct an
    * `event_attributes` object. The `event_attributes` object is then
    * associated with the `domain_thread_range`.
    *
@@ -1825,23 +1839,13 @@ class domain_thread_range {
    * nvtx3::domain_thread_range<> r{"message", nvtx3::rgb{127,255,0}};
    * ```
    *
-   * @note To prevent making needless copies of `event_attributes` objects,
-   * this constructor is disabled when the first argument is an
-   * `event_attributes` object, instead preferring the explicit
-   * `domain_thread_range(event_attributes const&)` constructor.
-   *
-   * @param[in] first First argument to forward to the `event_attributes`
-   * constructor.
-   * @param[in] args Variadic parameter pack of additional arguments to
-   * forward.
+   * @param[in] args Arguments to used to construct an `event_attributes` associated with this
+   * range.
    *
    */
-  template <typename First,
-            typename... Args,
-            typename = typename std::enable_if<
-              !std::is_same<event_attributes, typename std::decay<First>>::value>>
-  explicit domain_thread_range(First const& first, Args const&... args) noexcept
-    : domain_thread_range{event_attributes{first, args...}}
+  template <typename... Args>
+  explicit domain_thread_range(Args const&... args) noexcept
+    : domain_thread_range{event_attributes{args...}}
   {
   }
 
@@ -2001,39 +2005,32 @@ range_handle start_range(event_attributes const& attr) noexcept
 /**
  * @brief Manually begin an NVTX range.
  *
- * Explicitly begins an NVTX range and returns a unique handle. To end the
- * range, pass the handle to `end_range()`.
+ * Explicitly begins an NVTX range and returns a unique handle. To end the range, pass the handle to
+ * `end_range()`.
  *
- * Forwards the arguments `first, args...` to construct an  `event_attributes`
- * object. The `event_attributes` object is then  associated with the range.
+ * Passes the arguments `args...` to construct an  `event_attributes` associated with the range.
  *
  * For more detail, see `event_attributes` documentation.
  *
  * Example:
- * ```
- * nvtx3::range_handle h = nvxt3::start_range("msg", nvtx3::rgb{127,255,0}); //
- * Begin range
+ * \code{cpp}
+ * nvtx3::range_handle h = nvxt3::start_range("msg", nvtx3::rgb{127,255,0}); // Begin range
  * ...
  * nvtx3::end_range(h); // Ends the range
- * ```
+ * \endcode
  *
  * `start_range/end_range` are the most explicit and lowest level APIs provided
  * for creating ranges.  Use of `nvtx3::domain_process_range` should be
  * preferred unless one is unable to tie the range to the lifetime of an object.
  *
- * @param first[in] First argument to pass to an `event_attributes`
- * @param args[in] Variadiac parameter pack of the rest of the arguments for an
- * `event_attributes`.
+ * @param args[in] Variadiac parameter pack of the arguments for an `event_attributes`.
  * @return Unique handle to be passed to `end_range` to end the range.
  */
-template <typename First,
-          typename... Args,
-          typename = typename std::enable_if<
-            !std::is_same<event_attributes, typename std::decay<First>>::value>>
-range_handle start_range(First const& first, Args const&... args) noexcept
+template <typename... Args>
+range_handle start_range(Args const&... args) noexcept
 {
 #ifndef NVTX_DISABLE
-  return start_range(event_attributes{first, args...});
+  return start_range(event_attributes{args...});
 #else
   (void)first;
   return range_handle{};
@@ -2105,7 +2102,7 @@ class domain_process_range {
    * @brief Constructs a `domain_process_range` from the constructor arguments
    * of an `event_attributes`.
    *
-   * Forwards the arguments `first, args...` to construct an
+   * Forwards the arguments `args...` to construct an
    * `event_attributes` object. The `event_attributes` object is then
    * associated with the `domain_process_range`.
    *
@@ -2117,22 +2114,12 @@ class domain_process_range {
    * nvtx3::domain_process_range<> r{"message", nvtx3::rgb{127,255,0}};
    * ```
    *
-   * @note To prevent making needless copies of `event_attributes` objects,
-   * this constructor is disabled when the first argument is an
-   * `event_attributes` object, instead preferring the explicit
-   * `domain_thread_range(event_attributes const&)` constructor.
-   *
-   * @param[in] first First argument to forward to the `event_attributes`
-   * constructor.
-   * @param[in] args Variadic parameter pack of additional arguments to
-   * forward.
+   * @param[in] args Variadic parameter pack of arguments to construct an `event_attributes`
+   * associated with this range.
    */
-  template <typename First,
-            typename... Args,
-            typename = typename std::enable_if<
-              !std::is_same<event_attributes, typename std::decay<First>>::value>>
-  explicit domain_process_range(First const& first, Args const&... args) noexcept
-    : domain_process_range{event_attributes{first, args...}}
+  template <typename... Args>
+  explicit domain_process_range(Args const&... args) noexcept
+    : domain_process_range{event_attributes{args...}}
   {
   }
 
@@ -2332,6 +2319,7 @@ inline void mark(event_attributes const& attr) noexcept
 #undef NVTX3_NAMESPACE_FOR
 #undef NVTX3_VERSION_NAMESPACE
 #undef NVTX3_INLINE_IF_REQUESTED
+#undef NVTX3_RELAXED_CONSTEXPR
 
 #if defined(NVTX3_INLINE_THIS_VERSION)
 #undef NVTX3_INLINE_THIS_VERSION
