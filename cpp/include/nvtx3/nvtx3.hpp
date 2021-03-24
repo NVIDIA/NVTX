@@ -2037,15 +2037,11 @@ class domain_process_range {
   /**
    * @brief Construct a new domain process range object
    *
-   * @param first
    * @param args
    */
-  template <typename First,
-            typename... Args,
-            typename = typename std::enable_if<
-              !std::is_same<event_attributes, typename std::decay<First>>::value>>
-  explicit domain_process_range(First const& first, Args const&... args) noexcept
-    : domain_process_range{event_attributes{first, args...}}
+  template <typename... Args>
+  explicit domain_process_range(Args const&... args) noexcept
+    : domain_process_range{event_attributes{args...}}
   {
   }
 
