@@ -1988,15 +1988,19 @@ range_handle start_range(Args const&... args) noexcept
  * prior call to `start_range`. The range may end on a different thread from
  * where it began.
  *
- * This function does not have a Domain tag type template parameter as the
- * handle `r` already indicates the domain to which the range belongs.
- *
+ * @tparam D Type containing `name` member used to identify the `domain` to
+ * which the range belongs. Else, `domain::global` to indicate that the global
+ * NVTX domain should be used.
  * @param r Handle to a range started by a prior call to `start_range`.
+ *
+ * @warning The domain type specified as template parameter to this function
+ * must be the same that was specified on the associated `start_range` call.
  */
-inline void end_range(range_handle r)
+template <typename D = domain::global>
+void end_range(range_handle r) noexcept
 {
 #ifndef NVTX_DISABLE
-  nvtxRangeEnd(r.get_value());
+  nvtxDomainRangeEnd(domain::get<D>(), r.get_value());
 #else
   (void)r;
 #endif
@@ -2057,7 +2061,7 @@ class domain_process_range {
    */
   ~domain_process_range()
   {
-    if (handle_) { end_range(*handle_); }
+    if (handle_) { end_range<D>(*handle_); }
   }
 
   /**
