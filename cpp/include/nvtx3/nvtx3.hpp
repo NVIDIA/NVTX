@@ -1976,7 +1976,6 @@ range_handle start_range(Args const&... args) noexcept
 #ifndef NVTX_DISABLE
   return start_range(event_attributes{args...});
 #else
-  (void)first;
   return range_handle{};
 #endif
 }
