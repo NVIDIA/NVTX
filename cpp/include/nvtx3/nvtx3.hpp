@@ -727,7 +727,7 @@ class domain {
    * @return Reference to the `domain` corresponding to the type `DomainName`.
    */
   template <typename DomainName>
-  static domain const& get()
+  static domain const& get() noexcept
   {
     static_assert(detail::has_name_member<DomainName>(),
                   "Type used to identify a domain must contain a name member of"
@@ -843,7 +843,7 @@ class domain {
  *
  */
 template <>
-inline domain const& domain::get<domain::global>()
+inline domain const& domain::get<domain::global>() noexcept
 {
   static domain const d{};
   return d;
@@ -1853,7 +1853,7 @@ class domain_thread_range {
    * message, color, payload, nor category.
    *
    */
-  domain_thread_range() : domain_thread_range{event_attributes{}} {}
+  domain_thread_range() noexcept : domain_thread_range{event_attributes{}} {}
 
   /**
    * @brief Delete `operator new` to disallow heap allocated objects.
@@ -1993,7 +1993,7 @@ range_handle start_range(Args const&... args) noexcept
  *
  * @param r Handle to a range started by a prior call to `start_range`.
  */
-inline void end_range(range_handle r)
+inline void end_range(range_handle r) noexcept
 {
 #ifndef NVTX_DISABLE
   nvtxRangeEnd(r.get_value());
