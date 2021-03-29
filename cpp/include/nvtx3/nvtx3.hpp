@@ -97,6 +97,7 @@
 #include <string>
 #include <type_traits>
 #include <utility>
+#include <cstddef>
 
 /**
  * @file nvtx3.hpp
@@ -727,7 +728,7 @@ class domain {
    * @return Reference to the `domain` corresponding to the type `DomainName`.
    */
   template <typename DomainName>
-  static domain const& get()
+  static domain const& get() noexcept
   {
     static_assert(detail::has_name_member<DomainName>(),
                   "Type used to identify a domain must contain a name member of"
@@ -843,7 +844,7 @@ class domain {
  *
  */
 template <>
-inline domain const& domain::get<domain::global>()
+inline domain const& domain::get<domain::global>() noexcept
 {
   static domain const d{};
   return d;
@@ -1853,7 +1854,7 @@ class domain_thread_range {
    * message, color, payload, nor category.
    *
    */
-  domain_thread_range() : domain_thread_range{event_attributes{}} {}
+  domain_thread_range() noexcept : domain_thread_range{event_attributes{}} {}
 
   /**
    * @brief Delete `operator new` to disallow heap allocated objects.
@@ -1885,19 +1886,97 @@ class domain_thread_range {
  */
 using thread_range = domain_thread_range<>;
 
+namespace detail {
+
+/// @cond internal
+template <typename D = domain::global>
+class optional_domain_thread_range
+{
+public:
+  optional_domain_thread_range() = default;
+
+  void begin(event_attributes const& attr) noexcept
+  {
+#ifndef NVTX_DISABLE
+    // This class is not meant to be part of the public NVTX C++ API and should
+    // only be used in the `NVTX3_FUNC_RANGE_IF` and `NVTX3_FUNC_RANGE_IF_IN`
+    // macros. However, to prevent developers from misusing this class, make
+    // sure to not start multiple ranges.
+    if (initialized) { return; }
+
+    nvtxDomainRangePushEx(domain::get<D>(), attr.get());
+    initialized = true;
+#endif
+  }
+
+  ~optional_domain_thread_range() noexcept
+  {
+#ifndef NVTX_DISABLE
+    if (initialized) { nvtxDomainRangePop(domain::get<D>()); }
+#endif
+  }
+
+  void* operator new(std::size_t) = delete;
+  optional_domain_thread_range(optional_domain_thread_range const&) = delete;
+  optional_domain_thread_range& operator=(optional_domain_thread_range const&) = delete;
+  optional_domain_thread_range(optional_domain_thread_range&&) = delete;
+  optional_domain_thread_range& operator=(optional_domain_thread_range&&) = delete;
+
+private:
+#ifndef NVTX_DISABLE
+  bool initialized = false;
+#endif
+};
+/// @endcond
+
+} // namespace detail
+
 /**
  * @brief Handle used for correlating explicit range start and end events.
+ * 
+ * A handle is "null" if it does not correspond to any range.
  *
  */
 struct range_handle {
   /// Type used for the handle's value
   using value_type = nvtxRangeId_t;
 
+
   /**
    * @brief Construct a `range_handle` from the given id.
    *
    */
   constexpr explicit range_handle(value_type id) noexcept : _range_id{id} {}
+
+  /**
+   * @brief Constructs a null range handle.
+   *
+   * A null range_handle corresponds to no range. Calling `end_range` on a null handle is undefined
+   * behavior.
+   *
+   */
+  constexpr range_handle() noexcept = default;
+
+  /**
+   * @brief Checks whether this handle is null
+   * 
+   * Provides contextual conversion to `bool`.
+   * 
+   * \code{cpp}
+   * range_handle handle{};
+   * if(handle){...}
+   * \endcode
+   *
+   */
+  constexpr explicit operator bool() const noexcept { return get_value() != null_range_id; };
+
+  /**
+   * @brief Implicit conversion from `nullptr` constructs a null handle.
+   *
+   * Satisfies the "NullablePointer" requirement to make `range_handle` comparable with `nullptr`.
+   *
+   */
+  constexpr range_handle(std::nullptr_t) noexcept {}
 
   /**
    * @brief Returns the `range_handle`'s value
@@ -1907,8 +1986,30 @@ struct range_handle {
   constexpr value_type get_value() const noexcept { return _range_id; }
 
  private:
-  value_type _range_id{};  ///< The underlying NVTX range id
+  /// Sentinel value for a null handle that corresponds to no range
+  static constexpr value_type null_range_id = nvtxRangeId_t{0};
+
+  value_type _range_id{null_range_id};  ///< The underlying NVTX range id
 };
+
+/**
+ * @brief Compares two range_handles for equality
+ * 
+ * @param lhs The first range_handle to compare
+ * @param rhs The second range_handle to compare
+ */
+constexpr bool operator==(range_handle lhs, range_handle rhs) noexcept
+{
+  return lhs.get_value() == rhs.get_value();
+}
+
+/**
+ * @brief Compares two range_handles for inequality
+ * 
+ * @param lhs The first range_handle to compare
+ * @param rhs The second range_handle to compare
+ */
+constexpr bool operator!=(range_handle lhs, range_handle rhs) noexcept { return !(lhs == rhs); }
 
 /**
  * @brief Manually begin an NVTX range.
@@ -1997,7 +2098,7 @@ range_handle start_range(Args const&... args) noexcept
  * must be the same that was specified on the associated `start_range` call.
  */
 template <typename D = domain::global>
-void end_range(range_handle r) noexcept
+inline void end_range(range_handle r) noexcept
 {
 #ifndef NVTX_DISABLE
   nvtxDomainRangeEnd(domain::get<D>(), r.get_value());
@@ -2029,19 +2130,41 @@ template <typename D = domain::global>
 class domain_process_range {
  public:
   /**
-   * @brief Construct a new domain process range object
+   * @brief Construct a new domain process range object with the specified event attributes
    *
-   * @param attr
+   * Example:
+   * \code{cpp}
+   * nvtx3::event_attributes attr{"msg", nvtx3::rgb{127,255,0}};
+   * nvtx3::domain_process_range<> range{attr}; // Creates a range with message contents
+   *                                            // "msg" and green color
+   * \endcode
+   *
+   * @param[in] attr `event_attributes` that describes the desired attributes
+   * of the range.
    */
   explicit domain_process_range(event_attributes const& attr) noexcept
-    : handle_{new range_handle{start_range<D>(attr)}}
+    : handle_{start_range<D>(attr)}
   {
   }
 
   /**
-   * @brief Construct a new domain process range object
+   * @brief Constructs a `domain_process_range` from the constructor arguments
+   * of an `event_attributes`.
    *
-   * @param args
+   * Forwards the arguments `args...` to construct an
+   * `event_attributes` object. The `event_attributes` object is then
+   * associated with the `domain_process_range`.
+   *
+   * For more detail, see `event_attributes` documentation.
+   *
+   * Example:
+   * ```
+   * // Creates a range with message "message" and green color
+   * nvtx3::domain_process_range<> r{"message", nvtx3::rgb{127,255,0}};
+   * ```
+   *
+   * @param[in] args Variadic parameter pack of arguments to construct an `event_attributes`
+   * associated with this range.
    */
   template <typename... Args>
   explicit domain_process_range(Args const&... args) noexcept
@@ -2050,7 +2173,8 @@ class domain_process_range {
   }
 
   /**
-   * @brief Construct a new domain process range object
+   * @brief Default constructor creates a `domain_process_range` with no
+   * message, color, payload, nor category.
    *
    */
   constexpr domain_process_range() noexcept : domain_process_range{event_attributes{}} {}
@@ -2059,27 +2183,23 @@ class domain_process_range {
    * @brief Destroy the `domain_process_range` ending the range.
    *
    */
-  ~domain_process_range()
-  {
-    if (handle_) { end_range<D>(*handle_); }
-  }
+  ~domain_process_range() noexcept = default;
 
   /**
    * @brief Move constructor allows taking ownership of the NVTX range from
    * another `domain_process_range`.
    *
-   * @param other
+   * @param other The range to take ownership of
    */
-  domain_process_range(domain_process_range&& other) = default;
+  domain_process_range(domain_process_range&& other) noexcept = default;
 
   /**
    * @brief Move assignment operator allows taking ownership of an NVTX range
    * from another `domain_process_range`.
    *
-   * @param other
-   * @return domain_process_range&
+   * @param other The range to take ownership of
    */
-  domain_process_range& operator=(domain_process_range&& other) = default;
+  domain_process_range& operator=(domain_process_range&& other) noexcept = default;
 
   /// Copy construction is not allowed to prevent multiple objects from owning
   /// the same range handle
@@ -2090,8 +2210,14 @@ class domain_process_range {
   domain_process_range& operator=(domain_process_range const&) = delete;
 
  private:
-  std::unique_ptr<range_handle> handle_;  ///< Range handle used to correlate
-                                          ///< the start/end of the range
+  template <typename D>
+  struct end_range_handle {
+    using pointer = range_handle;  /// Override the pointer type of the unique_ptr
+    void operator()(range_handle h) const noexcept { end_range<D>(h); }
+  };
+  
+  /// Range handle used to correlate the start/end of the range
+  std::unique_ptr<range_handle, end_range_handle<D>> handle_;  
 };
 
 /**
@@ -2135,6 +2261,7 @@ inline void mark(event_attributes const& attr) noexcept
 
 }  // namespace nvtx3
 
+#ifndef NVTX_DISABLE
 /**
  * @brief Convenience macro for generating a range in the specified `domain`
  * from the lifetime of a function
@@ -2163,14 +2290,38 @@ inline void mark(event_attributes const& attr) noexcept
  * `domain` to which the `registered_string` belongs. Else,
  * `domain::global` to  indicate that the global NVTX domain should be used.
  */
-#ifndef NVTX_DISABLE
 #define NVTX3_V1_FUNC_RANGE_IN(D)                                                  \
   static ::nvtx3::v1::registered_string<D> const nvtx3_func_name__{__func__};      \
   static ::nvtx3::v1::event_attributes const nvtx3_func_attr__{nvtx3_func_name__}; \
   ::nvtx3::v1::domain_thread_range<D> const nvtx3_range__{nvtx3_func_attr__};
+
+/**
+ * @brief Convenience macro for generating a range in the specified `domain`
+ * from the lifetime of a function if the given boolean expression evaluates
+ * to true.
+ *
+ * Similar to `NVTX3_V1_FUNC_RANGE_IN(D)`, the only difference being that
+ * `NVTX3_V1_FUNC_RANGE_IF_IN(D, C)` only generates a range if the given boolean
+ * expression evaluates to true.
+ *
+ * @param[in] D Type containing `name` member used to identify the
+ * `domain` to which the `registered_string` belongs. Else,
+ * `domain::global` to indicate that the global NVTX domain should be used.
+ *
+ * @param[in] C Boolean expression used to determine if a range should be
+ * generated.
+ */
+#define NVTX3_V1_FUNC_RANGE_IF_IN(D, C) \
+  ::nvtx3::v1::detail::optional_domain_thread_range<D> optional_nvtx3_range__;       \
+  if (C) {                                                                           \
+    static ::nvtx3::v1::registered_string<D> const nvtx3_func_name__{__func__};      \
+    static ::nvtx3::v1::event_attributes const nvtx3_func_attr__{nvtx3_func_name__}; \
+    optional_nvtx3_range__.begin(nvtx3_func_attr__);                                 \
+  }
 #else
 #define NVTX3_V1_FUNC_RANGE_IN(D)
-#endif
+#define NVTX3_V1_FUNC_RANGE_IF_IN(D, C)
+#endif  // NVTX_DISABLE
 
 /**
  * @brief Convenience macro for generating a range in the global domain from the
@@ -2196,12 +2347,27 @@ inline void mark(event_attributes const& attr) noexcept
  */
 #define NVTX3_V1_FUNC_RANGE() NVTX3_V1_FUNC_RANGE_IN(::nvtx3::v1::domain::global)
 
+/**
+ * @brief Convenience macro for generating a range in the global domain from the
+ * lifetime of a function if the given boolean expression evaluates to true.
+ *
+ * Similar to `NVTX3_V1_FUNC_RANGE()`, the only difference being that
+ * `NVTX3_V1_FUNC_RANGE_IF(C)` only generates a range if the given boolean
+ * expression evaluates to true.
+ *
+ * @param[in] C Boolean expression used to determine if a range should be
+ * generated.
+ */
+#define NVTX3_V1_FUNC_RANGE_IF(C) NVTX3_V1_FUNC_RANGE_IF_IN(::nvtx3::v1::domain::global, C)
+
 /* When inlining this version, versioned macros must have unversioned aliases.
  * For each NVTX3_Vx_ #define, make an NVTX3_ alias of it here.*/
 #if defined(NVTX3_INLINE_THIS_VERSION)
 /* clang format off */
-#define NVTX3_FUNC_RANGE_IN   NVTX3_V1_FUNC_RANGE_IN
-#define NVTX3_FUNC_RANGE      NVTX3_V1_FUNC_RANGE
+#define NVTX3_FUNC_RANGE       NVTX3_V1_FUNC_RANGE
+#define NVTX3_FUNC_RANGE_IF    NVTX3_V1_FUNC_RANGE_IF
+#define NVTX3_FUNC_RANGE_IN    NVTX3_V1_FUNC_RANGE_IN
+#define NVTX3_FUNC_RANGE_IF_IN NVTX3_V1_FUNC_RANGE_IF_IN
 /* clang format on */
 #endif
 
