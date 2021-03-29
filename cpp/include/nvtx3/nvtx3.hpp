@@ -97,6 +97,7 @@
 #include <string>
 #include <type_traits>
 #include <utility>
+#include <cstddef>
 
 /**
  * @file nvtx3.hpp
@@ -1932,17 +1933,50 @@ private:
 
 /**
  * @brief Handle used for correlating explicit range start and end events.
+ * 
+ * A handle is "null" if it does not correspond to any range.
  *
  */
 struct range_handle {
   /// Type used for the handle's value
   using value_type = nvtxRangeId_t;
 
+
   /**
    * @brief Construct a `range_handle` from the given id.
    *
    */
   constexpr explicit range_handle(value_type id) noexcept : _range_id{id} {}
+
+  /**
+   * @brief Constructs a null range handle.
+   *
+   * A null range_handle corresponds to no range. Calling `end_range` on a null handle is undefined
+   * behavior.
+   *
+   */
+  constexpr range_handle() noexcept = default;
+
+  /**
+   * @brief Checks whether this handle is null
+   * 
+   * Provides contextual conversion to `bool`.
+   * 
+   * \code{cpp}
+   * range_handle handle{};
+   * if(handle){...}
+   * \endcode
+   *
+   */
+  constexpr explicit operator bool() const noexcept { return get_value() != null_range_id; };
+
+  /**
+   * @brief Implicit conversion from `nullptr` constructs a null handle.
+   *
+   * Satisfies the "NullablePointer" requirement to make `range_handle` comparable with `nullptr`.
+   *
+   */
+  constexpr range_handle(std::nullptr_t) noexcept {}
 
   /**
    * @brief Returns the `range_handle`'s value
@@ -1952,8 +1986,30 @@ struct range_handle {
   constexpr value_type get_value() const noexcept { return _range_id; }
 
  private:
-  value_type _range_id{};  ///< The underlying NVTX range id
+  /// Sentinel value for a null handle that corresponds to no range
+  static constexpr value_type null_range_id = nvtxRangeId_t{0};
+
+  value_type _range_id{null_range_id};  ///< The underlying NVTX range id
 };
+
+/**
+ * @brief Compares two range_handles for equality
+ * 
+ * @param lhs The first range_handle to compare
+ * @param rhs The second range_handle to compare
+ */
+constexpr bool operator==(range_handle lhs, range_handle rhs) noexcept
+{
+  return lhs.get_value() == rhs.get_value();
+}
+
+/**
+ * @brief Compares two range_handles for inequality
+ * 
+ * @param lhs The first range_handle to compare
+ * @param rhs The second range_handle to compare
+ */
+constexpr bool operator!=(range_handle lhs, range_handle rhs) noexcept { return !(lhs == rhs); }
 
 /**
  * @brief Manually begin an NVTX range.
@@ -2070,19 +2126,41 @@ template <typename D = domain::global>
 class domain_process_range {
  public:
   /**
-   * @brief Construct a new domain process range object
+   * @brief Construct a new domain process range object with the specified event attributes
    *
-   * @param attr
+   * Example:
+   * \code{cpp}
+   * nvtx3::event_attributes attr{"msg", nvtx3::rgb{127,255,0}};
+   * nvtx3::domain_process_range<> range{attr}; // Creates a range with message contents
+   *                                            // "msg" and green color
+   * \endcode
+   *
+   * @param[in] attr `event_attributes` that describes the desired attributes
+   * of the range.
    */
   explicit domain_process_range(event_attributes const& attr) noexcept
-    : handle_{new range_handle{start_range<D>(attr)}}
+    : handle_{start_range<D>(attr)}
   {
   }
 
   /**
-   * @brief Construct a new domain process range object
+   * @brief Constructs a `domain_process_range` from the constructor arguments
+   * of an `event_attributes`.
    *
-   * @param args
+   * Forwards the arguments `args...` to construct an
+   * `event_attributes` object. The `event_attributes` object is then
+   * associated with the `domain_process_range`.
+   *
+   * For more detail, see `event_attributes` documentation.
+   *
+   * Example:
+   * ```
+   * // Creates a range with message "message" and green color
+   * nvtx3::domain_process_range<> r{"message", nvtx3::rgb{127,255,0}};
+   * ```
+   *
+   * @param[in] args Variadic parameter pack of arguments to construct an `event_attributes`
+   * associated with this range.
    */
   template <typename... Args>
   explicit domain_process_range(Args const&... args) noexcept
@@ -2091,7 +2169,8 @@ class domain_process_range {
   }
 
   /**
-   * @brief Construct a new domain process range object
+   * @brief Default constructor creates a `domain_process_range` with no
+   * message, color, payload, nor category.
    *
    */
   constexpr domain_process_range() noexcept : domain_process_range{event_attributes{}} {}
@@ -2100,27 +2179,23 @@ class domain_process_range {
    * @brief Destroy the `domain_process_range` ending the range.
    *
    */
-  ~domain_process_range()
-  {
-    if (handle_) { end_range(*handle_); }
-  }
+  ~domain_process_range() noexcept = default;
 
   /**
    * @brief Move constructor allows taking ownership of the NVTX range from
    * another `domain_process_range`.
    *
-   * @param other
+   * @param other The range to take ownership of
    */
-  domain_process_range(domain_process_range&& other) = default;
+  domain_process_range(domain_process_range&& other) noexcept = default;
 
   /**
    * @brief Move assignment operator allows taking ownership of an NVTX range
    * from another `domain_process_range`.
    *
-   * @param other
-   * @return domain_process_range&
+   * @param other The range to take ownership of
    */
-  domain_process_range& operator=(domain_process_range&& other) = default;
+  domain_process_range& operator=(domain_process_range&& other) noexcept = default;
 
   /// Copy construction is not allowed to prevent multiple objects from owning
   /// the same range handle
@@ -2131,8 +2206,12 @@ class domain_process_range {
   domain_process_range& operator=(domain_process_range const&) = delete;
 
  private:
-  std::unique_ptr<range_handle> handle_;  ///< Range handle used to correlate
-                                          ///< the start/end of the range
+  struct end_range_handle {
+    using pointer = range_handle;  /// Override the pointer type of the unique_ptr
+    void operator()(range_handle h) const noexcept { end_range(h); }
+  };
+  std::unique_ptr<range_handle, end_range_handle> handle_;  ///< Range handle used to correlate
+                                                            ///< the start/end of the range
 };
 
 /**
