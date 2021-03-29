@@ -2236,7 +2236,7 @@ inline void mark(event_attributes const& attr) noexcept
 #else
 #define NVTX3_V1_FUNC_RANGE_IN(D)
 #define NVTX3_V1_FUNC_RANGE_IF_IN(D, C)
-#endif
+#endif  // NVTX_DISABLE
 
 /**
  * @brief Convenience macro for generating a range in the global domain from the
