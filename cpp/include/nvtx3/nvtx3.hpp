@@ -1885,6 +1885,51 @@ class domain_thread_range {
  */
 using thread_range = domain_thread_range<>;
 
+namespace detail {
+
+/// @cond internal
+template <typename D = domain::global>
+class optional_domain_thread_range
+{
+public:
+  optional_domain_thread_range() = default;
+
+  void begin(event_attributes const& attr) noexcept
+  {
+#ifndef NVTX_DISABLE
+    // This class is not meant to be part of the public NVTX C++ API and should
+    // only be used in the `NVTX3_FUNC_RANGE_IF` and `NVTX3_FUNC_RANGE_IF_IN`
+    // macros. However, to prevent developers from misusing this class, make
+    // sure to not start multiple ranges.
+    if (initialized) { return; }
+
+    nvtxDomainRangePushEx(domain::get<D>(), attr.get());
+    initialized = true;
+#endif
+  }
+
+  ~optional_domain_thread_range() noexcept
+  {
+#ifndef NVTX_DISABLE
+    if (initialized) { nvtxDomainRangePop(domain::get<D>()); }
+#endif
+  }
+
+  void* operator new(std::size_t) = delete;
+  optional_domain_thread_range(optional_domain_thread_range const&) = delete;
+  optional_domain_thread_range& operator=(optional_domain_thread_range const&) = delete;
+  optional_domain_thread_range(optional_domain_thread_range&&) = delete;
+  optional_domain_thread_range& operator=(optional_domain_thread_range&&) = delete;
+
+private:
+#ifndef NVTX_DISABLE
+  bool initialized = false;
+#endif
+};
+/// @endcond
+
+} // namespace detail
+
 /**
  * @brief Handle used for correlating explicit range start and end events.
  *
@@ -2131,6 +2176,7 @@ inline void mark(event_attributes const& attr) noexcept
 
 }  // namespace nvtx3
 
+#ifndef NVTX_DISABLE
 /**
  * @brief Convenience macro for generating a range in the specified `domain`
  * from the lifetime of a function
@@ -2159,14 +2205,38 @@ inline void mark(event_attributes const& attr) noexcept
  * `domain` to which the `registered_string` belongs. Else,
  * `domain::global` to  indicate that the global NVTX domain should be used.
  */
-#ifndef NVTX_DISABLE
 #define NVTX3_V1_FUNC_RANGE_IN(D)                                                  \
   static ::nvtx3::v1::registered_string<D> const nvtx3_func_name__{__func__};      \
   static ::nvtx3::v1::event_attributes const nvtx3_func_attr__{nvtx3_func_name__}; \
   ::nvtx3::v1::domain_thread_range<D> const nvtx3_range__{nvtx3_func_attr__};
+
+/**
+ * @brief Convenience macro for generating a range in the specified `domain`
+ * from the lifetime of a function if the given boolean expression evaluates
+ * to true.
+ *
+ * Similar to `NVTX3_V1_FUNC_RANGE_IN(D)`, the only difference being that
+ * `NVTX3_V1_FUNC_RANGE_IF_IN(D, C)` only generates a range if the given boolean
+ * expression evaluates to true.
+ *
+ * @param[in] D Type containing `name` member used to identify the
+ * `domain` to which the `registered_string` belongs. Else,
+ * `domain::global` to indicate that the global NVTX domain should be used.
+ *
+ * @param[in] C Boolean expression used to determine if a range should be
+ * generated.
+ */
+#define NVTX3_V1_FUNC_RANGE_IF_IN(D, C) \
+  ::nvtx3::v1::detail::optional_domain_thread_range<D> optional_nvtx3_range__;       \
+  if (C) {                                                                           \
+    static ::nvtx3::v1::registered_string<D> const nvtx3_func_name__{__func__};      \
+    static ::nvtx3::v1::event_attributes const nvtx3_func_attr__{nvtx3_func_name__}; \
+    optional_nvtx3_range__.begin(nvtx3_func_attr__);                                 \
+  }
 #else
 #define NVTX3_V1_FUNC_RANGE_IN(D)
-#endif
+#define NVTX3_V1_FUNC_RANGE_IF_IN(D, C)
+#endif  // NVTX_DISABLE
 
 /**
  * @brief Convenience macro for generating a range in the global domain from the
@@ -2192,12 +2262,27 @@ inline void mark(event_attributes const& attr) noexcept
  */
 #define NVTX3_V1_FUNC_RANGE() NVTX3_V1_FUNC_RANGE_IN(::nvtx3::v1::domain::global)
 
+/**
+ * @brief Convenience macro for generating a range in the global domain from the
+ * lifetime of a function if the given boolean expression evaluates to true.
+ *
+ * Similar to `NVTX3_V1_FUNC_RANGE()`, the only difference being that
+ * `NVTX3_V1_FUNC_RANGE_IF(C)` only generates a range if the given boolean
+ * expression evaluates to true.
+ *
+ * @param[in] C Boolean expression used to determine if a range should be
+ * generated.
+ */
+#define NVTX3_V1_FUNC_RANGE_IF(C) NVTX3_V1_FUNC_RANGE_IF_IN(::nvtx3::v1::domain::global, C)
+
 /* When inlining this version, versioned macros must have unversioned aliases.
  * For each NVTX3_Vx_ #define, make an NVTX3_ alias of it here.*/
 #if defined(NVTX3_INLINE_THIS_VERSION)
 /* clang format off */
-#define NVTX3_FUNC_RANGE_IN   NVTX3_V1_FUNC_RANGE_IN
-#define NVTX3_FUNC_RANGE      NVTX3_V1_FUNC_RANGE
+#define NVTX3_FUNC_RANGE       NVTX3_V1_FUNC_RANGE
+#define NVTX3_FUNC_RANGE_IF    NVTX3_V1_FUNC_RANGE_IF
+#define NVTX3_FUNC_RANGE_IN    NVTX3_V1_FUNC_RANGE_IN
+#define NVTX3_FUNC_RANGE_IF_IN NVTX3_V1_FUNC_RANGE_IF_IN
 /* clang format on */
 #endif
 
