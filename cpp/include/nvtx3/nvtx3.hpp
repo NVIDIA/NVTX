@@ -2089,15 +2089,19 @@ range_handle start_range(Args const&... args) noexcept
  * prior call to `start_range`. The range may end on a different thread from
  * where it began.
  *
- * This function does not have a Domain tag type template parameter as the
- * handle `r` already indicates the domain to which the range belongs.
- *
+ * @tparam D Type containing `name` member used to identify the `domain` to
+ * which the range belongs. Else, `domain::global` to indicate that the global
+ * NVTX domain should be used.
  * @param r Handle to a range started by a prior call to `start_range`.
+ *
+ * @warning The domain type specified as template parameter to this function
+ * must be the same that was specified on the associated `start_range` call.
  */
+template <typename D = domain::global>
 inline void end_range(range_handle r) noexcept
 {
 #ifndef NVTX_DISABLE
-  nvtxRangeEnd(r.get_value());
+  nvtxDomainRangeEnd(domain::get<D>(), r.get_value());
 #else
   (void)r;
 #endif
@@ -2206,12 +2210,14 @@ class domain_process_range {
   domain_process_range& operator=(domain_process_range const&) = delete;
 
  private:
+  template <typename D>
   struct end_range_handle {
     using pointer = range_handle;  /// Override the pointer type of the unique_ptr
-    void operator()(range_handle h) const noexcept { end_range(h); }
+    void operator()(range_handle h) const noexcept { end_range<D>(h); }
   };
-  std::unique_ptr<range_handle, end_range_handle> handle_;  ///< Range handle used to correlate
-                                                            ///< the start/end of the range
+  
+  /// Range handle used to correlate the start/end of the range
+  std::unique_ptr<range_handle, end_range_handle<D>> handle_;  
 };
 
 /**
