@@ -20,9 +20,9 @@
 
 /* This section handles the decision of whether to provide unversioned symbols.
  * If NVTX3_CPP_REQUIRE_EXPLICIT_VERSION is #defined, unversioned symbols are
- * not provided, and explicit-version symbols such as nvtx3::v1::thread_range
+ * not provided, and explicit-version symbols such as nvtx3::v1::scoped_range
  * and NVTX3_V1_FUNC_RANGE must be used.  By default, the first #include of this
- * header will define the unversioned symbols such as nvtx3::thread_range and
+ * header will define the unversioned symbols such as nvtx3::scoped_range and
  * NVTX3_FUNC_RANGE.  Subsequently including a different major version of this
  * header without #defining NVTX3_CPP_REQUIRE_EXPLICIT_VERSION triggers an error
  * since the symbols would conflict.  Subsequently including of a different
@@ -112,7 +112,7 @@
  *
  * \section QUICK_START Quick Start
  *
- * To add NVTX ranges to your code, use the `nvtx3::thread_range` RAII object. A
+ * To add NVTX ranges to your code, use the `nvtx3::scoped_range` RAII object. A
  * range begins when the object is created, and ends when the object is
  * destroyed.
  *
@@ -121,10 +121,10 @@
  * void some_function(){
  *    // Begins a NVTX range with the messsage "some_function"
  *    // The range ends when some_function() returns and `r` is destroyed
- *    nvtx3::thread_range r{"some_function"};
+ *    nvtx3::scoped_range r{"some_function"};
  *
  *    for(int i = 0; i < 6; ++i){
- *       nvtx3::thread_range loop{"loop range"};
+ *       nvtx3::scoped_range loop{"loop range"};
  *       std::this_thread::sleep_for(std::chrono::seconds{1});
  *    }
  * } // Range ends when `r` is destroyed
@@ -179,19 +179,19 @@
  * requires calling `nvtxRangePop()` before all possible return points.
  *
  * NVTX++ solves this inconvenience through the "RAII" technique by providing a
- * `nvtx3::thread_range` class that begins a range at construction and ends the
+ * `nvtx3::scoped_range` class that begins a range at construction and ends the
  * range on destruction. The above example then becomes:
  *
  * ```
  * void my_function(...){
- *    nvtx3::thread_range r{"my_function"}; // Begins NVTX range
+ *    nvtx3::scoped_range r{"my_function"}; // Begins NVTX range
  *    // do work
  * } // Range ends on exit from `my_function` when `r` is destroyed
  * ```
  *
  * The range object `r` is deterministically destroyed whenever `my_function`
  * returns---ending the NVTX range without manual intervention. For more
- * information, see \ref RANGES and `nvtx3::domain_thread_range`.
+ * information, see \ref RANGES and `nvtx3::scoped_range_in`.
  *
  * Another inconvenience of the NVTX C APIs are the several constructs where the
  * user is expected to initialize an object at the beginning of an application
@@ -240,18 +240,18 @@
  * lifetime of objects. Similar to `std::lock_guard` in the C++ Standard
  * Template Library.
  *
- * \subsection THREAD_RANGE Thread Range
+ * \subsection scoped_range Thread Range
  *
- * `nvtx3::domain_thread_range` is a class that begins a range upon construction
+ * `nvtx3::scoped_range_in` is a class that begins a range upon construction
  * and ends the range at destruction. This is one of the most commonly used
  * constructs in NVTX++ and is useful for annotating spans of time on a
  * particular thread. These ranges can be nested to arbitrary depths.
  *
- * `nvtx3::thread_range` is an alias for a `nvtx3::domain_thread_range` in the
+ * `nvtx3::scoped_range` is an alias for a `nvtx3::scoped_range_in` in the
  * global NVTX domain. For more information about Domains, see \ref DOMAINS.
  *
  * Various attributes of a range can be configured constructing a
- * `nvtx3::domain_thread_range` with a `nvtx3::event_attributes` object. For
+ * `nvtx3::scoped_range_in` with a `nvtx3::event_attributes` object. For
  * more information, see \ref ATTRIBUTES.
  *
  * Example:
@@ -259,24 +259,24 @@
  * \code{.cpp}
  * void some_function(){
  *    // Creates a range for the duration of `some_function`
- *    nvtx3::thread_range r{};
+ *    nvtx3::scoped_range r{};
  *
  *    while(true){
  *       // Creates a range for every loop iteration
  *       // `loop_range` is nested inside `r`
- *       nvtx3::thread_range loop_range{};
+ *       nvtx3::scoped_range loop_range{};
  *    }
  * }
  * \endcode
  *
- * \subsection PROCESS_RANGE Process Range
+ * \subsection unique_range Process Range
  *
- * `nvtx3::domain_process_range` is identical to `nvtx3::domain_thread_range`
- * with the exception that a `domain_process_range` can be created and destroyed
+ * `nvtx3::unique_range_in` is identical to `nvtx3::scoped_range_in`
+ * with the exception that a `unique_range_in` can be created and destroyed
  * on different threads. This is useful to annotate spans of time that can
  * bridge multiple threads.
  *
- * `nvtx3::domain_thread_range`s should be preferred unless one needs the
+ * `nvtx3::scoped_range_in`s should be preferred unless one needs the
  * ability to begin and end a range on different threads.
  *
  * \section MARKS Marks
@@ -319,20 +319,20 @@
  * The tag type `nvtx3::domain::global` represents the global NVTX domain.
  *
  * \code{.cpp}
- * // By default, `domain_thread_range` belongs to the global domain
- * nvtx3::domain_thread_range<> r0{};
+ * // By default, `scoped_range_in` belongs to the global domain
+ * nvtx3::scoped_range_in<> r0{};
  *
- * // Alias for a `domain_thread_range` in the global domain
- * nvtx3::thread_range r1{};
+ * // Alias for a `scoped_range_in` in the global domain
+ * nvtx3::scoped_range r1{};
  *
  * // `r` belongs to the custom domain
- * nvtx3::domain_thread_range<my_domain> r{};
+ * nvtx3::scoped_range_in<my_domain> r{};
  * \endcode
  *
  * When using a custom domain, it is reccomended to define type aliases for NVTX
  * constructs in the custom domain.
  * ```
- * using my_thread_range = nvtx3::domain_thread_range<my_domain>;
+ * using my_scoped_range = nvtx3::scoped_range_in<my_domain>;
  * using my_registered_string = nvtx3::registered_string<my_domain>;
  * using my_named_category = nvtx3::named_category<my_domain>;
  * ```
@@ -513,21 +513,21 @@
  * struct my_message{ static constexpr char const* message{"my message"}; };
  *
  * // For convenience, use aliases for domain scoped objects
- * using my_thread_range = nvtx3::domain_thread_range<my_domain>;
+ * using my_scoped_range = nvtx3::scoped_range_in<my_domain>;
  * using my_registered_string = nvtx3::registered_string<my_domain>;
  * using my_named_category = nvtx3::named_category<my_domain>;
  *
  * // Default values for all attributes
  * nvtx3::event_attributes attr{};
- * my_thread_range r0{attr};
+ * my_scoped_range r0{attr};
  *
  * // Custom (unregistered) message, and unnamed category
  * nvtx3::event_attributes attr1{"message", nvtx3::category{2}};
- * my_thread_range r1{attr1};
+ * my_scoped_range r1{attr1};
  *
  * // Alternatively, pass arguments of `event_attributes` ctor directly to
- * // `my_thread_range`
- * my_thread_range r2{"message", nvtx3::category{2}};
+ * // `my_scoped_range`
+ * my_scoped_range r2{"message", nvtx3::category{2}};
  *
  * // construct on first use a registered string
  * auto msg = my_registered_string::get<my_message>();
@@ -536,11 +536,11 @@
  * auto category = my_named_category::get<my_category>();
  *
  * // Use registered string and named category
- * my_thread_range r3{msg, category, nvtx3::rgb{127, 255, 0},
+ * my_scoped_range r3{msg, category, nvtx3::rgb{127, 255, 0},
  *                    nvtx3::payload{42}};
  *
  * // Any number of arguments in any order
- * my_thread_range r{nvtx3::rgb{127, 255,0}, msg};
+ * my_scoped_range r{nvtx3::rgb{127, 255,0}, msg};
  *
  * \endcode
  * \section MACROS Convenience Macros
@@ -550,7 +550,7 @@
  *
  * A convenient way to do this is to use the \ref NVTX3_FUNC_RANGE and
  * \ref NVTX3_FUNC_RANGE_IN macros. These macros take care of constructing an
- * `nvtx3::domain_thread_range` with the name of the enclosing function as the
+ * `nvtx3::scoped_range_in` with the name of the enclosing function as the
  * range's message.
  *
  * \code{.cpp}
@@ -662,18 +662,18 @@ constexpr auto has_name_member() noexcept -> decltype(T::name, bool())
  *
  * // The NVTX range `r` will be grouped with all other NVTX constructs
  * // associated with  `my_domain`.
- * nvtx3::domain_thread_range<my_domain> r{};
+ * nvtx3::scoped_range_in<my_domain> r{};
  *
- * // An alias can be created for a `domain_thread_range` in the custom domain
- * using my_thread_range = nvtx3::domain_thread_range<my_domain>;
- * my_thread_range my_range{};
+ * // An alias can be created for a `scoped_range_in` in the custom domain
+ * using my_scoped_range = nvtx3::scoped_range_in<my_domain>;
+ * my_scoped_range my_range{};
  *
  * // `domain::global` indicates that the global NVTX domain is used
- * nvtx3::domain_thread_range<domain::global> r2{};
+ * nvtx3::scoped_range_in<domain::global> r2{};
  *
- * // For convenience, `nvtx3::thread_range` is an alias for a range in the
+ * // For convenience, `nvtx3::scoped_range` is an alias for a range in the
  * // global domain
- * nvtx3::thread_range r3{};
+ * nvtx3::scoped_range r3{};
  * ```
  */
 class domain {
@@ -695,7 +695,7 @@ class domain {
    *
    * None of the constructs in this header require the user to directly invoke
    * `domain::get`. It is automatically invoked when constructing objects like
-   * a `domain_thread_range` or `category`. Advanced users may wish to use
+   * a `scoped_range_in` or `category`. Advanced users may wish to use
    * `domain::get` for the convenience of the "construct on first use" idiom
    * when using domains with their own use of the NVTX C API.
    *
@@ -1014,10 +1014,10 @@ class color {
  * nvtx3::category cat1{1};
  *
  * // Range `r1` belongs to the category identified by the value `1`.
- * nvtx3::thread_range r1{cat1};
+ * nvtx3::scoped_range r1{cat1};
  *
  * // Range `r2` belongs to the same category as `r1`
- * nvtx3::thread_range r2{nvtx3::category{1}};
+ * nvtx3::scoped_range r2{nvtx3::category{1}};
  * \endcode
  *
  * To associate a name string with a category id, see `named_category`.
@@ -1079,7 +1079,7 @@ class category {
  * static nvtx3::named_category static_category{42, "my category"};
  *
  * // Range `r` associated with category id `42`
- * nvtx3::thread_range r{static_category};
+ * nvtx3::scoped_range r{static_category};
  *
  * // OR use construct on first use:
  *
@@ -1094,7 +1094,7 @@ class category {
  * auto my_category = named_category<my_domain>::get<my_category>();
  *
  * // Range `r` associated with category id `42`
- * nvtx3::thread_range r{my_category};
+ * nvtx3::scoped_range r{my_category};
  * \endcode
  *
  * `named_category`'s association of a name to a category id is local to the
@@ -1132,7 +1132,7 @@ class named_category final : public category {
    * auto cat = named_category<my_domain>::get<my_category>();
    *
    * // Range `r` associated with category id `42`
-   * nvtx3::thread_range r{cat};
+   * nvtx3::scoped_range r{cat};
    * \endcode
    *
    * Uses the "construct on first use" idiom to safely ensure the `category`
@@ -1214,7 +1214,7 @@ class named_category final : public category {
  * static registered_string<my_domain> static_message{"message"};
  *
  * // "message" is associated with the range `r`
- * nvtx3::thread_range r{static_message};
+ * nvtx3::scoped_range r{static_message};
  *
  * // Or use construct on first use:
  *
@@ -1227,7 +1227,7 @@ class named_category final : public category {
  * auto msg = registered_string<my_domain>::get<my_message>();
  *
  * // "my message" is associated with the range `r`
- * nvtx3::thread_range r{msg};
+ * nvtx3::scoped_range r{msg};
  * \endcode
  *
  * `registered_string`s are local to a particular domain specified via
@@ -1265,7 +1265,7 @@ class registered_string {
    * auto msg = registered_string<my_domain>::get<my_message>();
    *
    * // "my message" is associated with the range `r`
-   * nvtx3::thread_range r{msg};
+   * nvtx3::scoped_range r{msg};
    * \endcode
    *
    * @tparam M Type required to contain a member `M::message` that
@@ -1374,7 +1374,7 @@ class registered_string {
  * nvtx3::event_attributes attr0{nvtx3::message{"message 0"}};
  *
  * // `range0` contains message "message 0"
- * nvtx3::thread_range range0{attr0};
+ * nvtx3::scoped_range range0{attr0};
  *
  * // `std::string` and string literals are implicitly assumed to be
  * // the contents of an `nvtx3::message`
@@ -1382,15 +1382,15 @@ class registered_string {
  * nvtx3::event_attributes attr1{"message 1"};
  *
  * // `range1` contains message "message 1"
- * nvtx3::thread_range range1{attr1};
+ * nvtx3::scoped_range range1{attr1};
  *
  * // `range2` contains message "message 2"
- * nvtx3::thread_range range2{nvtx3::Mesage{"message 2"}};
+ * nvtx3::scoped_range range2{nvtx3::Mesage{"message 2"}};
  *
  * // `std::string` and string literals are implicitly assumed to be
  * // the contents of an `nvtx3::message`
  * // `range3` contains message "message 3"
- * nvtx3::thread_range range3{"message 3"};
+ * nvtx3::scoped_range range3{"message 3"};
  * \endcode
  */
 class message {
@@ -1494,10 +1494,10 @@ class message {
  *                                                 // the `int32_t` value 42
  *
  * // `range0` will have an int32_t payload of 42
- * nvtx3::thread_range range0{attr};
+ * nvtx3::scoped_range range0{attr};
  *
  * // range1 has double payload of 3.14
- * nvtx3::thread_range range1{ nvtx3::payload{3.14} };
+ * nvtx3::scoped_range range1{ nvtx3::payload{3.14} };
  * ```
  */
 class payload {
@@ -1640,13 +1640,13 @@ class payload {
  * is 42
  *
  * // Range `r` will be customized according the attributes in `attr`
- * nvtx3::thread_range r{attr};
+ * nvtx3::scoped_range r{attr};
  *
  * // For convenience, the arguments that can be passed to the
  * `event_attributes`
- * // constructor may be passed to the `domain_thread_range` contructor where
+ * // constructor may be passed to the `scoped_range_in` contructor where
  * // they will be forwarded to the `EventAttribute`s constructor
- * nvtx3::thread_range r{nvtx3::payload{42}, nvtx3::category{1}, "message"};
+ * nvtx3::scoped_range r{nvtx3::payload{42}, nvtx3::category{1}, "message"};
  * \endcode
  *
  */
@@ -1756,16 +1756,16 @@ class event_attributes {
  * When constructed, begins a nested NVTX range on the calling thread in the
  * specified domain. Upon destruction, ends the NVTX range.
  *
- * Behavior is undefined if a `domain_thread_range` object is
+ * Behavior is undefined if a `scoped_range_in` object is
  * created/destroyed on different threads.
  *
- * `domain_thread_range` is neither moveable nor copyable.
+ * `scoped_range_in` is neither moveable nor copyable.
  *
- * `domain_thread_range`s may be nested within other ranges.
+ * `scoped_range_in`s may be nested within other ranges.
  *
  * The domain of the range is specified by the template type parameter `D`.
  * By default, the `domain::global` is used, which scopes the range to the
- * global NVTX domain. The convenience alias `thread_range` is provided for
+ * global NVTX domain. The convenience alias `scoped_range` is provided for
  * ranges scoped to the global domain.
  *
  * A custom domain can be defined by creating a type, `D`, with a static
@@ -1783,30 +1783,30 @@ class event_attributes {
  *
  * Usage:
  * ```
- * nvtx3::domain_thread_range<> r0{"range 0"}; // Range in global domain
+ * nvtx3::scoped_range_in<> r0{"range 0"}; // Range in global domain
  *
- * nvtx3::thread_range r1{"range 1"}; // Alias for range in global domain
+ * nvtx3::scoped_range r1{"range 1"}; // Alias for range in global domain
  *
- * nvtx3::domain_thread_range<my_domain> r2{"range 2"}; // Range in custom
+ * nvtx3::scoped_range_in<my_domain> r2{"range 2"}; // Range in custom
  * domain
  *
  * // specify an alias to a range that uses a custom domain
- * using my_thread_range = nvtx3::domain_thread_range<my_domain>;
+ * using my_scoped_range = nvtx3::scoped_range_in<my_domain>;
  *
- * my_thread_range r3{"range 3"}; // Alias for range in custom domain
+ * my_scoped_range r3{"range 3"}; // Alias for range in custom domain
  * ```
  */
 template <class D = domain::global>
-class domain_thread_range {
+class scoped_range_in {
  public:
   /**
-   * @brief Construct a `domain_thread_range` with the specified
+   * @brief Construct a `scoped_range_in` with the specified
    * `event_attributes`
    *
    * Example:
    * ```
    * nvtx3::event_attributes attr{"msg", nvtx3::rgb{127,255,0}};
-   * nvtx3::domain_thread_range<> range{attr}; // Creates a range with message
+   * nvtx3::scoped_range_in<> range{attr}; // Creates a range with message
    * contents
    *                                    // "msg" and green color
    * ```
@@ -1814,7 +1814,7 @@ class domain_thread_range {
    * @param[in] attr `event_attributes` that describes the desired attributes
    * of the range.
    */
-  explicit domain_thread_range(event_attributes const& attr) noexcept
+  explicit scoped_range_in(event_attributes const& attr) noexcept
   {
 #ifndef NVTX_DISABLE
     nvtxDomainRangePushEx(domain::get<D>(), attr.get());
@@ -1824,19 +1824,19 @@ class domain_thread_range {
   }
 
   /**
-   * @brief Constructs a `domain_thread_range` from the constructor arguments
+   * @brief Constructs a `scoped_range_in` from the constructor arguments
    * of an `event_attributes`.
    *
    * Forwards the arguments `args...` to construct an
    * `event_attributes` object. The `event_attributes` object is then
-   * associated with the `domain_thread_range`.
+   * associated with the `scoped_range_in`.
    *
    * For more detail, see `event_attributes` documentation.
    *
    * Example:
    * ```
    * // Creates a range with message "message" and green color
-   * nvtx3::domain_thread_range<> r{"message", nvtx3::rgb{127,255,0}};
+   * nvtx3::scoped_range_in<> r{"message", nvtx3::rgb{127,255,0}};
    * ```
    *
    * @param[in] args Arguments to used to construct an `event_attributes` associated with this
@@ -1844,35 +1844,35 @@ class domain_thread_range {
    *
    */
   template <typename... Args>
-  explicit domain_thread_range(Args const&... args) noexcept
-    : domain_thread_range{event_attributes{args...}}
+  explicit scoped_range_in(Args const&... args) noexcept
+    : scoped_range_in{event_attributes{args...}}
   {
   }
 
   /**
-   * @brief Default constructor creates a `domain_thread_range` with no
+   * @brief Default constructor creates a `scoped_range_in` with no
    * message, color, payload, nor category.
    *
    */
-  domain_thread_range() noexcept : domain_thread_range{event_attributes{}} {}
+  scoped_range_in() noexcept : scoped_range_in{event_attributes{}} {}
 
   /**
    * @brief Delete `operator new` to disallow heap allocated objects.
    *
-   * `domain_thread_range` must follow RAII semantics to guarantee proper push/pop semantics.
+   * `scoped_range_in` must follow RAII semantics to guarantee proper push/pop semantics.
    *
    */
   void* operator new(std::size_t) = delete;
 
-  domain_thread_range(domain_thread_range const&) = delete;
-  domain_thread_range& operator=(domain_thread_range const&) = delete;
-  domain_thread_range(domain_thread_range&&)                 = delete;
-  domain_thread_range& operator=(domain_thread_range&&) = delete;
+  scoped_range_in(scoped_range_in const&) = delete;
+  scoped_range_in& operator=(scoped_range_in const&) = delete;
+  scoped_range_in(scoped_range_in&&)                 = delete;
+  scoped_range_in& operator=(scoped_range_in&&) = delete;
 
   /**
-   * @brief Destroy the domain_thread_range, ending the NVTX range event.
+   * @brief Destroy the scoped_range_in, ending the NVTX range event.
    */
-  ~domain_thread_range() noexcept
+  ~scoped_range_in() noexcept
   {
 #ifndef NVTX_DISABLE
     nvtxDomainRangePop(domain::get<D>());
@@ -1881,19 +1881,19 @@ class domain_thread_range {
 };
 
 /**
- * @brief Alias for a `domain_thread_range` in the global NVTX domain.
+ * @brief Alias for a `scoped_range_in` in the global NVTX domain.
  *
  */
-using thread_range = domain_thread_range<>;
+using scoped_range = scoped_range_in<>;
 
 namespace detail {
 
 /// @cond internal
 template <typename D = domain::global>
-class optional_domain_thread_range
+class optional_scoped_range_in
 {
 public:
-  optional_domain_thread_range() = default;
+  optional_scoped_range_in() = default;
 
   void begin(event_attributes const& attr) noexcept
   {
@@ -1909,7 +1909,7 @@ public:
 #endif
   }
 
-  ~optional_domain_thread_range() noexcept
+  ~optional_scoped_range_in() noexcept
   {
 #ifndef NVTX_DISABLE
     if (initialized) { nvtxDomainRangePop(domain::get<D>()); }
@@ -1917,10 +1917,10 @@ public:
   }
 
   void* operator new(std::size_t) = delete;
-  optional_domain_thread_range(optional_domain_thread_range const&) = delete;
-  optional_domain_thread_range& operator=(optional_domain_thread_range const&) = delete;
-  optional_domain_thread_range(optional_domain_thread_range&&) = delete;
-  optional_domain_thread_range& operator=(optional_domain_thread_range&&) = delete;
+  optional_scoped_range_in(optional_scoped_range_in const&) = delete;
+  optional_scoped_range_in& operator=(optional_scoped_range_in const&) = delete;
+  optional_scoped_range_in(optional_scoped_range_in&&) = delete;
+  optional_scoped_range_in& operator=(optional_scoped_range_in&&) = delete;
 
 private:
 #ifndef NVTX_DISABLE
@@ -2018,7 +2018,7 @@ constexpr bool operator!=(range_handle lhs, range_handle rhs) noexcept { return 
  * range, pass the handle to `end_range()`.
  *
  * `start_range/end_range` are the most explicit and lowest level APIs provided
- * for creating ranges.  Use of `nvtx3::domain_process_range` should be
+ * for creating ranges.  Use of `nvtx3::unique_range_in` should be
  * preferred unless one is unable to tie the range to the lifetime of an object.
  *
  * Example:
@@ -2065,7 +2065,7 @@ range_handle start_range(event_attributes const& attr) noexcept
  * \endcode
  *
  * `start_range/end_range` are the most explicit and lowest level APIs provided
- * for creating ranges.  Use of `nvtx3::domain_process_range` should be
+ * for creating ranges.  Use of `nvtx3::unique_range_in` should be
  * preferred unless one is unable to tie the range to the lifetime of an object.
  *
  * @param args[in] Variadiac parameter pack of the arguments for an `event_attributes`.
@@ -2113,20 +2113,20 @@ inline void end_range(range_handle r) noexcept
  * When constructed, begins a NVTX range in the specified domain. Upon
  * destruction, ends the NVTX range.
  *
- * Similar to `nvtx3::domain_thread_range`, the only difference being that
- * `domain_process_range` can start and end on different threads.
+ * Similar to `nvtx3::scoped_range_in`, the only difference being that
+ * `unique_range_in` can start and end on different threads.
  *
- * Use of `nvtx3::domain_thread_range` should be preferred unless one needs
+ * Use of `nvtx3::scoped_range_in` should be preferred unless one needs
  * the ability to start and end a range on different threads.
  *
- * `domain_process_range` is moveable, but not copyable.
+ * `unique_range_in` is moveable, but not copyable.
  *
  * @tparam D Type containing `name` member used to identify the `domain`
- * to which the `domain_process_range` belongs. Else, `domain::global` to
+ * to which the `unique_range_in` belongs. Else, `domain::global` to
  * indicate that the global NVTX domain should be used.
  */
 template <typename D = domain::global>
-class domain_process_range {
+class unique_range_in {
  public:
   /**
    * @brief Construct a new domain process range object with the specified event attributes
@@ -2134,79 +2134,79 @@ class domain_process_range {
    * Example:
    * \code{cpp}
    * nvtx3::event_attributes attr{"msg", nvtx3::rgb{127,255,0}};
-   * nvtx3::domain_process_range<> range{attr}; // Creates a range with message contents
+   * nvtx3::unique_range_in<> range{attr}; // Creates a range with message contents
    *                                            // "msg" and green color
    * \endcode
    *
    * @param[in] attr `event_attributes` that describes the desired attributes
    * of the range.
    */
-  explicit domain_process_range(event_attributes const& attr) noexcept
+  explicit unique_range_in(event_attributes const& attr) noexcept
     : handle_{start_range<D>(attr)}
   {
   }
 
   /**
-   * @brief Constructs a `domain_process_range` from the constructor arguments
+   * @brief Constructs a `unique_range_in` from the constructor arguments
    * of an `event_attributes`.
    *
    * Forwards the arguments `args...` to construct an
    * `event_attributes` object. The `event_attributes` object is then
-   * associated with the `domain_process_range`.
+   * associated with the `unique_range_in`.
    *
    * For more detail, see `event_attributes` documentation.
    *
    * Example:
    * ```
    * // Creates a range with message "message" and green color
-   * nvtx3::domain_process_range<> r{"message", nvtx3::rgb{127,255,0}};
+   * nvtx3::unique_range_in<> r{"message", nvtx3::rgb{127,255,0}};
    * ```
    *
    * @param[in] args Variadic parameter pack of arguments to construct an `event_attributes`
    * associated with this range.
    */
   template <typename... Args>
-  explicit domain_process_range(Args const&... args) noexcept
-    : domain_process_range{event_attributes{args...}}
+  explicit unique_range_in(Args const&... args) noexcept
+    : unique_range_in{event_attributes{args...}}
   {
   }
 
   /**
-   * @brief Default constructor creates a `domain_process_range` with no
+   * @brief Default constructor creates a `unique_range_in` with no
    * message, color, payload, nor category.
    *
    */
-  constexpr domain_process_range() noexcept : domain_process_range{event_attributes{}} {}
+  constexpr unique_range_in() noexcept : unique_range_in{event_attributes{}} {}
 
   /**
-   * @brief Destroy the `domain_process_range` ending the range.
+   * @brief Destroy the `unique_range_in` ending the range.
    *
    */
-  ~domain_process_range() noexcept = default;
+  ~unique_range_in() noexcept = default;
 
   /**
    * @brief Move constructor allows taking ownership of the NVTX range from
-   * another `domain_process_range`.
+   * another `unique_range_in`.
    *
    * @param other The range to take ownership of
    */
-  domain_process_range(domain_process_range&& other) noexcept = default;
+  unique_range_in(unique_range_in&& other) noexcept = default;
 
   /**
    * @brief Move assignment operator allows taking ownership of an NVTX range
-   * from another `domain_process_range`.
+   * from another `unique_range_in`.
    *
    * @param other The range to take ownership of
    */
-  domain_process_range& operator=(domain_process_range&& other) noexcept = default;
+  unique_range_in& operator=(unique_range_in&& other) noexcept = default;
 
   /// Copy construction is not allowed to prevent multiple objects from owning
   /// the same range handle
-  domain_process_range(domain_process_range const&) = delete;
+  unique_range_in(unique_range_in const&) = delete;
 
   /// Copy assignment is not allowed to prevent multiple objects from owning the
   /// same range handle
-  domain_process_range& operator=(domain_process_range const&) = delete;
+  unique_range_in& operator=(unique_range_in const&) = delete;
 
  private:
   template <typename D>
@@ -2220,10 +2220,10 @@ class domain_process_range {
 };
 
 /**
- * @brief Alias for a `domain_process_range` in the global NVTX domain.
+ * @brief Alias for a `unique_range_in` in the global NVTX domain.
  *
  */
-using process_range = domain_process_range<>;
+using unique_range = unique_range_in<>;
 
 /**
  * @brief Annotates an instantaneous point in time with the attributes specified
@@ -2241,7 +2241,7 @@ using process_range = domain_process_range<>;
  * \endcode
  *
  * @tparam D Type containing `name` member used to identify the `domain`
- * to which the `domain_process_range` belongs. Else, `domain::global` to
+ * to which the `unique_range_in` belongs. Else, `domain::global` to
  * indicate that the global NVTX domain should be used.
  * @param[in] attr `event_attributes` that describes the desired attributes
  * of the mark.
@@ -2271,7 +2271,7 @@ inline void mark(event_attributes const& attr) noexcept
  *
  * Constructs a static `registered_string` using the name of the immediately
  * enclosing function returned by `__func__` and constructs a
- * `nvtx3::thread_range` using the registered function name as the range's
+ * `nvtx3::scoped_range` using the registered function name as the range's
  * message.
  *
  * Example:
@@ -2292,7 +2292,7 @@ inline void mark(event_attributes const& attr) noexcept
 #define NVTX3_V1_FUNC_RANGE_IN(D)                                                  \
   static ::nvtx3::v1::registered_string<D> const nvtx3_func_name__{__func__};      \
   static ::nvtx3::v1::event_attributes const nvtx3_func_attr__{nvtx3_func_name__}; \
-  ::nvtx3::v1::domain_thread_range<D> const nvtx3_range__{nvtx3_func_attr__};
+  ::nvtx3::v1::scoped_range_in<D> const nvtx3_range__{nvtx3_func_attr__};
 
 /**
  * @brief Convenience macro for generating a range in the specified `domain`
@@ -2311,7 +2311,7 @@ inline void mark(event_attributes const& attr) noexcept
  * generated.
  */
 #define NVTX3_V1_FUNC_RANGE_IF_IN(D, C) \
-  ::nvtx3::v1::detail::optional_domain_thread_range<D> optional_nvtx3_range__;       \
+  ::nvtx3::v1::detail::optional_scoped_range_in<D> optional_nvtx3_range__;       \
   if (C) {                                                                           \
     static ::nvtx3::v1::registered_string<D> const nvtx3_func_name__{__func__};      \
     static ::nvtx3::v1::event_attributes const nvtx3_func_attr__{nvtx3_func_name__}; \
@@ -2332,7 +2332,7 @@ inline void mark(event_attributes const& attr) noexcept
  *
  * Constructs a static `registered_string` using the name of the immediately
  * enclosing function returned by `__func__` and constructs a
- * `nvtx3::thread_range` using the registered function name as the range's
+ * `nvtx3::scoped_range` using the registered function name as the range's
  * message.
  *
  * Example:
