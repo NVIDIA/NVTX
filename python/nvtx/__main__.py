@@ -5,21 +5,30 @@ from optparse import OptionParser
 def main():
     from nvtx import profiler
 
-    usage = "%prog [options] script args ..."
-    parser = OptionParser(usage, prog="python -m nvtx")
-    parser.add_option(
-        "--profile_cfuncs",
-        action="store_true",
-        dest="profile_cfuncs",
-        default=False,
-        help="Also profile C-extension and builtin functions [default: %default]",
-    )
+    usage = "%prog [options] scriptfile [args] ..."
+
+    parser = OptionParser(usage)
     parser.add_option(
         "--linenos",
         action="store_true",
         dest="linenos",
+        default=True,
+        help="Include file and line number information in annotations. Otherwise, "
+              "only the function name is used [default: %default]"
+    )
+    parser.add_option(
+        "--no-linenos",
+        action="store_false",
+        dest="linenos",
+        default=True,
+        help="Do not include file and line number information in annotations."
+    )
+    parser.add_option(
+        "--annotate-cfuncs",
+        action="store_true",
+        dest="annotate_cfuncs",
         default=False,
-        help="Include file and line number information [default: %default]"
+        help="Also annotate C-extension and builtin functions [default: %default]",
     )
 
     options, args = parser.parse_args()
@@ -27,7 +36,12 @@ def main():
 
     sys.argv = args
 
-    sys.setprofile(profiler(profile_cfuncs=options.profile_cfuncs))
+    sys.setprofile(
+        profiler(
+            linenos=options.linenos,
+            annotate_cfuncs=options.annotate_cfuncs
+        )
+    )
     run_path(script_file)
     sys.setprofile(None)
 
