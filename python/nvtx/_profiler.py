@@ -1,34 +1,50 @@
 import os
+import  sys
 
-from nvtx import push_range, pop_range
+from nvtx._lib import (
+    push_range as libnvtx_push_range,
+    pop_range as libnvtx_pop_range,
+    EventAttributes,
+    Domain
+)
 
 
-def profiler(linenos=True, annotate_cfuncs=False):
-    """
-    Parameters
-    ----------
-    linenos: bool
-        If True, include file and line number information
-    annotate_cfuncs: bool
-        If True, also annotate calls to extension and builtin functions
-    """
-    def profile(frame, event, arg):
+class Profiler:
+
+    def __init__(self, linenos=True, annotate_cfuncs=True):
+        self.linenos = linenos
+        self.annotate_cfuncs = annotate_cfuncs
+        self.__domain = Domain("nvtx.py").handle
+        self.__attrib = EventAttributes("", "blue", None)
+
+    def profile(self, frame, event, arg):
         # profile function meant to be used with sys.setprofile
         if event == "call":
             name = frame.f_code.co_name
-            if linenos:
+            if self.linenos:
                 fname = os.path.basename(frame.f_code.co_filename)
                 lineno = frame.f_lineno
                 message = f"{fname}:{lineno}({name})"
             else:
                 message = name
-            push_range(message)
-        elif event == "c_call" and annotate_cfuncs:
-            message = arg.__name__
-            push_range(message)
+            self.push_range(message)
+        elif event == "c_call" and self.annotate_cfuncs:
+            self.push_range(arg.__name__)
         elif event == "return":
-            pop_range()
-        elif event in {"c_return", "c_exception"} and annotate_cfuncs:
-            pop_range()
+            self.pop_range()
+        elif event in {"c_return", "c_exception"} and self.annotate_cfuncs:
+            self.pop_range()
         return None
-    return profile
+
+    def push_range(self, message):
+        self.__attrib.message = message
+        libnvtx_push_range(self.__attrib, self.__domain)
+
+    def pop_range(self):
+        libnvtx_pop_range(self.__domain)
+
+    def enable(self):
+        sys.setprofile(self.profile)
+
+    def disable(self):
+        sys.setprofile(None)

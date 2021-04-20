@@ -14,4 +14,4 @@ from nvtx.nvtx import (
     mark
 )
 
-from nvtx._profiler import profiler
+from nvtx._profiler import Profiler
