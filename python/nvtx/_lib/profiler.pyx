@@ -4,17 +4,17 @@ import  sys
 from nvtx._lib import (
     push_range as libnvtx_push_range,
     pop_range as libnvtx_pop_range,
-    EventAttributes,
-    Domain
 )
 
+from nvtx._lib.lib cimport EventAttributes, DomainHandle
 
-class Profiler:
 
+cdef class Profiler:
+    
     def __init__(self, linenos=True, annotate_cfuncs=True):
         self.linenos = linenos
         self.annotate_cfuncs = annotate_cfuncs
-        self.__domain = Domain("nvtx.py").handle
+        self.__domain = DomainHandle("nvtx.py")
         self.__attrib = EventAttributes("", "blue", None)
 
     def profile(self, frame, event, arg):
