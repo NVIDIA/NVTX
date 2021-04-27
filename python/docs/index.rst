@@ -7,18 +7,21 @@
 nvtx - Annotate code ranges and events in Python
 ================================================
 
-``nvtx`` lets you annotate your Python code so that it can be analyzed and visualized
-using `NVIDIA Nsight Systems <https://developer.nvidia.com/nsight-systems>`_.
-This gives you a detailed timeline of execution
-of your Python program for the purposes of debugging and optimization.
+``nvtx`` gives your tools to annotate your Python code
+(or automatically annotates it for you).
+Annotated code can be analyzed and visualized by third-party applications such as
+`NVIDIA Nsight Systems <https://developer.nvidia.com/nsight-systems>`_.
+For example, you can produce detailed timelines of execution
+of Python programs annotated with ``nvtx``:
 
 .. image:: images/timeline.png
     :align: center
 
-Demo
-====
 
-Here is an example of code annotated using the annotation tools provided  by ``nvtx``:
+Quick Demo
+==========
+
+Here is an example of using the annotation tools provided  by ``nvtx``:
 
 ::
 
@@ -44,15 +47,16 @@ Here is an example of code annotated using the annotation tools provided  by ``n
 Adding annotations to your code doesn't achieve anything by itself.
 To derive something useful from annotated code,
 you'll need to use a third-party application that supports NVTX annotations.
-The command below uses the Nsight Systems command-line interface (CLI) to collect
+The command below uses the Nsight Systems command-line interface to collect
 information from the annotated code:
 
 ::
 
    nsys profile python demo.py
 
-This produces a ``.qdrep`` file that you can use with the Nsight Systems GUI
-to see a timeline of execution of your program:
+This produces a ``.qdrep`` file containing information about the annotated code.
+Opening that file in the Nsight Systems GUI,
+you can see a timeline of execution of your program:
 
 .. image:: images/timeline_lib.png
     :align: center

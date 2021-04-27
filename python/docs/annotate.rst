@@ -1,5 +1,5 @@
-Tools for explicitly annotating code
-====================================
+Tools for annotating code
+=========================
 
 annotate
 --------
