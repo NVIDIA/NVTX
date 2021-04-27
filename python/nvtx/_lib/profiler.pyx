@@ -3,7 +3,7 @@ import  sys
 
 from nvtx._lib import (
     push_range as libnvtx_push_range,
-    pop_range as libnvtx_pop_range,
+    pop_range as libnvtx_pop_range
 )
 
 from nvtx._lib.lib cimport EventAttributes, DomainHandle
@@ -36,11 +36,11 @@ cdef class Profiler:
             self.pop_range()
         return None
 
-    def push_range(self, message):
+    cdef push_range(self, message):
         self.__attrib.message = message
         libnvtx_push_range(self.__attrib, self.__domain)
 
-    def pop_range(self):
+    cdef pop_range(self):
         libnvtx_pop_range(self.__domain)
 
     def enable(self):

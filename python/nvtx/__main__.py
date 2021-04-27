@@ -45,6 +45,6 @@ def main():
     try:
         run_path(script_file)
     finally:
-        sys.setprofile(None)
+        profiler.disable()
 
 main()
