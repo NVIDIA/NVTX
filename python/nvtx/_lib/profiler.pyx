@@ -9,7 +9,7 @@ from nvtx._lib import (
 from nvtx._lib.lib cimport EventAttributes, DomainHandle
 
 
-cdef class Profiler:
+cdef class Profile:
     
     def __init__(self, linenos=True, annotate_cfuncs=True):
         self.linenos = linenos
@@ -17,7 +17,7 @@ cdef class Profiler:
         self.__domain = DomainHandle("nvtx.py")
         self.__attrib = EventAttributes("", "blue", None)
 
-    def profile(self, frame, event, arg):
+    def _profile(self, frame, event, arg):
         # profile function meant to be used with sys.setprofile
         if event == "call":
             name = frame.f_code.co_name
@@ -44,7 +44,7 @@ cdef class Profiler:
         libnvtx_pop_range(self.__domain)
 
     def enable(self):
-        sys.setprofile(self.profile)
+        sys.setprofile(self._profile)
 
     def disable(self):
         sys.setprofile(None)

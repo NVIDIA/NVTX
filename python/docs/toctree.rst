@@ -2,5 +2,6 @@
    :maxdepth: 2
 
    install
-   basic
+   annotate
+   auto
    reference

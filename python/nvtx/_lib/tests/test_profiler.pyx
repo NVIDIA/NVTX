@@ -9,8 +9,8 @@ import sys
 
 import cython
 
-from nvtx._lib.profiler cimport Profiler
-from nvtx._lib.profiler import Profiler
+from nvtx._lib.profiler cimport Profile
+from nvtx._lib.profiler import Profile
 
 
 def test_profiler_message():
@@ -23,7 +23,7 @@ def test_profiler_message():
     #
     # got_lineno = sys._getframe().f_code.co_firstlineno
 
-    prof = Profiler()
+    prof = Profile()
 
     def foo():
         got_message = prof.__attrib.message

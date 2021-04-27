@@ -3,7 +3,7 @@ from runpy import run_path
 from optparse import OptionParser
 
 def main():
-    from nvtx import Profiler
+    from nvtx import Profile
 
     usage = "%prog [options] scriptfile [args] ..."
 
@@ -35,7 +35,7 @@ def main():
     script_file = args[0]
 
     sys.argv = args
-    profiler = Profiler(
+    profiler = Profile(
         linenos=options.linenos,
         annotate_cfuncs=options.annotate_cfuncs
     )

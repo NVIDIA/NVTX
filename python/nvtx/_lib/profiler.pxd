@@ -3,7 +3,7 @@ from libcpp cimport bool
 from nvtx._lib.lib cimport EventAttributes, DomainHandle
 
 
-cdef class Profiler:
+cdef class Profile:
     cdef DomainHandle __domain
     cdef EventAttributes __attrib
 
