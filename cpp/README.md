@@ -42,3 +42,41 @@ See https://jrhemstad.github.io/nvtx_wrappers/html/index.html for Doxygen docume
   }
   ```
 
+  ## Getting NVTX++
+
+  The NVTX C++ wrappers are header-only and implemented in a single header file.
+  This header can be incorporated manually into your project by downloading the headers and placing them in your source tree. 
+  However, we strongly recommend using CMake or CMake Package Manager (CPM) to fetch and link NVTX++ to your project.
+
+  ### Adding NVTX++ to a CMake Project
+
+  NVTX++ is designed to make it easy to include within another CMake project. 
+  The `CMakeLists.txt` exports a `nvtx3-cpp` target that can be linked into a target to setup include directories, dependencies, and compile flags necessary to use NVTX++ in your project.
+
+  We recommend using [CMake Package Manager (CPM)](https://github.com/cpm-cmake/CPM.cmake#adding-cpm) to fetch NVTX++ into your project. With CPM, getting NVTX++ is easy:
+
+  ```
+  cmake_minimum_required(VERSION 3.14 FATAL_ERROR)
+
+  include(path/to/CPM.cmake) // You'll need to download this file from the CPM repo
+
+  CPMAddPackage(
+  NAME NVTX
+  GITHUB_REPOSITORY NVIDIA/NVTX
+  GIT_TAG dev
+  SOURCE_SUBDIR cpp
+  OPTIONS
+     "BUILD_TESTS OFF"
+     "BUILD_BENCHMARKS OFF"
+)
+
+target_link_libraries(my_library nvtx3-cpp)
+```
+
+You can then include `<nvtx3.hpp>` in your project files part of `my_library` and use the NVTX++ wrappers.
+
+
+  ## Dependencies
+  - NVTX C API headers (in the CUDA Toolkit, these are located in `cuda/include/nvtx3`)
+     - If fetching NVTX++ via CMake, the NVTX C headers will automatically be fetched from GitHub
+
