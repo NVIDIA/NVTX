@@ -2209,14 +2209,14 @@ class domain_process_range {
   domain_process_range& operator=(domain_process_range const&) = delete;
 
  private:
-  template <typename D>
+
   struct end_range_handle {
     using pointer = range_handle;  /// Override the pointer type of the unique_ptr
     void operator()(range_handle h) const noexcept { end_range<D>(h); }
   };
   
   /// Range handle used to correlate the start/end of the range
-  std::unique_ptr<range_handle, end_range_handle<D>> handle_;  
+  std::unique_ptr<range_handle, end_range_handle> handle_;  
 };
 
 /**
