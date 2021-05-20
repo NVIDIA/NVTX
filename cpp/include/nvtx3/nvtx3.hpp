@@ -272,8 +272,8 @@
  * \subsection unique_range Unique Range
  *
  * `nvtx3::unique_range` is similar to `nvtx3::scoped_range`, with a few key differences:
- * - `unique_range` objects can be destroyed whereas `scoped_range` objects must be destroyed in
- *    exact reverse creation order
+ * - `unique_range` objects can be destroyed in any order whereas `scoped_range` objects must be
+ *    destroyed in exact reverse creation order
  * - `unique_range` can start and end on different threads
  * - `unique_range` is moveable
  * - `unique_range` objects can be constructed as heap objects
@@ -2115,8 +2115,8 @@ inline void end_range(range_handle r) noexcept
  * destruction, ends the NVTX range.
  *
  * Similar to `nvtx3::scoped_range_in`, with a few key differences:
- * - `unique_range` objects can be destroyed whereas `scoped_range` objects must be destroyed in
- *    exact reverse creation order
+ * - `unique_range` objects can be destroyed in an order whereas `scoped_range` objects must be
+ *    destroyed in exact reverse creation order
  * - `unique_range` can start and end on different threads
  * - `unique_range` is moveable
  * - `unique_range` objects can be constructed as heap objects
