@@ -45,7 +45,7 @@ See https://jrhemstad.github.io/nvtx_wrappers/html/index.html for Doxygen docume
   ## Getting NVTX++
 
   The NVTX C++ wrappers are header-only and implemented in a single header file.
-  This header can be incorporated manually into your project by downloading the headers and placing them in your source tree. 
+  This header can be incorporated manually into your project by downloading the header and placing it in your source tree. 
   However, we strongly recommend using CMake or CMake Package Manager (CPM) to fetch and link NVTX++ to your project.
 
   ### Adding NVTX++ to a CMake Project
