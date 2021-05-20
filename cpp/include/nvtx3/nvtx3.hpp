@@ -240,7 +240,7 @@
  * lifetime of objects. Similar to `std::lock_guard` in the C++ Standard
  * Template Library.
  *
- * \subsection scoped_range Thread Range
+ * \subsection scoped_range Scoped Range
  *
  * `nvtx3::scoped_range_in` is a class that begins a range upon construction
  * and ends the range at destruction. This is one of the most commonly used
@@ -269,15 +269,17 @@
  * }
  * \endcode
  *
- * \subsection unique_range Process Range
+ * \subsection unique_range Unique Range
  *
- * `nvtx3::unique_range_in` is identical to `nvtx3::scoped_range_in`
- * with the exception that a `unique_range_in` can be created and destroyed
- * on different threads. This is useful to annotate spans of time that can
- * bridge multiple threads.
+ * `nvtx3::unique_range` is similar to `nvtx3::scoped_range`, with a few key differences:
+ * - `unique_range` objects can be destroyed whereas `scoped_range` objects must be destroyed in
+ *    exact reverse creation order
+ * - `unique_range` can start and end on different threads
+ * - `unique_range` is moveable
+ * - `unique_range` objects can be constructed as heap objects
  *
- * `nvtx3::scoped_range_in`s should be preferred unless one needs the
- * ability to begin and end a range on different threads.
+ * There is extra overhead associated with `unique_range` constructs and therefore use of
+ * `nvtx3::scoped_range_in` should be preferred.
  *
  * \section MARKS Marks
  *
@@ -1804,12 +1806,11 @@ class scoped_range_in {
    * `event_attributes`
    *
    * Example:
-   * ```
+   * \code{cpp}
    * nvtx3::event_attributes attr{"msg", nvtx3::rgb{127,255,0}};
-   * nvtx3::scoped_range_in<> range{attr}; // Creates a range with message
-   * contents
-   *                                    // "msg" and green color
-   * ```
+   * nvtx3::scoped_range range{attr}; // Creates a range with message contents
+   *                                  // "msg" and green color
+   * \endcode
    *
    * @param[in] attr `event_attributes` that describes the desired attributes
    * of the range.
@@ -1834,10 +1835,10 @@ class scoped_range_in {
    * For more detail, see `event_attributes` documentation.
    *
    * Example:
-   * ```
+   * \code{cpp}
    * // Creates a range with message "message" and green color
-   * nvtx3::scoped_range_in<> r{"message", nvtx3::rgb{127,255,0}};
-   * ```
+   * nvtx3::scoped_range r{"message", nvtx3::rgb{127,255,0}};
+   * \endcode
    *
    * @param[in] args Arguments to used to construct an `event_attributes` associated with this
    * range.
@@ -2113,13 +2114,15 @@ inline void end_range(range_handle r) noexcept
  * When constructed, begins a NVTX range in the specified domain. Upon
  * destruction, ends the NVTX range.
  *
- * Similar to `nvtx3::scoped_range_in`, the only difference being that
- * `unique_range_in` can start and end on different threads.
+ * Similar to `nvtx3::scoped_range_in`, with a few key differences:
+ * - `unique_range` objects can be destroyed whereas `scoped_range` objects must be destroyed in
+ *    exact reverse creation order
+ * - `unique_range` can start and end on different threads
+ * - `unique_range` is moveable
+ * - `unique_range` objects can be constructed as heap objects
  *
- * Use of `nvtx3::scoped_range_in` should be preferred unless one needs
- * the ability to start and end a range on different threads.
- *
- * `unique_range_in` is moveable, but not copyable.
+ * There is extra overhead associated with `unique_range` constructs and therefore use of
+ * `nvtx3::scoped_range_in` should be preferred.
  *
  * @tparam D Type containing `name` member used to identify the `domain`
  * to which the `unique_range_in` belongs. Else, `domain::global` to
@@ -2129,7 +2132,7 @@ template <typename D = domain::global>
 class unique_range_in {
  public:
   /**
-   * @brief Construct a new domain process range object with the specified event attributes
+   * @brief Construct a new unique_range_in object with the specified event attributes
    *
    * Example:
    * \code{cpp}
