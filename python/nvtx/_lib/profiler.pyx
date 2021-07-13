@@ -1,5 +1,6 @@
 import os
 import  sys
+import threading
 
 from nvtx._lib import (
     push_range as libnvtx_push_range,
@@ -10,7 +11,7 @@ from nvtx._lib.lib cimport EventAttributes, DomainHandle
 
 
 cdef class Profile:
-    
+
     def __init__(self, linenos=True, annotate_cfuncs=True):
         self.linenos = linenos
         self.annotate_cfuncs = annotate_cfuncs
@@ -44,7 +45,9 @@ cdef class Profile:
         libnvtx_pop_range(self.__domain)
 
     def enable(self):
+        threading.setprofile(self._profile)
         sys.setprofile(self._profile)
 
     def disable(self):
+        threading.setprofile(None)
         sys.setprofile(None)
