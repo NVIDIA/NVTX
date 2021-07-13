@@ -6,10 +6,15 @@ when you have lots of functions to annotate,
 or when you want to capture information from third-party libraries.
 
 ``nvtx``  can automatically annotate each function call in your program.
-This can give you lots of useful information that manual
-annotation cannot. However, note that doing this adds a tiny amount of
+Note that doing this adds a tiny amount of
 overhead to each and every function invocation, which can significantly
 impact the overall runtime (by more than 10x).
+
+This can give you lots of useful information that manual
+annotation cannot
+
+.. image:: images/timeline_auto.png
+    :align: center
 
 
 Command-line interface
