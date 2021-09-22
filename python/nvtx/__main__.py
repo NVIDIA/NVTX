@@ -14,7 +14,7 @@ def main():
         dest="linenos",
         default=True,
         help="Include file and line number information in annotations. Otherwise, "
-              "only the function name is used [default: %default]"
+              "only the function name is used."
     )
     parser.add_option(
         "--no-linenos",
@@ -28,7 +28,7 @@ def main():
         action="store_true",
         dest="annotate_cfuncs",
         default=False,
-        help="Also annotate C-extension and builtin functions [default: %default]",
+        help="Also annotate C-extension and builtin functions. [default: %default]",
     )
 
     options, args = parser.parse_args()
