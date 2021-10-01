@@ -46,6 +46,7 @@ and returns a handle. The handle is passed to the ``end_range()`` function,
 which is called at the end of the code range.
 
 ::
+
    rng = nvtx.start_range(message="my_message", color="blue")
    # ... do something ... #
    nvtx.end_range(rng)
