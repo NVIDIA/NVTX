@@ -32,7 +32,7 @@ extensions = [
 
 setup(
     name="nvtx",
-    version="0.2.3",
+    version="0.2.4",
     description="PyNVTX - Python code annotation library",
     url="https://github.com/NVIDIA/nvtx",
     author="NVIDIA Corporation",
@@ -46,9 +46,9 @@ setup(
         "Programming Language :: Python :: 3.6",
         "Programming Language :: Python :: 3.7",
         "Programming Language :: Python :: 3.8",
+        "Programming Language :: Python :: 3.9",
     ],
     # Include the separately-compiled shared library
-    setup_requires=["Cython"],
     ext_modules=cythonize(
         extensions,
         nthreads=nthreads,
