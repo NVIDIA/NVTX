@@ -49,7 +49,6 @@ setup(
         "Programming Language :: Python :: 3.9",
     ],
     # Include the separately-compiled shared library
-    setup_requires=["Cython"],
     ext_modules=cythonize(
         extensions,
         nthreads=nthreads,
