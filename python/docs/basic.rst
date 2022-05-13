@@ -134,9 +134,15 @@ Categories allow grouping of annotations within a domain.
    def func_3():
        time.sleep(1)
 
+
+   @nvtx.annotate(color="red", domain="Domain_2", category=2)
+   def func_4():
+       time.sleep(1)
+
    func_1()
    func_2()
    func_3()
+   func_4()
 
 In the example above, `func_1` and `func_2`
 are grouped under the domain `Domain1`,
