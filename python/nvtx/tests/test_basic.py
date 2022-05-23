@@ -138,7 +138,9 @@ def test_domain_reuse():
         "y"
         "x",
         "abc",
-        "abc def"
+        "abc def",
+        0,
+        1,
     ]
 )
 def test_categories_basic(message, color, domain, category):
@@ -181,6 +183,7 @@ def test_get_category_id():
     [
         None,
         "abc",
+        1,
     ]
 )
 def test_start_end(message, color, domain, category):
@@ -216,6 +219,7 @@ def test_start_end(message, color, domain, category):
     [
         None,
         "abc",
+        1,
     ]
 )
 def test_push_pop(message, color, domain, category):
@@ -250,6 +254,7 @@ def test_push_pop(message, color, domain, category):
     [
         None,
         "abc",
+        1,
     ]
 )
 def test_mark(message, color, domain, category):

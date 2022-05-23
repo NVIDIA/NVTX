@@ -6,7 +6,7 @@ See https://jrhemstad.github.io/nvtx_wrappers/html/index.html for Doxygen docume
 
   # Quick Start
  
-  To add NVTX ranges to your code, use the `nvtx3::thread_range` RAII object. A
+  To add NVTX ranges to your code, use the `nvtx3::scoped_range` RAII object. A
   range begins when the object is created, and ends when the object is
   destroyed.
  
@@ -15,10 +15,10 @@ See https://jrhemstad.github.io/nvtx_wrappers/html/index.html for Doxygen docume
   void some_function(){
      // Begins a NVTX range with the messsage "some_function"
      // The range ends when some_function() returns and `r` is destroyed
-     nvtx3::thread_range r{"some_function"};
+     nvtx3::scoped_range r{"some_function"};
   
      for(int i = 0; i < 6; ++i){
-        nvtx3::thread_range loop{"loop range"};
+        nvtx3::scoped_range loop{"loop range"};
         std::this_thread::sleep_for(std::chrono::seconds{1});
      }
   } // Range ends when `r` is destroyed

@@ -45,10 +45,10 @@ class annotate:
         domain : str, optional
             A string specifying the domain under which the code range is
             scoped. The default domain is named "NVTX".
-        category : str, optional
-            A string specifying the category within the domain under which
-            the code range is scoped. If unspecified, the code range is not
-            associated with a category.
+        category : str, int, optional
+            A string or an integer specifying the category within the domain
+            under which the code range is scoped. If unspecified, the code
+            range is not associated with a category.
 
         Examples
         --------
@@ -69,12 +69,12 @@ class annotate:
         """
 
         self.domain = Domain(domain)
-
-        category_id = (
-            self.domain.get_category_id(category)
-            if category is not None
-            else None
-        )
+ 
+        category_id = None
+        if isinstance(category, int):
+            category_id =  category
+        elif isinstance(category, str):
+            category_id = self.domain.get_category_id(category)
         self.attributes = EventAttributes(message, color, category_id)
 
     def __reduce__(self):
@@ -118,17 +118,17 @@ def mark(message=None, color="blue", domain=None, category=None):
     domain : str, optional
         A string specifuing the domain under which the event is scoped.
         The default domain is named "NVTX".
-    category : str, optional
-        A string specifying the category within the domain under which
-        the event is scoped. If unspecified, the event is not associated
-        with a category.
+    category : str, int, optional
+        A string or an integer specifying the category within the domain
+        under which the event is scoped. If unspecified, the event is
+        not associated with a category.
     """
     domain = Domain(domain)
-    category_id = (
-        domain.get_category_id(category)
-        if category is not None
-        else None
-    )
+    category_id = None
+    if isinstance(category, int):
+        category_id =  category
+    elif isinstance(category, str):
+        category_id = domain.get_category_id(category)
     attributes = EventAttributes(message, color, category_id)
     libnvtx_mark(attributes, domain.handle)
 
@@ -147,10 +147,10 @@ def push_range(message=None, color="blue", domain=None, category=None):
     domain : str, optional
         Name of a domain under which the code range is scoped.
         The default domain name is "NVTX".
-    category : str, optional
-        A string specifying the category within the domain under which
-        the event is scoped. If unspecified, the event is not associated
-        with a category.
+    category : str, int, optional
+        A string or an integer specifying the category within the domain
+        under which the code range is scoped. If unspecified, the code range
+        is not associated with a category.
 
     Examples
     --------
@@ -161,11 +161,11 @@ def push_range(message=None, color="blue", domain=None, category=None):
     >>> nvtx.pop_range(domain="my_domain")
     """
     domain = Domain(domain)
-    category_id = (
-        domain.get_category_id(category)
-        if category is not None
-        else None
-    )
+    category_id = None
+    if isinstance(category, int):
+        category_id =  category
+    elif isinstance(category, str):
+        category_id = domain.get_category_id(category)
     libnvtx_push_range(EventAttributes(message, color, category_id), domain.handle)
 
 
@@ -196,10 +196,10 @@ def start_range(message=None, color="blue", domain=None, category=None):
     domain : str, optional
         Name of a domain under which the code range is scoped.
         The default domain name is "NVTX".
-    category : str, optional
-        A string specifying the category within the domain under which
-        the event is scoped. If unspecified, the event is not associated
-        with a category.
+    category : str, int, optional
+        A string or an integer specifying the category within the domain
+        under which the code range is scoped. If unspecified, the code range
+        is not associated with a category.
 
     Returns
     -------
@@ -214,11 +214,11 @@ def start_range(message=None, color="blue", domain=None, category=None):
     >>> nvtx.end_range(range_id, domain="my_domain")
     """
     domain = Domain(domain)
-    category_id = (
-        domain.get_category_id(category)
-        if category is not None
-        else None
-    )
+    category_id = None
+    if isinstance(category, int):
+        category_id =  category
+    elif isinstance(category, str):
+        category_id = domain.get_category_id(category)
     marker_id = libnvtx_start_range(
         EventAttributes(message, color, category_id), domain.handle
     )

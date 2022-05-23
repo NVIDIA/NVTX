@@ -46,6 +46,7 @@ and returns a handle. The handle is passed to the ``end_range()`` function,
 which is called at the end of the code range.
 
 ::
+
    rng = nvtx.start_range(message="my_message", color="blue")
    # ... do something ... #
    nvtx.end_range(rng)
@@ -133,9 +134,15 @@ Categories allow grouping of annotations within a domain.
    def func_3():
        time.sleep(1)
 
+
+   @nvtx.annotate(color="red", domain="Domain_2", category=2)
+   def func_4():
+       time.sleep(1)
+
    func_1()
    func_2()
    func_3()
+   func_4()
 
 In the example above, `func_1` and `func_2`
 are grouped under the domain `Domain1`,

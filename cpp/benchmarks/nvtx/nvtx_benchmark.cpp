@@ -9,7 +9,7 @@
 static void BM_no_attr_reuse(::benchmark::State& state)
 {
   // This will construct a default initialized `event_attributes` every iteration
-  for (auto _ : state) { nvtx3::thread_range r{}; }
+  for (auto _ : state) { nvtx3::scoped_range r{}; }
 }
 BENCHMARK(BM_no_attr_reuse);
 
@@ -19,7 +19,7 @@ BENCHMARK(BM_no_attr_reuse);
 static void BM_CXX_global_range(::benchmark::State& state)
 {
   nvtx3::event_attributes attr{};
-  for (auto _ : state) { nvtx3::thread_range r{attr}; }
+  for (auto _ : state) { nvtx3::scoped_range r{attr}; }
 }
 BENCHMARK(BM_CXX_global_range);
 
@@ -43,7 +43,7 @@ struct my_domain {
 static void BM_CXX_scoped_range(::benchmark::State& state)
 {
   nvtx3::event_attributes attr{};
-  for (auto _ : state) { nvtx3::domain_thread_range<my_domain> r{attr}; }
+  for (auto _ : state) { nvtx3::scoped_range_in<my_domain> r{attr}; }
 }
 BENCHMARK(BM_CXX_scoped_range);
 
