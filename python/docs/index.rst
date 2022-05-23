@@ -7,56 +7,61 @@
 nvtx - Annotate code ranges and events in Python
 ================================================
 
-``nvtx`` lets you annotate your Python code so that it can be analyzed and visualized
-using `NVIDIA Nsight Systems <https://developer.nvidia.com/nsight-systems>`_.
-This enables generating detailed timelines of execution
-of Python programs for the purposes of debugging and optimization.
+``nvtx`` gives your tools to annotate your Python code
+(or automatically annotates it for you).
+Annotated code can be analyzed and visualized by third-party applications such as
+`NVIDIA Nsight Systems <https://developer.nvidia.com/nsight-systems>`_.
+For example, you can produce detailed timelines of execution
+of Python programs annotated with ``nvtx``:
 
 .. image:: images/timeline.png
     :align: center
 
 
-A quick example
-===============
+Quick Demo
+==========
 
-Here is an example of code annotated with ``nvtx``:
+Here is an example of using the annotation tools provided  by ``nvtx``:
+
 ::
 
-   # demo.py
+   # example_lib.py
 
    import time
    import nvtx
 
-   @nvtx.annotate(color="blue")
-   def my_function():
+
+   def sleep_for(i):
+       time.sleep(i)
+
+   @nvtx.annotate()
+   def my_func():
+       time.sleep(1)
+
+   with nvtx.annotate("for_loop", color="green"):
        for i in range(5):
-           with nvtx.annotate("my_loop", color="red"):
-               time.sleep(i)
-
-   my_function()
+           sleep_for(i)
+           my_func()
 
 
-Adding ``nvtx`` annotations to your code doesn't achieve anything by itself.
+Adding annotations to your code doesn't achieve anything by itself.
 To derive something useful from annotated code,
 you'll need to use a third-party application that supports NVTX annotations.
+The command below uses the Nsight Systems command-line interface to collect
+information from the annotated code:
 
-`Nsight Systems <https://developer.nvidia.com/nsight-systems>`_ is one such application,
-which displays annotated code ranges and events in a timeline.
-This is incredibly useful for debugging and optimization.
-
-Running the annotated Python program through Nsight Systems:
 ::
 
-   nsight-sys profile -t nvtx python demo.py
+   nsys profile python demo.py
 
+This produces a ``.qdrep`` file containing information about the annotated code.
+Opening that file in the Nsight Systems GUI,
+you can see a timeline of execution of your program:
 
-This will produce a ``.qdrep`` file that can be opened in the Nsight systems GUI to view
-the timeline:
-
-.. image:: images/demo_timeline.png
+.. image:: images/timeline_lib.png
     :align: center
 
-
+           
 Contents
 ========
 

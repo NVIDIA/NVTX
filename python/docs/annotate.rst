@@ -1,5 +1,5 @@
-Basic Usage
-===========
+Tools for annotating code
+=========================
 
 annotate
 --------

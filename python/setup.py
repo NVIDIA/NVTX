@@ -5,7 +5,7 @@
 # SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception
 
 import os
-import shutil
+import glob
 import sysconfig
 from distutils.sysconfig import get_python_lib
 
@@ -20,15 +20,38 @@ try:
 except Exception:
     nthreads = 0
 
+include_dirs = [os.path.dirname(sysconfig.get_path("include")),]
+library_dirs = [get_python_lib()]
+
 extensions = [
     Extension(
         "*",
         sources=cython_files,
-        include_dirs=[os.path.dirname(sysconfig.get_path("include")),],
-        library_dirs=[get_python_lib()],
+        include_dirs=include_dirs,
+        library_dirs=library_dirs,
         language="c",
     )
 ]
+
+cython_tests = glob.glob("nvtx/_lib/tests/*.pyx")
+
+# tests:
+extensions += cythonize(
+    [
+        Extension(
+            "*",
+            sources=cython_tests,
+            include_dirs=include_dirs,
+            library_dirs=library_dirs,
+            language="c"
+        )
+    ],
+    nthreads=nthreads,
+    compiler_directives=dict(
+        profile=True, language_level=3, embedsignature=True, binding=True
+    ),
+)
+
 
 setup(
     name="nvtx",

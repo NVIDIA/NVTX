@@ -13,3 +13,5 @@ from nvtx.nvtx import (
     end_range,
     mark
 )
+
+from nvtx._lib.profiler import Profile
