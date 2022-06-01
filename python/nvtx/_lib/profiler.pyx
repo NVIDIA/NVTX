@@ -13,6 +13,26 @@ from nvtx._lib.lib cimport EventAttributes, DomainHandle
 cdef class Profile:
 
     def __init__(self, linenos=True, annotate_cfuncs=True):
+        """
+        Class that enables turning on and off automatic annotation.
+
+        Parameters
+        ----------
+        linenos: bool (default True)
+            Include file and line number information in annotations.
+        annotate_cfuncs: bool (default False)
+            Also annotate C-extensions and builtin functions.
+
+        Examples
+        --------
+        >>> import nvtx
+        >>> import time
+        >>> pr = nvtx.Profile()
+        >>> pr.enable()
+        >>> time.sleep(1) # this call to `sleep` is captured by nvtx.
+        >>> pr.disable()
+        >>> time.sleep(1) # this one is not.
+        """
         self.linenos = linenos
         self.annotate_cfuncs = annotate_cfuncs
         self.__domain = DomainHandle("nvtx.py")
@@ -45,9 +65,13 @@ cdef class Profile:
         libnvtx_pop_range(self.__domain)
 
     def enable(self):
+        """Start annotating function calls automatically.
+        """
         threading.setprofile(self._profile)
         sys.setprofile(self._profile)
 
     def disable(self):
+        """Stop annotating function calls automatically.
+        """
         threading.setprofile(None)
         sys.setprofile(None)
