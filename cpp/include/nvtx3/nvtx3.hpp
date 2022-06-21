@@ -2270,19 +2270,24 @@ class unique_range_in {
 using unique_range = unique_range_in<>;
 
 /**
- * @brief Annotates an instantaneous point in time with the attributes specified
- * by `attr`.
+ * @brief Annotates an instantaneous point in time with a "marker", using the
+ * attributes specified by `attr`.
  *
- * Unlike a "range", a mark is an instantaneous event in an application, e.g.,
- * locking/unlocking a mutex.
+ * Unlike a "range" which has a beginning and an end, a marker is a single event
+ * in an application, such as detecting a problem:
  *
  * \code{.cpp}
- * std::mutex global_lock;
- * void lock_mutex() {
- *    global_lock.lock();
- *    nvtx3::mark("lock_mutex");
+ * bool try_operation() {
+ *    bool success = do_operation(...);
+ *    if (!success) {
+ *       nvtx3::event_attributes attr{"operation failed!", nvtx3::rgb{255,0,0}};
+ *       nvtx3::mark<my_domain>(attr);
+ *    }
+ *    return success;
  * }
  * \endcode
+ *
+ * Note that nvtx3::mark is a function, not a class like scoped_range.
  *
  * @tparam D Type containing `name` member used to identify the `domain`
  * to which the `unique_range_in` belongs. Else, `domain::global` to
@@ -2297,6 +2302,44 @@ inline void mark(event_attributes const& attr) noexcept
   nvtxDomainMarkEx(domain::get<D>(), attr.get());
 #else
   (void)(attr);
+#endif
+}
+
+/**
+ * @brief Annotates an instantaneous point in time with a "marker", using the
+ * arguments to construct an `event_attributes`.
+ *
+ * Unlike a "range" which has a beginning and an end, a marker is a single event
+ * in an application, such as detecting a problem:
+ *
+ * \code{.cpp}
+ * bool try_operation() {
+ *    bool success = do_operation(...);
+ *    if (!success) {
+ *       nvtx3::mark<my_domain>("operation failed!", nvtx3::rgb{255,0,0});
+ *    }
+ *    return success;
+ * }
+ * \endcode
+ *
+ * Note that nvtx3::mark is a function, not a class like scoped_range.
+ *
+ * Forwards the arguments `args...` to construct an `event_attributes` object.
+ * The attributes are then associated with the marker. For more detail, see
+ * the `event_attributes` documentation.
+ *
+ * @tparam D Type containing `name` member used to identify the `domain`
+ * to which the `unique_range_in` belongs. Else `domain::global` to
+ * indicate that the global NVTX domain should be used.
+ * @param[in] args Variadic parameter pack of arguments to construct an `event_attributes`
+ * associated with this range.
+ *
+ */
+template <typename D = domain::global, typename... Args>
+inline void mark(Args const&... args) noexcept
+{
+#ifndef NVTX_DISABLE
+  mark<D>(event_attributes{args...});
 #endif
 }
 
