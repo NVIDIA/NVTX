@@ -1477,6 +1477,30 @@ class message {
   }
 
   /**
+   * @brief Construct a `message` from NVTX C API type and value.
+   *
+   * @param type nvtxMessageType_t enum value indicating type of the payload
+   * @param value nvtxMessageValue_t union containing message
+   */
+  NVTX3_RELAXED_CONSTEXPR message(
+    nvtxMessageType_t const& type,
+    nvtxMessageValue_t const& value) noexcept
+    : type_{type}, value_{value}
+  {
+  }
+
+  /**
+   * @brief Construct a `message` from NVTX C API registered string handle.
+   *
+   * @param handle nvtxStringHandle_t value of registered string handle
+   */
+  NVTX3_RELAXED_CONSTEXPR message(nvtxStringHandle_t handle) noexcept
+    : type_{NVTX_MESSAGE_TYPE_REGISTERED}
+  {
+    value_.registered = handle;
+  }
+
+  /**
    * @brief Return the union holding the value of the message.
    *
    */
@@ -1579,6 +1603,19 @@ class payload {
     : type_{NVTX_PAYLOAD_TYPE_DOUBLE}, value_{}
   {
     value_.dValue = value;
+  }
+
+  /**
+   * @brief Construct a `payload` from NVTX C API type and value.
+   *
+   * @param type nvtxPayloadType_t enum value indicating type of the payload
+   * @param value nvtxEventAttributes_t::payload_t union containing payload
+   */
+  NVTX3_RELAXED_CONSTEXPR payload(
+    nvtxPayloadType_t const& type,
+    value_type const& value) noexcept
+    : type_{type}, value_{value}
+  {
   }
 
   /**
