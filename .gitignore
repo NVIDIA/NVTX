@@ -1,4 +1,8 @@
-*.qdrep
+### C/C++/CMake ###
+out/
+build/
+cpp/docs/html/
+cpp/docs/index.html
 
 ### Python ###
 # Byte-compiled / optimized / DLL files
@@ -31,3 +35,12 @@ share/python-wheels/
 MANIFEST
 python/nvtx/_lib/**/*.c
 python/docs/_build/
+
+### Nsight Systems ###
+*.qdrep
+*.qdstream
+*.nsys-rep
+
+### IDEs ###
+.vs/
+.vscode/
