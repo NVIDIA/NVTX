@@ -18,26 +18,11 @@ cmake_minimum_required(VERSION 3.12 FATAL_ERROR)
 project(NVTX-C VERSION 0.1.0 LANGUAGES C)
 
 ###################################################################################################
-# - build type ------------------------------------------------------------------------------------
-
-# Set a default build type if none was specified
-set(DEFAULT_BUILD_TYPE "Release")
-
-if(NOT CMAKE_BUILD_TYPE AND NOT CMAKE_CONFIGURATION_TYPES)
-  message(STATUS "Setting build type to '${DEFAULT_BUILD_TYPE}' since none specified.")
-  set(CMAKE_BUILD_TYPE "${DEFAULT_BUILD_TYPE}" CACHE
-      STRING "Choose the type of build." FORCE)
-  # Set the possible values of build type for cmake-gui
-  set_property(CACHE CMAKE_BUILD_TYPE PROPERTY STRINGS
-    "Debug" "Release" "MinSizeRel" "RelWithDebInfo")
-endif()
-
-###################################################################################################
 # - nvtx target -----------------------------------------------------------------------------------
 add_library(nvtx3-c INTERFACE)
 target_include_directories(nvtx3-c INTERFACE
-                           "$<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>"
-                           "$<INSTALL_INTERFACE:include>")
+    "$<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>"
+    "$<INSTALL_INTERFACE:include>")
 target_link_libraries(nvtx3-c INTERFACE ${CMAKE_DL_LIBS})
 
 

@@ -19,21 +19,6 @@ project(NVTX-CPP VERSION 0.1.0 LANGUAGES CXX)
 
 include(cmake/CPM.cmake)
 
-###################################################################################################
-# - build type ------------------------------------------------------------------------------------
-
-# Set a default build type if none was specified
-set(DEFAULT_BUILD_TYPE "Release")
-
-if(NOT CMAKE_BUILD_TYPE AND NOT CMAKE_CONFIGURATION_TYPES)
-  message(STATUS "Setting build type to '${DEFAULT_BUILD_TYPE}' since none specified.")
-  set(CMAKE_BUILD_TYPE "${DEFAULT_BUILD_TYPE}" CACHE
-      STRING "Choose the type of build." FORCE)
-  # Set the possible values of build type for cmake-gui
-  set_property(CACHE CMAKE_BUILD_TYPE PROPERTY STRINGS
-    "Debug" "Release" "MinSizeRel" "RelWithDebInfo")
-endif()
-
 # Include the nvtx-c directory to access the nvtx-c CMake target
 add_subdirectory(../c nvtx-c)
 
@@ -41,10 +26,10 @@ add_subdirectory(../c nvtx-c)
 # - nvtx target -----------------------------------------------------------------------------------
 add_library(nvtx3-cpp INTERFACE)
 target_include_directories(nvtx3-cpp INTERFACE
-                           "$<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>"
-                           "$<INSTALL_INTERFACE:include>")
+    "$<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>"
+    "$<INSTALL_INTERFACE:include>")
 
-target_compile_features(nvtx3-cpp INTERFACE cxx_std_11)                           
+target_compile_features(nvtx3-cpp INTERFACE cxx_std_11)
 target_link_libraries(nvtx3-cpp INTERFACE nvtx3-c)
 
 # Build options
@@ -62,8 +47,8 @@ endif(BUILD_BENCHMARKS)
 ###################################################################################################
 # - build doxygen ---------------------------------------------------------------------------------
 add_custom_command(OUTPUT BUILD_DOXYGEN
-                   WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
-                   COMMAND doxygen doxygen/Doxyfile
-                   VERBATIM)
+   WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
+   COMMAND doxygen doxygen/Doxyfile
+   VERBATIM)
 
 add_custom_target(docs DEPENDS BUILD_DOXYGEN)
