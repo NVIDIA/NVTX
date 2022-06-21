@@ -2040,7 +2040,7 @@ struct range_handle {
  * @param lhs The first range_handle to compare
  * @param rhs The second range_handle to compare
  */
-constexpr bool operator==(range_handle lhs, range_handle rhs) noexcept
+inline constexpr bool operator==(range_handle lhs, range_handle rhs) noexcept
 {
   return lhs.get_value() == rhs.get_value();
 }
@@ -2051,7 +2051,7 @@ constexpr bool operator==(range_handle lhs, range_handle rhs) noexcept
  * @param lhs The first range_handle to compare
  * @param rhs The second range_handle to compare
  */
-constexpr bool operator!=(range_handle lhs, range_handle rhs) noexcept { return !(lhs == rhs); }
+inline constexpr bool operator!=(range_handle lhs, range_handle rhs) noexcept { return !(lhs == rhs); }
 
 /**
  * @brief Manually begin an NVTX range.
@@ -2079,7 +2079,7 @@ constexpr bool operator!=(range_handle lhs, range_handle rhs) noexcept { return 
  * @return Unique handle to be passed to `end_range` to end the range.
  */
 template <typename D = domain::global>
-range_handle start_range(event_attributes const& attr) noexcept
+inline range_handle start_range(event_attributes const& attr) noexcept
 {
 #ifndef NVTX_DISABLE
   return range_handle{nvtxDomainRangeStartEx(domain::get<D>(), attr.get())};
@@ -2113,11 +2113,11 @@ range_handle start_range(event_attributes const& attr) noexcept
  * @param args[in] Variadiac parameter pack of the arguments for an `event_attributes`.
  * @return Unique handle to be passed to `end_range` to end the range.
  */
-template <typename... Args>
-range_handle start_range(Args const&... args) noexcept
+template <typename D = domain::global, typename... Args>
+inline range_handle start_range(Args const&... args) noexcept
 {
 #ifndef NVTX_DISABLE
-  return start_range(event_attributes{args...});
+  return start_range<D>(event_attributes{args...});
 #else
   return range_handle{};
 #endif
