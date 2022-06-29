@@ -1,0 +1,17 @@
+# this job is an empty no-op because we need a cibw.yml in the default branch
+# to be able to use the manual workflow_dispatch
+#   https://docs.github.com/en/actions/managing-workflow-runs/manually-running-a-workflow
+#
+# the real version of the job is in the dev branch
+
+name: Build wheels for NVTX
+
+on:
+  workflow_dispatch:
+
+jobs:
+  noop:
+    runs-on: ubuntu-latest
+    steps:
+      - name: no-op
+        run: echo "Hello World!"
