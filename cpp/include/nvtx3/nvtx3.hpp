@@ -880,9 +880,9 @@ struct rgb {
   {
   }
 
-  component_type const red{};    ///< Red channel value
-  component_type const green{};  ///< Green channel value
-  component_type const blue{};   ///< Blue channel value
+  component_type red{};    ///< Red channel value
+  component_type green{};  ///< Green channel value
+  component_type blue{};   ///< Blue channel value
 };
 
 /**
@@ -912,7 +912,7 @@ struct argb final : rgb {
   {
   }
 
-  component_type const alpha{};  ///< Alpha channel value
+  component_type alpha{};  ///< Alpha channel value
 };
 
 /**
@@ -1006,8 +1006,8 @@ class color {
     return uint32_t{byte3} << 24 | uint32_t{byte2} << 16 | uint32_t{byte1} << 8 | uint32_t{byte0};
   }
 
-  value_type const _value{};                     ///< color's argb color code
-  nvtxColorType_t const _type{NVTX_COLOR_ARGB};  ///< NVTX color type code
+  value_type _value{};                     ///< color's argb color code
+  nvtxColorType_t _type{NVTX_COLOR_ARGB};  ///< NVTX color type code
 };
 
 /**
@@ -1061,7 +1061,7 @@ class category {
   category& operator=(category&&) = default;
 
  private:
-  id_type const id_{};  ///< category's unique identifier
+  id_type id_{};  ///< category's unique identifier
 };
 
 /**
@@ -1362,8 +1362,8 @@ class registered_string {
   registered_string& operator=(registered_string&&) = default;
 
  private:
-  nvtxStringHandle_t const handle_{};  ///< The handle returned from
-                                       ///< registering the message with NVTX
+  nvtxStringHandle_t handle_{};  ///< The handle returned from
+                                 ///< registering the message with NVTX
 };
 
 /**
@@ -1513,8 +1513,8 @@ class message {
   NVTX3_RELAXED_CONSTEXPR nvtxMessageType_t get_type() const noexcept { return type_; }
 
  private:
-  nvtxMessageType_t const type_{};  ///< message type
-  nvtxMessageValue_t value_{};      ///< message contents
+  nvtxMessageType_t type_{};    ///< message type
+  nvtxMessageValue_t value_{};  ///< message contents
 };
 
 /**
@@ -1631,8 +1631,8 @@ class payload {
   NVTX3_RELAXED_CONSTEXPR nvtxPayloadType_t get_type() const noexcept { return type_; }
 
  private:
-  nvtxPayloadType_t const type_;  ///< Type of the payload value
-  value_type value_;              ///< Union holding the payload value
+  nvtxPayloadType_t type_;  ///< Type of the payload value
+  value_type value_;        ///< Union holding the payload value
 };
 
 /**
