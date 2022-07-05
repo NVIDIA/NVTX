@@ -1485,7 +1485,7 @@ class message {
   NVTX3_RELAXED_CONSTEXPR message(
     nvtxMessageType_t const& type,
     nvtxMessageValue_t const& value) noexcept
-    : type_{type}, value_{value}
+    : type_{type}, value_(value)
   {
   }
 
@@ -1614,7 +1614,7 @@ class payload {
   NVTX3_RELAXED_CONSTEXPR payload(
     nvtxPayloadType_t const& type,
     value_type const& value) noexcept
-    : type_{type}, value_{value}
+    : type_{type}, value_(value)
   {
   }
 
