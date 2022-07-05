@@ -598,6 +598,16 @@
 #define NVTX3_RELAXED_CONSTEXPR
 #endif
 
+ /* Use a macro for static asserts, which defaults to static_assert, but that
+  * testing tools can replace with a logging function.  For example:
+  * #define NVTX3_STATIC_ASSERT(c, m) \
+  *   do { if (!(c)) printf("static_assert would fail: %s\n", m); } while (0)
+  */
+#if !defined(NVTX3_STATIC_ASSERT)
+#define NVTX3_STATIC_ASSERT(condition, message) static_assert(condition, message);
+#define NVTX3_STATIC_ASSERT_DEFINED_HERE
+#endif
+
 /* Implementation sections, enclosed in guard macros for each minor version */
 
 #ifndef NVTX3_CPP_DEFINITIONS_V1_0
@@ -610,20 +620,35 @@ NVTX3_INLINE_IF_REQUESTED namespace NVTX3_VERSION_NAMESPACE
 
 namespace detail {
 
-/**
- * @brief Verifies if a type `T` contains a member `T::name` of type `const
- * char*` or `const wchar_t*`.
- *
- * @tparam T The type to verify
- * @return True if `T` contains a member `T::name` of type `const char*` or
- * `const wchar_t*`.
- */
+template <typename Unused>
+struct always_false : std::false_type {};
+
+template <typename T, typename = void>
+struct has_name : std::false_type {};
 template <typename T>
-constexpr auto has_name_member() noexcept -> decltype(T::name, bool())
-{
-  return std::is_same<char const*,    typename std::decay<decltype(T::name)>::type>::value
-    ||   std::is_same<wchar_t const*, typename std::decay<decltype(T::name)>::type>::value;
-}
+struct has_name<T, decltype((void)T::name, void())> : std::true_type {};
+
+template <typename T, typename = void>
+struct has_id : std::false_type {};
+template <typename T>
+struct has_id<T, decltype((void)T::id, void())> : std::true_type {};
+
+template <typename T, typename = void>
+struct has_message : std::false_type {};
+template <typename T>
+struct has_message<T, decltype((void)T::message, void())> : std::true_type {};
+
+template <typename T, typename = void>
+struct is_c_string : std::false_type {};
+template <typename T>
+struct is_c_string<T, typename std::enable_if<
+  std::is_convertible<T, char const*   >::value ||
+  std::is_convertible<T, wchar_t const*>::value
+>::type> : std::true_type {};
+
+template <typename T>
+using is_uint32 = std::is_same<typename std::decay<T>::type, uint32_t>;
+
 }  // namespace detail
 
 /**
@@ -638,7 +663,7 @@ constexpr auto has_name_member() noexcept -> decltype(T::name, bool())
  * `domain`s are expected to be long-lived and unique to a library or
  * application. As such, it is assumed a domain's name is known at compile
  * time. Therefore, all NVTX constructs that can be associated with a domain
- * require the domain to be specified via a *type* `DomainName` passed as an
+ * require the domain to be specified via a *type* `D` passed as an
  * explicit template parameter.
  *
  * The type `domain::global` may be used to indicate that the global NVTX
@@ -646,15 +671,15 @@ constexpr auto has_name_member() noexcept -> decltype(T::name, bool())
  *
  * None of the C++ NVTX constructs require the user to manually construct a
  * `domain` object. Instead, if a custom domain is desired, the user is
- * expected to define a type `DomainName` that contains a member
- * `DomainName::name` which resolves to either a `char const*` or `wchar_t
- * const*`. The value of `DomainName::name` is used to name and uniquely
+ * expected to define a type `D` that contains a member
+ * `D::name` which resolves to either a `char const*` or `wchar_t
+ * const*`. The value of `D::name` is used to name and uniquely
  * identify the custom domain.
  *
  * Upon the first use of an NVTX construct associated with the type
- * `DomainName`, the "construct on first use" pattern is used to construct a
+ * `D`, the "construct on first use" pattern is used to construct a
  * function local static `domain` object. All future NVTX constructs
- * associated with `DomainType` will use a reference to the previously
+ * associated with `D` will use a reference to the previously
  * constructed `domain` object. See `domain::get`.
  *
  * Example:
@@ -687,12 +712,26 @@ class domain {
   domain& operator=(domain&&) = delete;
 
   /**
+   * @brief Tag type for the "global" NVTX domain.
+   *
+   * This type may be passed as a template argument to any function/class
+   * expecting a type to identify a domain to indicate that the global domain
+   * should be used.
+   *
+   * All NVTX events in the global domain across all libraries and
+   * applications will be grouped together.
+   *
+   */
+  struct global {
+  };
+
+  /**
    * @brief Returns reference to an instance of a function local static
    * `domain` object.
    *
    * Uses the "construct on first use" idiom to safely ensure the `domain`
    * object is initialized exactly once upon first invocation of
-   * `domain::get<DomainName>()`. All following invocations will return a
+   * `domain::get<D>()`. All following invocations will return a
    * reference to the previously constructed `domain` object. See
    * https://isocpp.org/wiki/faq/ctors#static-init-order-on-first-use
    *
@@ -703,14 +742,14 @@ class domain {
    * when using domains with their own use of the NVTX C API.
    *
    * This function is threadsafe as of C++11. If two or more threads call
-   * `domain::get<DomainName>` concurrently, exactly one of them is guaranteed
+   * `domain::get<D>` concurrently, exactly one of them is guaranteed
    * to construct the `domain` object and the other(s) will receive a
    * reference to the object after it is fully constructed.
    *
-   * The domain's name is specified via the type `DomainName` pass as an
-   * explicit template parameter. `DomainName` is required to contain a
-   * member `DomainName::name` that resolves to either a `char const*` or
-   * `wchar_t const*`. The value of `DomainName::name` is used to name and
+   * The domain's name is specified via the type `D` pass as an
+   * explicit template parameter. `D` is required to contain a
+   * member `D::name` that resolves to either a `char const*` or
+   * `wchar_t const*`. The value of `D::name` is used to name and
    * uniquely identify the `domain`.
    *
    * Example:
@@ -726,18 +765,54 @@ class domain {
    *                                      // previously constructed `domain`.
    * \endcode
    *
-   * @tparam DomainName Type that contains a `DomainName::name` member used to
+   * @tparam D Type that contains a `D::name` member used to
    * name the `domain` object.
-   * @return Reference to the `domain` corresponding to the type `DomainName`.
+   * @return Reference to the `domain` corresponding to the type `D`.
    */
-  template <typename DomainName>
+  template <typename D = global,
+    typename std::enable_if<
+      detail::is_c_string<decltype(D::name)>::value
+    , int>::type = 0>
   static domain const& get() noexcept
   {
-    static_assert(detail::has_name_member<DomainName>(),
-      "Type used to identify a domain must contain a name member of type "
-      "const char* or const wchar_t*");
-    static domain const d{DomainName::name};
+    static domain const d(D::name);
     return d;
+  }
+
+  /**
+   * @brief Overload of `domain::get` to provide a clear compile error when
+   * `D` has a `name` member that is not directly convertible to either
+   * `char const*` or `wchar_t const*`.
+   */
+  template <typename D = global,
+      typename std::enable_if<
+      !detail::is_c_string<decltype(D::name)>::value
+      , int>::type = 0>
+  static domain const& get() noexcept
+  {
+      NVTX3_STATIC_ASSERT(detail::always_false<D>::value,
+          "Type used to identify an NVTX domain must contain a static constexpr member "
+          "called 'name' of type const char* or const wchar_t* -- 'name' member is not "
+          "convertible to either of those types");
+      static domain const unused;
+      return unused;  // Function must compile for static_assert to be triggered
+  }
+
+  /**
+   * @brief Overload of `domain::get` to provide a clear compile error when
+   * `D` does not have a `name` member.
+   */
+  template <typename D = global,
+    typename std::enable_if<
+      !detail::has_name<D>::value
+    , int>::type = 0>
+  static domain const& get() noexcept
+  {
+    NVTX3_STATIC_ASSERT(detail::always_false<D>::value,
+      "Type used to identify an NVTX domain must contain a static constexpr member "
+      "called 'name' of type const char* or const wchar_t* -- 'name' member is missing");
+    static domain const unused;
+    return unused;  // Function must compile for static_assert to be triggered
   }
 
   /**
@@ -747,20 +822,6 @@ class domain {
    * native `nvtxDomainHandle_t` object.
    */
   operator nvtxDomainHandle_t() const noexcept { return _domain; }
-
-  /**
-   * @brief Tag type for the "global" NVTX domain.
-   *
-   * This type may be passed as a template argument to any function/class
-   * expecting a type to identify a domain to indicate that the global domain
-   * should be used.
-   *
-   * All NVTX events in the global domain across all libraries and
-   * applications will be grouped together.
-   *
-   */
-  struct global {
-  };
 
  private:
   /**
@@ -811,7 +872,7 @@ class domain {
    * "global" NVTX domain.
    *
    */
-  domain() = default;
+  domain() noexcept {}
 
   /**
    * @brief Intentionally avoid calling nvtxDomainDestroy on the `domain` object.
@@ -1150,14 +1211,68 @@ class named_category final : public category {
    * @tparam C Type containing a member `C::name` that resolves  to either a
    * `char const*` or `wchar_t const*` and `C::id`.
    */
-  template <typename C>
-  static named_category<D> const& get() noexcept
+  template <typename C,
+    typename std::enable_if<
+      detail::is_c_string<decltype(C::name)>::value &&
+      detail::is_uint32<decltype(C::id)>::value
+    , int>::type = 0>
+  static named_category const& get() noexcept
   {
-    static_assert(detail::has_name_member<C>(),
-      "Type used to name a category must contain a 'name' member.");
-    static named_category<D> const category{C::id, C::name};
-    return category;
+    static named_category const cat(C::id, C::name);
+    return cat;
   }
+
+  /**
+   * @brief Overload of `named_category::get` to provide a clear compile error
+   * when `C` has the required `name` and `id` members, but they are not the
+   * required types.  `name` must be directly convertible to `char const*` or
+   * `wchar_t const*`, and `id` must be `uint32_t`.
+   */
+  template <typename C,
+    typename std::enable_if<
+      detail::has_name<C>::value &&  // This line only needed for VS pre-2017
+      (!detail::is_c_string<decltype(C::name)>::value ||
+      !detail::is_uint32<decltype(C::id)>::value)
+    , int>::type = 0>
+  static named_category const& get() noexcept
+  {
+    NVTX3_STATIC_ASSERT(detail::is_c_string<decltype(C::name)>::value,
+      "Type used to name an NVTX category must contain a static constexpr member "
+      "called 'name' of type const char* or const wchar_t* -- 'name' member is not "
+      "convertible to either of those types");
+    NVTX3_STATIC_ASSERT(detail::is_uint32<decltype(C::id)>::value,
+      "Type used to name an NVTX category must contain a static constexpr member "
+      "called 'id' of type uint32_t -- 'id' member is the wrong type");
+    static named_category const unused;
+    return unused;  // Function must compile for static_assert to be triggered
+  }
+
+  /**
+   * @brief Overload of `named_category::get` to provide a clear compile error
+   * when `C` does not have the required `name` and `id` members.
+   */
+  template <typename C,
+    typename std::enable_if<
+      !detail::has_name<C>::value ||
+      !detail::has_id<C>::value
+    , int>::type = 0>
+  static named_category const& get() noexcept
+  {
+    NVTX3_STATIC_ASSERT(detail::has_name<C>::value,
+      "Type used to name an NVTX category must contain a static constexpr member "
+      "called 'name' of type const char* or const wchar_t* -- 'name' member is missing");
+    NVTX3_STATIC_ASSERT(detail::has_id<C>::value,
+      "Type used to name an NVTX category must contain a static constexpr member "
+      "called 'id' of type uint32_t -- 'id' member is missing");
+    static named_category const unused;
+    return unused;  // Function must compile for static_assert to be triggered
+  }
+
+ private:
+  // Default constructor is only used internally for static_assert(false) cases.
+  named_category() noexcept : category{0} {}
+
+ public:
   /**
    * @brief Construct a `category` with the specified `id` and `name`.
    *
@@ -1281,11 +1396,53 @@ class registered_string {
    * registered string's contents.
    * @return Reference to a `registered_string` associated with the type `M`.
    */
-  template <typename M>
-  static registered_string<D> const& get() noexcept
+  template <typename M,
+    typename std::enable_if<
+      detail::has_message<M>::value &&  // This line only needed for VS pre-2017
+      detail::is_c_string<decltype(M::message)>::value
+    , int>::type = 0>
+  static registered_string const& get() noexcept
   {
-    static registered_string<D> const registered_string{M::message};
-    return registered_string;
+    static registered_string const regstr(M::message);
+    return regstr;
+  }
+
+  /**
+   * @brief Overload of `registered_string::get` to provide a clear compile error
+   * when `M` has a `message` member that is not directly convertible to either
+   * `char const*` or `wchar_t const*`.
+   */
+  template <typename M,
+    typename std::enable_if<
+      detail::has_message<M>::value &&  // This line only needed for VS pre-2017
+      !detail::is_c_string<decltype(M::message)>::value
+    , int>::type = 0>
+  static registered_string const& get() noexcept
+  {
+    NVTX3_STATIC_ASSERT(detail::always_false<M>::value,
+      "Type used to register an NVTX string must contain a static constexpr member "
+      "called 'message' of type const char* or const wchar_t* -- 'message' member is "
+      "not convertible to either of those types");
+    static registered_string const unused;
+    return unused;  // Function must compile for static_assert to be triggered
+  }
+
+  /**
+   * @brief Overload of `registered_string::get` to provide a clear compile error when
+   * `M` does not have a `message` member.
+   */
+  template <typename M,
+    typename std::enable_if<
+      !detail::has_message<M>::value
+    , int>::type = 0>
+  static registered_string const& get() noexcept
+  {
+    NVTX3_STATIC_ASSERT(detail::always_false<M>::value,
+      "Type used to register an NVTX string must contain a static constexpr member "
+      "called 'message' of type const char* or const wchar_t* -- 'message' member "
+      "is missing");
+    static registered_string const unused;
+    return unused;  // Function must compile for static_assert to be triggered
   }
 
   /**
@@ -1354,7 +1511,10 @@ class registered_string {
    */
   nvtxStringHandle_t get_handle() const noexcept { return handle_; }
 
-  registered_string() = delete;
+private:
+  // Default constructor is only used internally for static_assert(false) cases.
+  registered_string() noexcept {};
+public:
   ~registered_string() = default;
   registered_string(registered_string const&) = default;
   registered_string& operator=(registered_string const&) = default;
@@ -2500,4 +2660,9 @@ inline void mark(Args const&... args) noexcept
 
 #if defined(NVTX3_INLINE_THIS_VERSION)
 #undef NVTX3_INLINE_THIS_VERSION
+#endif
+
+#if defined(NVTX3_STATIC_ASSERT_DEFINED_HERE)
+#undef NVTX3_STATIC_ASSERT_DEFINED_HERE
+#undef NVTX3_STATIC_ASSERT
 #endif
