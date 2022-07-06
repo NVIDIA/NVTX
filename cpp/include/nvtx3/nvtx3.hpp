@@ -210,8 +210,8 @@
  * NVTX++ makes use of the "construct on first use" technique to alleviate this
  * inconvenience. In short, a function local static object is constructed upon
  * the first invocation of a function and returns a reference to that object on
- * all future invocations. See the documentation for
- * `nvtx3::registered_string`, `nvtx3::domain`, `nvtx3::named_category`,  and
+ * all future invocations. See the documentation for `nvtx3::domain`,
+ * `nvtx3::named_category`, `nvtx3::registered_string`, and
  * https://isocpp.org/wiki/faq/ctors#static-init-order-on-first-use for more
  * information.
  *
@@ -334,8 +334,8 @@
  * constructs in the custom domain.
  * \code{.cpp}
  * using my_scoped_range = nvtx3::scoped_range_in<my_domain>;
- * using my_registered_string = nvtx3::registered_string<my_domain>;
- * using my_named_category = nvtx3::named_category<my_domain>;
+ * using my_registered_string = nvtx3::registered_string_in<my_domain>;
+ * using my_named_category = nvtx3::named_category_in<my_domain>;
  * \endcode
  *
  * See `nvtx3::domain` for more information.
@@ -422,8 +422,8 @@
  *
  * Example:
  * \code{.cpp}
- * // Explicitly constructed, static `registered_string`
- * static registered_string<my_domain> static_message{"my message"};
+ * // Explicitly constructed, static `registered_string` in my_domain:
+ * static registered_string_in<my_domain> static_message{"my message"};
  *
  * // Or use construct on first use:
  * // Define a tag type with a `message` member string to register
@@ -431,7 +431,7 @@
  *
  * // Uses construct on first use to register the contents of
  * // `my_message::message`
- * auto const& msg = nvtx3::registered_string<my_domain>::get<my_message>();
+ * auto& msg = nvtx3::registered_string_in<my_domain>::get<my_message>();
  * \endcode
  *
  * \subsection COLOR color
@@ -473,10 +473,10 @@
  * custom tag type with static `name` and `id` members.
  *
  * \code{.cpp}
- * // Explicitly constructed, static `named_category`
- * static nvtx3::named_category<my_domain> static_category{42, "my category"};
+ * // Explicitly constructed, static `named_category` in my_domain:
+ * static nvtx3::named_category_in<my_domain> static_category{42, "my category"};
  *
- * // OR use construct on first use:
+ * // Or use construct on first use:
  * // Define a tag type with `name` and `id` members
  * struct my_category {
  *    static constexpr char const* name{"my category"}; // category name
@@ -484,11 +484,11 @@
  * };
  *
  * // Use construct on first use to name the category id `42`
- * // with name "my category"
- * auto const& my_category = named_category<my_domain>::get<my_category>();
+ * // with name "my category":
+ * auto& cat = named_category_in<my_domain>::get<my_category>();
  *
  * // Range `r` associated with category id `42`
- * nvtx3::event_attributes attr{my_category};
+ * nvtx3::event_attributes attr{cat};
  * \endcode
  *
  * \subsection PAYLOAD payload
@@ -519,8 +519,8 @@
  *
  * // For convenience, use aliases for domain scoped objects
  * using my_scoped_range = nvtx3::scoped_range_in<my_domain>;
- * using my_registered_string = nvtx3::registered_string<my_domain>;
- * using my_named_category = nvtx3::named_category<my_domain>;
+ * using my_registered_string = nvtx3::registered_string_in<my_domain>;
+ * using my_named_category = nvtx3::named_category_in<my_domain>;
  *
  * // Default values for all attributes
  * nvtx3::event_attributes attr{};
@@ -535,13 +535,13 @@
  * my_scoped_range r2{"message", nvtx3::category{2}};
  *
  * // construct on first use a registered string
- * auto msg = my_registered_string::get<my_message>();
+ * auto& msg = my_registered_string::get<my_message>();
  *
  * // construct on first use a named category
- * auto category = my_named_category::get<my_category>();
+ * auto& cat = my_named_category::get<my_category>();
  *
  * // Use registered string and named category with a custom payload
- * my_scoped_range r3{msg, category, nvtx3::payload{42}};
+ * my_scoped_range r3{msg, cat, nvtx3::payload{42}};
  *
  * // Any number of arguments in any order
  * my_scoped_range r{nvtx3::rgb{127, 255,0}, msg};
@@ -758,10 +758,10 @@ class domain {
    * // the `domain` object identified by `my_domain`.
    * struct my_domain{ static constexpr char const* name{"my domain"}; };
    *
-   * auto& D = domain::get<my_domain>(); // First invocation constructs a
-   *                                     // `domain` with the name "my domain"
+   * auto& D1 = domain::get<my_domain>(); // First invocation constructs a
+   *                                      // `domain` with the name "my domain"
    *
-   * auto& D1 = domain::get<my_domain>(); // Quickly returns reference to
+   * auto& D2 = domain::get<my_domain>(); // Quickly returns reference to
    *                                      // previously constructed `domain`.
    * \endcode
    *
@@ -1144,7 +1144,7 @@ class category {
  *
  * Example:
  * \code{.cpp}
- * // Explicitly constructed, static `named_category`
+ * // Explicitly constructed, static `named_category` in global domain:
  * static nvtx3::named_category static_category{42, "my category"};
  *
  * // Range `r` associated with category id `42`
@@ -1160,29 +1160,29 @@ class category {
  *
  * // Use construct on first use to name the category id `42`
  * // with name "my category"
- * auto my_category = named_category<my_domain>::get<my_category>();
+ * auto& cat = named_category_in<my_domain>::get<my_category>();
  *
  * // Range `r` associated with category id `42`
- * nvtx3::scoped_range r{my_category};
+ * nvtx3::scoped_range r{cat};
  * \endcode
  *
- * `named_category`'s association of a name to a category id is local to the
- * domain specified by the type `D`. An id may have a different name in
+ * `named_category_in<D>`'s association of a name to a category id is local to
+ * the domain specified by the type `D`. An id may have a different name in
  * another domain.
  *
  * @tparam D Type containing `name` member used to identify the `domain` to
- * which the `named_category` belongs. Else, `domain::global` to  indicate
+ * which the `named_category_in` belongs. Else, `domain::global` to indicate
  * that the global NVTX domain should be used.
  */
 template <typename D = domain::global>
-class named_category final : public category {
+class named_category_in final : public category {
  public:
   /**
-   * @brief Returns a global instance of a `named_category` as a
+   * @brief Returns a global instance of a `named_category_in` as a
    * function-local static.
    *
-   * Creates a `named_category` with name and id specified by the contents of
-   * a type `C`. `C::name` determines the name and `C::id` determines the
+   * Creates a `named_category_in<D>` with name and id specified by the contents
+   * of a type `C`. `C::name` determines the name and `C::id` determines the
    * category id.
    *
    * This function is useful for constructing a named `category` exactly once
@@ -1198,7 +1198,7 @@ class named_category final : public category {
    *
    * // Use construct on first use to name the category id `42`
    * // with name "my category"
-   * auto cat = named_category<my_domain>::get<my_category>();
+   * auto& cat = named_category_in<my_domain>::get<my_category>();
    *
    * // Range `r` associated with category id `42`
    * nvtx3::scoped_range r{cat};
@@ -1208,7 +1208,7 @@ class named_category final : public category {
    * object is initialized exactly once. See
    * https://isocpp.org/wiki/faq/ctors#static-init-order-on-first-use
    *
-   * @tparam C Type containing a member `C::name` that resolves  to either a
+   * @tparam C Type containing a member `C::name` that resolves to either a
    * `char const*` or `wchar_t const*` and `C::id`.
    */
   template <typename C,
@@ -1216,14 +1216,14 @@ class named_category final : public category {
       detail::is_c_string<decltype(C::name)>::value &&
       detail::is_uint32<decltype(C::id)>::value
     , int>::type = 0>
-  static named_category const& get() noexcept
+  static named_category_in const& get() noexcept
   {
-    static named_category const cat(C::id, C::name);
+    static named_category_in const cat(C::id, C::name);
     return cat;
   }
 
   /**
-   * @brief Overload of `named_category::get` to provide a clear compile error
+   * @brief Overload of `named_category_in::get` to provide a clear compile error
    * when `C` has the required `name` and `id` members, but they are not the
    * required types.  `name` must be directly convertible to `char const*` or
    * `wchar_t const*`, and `id` must be `uint32_t`.
@@ -1234,7 +1234,7 @@ class named_category final : public category {
       (!detail::is_c_string<decltype(C::name)>::value ||
       !detail::is_uint32<decltype(C::id)>::value)
     , int>::type = 0>
-  static named_category const& get() noexcept
+  static named_category_in const& get() noexcept
   {
     NVTX3_STATIC_ASSERT(detail::is_c_string<decltype(C::name)>::value,
       "Type used to name an NVTX category must contain a static constexpr member "
@@ -1243,12 +1243,12 @@ class named_category final : public category {
     NVTX3_STATIC_ASSERT(detail::is_uint32<decltype(C::id)>::value,
       "Type used to name an NVTX category must contain a static constexpr member "
       "called 'id' of type uint32_t -- 'id' member is the wrong type");
-    static named_category const unused;
+    static named_category_in const unused;
     return unused;  // Function must compile for static_assert to be triggered
   }
 
   /**
-   * @brief Overload of `named_category::get` to provide a clear compile error
+   * @brief Overload of `named_category_in::get` to provide a clear compile error
    * when `C` does not have the required `name` and `id` members.
    */
   template <typename C,
@@ -1256,7 +1256,7 @@ class named_category final : public category {
       !detail::has_name<C>::value ||
       !detail::has_id<C>::value
     , int>::type = 0>
-  static named_category const& get() noexcept
+  static named_category_in const& get() noexcept
   {
     NVTX3_STATIC_ASSERT(detail::has_name<C>::value,
       "Type used to name an NVTX category must contain a static constexpr member "
@@ -1264,17 +1264,17 @@ class named_category final : public category {
     NVTX3_STATIC_ASSERT(detail::has_id<C>::value,
       "Type used to name an NVTX category must contain a static constexpr member "
       "called 'id' of type uint32_t -- 'id' member is missing");
-    static named_category const unused;
+    static named_category_in const unused;
     return unused;  // Function must compile for static_assert to be triggered
   }
 
  private:
   // Default constructor is only used internally for static_assert(false) cases.
-  named_category() noexcept : category{0} {}
+  named_category_in() noexcept : category{0} {}
 
  public:
   /**
-   * @brief Construct a `category` with the specified `id` and `name`.
+   * @brief Construct a `named_category_in` with the specified `id` and `name`.
    *
    * The name `name` will be registered with `id`.
    *
@@ -1283,7 +1283,7 @@ class named_category final : public category {
    * @param[in] id The category id to name
    * @param[in] name The name to associated with `id`
    */
-  named_category(id_type id, char const* name) noexcept : category{id}
+  named_category_in(id_type id, char const* name) noexcept : category{id}
   {
 #ifndef NVTX_DISABLE
     nvtxDomainNameCategoryA(domain::get<D>(), get_id(), name);
@@ -1294,7 +1294,7 @@ class named_category final : public category {
   };
 
   /**
-   * @brief Construct a `category` with the specified `id` and `name`.
+   * @brief Construct a `named_category_in` with the specified `id` and `name`.
    *
    * The name `name` will be registered with `id`.
    *
@@ -1303,7 +1303,7 @@ class named_category final : public category {
    * @param[in] id The category id to name
    * @param[in] name The name to associated with `id`
    */
-  named_category(id_type id, wchar_t const* name) noexcept : category{id}
+  named_category_in(id_type id, wchar_t const* name) noexcept : category{id}
   {
 #ifndef NVTX_DISABLE
     nvtxDomainNameCategoryW(domain::get<D>(), get_id(), name);
@@ -1313,6 +1313,12 @@ class named_category final : public category {
 #endif
   };
 };
+
+/**
+ * @brief Alias for a `named_category_in` in the global NVTX domain.
+ *
+ */
+using named_category = named_category_in<domain::global>;
 
 /**
  * @brief A message registered with NVTX.
@@ -1328,13 +1334,13 @@ class named_category final : public category {
  *
  * A particular message should only be registered once and the handle
  * reused throughout the rest of the application. This can be done by either
- * explicitly creating static `registered_string` objects, or using the
- * `registered_string::get` construct on first use helper (recommended).
+ * explicitly creating static `registered_string_in` objects, or using the
+ * `registered_string_in::get` construct on first use helper (recommended).
  *
  * Example:
  * \code{.cpp}
- * // Explicitly constructed, static `registered_string`
- * static registered_string<my_domain> static_message{"message"};
+ * // Explicitly constructed, static `registered_string` in my_domain:
+ * static registered_string_in<my_domain> static_message{"message"};
  *
  * // "message" is associated with the range `r`
  * nvtx3::scoped_range r{static_message};
@@ -1347,30 +1353,30 @@ class named_category final : public category {
  *
  * // Uses construct on first use to register the contents of
  * // `my_message::message`
- * auto msg = registered_string<my_domain>::get<my_message>();
+ * auto& msg = registered_string_in<my_domain>::get<my_message>();
  *
  * // "my message" is associated with the range `r`
  * nvtx3::scoped_range r{msg};
  * \endcode
  *
- * `registered_string`s are local to a particular domain specified via
+ * `registered_string_in`s are local to a particular domain specified via
  * the type `D`.
  *
  * @tparam D Type containing `name` member used to identify the `domain` to
- * which the `registered_string` belongs. Else, `domain::global` to  indicate
+ * which the `registered_string_in` belongs. Else, `domain::global` to indicate
  * that the global NVTX domain should be used.
  */
 template <typename D = domain::global>
-class registered_string {
+class registered_string_in {
  public:
   /**
-   * @brief Returns a global instance of a `registered_string` as a function
+   * @brief Returns a global instance of a `registered_string_in` as a function
    * local static.
    *
    * Provides a convenient way to register a message with NVTX without having
    * to explicitly register the message.
    *
-   * Upon first invocation, constructs a `registered_string` whose contents
+   * Upon first invocation, constructs a `registered_string_in` whose contents
    * are specified by `message::message`.
    *
    * All future invocations will return a reference to the object constructed
@@ -1385,7 +1391,7 @@ class registered_string {
    *
    * // Uses construct on first use to register the contents of
    * // `my_message::message`
-   * auto msg = registered_string<my_domain>::get<my_message>();
+   * auto& msg = registered_string_in<my_domain>::get<my_message>();
    *
    * // "my message" is associated with the range `r`
    * nvtx3::scoped_range r{msg};
@@ -1394,21 +1400,21 @@ class registered_string {
    * @tparam M Type required to contain a member `M::message` that
    * resolves to either a `char const*` or `wchar_t const*` used as the
    * registered string's contents.
-   * @return Reference to a `registered_string` associated with the type `M`.
+   * @return Reference to a `registered_string_in` associated with the type `M`.
    */
   template <typename M,
     typename std::enable_if<
       detail::has_message<M>::value &&  // This line only needed for VS pre-2017
       detail::is_c_string<decltype(M::message)>::value
     , int>::type = 0>
-  static registered_string const& get() noexcept
+  static registered_string_in const& get() noexcept
   {
-    static registered_string const regstr(M::message);
+    static registered_string_in const regstr(M::message);
     return regstr;
   }
 
   /**
-   * @brief Overload of `registered_string::get` to provide a clear compile error
+   * @brief Overload of `registered_string_in::get` to provide a clear compile error
    * when `M` has a `message` member that is not directly convertible to either
    * `char const*` or `wchar_t const*`.
    */
@@ -1417,36 +1423,36 @@ class registered_string {
       detail::has_message<M>::value &&  // This line only needed for VS pre-2017
       !detail::is_c_string<decltype(M::message)>::value
     , int>::type = 0>
-  static registered_string const& get() noexcept
+  static registered_string_in const& get() noexcept
   {
     NVTX3_STATIC_ASSERT(detail::always_false<M>::value,
       "Type used to register an NVTX string must contain a static constexpr member "
       "called 'message' of type const char* or const wchar_t* -- 'message' member is "
       "not convertible to either of those types");
-    static registered_string const unused;
+    static registered_string_in const unused;
     return unused;  // Function must compile for static_assert to be triggered
   }
 
   /**
-   * @brief Overload of `registered_string::get` to provide a clear compile error when
+   * @brief Overload of `registered_string_in::get` to provide a clear compile error when
    * `M` does not have a `message` member.
    */
   template <typename M,
     typename std::enable_if<
       !detail::has_message<M>::value
     , int>::type = 0>
-  static registered_string const& get() noexcept
+  static registered_string_in const& get() noexcept
   {
     NVTX3_STATIC_ASSERT(detail::always_false<M>::value,
       "Type used to register an NVTX string must contain a static constexpr member "
       "called 'message' of type const char* or const wchar_t* -- 'message' member "
       "is missing");
-    static registered_string const unused;
+    static registered_string_in const unused;
     return unused;  // Function must compile for static_assert to be triggered
   }
 
   /**
-   * @brief Constructs a `registered_string` from the specified `msg` string.
+   * @brief Constructs a `registered_string_in` from the specified `msg` string.
    *
    * Registers `msg` with NVTX and associates a handle with the registered
    * message.
@@ -1456,13 +1462,13 @@ class registered_string {
    *
    * @param msg The contents of the message
    */
-  explicit registered_string(char const* msg) noexcept
+  explicit registered_string_in(char const* msg) noexcept
     : handle_{nvtxDomainRegisterStringA(domain::get<D>(), msg)}
   {
   }
 
   /**
-   * @brief Constructs a `registered_string` from the specified `msg` string.
+   * @brief Constructs a `registered_string_in` from the specified `msg` string.
    *
    * Registers `msg` with NVTX and associates a handle with the registered
    * message.
@@ -1472,11 +1478,11 @@ class registered_string {
    *
    * @param msg The contents of the message
    */
-  explicit registered_string(std::string const& msg) noexcept
-    : registered_string{msg.c_str()} {}
+  explicit registered_string_in(std::string const& msg) noexcept
+    : registered_string_in{msg.c_str()} {}
 
   /**
-   * @brief Constructs a `registered_string` from the specified `msg` string.
+   * @brief Constructs a `registered_string_in` from the specified `msg` string.
    *
    * Registers `msg` with NVTX and associates a handle with the registered
    * message.
@@ -1486,13 +1492,13 @@ class registered_string {
    *
    * @param msg The contents of the message
    */
-  explicit registered_string(wchar_t const* msg) noexcept
+  explicit registered_string_in(wchar_t const* msg) noexcept
     : handle_{nvtxDomainRegisterStringW(domain::get<D>(), msg)}
   {
   }
 
   /**
-   * @brief Constructs a `registered_string` from the specified `msg` string.
+   * @brief Constructs a `registered_string_in` from the specified `msg` string.
    *
    * Registers `msg` with NVTX and associates a handle with the registered
    * message.
@@ -1502,8 +1508,8 @@ class registered_string {
    *
    * @param msg The contents of the message
    */
-  explicit registered_string(std::wstring const& msg) noexcept
-    : registered_string{msg.c_str()} {}
+  explicit registered_string_in(std::wstring const& msg) noexcept
+    : registered_string_in{msg.c_str()} {}
 
   /**
    * @brief Returns the registered string's handle
@@ -1513,18 +1519,24 @@ class registered_string {
 
 private:
   // Default constructor is only used internally for static_assert(false) cases.
-  registered_string() noexcept {};
+  registered_string_in() noexcept {};
 public:
-  ~registered_string() = default;
-  registered_string(registered_string const&) = default;
-  registered_string& operator=(registered_string const&) = default;
-  registered_string(registered_string&&) = default;
-  registered_string& operator=(registered_string&&) = default;
+  ~registered_string_in() = default;
+  registered_string_in(registered_string_in const&) = default;
+  registered_string_in& operator=(registered_string_in const&) = default;
+  registered_string_in(registered_string_in&&) = default;
+  registered_string_in& operator=(registered_string_in&&) = default;
 
  private:
   nvtxStringHandle_t handle_{};  ///< The handle returned from
                                  ///< registering the message with NVTX
 };
+
+/**
+ * @brief Alias for a `registered_string_in` in the global NVTX domain.
+ *
+ */
+using registered_string = registered_string_in<domain::global>;
 
 /**
  * @brief Allows associating a message string with an NVTX event via
@@ -1622,15 +1634,15 @@ class message {
   message(std::wstring&&) = delete;
 
   /**
-   * @brief Construct a `message` from a `registered_string`.
+   * @brief Construct a `message` from a `registered_string_in`.
    *
    * @tparam D Type containing `name` member used to identify the `domain`
-   * to which the `registered_string` belongs. Else, `domain::global` to
+   * to which the `registered_string_in` belongs. Else, `domain::global` to
    * indicate that the global NVTX domain should be used.
    * @param msg The message that has already been registered with NVTX.
    */
   template <typename D>
-  NVTX3_RELAXED_CONSTEXPR message(registered_string<D> const& msg) noexcept
+  NVTX3_RELAXED_CONSTEXPR message(registered_string_in<D> const& msg) noexcept
     : type_{NVTX_MESSAGE_TYPE_REGISTERED}
   {
     value_.registered = msg.get_handle();
@@ -2086,7 +2098,7 @@ class scoped_range_in {
  * @brief Alias for a `scoped_range_in` in the global NVTX domain.
  *
  */
-using scoped_range = scoped_range_in<>;
+using scoped_range = scoped_range_in<domain::global>;
 
 namespace detail {
 
@@ -2217,18 +2229,22 @@ inline constexpr bool operator!=(range_handle lhs, range_handle rhs) noexcept { 
  * @brief Manually begin an NVTX range.
  *
  * Explicitly begins an NVTX range and returns a unique handle. To end the
- * range, pass the handle to `end_range()`.
+ * range, pass the handle to `end_range_in<D>()`.
+ * 
+ * `nvtx3::start_range(...)` is equivalent to `nvtx3::start_range_in<>(...)` and
+ * `nvtx3::start_range_in<nvtx3::domain::global>(...)`.
  *
- * `start_range/end_range` are the most explicit and lowest level APIs provided
- * for creating ranges.  Use of `nvtx3::unique_range_in` should be
+ * `start_range_in/end_range_in` are the most explicit and lowest level APIs
+ * provided for creating ranges.  Use of `nvtx3::unique_range_in` should be
  * preferred unless one is unable to tie the range to the lifetime of an object.
  *
  * Example:
  * \code{.cpp}
  * nvtx3::event_attributes attr{"msg", nvtx3::rgb{127,255,0}};
- * nvtx3::range_handle h = nvxt3::start_range(attr); // Manually begins a range
+ * // Manually begin a range
+ * nvtx3::range_handle h = nvtx3::start_range_in<my_domain>(attr);
  * ...
- * nvtx3::end_range(h); // Ends the range
+ * nvtx3::end_range_in<my_domain>(h); // End the range
  * \endcode
  *
  * @tparam D Type containing `name` member used to identify the `domain`
@@ -2236,73 +2252,174 @@ inline constexpr bool operator!=(range_handle lhs, range_handle rhs) noexcept { 
  * global NVTX domain should be used.
  * @param[in] attr `event_attributes` that describes the desired attributes
  * of the range.
- * @return Unique handle to be passed to `end_range` to end the range.
+ * @return Unique handle to be passed to `end_range_in` to end the range.
  */
 template <typename D = domain::global>
-inline range_handle start_range(event_attributes const& attr) noexcept
+inline range_handle start_range_in(event_attributes const& attr) noexcept
 {
 #ifndef NVTX_DISABLE
   return range_handle{nvtxDomainRangeStartEx(domain::get<D>(), attr.get())};
 #else
   (void)attr;
-  return range_handle{};
+  return {};
 #endif
 }
 
 /**
  * @brief Manually begin an NVTX range.
  *
- * Explicitly begins an NVTX range and returns a unique handle. To end the range, pass the handle to
- * `end_range()`.
+ * Explicitly begins an NVTX range and returns a unique handle. To end the
+ * range, pass the handle to `end_range_in<D>()`.
  *
- * Passes the arguments `args...` to construct an  `event_attributes` associated with the range.
+ * `nvtx3::start_range(...)` is equivalent to `nvtx3::start_range_in<>(...)` and
+ * `nvtx3::start_range_in<nvtx3::domain::global>(...)`.
  *
- * For more detail, see `event_attributes` documentation.
+ * `start_range_in/end_range_in` are the most explicit and lowest level APIs
+ * provided for creating ranges.  Use of `nvtx3::unique_range_in` should be
+ * preferred unless one is unable to tie the range to the lifetime of an object.
+ *
+ * This overload uses `args...` to construct an  `event_attributes` to
+ * associate with the range.  For more detail, see `event_attributes`.
  *
  * Example:
  * \code{cpp}
- * nvtx3::range_handle h = nvxt3::start_range("msg", nvtx3::rgb{127,255,0}); // Begin range
+ * // Manually begin a range
+ * nvtx3::range_handle h = nvtx3::start_range_in<D>("msg", nvtx3::rgb{127,255,0});
  * ...
- * nvtx3::end_range(h); // Ends the range
+ * nvtx3::end_range_in<D>(h); // Ends the range
  * \endcode
  *
- * `start_range/end_range` are the most explicit and lowest level APIs provided
- * for creating ranges.  Use of `nvtx3::unique_range_in` should be
- * preferred unless one is unable to tie the range to the lifetime of an object.
- *
- * @param args[in] Variadiac parameter pack of the arguments for an `event_attributes`.
+ * @tparam D Type containing `name` member used to identify the `domain`
+ * to which the range belongs. Else, `domain::global` to indicate that the
+ * global NVTX domain should be used.
+ * @param args[in] Variadic parameter pack of the arguments for an `event_attributes`.
  * @return Unique handle to be passed to `end_range` to end the range.
  */
 template <typename D = domain::global, typename... Args>
-inline range_handle start_range(Args const&... args) noexcept
+inline range_handle start_range_in(Args const&... args) noexcept
 {
 #ifndef NVTX_DISABLE
-  return start_range<D>(event_attributes{args...});
+  return start_range_in<D>(event_attributes{args...});
 #else
-  return range_handle{};
+  return {};
 #endif
 }
 
 /**
- * @brief Manually end the range associated with the handle `r`.
+ * @brief Manually begin an NVTX range in the global domain.
+ *
+ * Explicitly begins an NVTX range and returns a unique handle. To end the
+ * range, pass the handle to `end_range()`.
+ *
+ * `nvtx3::start_range(...)` is equivalent to `nvtx3::start_range_in<>(...)` and
+ * `nvtx3::start_range_in<nvtx3::domain::global>(...)`.
+ *
+ * `start_range/end_range` are the most explicit and lowest level APIs
+ * provided for creating ranges.  Use of `nvtx3::unique_range` should be
+ * preferred unless one is unable to tie the range to the lifetime of an object.
+ *
+ * Example:
+ * \code{.cpp}
+ * nvtx3::event_attributes attr{"msg", nvtx3::rgb{127,255,0}};
+ * // Manually begin a range
+ * nvtx3::range_handle h = nvtx3::start_range(attr);
+ * ...
+ * nvtx3::end_range(h); // End the range
+ * \endcode
+ *
+ * @param[in] attr `event_attributes` that describes the desired attributes
+ * of the range.
+ * @return Unique handle to be passed to `end_range_in` to end the range.
+ */
+inline range_handle start_range(event_attributes const& attr) noexcept
+{
+#ifndef NVTX_DISABLE
+  return start_range_in<domain::global>(attr);
+#else
+  (void)attr;
+  return {};
+#endif
+}
+
+/**
+ * @brief Manually begin an NVTX range in the global domain.
+ *
+ * Explicitly begins an NVTX range and returns a unique handle. To end the
+ * range, pass the handle to `end_range_in<D>()`.
+ *
+ * `nvtx3::start_range(...)` is equivalent to `nvtx3::start_range_in<>(...)` and
+ * `nvtx3::start_range_in<nvtx3::domain::global>(...)`.
+ *
+ * `start_range_in/end_range_in` are the most explicit and lowest level APIs
+ * provided for creating ranges.  Use of `nvtx3::unique_range_in` should be
+ * preferred unless one is unable to tie the range to the lifetime of an object.
+ *
+ * This overload uses `args...` to construct an  `event_attributes` to
+ * associate with the range.  For more detail, see `event_attributes`.
+ *
+ * Example:
+ * \code{cpp}
+ * // Manually begin a range
+ * nvtx3::range_handle h = nvtx3::start_range("msg", nvtx3::rgb{127,255,0});
+ * ...
+ * nvtx3::end_range(h); // Ends the range
+ * \endcode
+ *
+ * @param args[in] Variadic parameter pack of the arguments for an `event_attributes`.
+ * @return Unique handle to be passed to `end_range` to end the range.
+ */
+template <typename... Args>
+inline range_handle start_range(Args const&... args) noexcept
+{
+#ifndef NVTX_DISABLE
+  return start_range_in<domain::global>(args...);
+#else
+  return {};
+#endif
+}
+
+/**
+ * @brief Manually end the range associated with the handle `r` in domain `D`.
+ *
+ * Explicitly ends the NVTX range indicated by the handle `r` returned from a
+ * prior call to `start_range_in<D>`. The range may end on a different thread
+ * from where it began.
+ *
+ * @tparam D Type containing `name` member used to identify the `domain` to
+ * which the range belongs. Else, `domain::global` to indicate that the global
+ * NVTX domain should be used.
+ * @param r Handle to a range started by a prior call to `start_range_in`.
+ *
+ * @warning The domain type specified as template parameter to this function
+ * must be the same that was specified on the associated `start_range_in` call.
+ */
+template <typename D = domain::global>
+inline void end_range_in(range_handle r) noexcept
+{
+#ifndef NVTX_DISABLE
+  nvtxDomainRangeEnd(domain::get<D>(), r.get_value());
+#else
+  (void)r;
+#endif
+}
+
+/**
+ * @brief Manually end the range associated with the handle `r` in the global
+ * domain.
  *
  * Explicitly ends the NVTX range indicated by the handle `r` returned from a
  * prior call to `start_range`. The range may end on a different thread from
  * where it began.
  *
- * @tparam D Type containing `name` member used to identify the `domain` to
- * which the range belongs. Else, `domain::global` to indicate that the global
- * NVTX domain should be used.
  * @param r Handle to a range started by a prior call to `start_range`.
  *
  * @warning The domain type specified as template parameter to this function
  * must be the same that was specified on the associated `start_range` call.
  */
-template <typename D = domain::global>
 inline void end_range(range_handle r) noexcept
 {
 #ifndef NVTX_DISABLE
-  nvtxDomainRangeEnd(domain::get<D>(), r.get_value());
+  end_range_in<domain::global>(r);
 #else
   (void)r;
 #endif
@@ -2416,7 +2533,7 @@ class unique_range_in {
 
   struct end_range_handle {
     using pointer = range_handle;  /// Override the pointer type of the unique_ptr
-    void operator()(range_handle h) const noexcept { end_range<D>(h); }
+    void operator()(range_handle h) const noexcept { end_range_in<D>(h); }
   };
   
   /// Range handle used to correlate the start/end of the range
@@ -2427,7 +2544,7 @@ class unique_range_in {
  * @brief Alias for a `unique_range_in` in the global NVTX domain.
  *
  */
-using unique_range = unique_range_in<>;
+using unique_range = unique_range_in<domain::global>;
 
 /**
  * @brief Annotates an instantaneous point in time with a "marker", using the
@@ -2437,17 +2554,14 @@ using unique_range = unique_range_in<>;
  * in an application, such as detecting a problem:
  *
  * \code{.cpp}
- * bool try_operation() {
- *    bool success = do_operation(...);
- *    if (!success) {
- *       nvtx3::event_attributes attr{"operation failed!", nvtx3::rgb{255,0,0}};
- *       nvtx3::mark<my_domain>(attr);
- *    }
- *    return success;
+ * bool success = do_operation(...);
+ * if (!success) {
+ *    nvtx3::event_attributes attr{"operation failed!", nvtx3::rgb{255,0,0}};
+ *    nvtx3::mark_in<my_domain>(attr);
  * }
  * \endcode
  *
- * Note that nvtx3::mark is a function, not a class like scoped_range.
+ * Note that nvtx3::mark_in<D> is a function, not a class like scoped_range_in<D>.
  *
  * @tparam D Type containing `name` member used to identify the `domain`
  * to which the `unique_range_in` belongs. Else, `domain::global` to
@@ -2456,7 +2570,7 @@ using unique_range = unique_range_in<>;
  * of the mark.
  */
 template <typename D = domain::global>
-inline void mark(event_attributes const& attr) noexcept
+inline void mark_in(event_attributes const& attr) noexcept
 {
 #ifndef NVTX_DISABLE
   nvtxDomainMarkEx(domain::get<D>(), attr.get());
@@ -2473,16 +2587,13 @@ inline void mark(event_attributes const& attr) noexcept
  * in an application, such as detecting a problem:
  *
  * \code{.cpp}
- * bool try_operation() {
- *    bool success = do_operation(...);
- *    if (!success) {
- *       nvtx3::mark<my_domain>("operation failed!", nvtx3::rgb{255,0,0});
- *    }
- *    return success;
+ * bool success = do_operation(...);
+ * if (!success) {
+ *    nvtx3::mark_in<my_domain>("operation failed!", nvtx3::rgb{255,0,0});
  * }
  * \endcode
  *
- * Note that nvtx3::mark is a function, not a class like scoped_range.
+ * Note that nvtx3::mark_in<D> is a function, not a class like scoped_range_in<D>.
  *
  * Forwards the arguments `args...` to construct an `event_attributes` object.
  * The attributes are then associated with the marker. For more detail, see
@@ -2496,10 +2607,69 @@ inline void mark(event_attributes const& attr) noexcept
  *
  */
 template <typename D = domain::global, typename... Args>
+inline void mark_in(Args const&... args) noexcept
+{
+#ifndef NVTX_DISABLE
+  mark_in<D>(event_attributes{args...});
+#endif
+}
+
+/**
+ * @brief Annotates an instantaneous point in time with a "marker", using the
+ * attributes specified by `attr`, in the global domain.
+ *
+ * Unlike a "range" which has a beginning and an end, a marker is a single event
+ * in an application, such as detecting a problem:
+ *
+ * \code{.cpp}
+ * bool success = do_operation(...);
+ * if (!success) {
+ *    nvtx3::event_attributes attr{"operation failed!", nvtx3::rgb{255,0,0}};
+ *    nvtx3::mark(attr);
+ * }
+ * \endcode
+ *
+ * Note that nvtx3::mark is a function, not a class like scoped_range.
+ *
+ * @param[in] attr `event_attributes` that describes the desired attributes
+ * of the mark.
+ */
+inline void mark(event_attributes const& attr) noexcept
+{
+#ifndef NVTX_DISABLE
+  mark_in<domain::global>(attr);
+#endif
+}
+
+/**
+ * @brief Annotates an instantaneous point in time with a "marker", using the
+ * arguments to construct an `event_attributes`, in the global domain.
+ *
+ * Unlike a "range" which has a beginning and an end, a marker is a single event
+ * in an application, such as detecting a problem:
+ *
+ * \code{.cpp}
+ * bool success = do_operation(...);
+ * if (!success) {
+ *    nvtx3::mark("operation failed!", nvtx3::rgb{255,0,0});
+ * }
+ * \endcode
+ *
+ * Note that nvtx3::mark is a function, not a class like scoped_range.
+ *
+ * Forwards the arguments `args...` to construct an `event_attributes` object.
+ * The attributes are then associated with the marker. For more detail, see
+ * the `event_attributes` documentation.
+ *
+ * @param[in] args Variadic parameter pack of arguments to construct an
+ * `event_attributes` associated with this range.
+ *
+ */
+template <typename... Args>
 inline void mark(Args const&... args) noexcept
 {
 #ifndef NVTX_DISABLE
-  mark<D>(event_attributes{args...});
+  mark_in<domain::global>(args...);
 #endif
 }
 
@@ -2516,7 +2686,7 @@ inline void mark(Args const&... args) noexcept
  * the entry point of a function to its exit. It is intended to be the first
  * line of the function.
  *
- * Constructs a static `registered_string` using the name of the immediately
+ * Constructs a static `registered_string_in` using the name of the immediately
  * enclosing function returned by `__func__` and constructs a
  * `nvtx3::scoped_range` using the registered function name as the range's
  * message.
@@ -2533,11 +2703,11 @@ inline void mark(Args const&... args) noexcept
  * \endcode
  *
  * @param[in] D Type containing `name` member used to identify the
- * `domain` to which the `registered_string` belongs. Else,
+ * `domain` to which the `registered_string_in` belongs. Else,
  * `domain::global` to  indicate that the global NVTX domain should be used.
  */
 #define NVTX3_V1_FUNC_RANGE_IN(D)                                                  \
-  static ::nvtx3::v1::registered_string<D> const nvtx3_func_name__{__func__};      \
+  static ::nvtx3::v1::registered_string_in<D> const nvtx3_func_name__{__func__};   \
   static ::nvtx3::v1::event_attributes const nvtx3_func_attr__{nvtx3_func_name__}; \
   ::nvtx3::v1::scoped_range_in<D> const nvtx3_range__{nvtx3_func_attr__};
 
@@ -2551,7 +2721,7 @@ inline void mark(Args const&... args) noexcept
  * expression evaluates to true.
  *
  * @param[in] D Type containing `name` member used to identify the
- * `domain` to which the `registered_string` belongs. Else,
+ * `domain` to which the `registered_string_in` belongs. Else,
  * `domain::global` to indicate that the global NVTX domain should be used.
  *
  * @param[in] C Boolean expression used to determine if a range should be
@@ -2560,7 +2730,7 @@ inline void mark(Args const&... args) noexcept
 #define NVTX3_V1_FUNC_RANGE_IF_IN(D, C) \
   ::nvtx3::v1::detail::optional_scoped_range_in<D> optional_nvtx3_range__;           \
   if (C) {                                                                           \
-    static ::nvtx3::v1::registered_string<D> const nvtx3_func_name__{__func__};      \
+    static ::nvtx3::v1::registered_string_in<D> const nvtx3_func_name__{__func__};   \
     static ::nvtx3::v1::event_attributes const nvtx3_func_attr__{nvtx3_func_name__}; \
     optional_nvtx3_range__.begin(nvtx3_func_attr__);                                 \
   }
@@ -2577,7 +2747,7 @@ inline void mark(Args const&... args) noexcept
  * the entry point of a function to its exit. It is intended to be the first
  * line of the function.
  *
- * Constructs a static `registered_string` using the name of the immediately
+ * Constructs a static `registered_string_in` using the name of the immediately
  * enclosing function returned by `__func__` and constructs a
  * `nvtx3::scoped_range` using the registered function name as the range's
  * message.
