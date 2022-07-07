@@ -569,6 +569,25 @@
 
 /* Temporary helper #defines, removed with #undef at end of header */
 
+#if !defined(NVTX3_USE_CHECKED_OVERLOADS_FOR_GET)
+#if defined(_MSC_VER) && _MSC_VER < 1914
+/* Microsoft's compiler prior to VS2017 Update 7 (15.7) uses an older parser
+ * that does not work with domain::get's specialization for domain::global,
+ * and would require extra conditions to make SFINAE work for the overloaded
+ * get() functions.  This macro disables use of overloaded get() in order to
+ * work with VS2015 and versions of VS2017 below 15.7, without penalizing
+ * users of newer compilers.  Building with this flag set to 0 means errors
+ * when defining tag structs (see documentation for domain, named_category,
+ * and registered_string) will have more complex compiler error messages
+ * instead of the clear static_assert messages from the get() overloads.
+ */
+#define NVTX3_USE_CHECKED_OVERLOADS_FOR_GET 0
+#else
+#define NVTX3_USE_CHECKED_OVERLOADS_FOR_GET 1
+#endif
+#define NVTX3_USE_CHECKED_OVERLOADS_FOR_GET_DEFINED_HERE
+#endif
+
 /* Within this header, nvtx3::NVTX3_VERSION_NAMESPACE resolves to nvtx3::vX,
  * where "X" is the major version number. */
 #define NVTX3_CONCAT(A, B) A##B
@@ -725,6 +744,7 @@ class domain {
   struct global {
   };
 
+#if NVTX3_USE_CHECKED_OVERLOADS_FOR_GET
   /**
    * @brief Returns reference to an instance of a function local static
    * `domain` object.
@@ -785,17 +805,17 @@ class domain {
    * `char const*` or `wchar_t const*`.
    */
   template <typename D = global,
-      typename std::enable_if<
+    typename std::enable_if<
       !detail::is_c_string<decltype(D::name)>::value
-      , int>::type = 0>
+    , int>::type = 0>
   static domain const& get() noexcept
   {
-      NVTX3_STATIC_ASSERT(detail::always_false<D>::value,
-          "Type used to identify an NVTX domain must contain a static constexpr member "
-          "called 'name' of type const char* or const wchar_t* -- 'name' member is not "
-          "convertible to either of those types");
-      static domain const unused;
-      return unused;  // Function must compile for static_assert to be triggered
+    NVTX3_STATIC_ASSERT(detail::always_false<D>::value,
+      "Type used to identify an NVTX domain must contain a static constexpr member "
+      "called 'name' of type const char* or const wchar_t* -- 'name' member is not "
+      "convertible to either of those types");
+    static domain const unused;
+    return unused;  // Function must compile for static_assert to be triggered
   }
 
   /**
@@ -814,6 +834,14 @@ class domain {
     static domain const unused;
     return unused;  // Function must compile for static_assert to be triggered
   }
+#else
+  template <typename D = global>
+  static domain const& get() noexcept
+  {
+    static domain const d(D::name);
+    return d;
+  }
+#endif
 
   /**
    * @brief Conversion operator to `nvtxDomainHandle_t`.
@@ -1177,6 +1205,7 @@ class category {
 template <typename D = domain::global>
 class named_category_in final : public category {
  public:
+#if NVTX3_USE_CHECKED_OVERLOADS_FOR_GET
   /**
    * @brief Returns a global instance of a `named_category_in` as a
    * function-local static.
@@ -1230,9 +1259,8 @@ class named_category_in final : public category {
    */
   template <typename C,
     typename std::enable_if<
-      detail::has_name<C>::value &&  // This line only needed for VS pre-2017
-      (!detail::is_c_string<decltype(C::name)>::value ||
-      !detail::is_uint32<decltype(C::id)>::value)
+      !detail::is_c_string<decltype(C::name)>::value ||
+      !detail::is_uint32<decltype(C::id)>::value
     , int>::type = 0>
   static named_category_in const& get() noexcept
   {
@@ -1267,6 +1295,14 @@ class named_category_in final : public category {
     static named_category_in const unused;
     return unused;  // Function must compile for static_assert to be triggered
   }
+#else
+  template <typename C>
+  static named_category_in const& get() noexcept
+  {
+    static named_category_in const cat(C::id, C::name);
+    return cat;
+  }
+#endif
 
  private:
   // Default constructor is only used internally for static_assert(false) cases.
@@ -1369,6 +1405,7 @@ using named_category = named_category_in<domain::global>;
 template <typename D = domain::global>
 class registered_string_in {
  public:
+#if NVTX3_USE_CHECKED_OVERLOADS_FOR_GET
   /**
    * @brief Returns a global instance of a `registered_string_in` as a function
    * local static.
@@ -1404,7 +1441,6 @@ class registered_string_in {
    */
   template <typename M,
     typename std::enable_if<
-      detail::has_message<M>::value &&  // This line only needed for VS pre-2017
       detail::is_c_string<decltype(M::message)>::value
     , int>::type = 0>
   static registered_string_in const& get() noexcept
@@ -1420,7 +1456,6 @@ class registered_string_in {
    */
   template <typename M,
     typename std::enable_if<
-      detail::has_message<M>::value &&  // This line only needed for VS pre-2017
       !detail::is_c_string<decltype(M::message)>::value
     , int>::type = 0>
   static registered_string_in const& get() noexcept
@@ -1450,6 +1485,14 @@ class registered_string_in {
     static registered_string_in const unused;
     return unused;  // Function must compile for static_assert to be triggered
   }
+#else
+  template <typename M>
+  static registered_string_in const& get() noexcept
+  {
+    static registered_string_in const regstr(M::message);
+    return regstr;
+  }
+#endif
 
   /**
    * @brief Constructs a `registered_string_in` from the specified `msg` string.
@@ -2455,7 +2498,7 @@ class unique_range_in {
    * Example:
    * \code{cpp}
    * nvtx3::event_attributes attr{"msg", nvtx3::rgb{127,255,0}};
-   * nvtx3::unique_range_in<> range{attr}; // Creates a range with message contents
+   * nvtx3::unique_range_in<my_domain> range{attr}; // Creates a range with message contents
    *                                            // "msg" and green color
    * \endcode
    *
@@ -2463,7 +2506,7 @@ class unique_range_in {
    * of the range.
    */
   explicit unique_range_in(event_attributes const& attr) noexcept
-    : handle_{start_range<D>(attr)}
+    : handle_{start_range_in<D>(attr)}
   {
   }
 
@@ -2830,6 +2873,11 @@ inline void mark(Args const&... args) noexcept
 
 #if defined(NVTX3_INLINE_THIS_VERSION)
 #undef NVTX3_INLINE_THIS_VERSION
+#endif
+
+#if defined(NVTX3_USE_CHECKED_OVERLOADS_FOR_GET_DEFINED_HERE)
+#undef NVTX3_USE_CHECKED_OVERLOADS_FOR_GET_DEFINED_HERE
+#undef NVTX3_USE_CHECKED_OVERLOADS_FOR_GET
 #endif
 
 #if defined(NVTX3_STATIC_ASSERT_DEFINED_HERE)
