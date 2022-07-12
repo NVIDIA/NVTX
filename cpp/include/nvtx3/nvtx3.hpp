@@ -28,7 +28,7 @@
  * since the symbols would conflict.  Subsequently including of a different
  * minor version within the same major version is allowed. Functionality of
  * minor versions is cumulative, regardless of include order.
- * 
+ *
  * Since NVTX3_CPP_REQUIRE_EXPLICIT_VERSION allows all combinations of versions
  * to coexist without problems within a translation unit, the recommended best
  * practice for instrumenting header-based libraries with NVTX C++ Wrappers is
@@ -54,7 +54,7 @@
      *
      * Breaking changes may occur between major versions, and different major versions
      * cannot provide unversioned symbols in the same translation unit (.cpp file).
-     * 
+     *
      * Note: If NVTX3_CPP_REQUIRE_EXPLICIT_VERSION is defined, this macro is not defined.
      *
      * Not to be confused with the version number of the NVTX core library.
@@ -81,7 +81,7 @@
   #elif (NVTX3_CPP_INLINED_VERSION_MAJOR == NVTX3_CPP_VERSION_MAJOR) && \
     (NVTX3_CPP_INLINED_VERSION_MINOR < NVTX3_CPP_VERSION_MINOR)
     /* An older minor version of the same major version already defined unversioned
-     * symbols.  The new features provided in this header will be inlined 
+     * symbols.  The new features provided in this header will be inlined
      * redefine the minor version macro to this header's version.
      */
     #undef NVTX3_CPP_INLINED_VERSION_MINOR
@@ -373,7 +373,7 @@
  * // Multiple arguments of the same type are allowed, but only the first is
  * // used -- in this example, payload is set to 42:
  * nvtx3::event_attributes attr{ nvtx3::payload{42}, nvtx3::payload{7} };
- * 
+ *
  * // Using the nvtx3 namespace in a local scope makes the syntax more succinct:
  * using namespace nvtx3;
  * event_attributes attr{"message", rgb{127, 255, 0}, payload{42}, category{1}};
@@ -2192,7 +2192,7 @@ private:
 
 /**
  * @brief Handle used for correlating explicit range start and end events.
- * 
+ *
  * A handle is "null" if it does not correspond to any range.
  *
  */
@@ -2218,9 +2218,9 @@ struct range_handle {
 
   /**
    * @brief Checks whether this handle is null
-   * 
+   *
    * Provides contextual conversion to `bool`.
-   * 
+   *
    * \code{cpp}
    * range_handle handle{};
    * if (handle) {...}
@@ -2253,7 +2253,7 @@ struct range_handle {
 
 /**
  * @brief Compares two range_handles for equality
- * 
+ *
  * @param lhs The first range_handle to compare
  * @param rhs The second range_handle to compare
  */
@@ -2264,7 +2264,7 @@ inline constexpr bool operator==(range_handle lhs, range_handle rhs) noexcept
 
 /**
  * @brief Compares two range_handles for inequality
- * 
+ *
  * @param lhs The first range_handle to compare
  * @param rhs The second range_handle to compare
  */
@@ -2275,7 +2275,7 @@ inline constexpr bool operator!=(range_handle lhs, range_handle rhs) noexcept { 
  *
  * Explicitly begins an NVTX range and returns a unique handle. To end the
  * range, pass the handle to `end_range_in<D>()`.
- * 
+ *
  * `nvtx3::start_range(...)` is equivalent to `nvtx3::start_range_in<>(...)` and
  * `nvtx3::start_range_in<nvtx3::domain::global>(...)`.
  *
@@ -2580,9 +2580,9 @@ class unique_range_in {
     using pointer = range_handle;  /// Override the pointer type of the unique_ptr
     void operator()(range_handle h) const noexcept { end_range_in<D>(h); }
   };
-  
+
   /// Range handle used to correlate the start/end of the range
-  std::unique_ptr<range_handle, end_range_handle> handle_;  
+  std::unique_ptr<range_handle, end_range_handle> handle_;
 };
 
 /**
