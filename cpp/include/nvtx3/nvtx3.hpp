@@ -1699,7 +1699,7 @@ class message {
    * @param type nvtxMessageType_t enum value indicating type of the payload
    * @param value nvtxMessageValue_t union containing message
    */
-  NVTX3_CONSTEXPR_IF_CPP14 message(
+  constexpr message(
     nvtxMessageType_t const& type,
     nvtxMessageValue_t const& value) noexcept
     : type_{type}, value_(value)
@@ -1721,13 +1721,13 @@ class message {
    * @brief Return the union holding the value of the message.
    *
    */
-  NVTX3_CONSTEXPR_IF_CPP14 value_type get_value() const noexcept { return value_; }
+  constexpr value_type get_value() const noexcept { return value_; }
 
   /**
    * @brief Return the type information about the value the union holds.
    *
    */
-  NVTX3_CONSTEXPR_IF_CPP14 nvtxMessageType_t get_type() const noexcept { return type_; }
+  constexpr nvtxMessageType_t get_type() const noexcept { return type_; }
 
  private:
   nvtxMessageType_t type_{};    ///< message type
@@ -1828,7 +1828,7 @@ class payload {
    * @param type nvtxPayloadType_t enum value indicating type of the payload
    * @param value nvtxEventAttributes_t::payload_t union containing payload
    */
-  NVTX3_CONSTEXPR_IF_CPP14 payload(
+  constexpr payload(
     nvtxPayloadType_t const& type,
     value_type const& value) noexcept
     : type_{type}, value_(value)
@@ -1839,13 +1839,13 @@ class payload {
    * @brief Return the union holding the value of the payload
    *
    */
-  NVTX3_CONSTEXPR_IF_CPP14 value_type get_value() const noexcept { return value_; }
+  constexpr value_type get_value() const noexcept { return value_; }
 
   /**
    * @brief Return the information about the type the union holds.
    *
    */
-  NVTX3_CONSTEXPR_IF_CPP14 nvtxPayloadType_t get_type() const noexcept { return type_; }
+  constexpr nvtxPayloadType_t get_type() const noexcept { return type_; }
 
  private:
   nvtxPayloadType_t type_;  ///< Type of the payload value
