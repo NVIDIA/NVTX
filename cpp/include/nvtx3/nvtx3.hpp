@@ -274,15 +274,15 @@
  *
  * \section MARKS Marks
  *
- * `nvtx3::mark` allows annotating an instantaneous event in an application's
- * timeline. For example, indicating when a mutex is locked or unlocked.
+ * `nvtx3::mark` annotates an instantaneous point in time with a "marker".
+ *
+ * Unlike a "range" which has a beginning and an end, a marker is a single event
+ * in an application, such as detecting a problem:
  *
  * \code{.cpp}
- * std::mutex global_lock;
- * void lock_mutex() {
- *    global_lock.lock();
- *    // Marks an event immediately after the mutex is locked
- *    nvtx3::mark<my_domain>("Locked global_lock");
+ * bool success = do_operation(...);
+ * if (!success) {
+ *    nvtx3::mark("operation failed!");
  * }
  * \endcode
  *
