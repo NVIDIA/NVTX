@@ -91,14 +91,6 @@
 #endif
 /* clang-format on */
 
-#include <nvtx3/nvToolsExt.h>
-
-#include <memory>
-#include <string>
-#include <type_traits>
-#include <utility>
-#include <cstddef>
-
 /**
  * @file nvtx3.hpp
  *
@@ -633,6 +625,14 @@
 
 #ifndef NVTX3_CPP_DEFINITIONS_V1_0
 #define NVTX3_CPP_DEFINITIONS_V1_0
+
+#include <nvtx3/nvToolsExt.h>
+
+#include <memory>
+#include <string>
+#include <type_traits>
+#include <utility>
+#include <cstddef>
 
 namespace nvtx3 {
 
