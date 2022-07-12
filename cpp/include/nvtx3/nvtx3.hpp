@@ -169,9 +169,9 @@
  * if `my_function()` has multiple returns or can throw exceptions as it
  * requires calling `nvtxRangePop()` before all possible return points.
  *
- * NVTX++ solves this inconvenience through the "RAII" technique by providing a
- * `nvtx3::scoped_range` class that begins a range at construction and ends the
- * range on destruction. The above example then becomes:
+ * NVTX C++ solves this inconvenience through the "RAII" technique by providing
+ * a `nvtx3::scoped_range` class that begins a range at construction and ends
+ * the range on destruction. The above example then becomes:
  *
  * \code{.cpp}
  * void my_function(...) {
@@ -199,10 +199,10 @@
  * explicit initialization function called before all other functions to
  * ensure that these long-lived objects are initialized before being used.
  *
- * NVTX++ makes use of the "construct on first use" technique to alleviate this
- * inconvenience. In short, a function local static object is constructed upon
- * the first invocation of a function and returns a reference to that object on
- * all future invocations. See the documentation for `nvtx3::domain`,
+ * NVTX C++ makes use of the "construct on first use" technique to alleviate
+ * this inconvenience. In short, a function local static object is constructed
+ * upon the first invocation of a function and returns a reference to that
+ * object on all future invocations. See the documentation for `nvtx3::domain`,
  * `nvtx3::named_category`, `nvtx3::registered_string`, and
  * https://isocpp.org/wiki/faq/ctors#static-init-order-on-first-use for more
  * information.
@@ -227,7 +227,7 @@
  * application. Common examples are using ranges to annotate the time it takes
  * to execute a function or an iteration of a loop.
  *
- * NVTX++ uses RAII to automate the generation of ranges that are tied to the
+ * NVTX C++ uses RAII to automate the generation of ranges that are tied to the
  * lifetime of objects. Similar to `std::lock_guard` in the C++ Standard
  * Template Library.
  *
@@ -235,7 +235,7 @@
  *
  * `nvtx3::scoped_range_in` is a class that begins a range upon construction
  * and ends the range at destruction. This is one of the most commonly used
- * constructs in NVTX++ and is useful for annotating spans of time on a
+ * constructs in NVTX C++ and is useful for annotating spans of time on a
  * particular thread. These ranges can be nested to arbitrary depths.
  *
  * `nvtx3::scoped_range` is an alias for a `nvtx3::scoped_range_in` in the
@@ -295,7 +295,7 @@
  *
  * It is common for a library or application to have only a single domain and
  * for the name of that domain to be known at compile time. Therefore, Domains
- * in NVTX++ are represented by _tag types_.
+ * in NVTX C++ are represented by _tag types_.
  *
  * For example, to define a custom domain, simply define a new concrete type
  * (a `class` or `struct`) with a `static` member called `name` that contains
@@ -305,9 +305,9 @@
  * struct my_domain{ static constexpr char const* name{"my domain"}; };
  * \endcode
  *
- * For any NVTX++ construct that can be scoped to a domain, the type `my_domain`
- * can be passed as an explicit template argument to scope it to the custom
- * domain.
+ * For any NVTX C++ construct that can be scoped to a domain, the type
+ * `my_domain` can be passed as an explicit template argument to scope it to
+ * the custom domain.
  *
  * The tag type `nvtx3::domain::global` represents the global NVTX domain.
  *
