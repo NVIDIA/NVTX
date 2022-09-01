@@ -626,7 +626,7 @@
 #ifndef NVTX3_CPP_DEFINITIONS_V1_0
 #define NVTX3_CPP_DEFINITIONS_V1_0
 
-#include <nvtx3/nvToolsExt.h>
+#include "nvToolsExt.h"
 
 #include <memory>
 #include <string>
