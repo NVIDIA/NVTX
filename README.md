@@ -129,7 +129,7 @@ Note that the toolkit may also include older versions for backwards compatibilit
 
 [CMake Package Manager (CPM)](https://github.com/cpm-cmake/CPM.cmake) is a utility that automatically downloads dependencies when CMake first runs on a project.  Since NVTX v3 is just a few headers, the download will be fast.  The downloaded files can be stored in an external cache directory to avoid redownloading during clean builds, and to enable offline builds.  First, download `CPM.cmake` from CPM's repo and save it in your project.  Then you can fetch NVTX directly from GitHub with CMake code like this (CMake 3.14 or greater is required):
 
-```
+```cmake
 include(path/to/CPM.cmake)
 
 CPMAddPackage(
@@ -139,9 +139,11 @@ CPMAddPackage(
     SOURCE_SUBDIR c
     )
 
-target_link_libraries(some_c_program nvtx3-c)
+add_executable(some_c_program main.c)
+target_link_libraries(some_c_program PRIVATE nvtx3-c)
 
-target_link_libraries(some_cpp_program nvtx3-cpp)
+add_executable(some_cpp_program main.cpp)
+target_link_libraries(some_cpp_program PRIVATE nvtx3-cpp)
 ```
 ## Python
 ### Get NVTX using Conda
@@ -190,7 +192,7 @@ The NVTX C API is a header-only library, implemented using **standard C89**.  Th
 - NVIDIA nvcc
 - MinGW
 
-C89 support in these compilers has not changed in many years, so even very old versions should work.
+C89 support in these compilers has not changed in many years, so even very old compiler versions should work.
 
 See more details in [the `c` directory of this repo](/c), and the [NVTX C API Reference](https://nvidia.github.io/NVTX/doxygen/index.html).
 
