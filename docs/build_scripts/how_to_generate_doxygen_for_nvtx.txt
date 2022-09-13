@@ -1,0 +1,4 @@
+Simply run the "doxygen" command in this directory, with no arguments.
+
+It will use "Doxyfile" as the configuration to build HTML docs.  The
+generated docs will appear in "generated/html".
