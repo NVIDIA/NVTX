@@ -21,7 +21,7 @@ project(NVTX-C VERSION 0.1.0 LANGUAGES C)
 # - nvtx target -----------------------------------------------------------------------------------
 add_library(nvtx3-c INTERFACE)
 target_include_directories(nvtx3-c INTERFACE
-    "$<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>"
+    "$<BUILD_INTERFACE:${CMAKE_CURRENT_LIST_DIR}/include>"
     "$<INSTALL_INTERFACE:include>")
 target_link_libraries(nvtx3-c INTERFACE ${CMAKE_DL_LIBS})
 
