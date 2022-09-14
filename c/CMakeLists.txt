@@ -1,5 +1,5 @@
 #=============================================================================
-# Copyright (c) 2022, NVIDIA CORPORATION.
+# Copyright (c) 2020, NVIDIA CORPORATION.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -15,10 +15,13 @@
 #=============================================================================
 cmake_minimum_required(VERSION 3.12 FATAL_ERROR)
 
+# Define "nvtx3-c" library for the NVTX v3 C API
 add_library(nvtx3-c INTERFACE)
 target_include_directories(nvtx3-c INTERFACE
     "$<BUILD_INTERFACE:${CMAKE_CURRENT_LIST_DIR}/include>"
     "$<INSTALL_INTERFACE:include>")
 target_link_libraries(nvtx3-c INTERFACE ${CMAKE_DL_LIBS})
 
-
+# Define "nvtx3-cpp" library for the NVTX v3 C++ API
+add_library(nvtx3-cpp INTERFACE)
+target_link_libraries(nvtx3-cpp INTERFACE nvtx3-c)
