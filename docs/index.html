@@ -1,10 +1,234 @@
+
 <!DOCTYPE html>
-<html>
-  <head>
-    <!--<meta http-equiv="Refresh" content="0; url=doxygen/index.html" />-->
-  </head>
-  <body>
-    <p><a href="doxygen/index.html">Reference documentation for NVTX C API</a></p>
-    <p><a href="doxygen-cpp/index.html">Reference documentation for NVTX C++ API</a></p>
-  </body>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="" xml:lang="">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>NVTX - NVIDIA Tools Extension Library</title>
+  <link rel="stylesheet" href="../tools/docs/github-markdown-css/github-markdown.css">
+  <style>
+    .markdown-body {
+      box-sizing: border-box;
+      min-width: 200px;
+      max-width: 980px;
+      margin: 0 auto;
+      padding: 45px;
+    }
+  
+    @media (max-width: 767px) {
+      .markdown-body {
+        padding: 15px;
+      }
+    }
+  </style>
+</head>
+<body class="markdown-body" style="background-color: var(--color-canvas-default)">
+<h1><a id="user-content-nvtx-nvidia-tools-extension-library" class="anchor" aria-hidden="true" href="#nvtx-nvidia-tools-extension-library"><span aria-hidden="true" class="octicon octicon-link"></span></a>NVTX (NVIDIA Tools Extension Library)</h1>
+<p>NVTX is a cross-platform API for annotating source code to provide contextual information to developer tools.</p>
+<p>The NVTX API is written in C, with wrappers provided for C++ and Python.</p>
+<h1><a id="user-content-what-does-nvtx-do" class="anchor" aria-hidden="true" href="#what-does-nvtx-do"><span aria-hidden="true" class="octicon octicon-link"></span></a>What does NVTX do?</h1>
+<p>By default, NVTX API calls do <em>nothing</em>.  When you launch a program from a developer tool, NVTX calls in that program are redirected to functions in the tool.  Developer tools are free to implement NVTX API calls however they wish.</p>
+<p>Here are some examples of what a tool might do with NVTX calls:</p>
+<ul>
+<li>Print a message to the console</li>
+<li>Record a trace of when NVTX calls occur, and display them on a timeline</li>
+<li>Build a statistical profile of NVTX calls, or time spent in ranges between calls</li>
+<li>Enable/disable tool features in ranges bounded by NVTX calls matching some criteria</li>
+<li>Forward the data to other logging APIs or event systems</li>
+</ul>
+<h1><a id="user-content-example-visualize-loop-iterations-on-a-timeline" class="anchor" aria-hidden="true" href="#example-visualize-loop-iterations-on-a-timeline"><span aria-hidden="true" class="octicon octicon-link"></span></a>Example: Visualize loop iterations on a timeline</h1>
+<p>This C++ example annotates <code>some_function</code> with an NVTX range using the function's name.  This range begins at the top of the function body, and automatically ends when the function returns.  The function performs a loop, sleeping for one second in each iteration.  A local <code>nvtx3::scoped_range</code> annotates the scope of the loop body.  The loop iteration ranges are nested within the function range.</p>
+<div class="highlight highlight-source-c++"><pre>#<span class="pl-k">include</span> <span class="pl-s"><span class="pl-pds">&lt;</span>nvtx3/nvtx3.hpp<span class="pl-pds">&gt;</span></span>
+
+<span class="pl-k">void</span> <span class="pl-en">some_function</span>()
+{
+    <span class="pl-c1">NVTX3_FUNC_RANGE</span>();  <span class="pl-c"><span class="pl-c">//</span> Range around the whole function</span>
+
+    <span class="pl-k">for</span> (<span class="pl-k">int</span> i = <span class="pl-c1">0</span>; i &lt; <span class="pl-c1">6</span>; ++i) {
+        nvtx3::scoped_range loop{<span class="pl-s"><span class="pl-pds">"</span>loop range<span class="pl-pds">"</span></span>};  <span class="pl-c"><span class="pl-c">//</span> Range for iteration</span>
+
+        <span class="pl-c"><span class="pl-c">//</span> Make each iteration last for one second</span>
+        <span class="pl-c1">std::this_thread::sleep_for</span>(std::chrono::seconds{<span class="pl-c1">1</span>});
+    }
+}</pre></div>
+<p>Normally, this program waits for 6 seconds, and does nothing else.</p>
+<p>Launch it from <strong>NVIDIA Nsight Systems</strong>, and you'll see this execution on a timeline:</p>
+<p><a target="_blank" rel="noopener noreferrer nofollow" href="https://raw.githubusercontent.com/jrhemstad/nvtx_wrappers/master/docs/example_range.png"><img src="https://raw.githubusercontent.com/jrhemstad/nvtx_wrappers/master/docs/example_range.png" alt="alt text" title="Example NVTX Ranges in Nsight Systems" style="max-width: 100%;"></a></p>
+<p>The NVTX row shows the function's name "some_function" in the top-level range and the "loop range" message in the nested ranges.  The loop iterations each last for the expected one second.</p>
+<h1><a id="user-content-what-kinds-of-annotation-does-nvtx-provide" class="anchor" aria-hidden="true" href="#what-kinds-of-annotation-does-nvtx-provide"><span aria-hidden="true" class="octicon octicon-link"></span></a>What kinds of annotation does NVTX provide?</h1>
+<h2><a id="user-content-markers" class="anchor" aria-hidden="true" href="#markers"><span aria-hidden="true" class="octicon octicon-link"></span></a>Markers</h2>
+<p><strong>Markers</strong> annotate a specific point in a program's execution with a message.  Optional extra fields may be provided: a category, a color, and a payload value.</p>
+<h2><a id="user-content-ranges" class="anchor" aria-hidden="true" href="#ranges"><span aria-hidden="true" class="octicon octicon-link"></span></a>Ranges</h2>
+<p><strong>Ranges</strong> annotate a range between two points in a program's execution, like a related pair of markers.  There are two types of ranges:</p>
+<ul>
+<li>Push/Pop ranges, which can be nested to form a stack
+<ul>
+<li>The Pop call is automatically associated with a prior Push call on the same thread</li>
+</ul>
+</li>
+<li>Start/End ranges, which may overlap with other ranges arbitrarily
+<ul>
+<li>The Start call returns a handle which must be passed to the End call</li>
+<li>These ranges can start and end on different threads</li>
+</ul>
+</li>
+</ul>
+<p>The C++ and Python interfaces provide objects and decorators for automatically managing the lifetimes of ranges.</p>
+<h2><a id="user-content-resource-namingtracking" class="anchor" aria-hidden="true" href="#resource-namingtracking"><span aria-hidden="true" class="octicon octicon-link"></span></a>Resource naming/tracking</h2>
+<p><strong>Resource naming</strong> associates a displayable name string with an object.  For example, naming CPU threads allows a tool that displays thread activity on a timeline to have more meaningful labels for its rows than an numeric thread ID.</p>
+<p><strong>Resource tracking</strong> extends the idea of naming to include object lifetime tracking, as well as important usage of the object.  For example, a mutex provided by platform API (e.g. pthread_mutex, CriticalSection) can be tracked by a tool that intercepts its lock/unlock API calls, so using NVTX to name these mutex objects would be sufficient to see the names of mutexes being locked/unlocked on a timeline.  However, manually implemented spin-locks may not have an interceptible API, so tools can't automatically detect when they are used.  Use NVTX to annotate these types of mutexes where they are locked/unlocked to enable tools to track them just like standard platform API mutexes.</p>
+<h1><a id="user-content-how-do-i-use-nvtx-in-my-code" class="anchor" aria-hidden="true" href="#how-do-i-use-nvtx-in-my-code"><span aria-hidden="true" class="octicon octicon-link"></span></a>How do I use NVTX in my code?</h1>
+<h2><a id="user-content-c-and-c" class="anchor" aria-hidden="true" href="#c-and-c"><span aria-hidden="true" class="octicon octicon-link"></span></a>C and C++</h2>
+<p>For C and C++, NVTX is a header-only library with no dependencies.  Simply #include the header(s) you want to use, and call NVTX functions!  NVTX initializes automatically during the first call to any NVTX function.</p>
+<p>It is not necessary to link against a binary library.  On POSIX platforms, adding the <code>-ldl</code> option to the linker command-line is required.</p>
+<p><em>NOTE:</em> Older versions of NVTX did require linking against a dynamic library.  NVTX version 3 provides the same API, but removes the need to link with any library.  Ensure you are including NVTX v3 by using the <code>nvtx3</code> directory as a prefix in your #includes:</p>
+<p><strong>C</strong>:</p>
+<div class="highlight highlight-source-c"><pre>#<span class="pl-k">include</span> <span class="pl-s"><span class="pl-pds">&lt;</span>nvtx3/nvToolsExt.h<span class="pl-pds">&gt;</span></span>
+
+<span class="pl-k">void</span> <span class="pl-en">example</span>()
+{
+    <span class="pl-c1">nvtxMark</span>(<span class="pl-s"><span class="pl-pds">"</span>Hello world!<span class="pl-pds">"</span></span>);
+}</pre></div>
+<p><strong>C++</strong>:</p>
+<div class="highlight highlight-source-c++"><pre>#<span class="pl-k">include</span> <span class="pl-s"><span class="pl-pds">&lt;</span>nvtx3/nvtx3.hpp<span class="pl-pds">&gt;</span></span>
+
+<span class="pl-k">void</span> <span class="pl-en">example</span>()
+{
+    <span class="pl-c1">nvtx3::mark</span>(<span class="pl-s"><span class="pl-pds">"</span>Hello world!<span class="pl-pds">"</span></span>);
+}</pre></div>
+<p>For projects that use CMake, the included <code>CMakeLists.txt</code> provides targets <code>nvtx3-c</code> and <code>nvtx3-cpp</code> that set the include search paths and the <code>-ldl</code> linker option where required.</p>
+<p>The NVTX C++ API is a set of wrappers around the C API, so the C API functions are usable from C++ as well.</p>
+<p>Since the C and C++ APIs are header-only, dependency-free, and don't require explicit initialization, they are suitable for annotating other header-only libraries.  Libraries using different versions of the NVTX headers in the same translation unit or different translation units will not have conflicts, as long as best practices are followed.</p>
+<p>See more details in <a href="https://github.com/NVIDIA/NVTX/tree/release-v3/c">the <code>c</code> directory</a> of the NVIDIA NVTX GitHub repo, and in the API reference guides:</p>
+<ul>
+<li><a href="https://nvidia.github.io/NVTX/doxygen/index.html" rel="nofollow">NVTX C API Reference</a></li>
+<li><a href="https://nvidia.github.io/NVTX/doxygen-cpp/index.html" rel="nofollow">NVTX C++ API Reference</a></li>
+</ul>
+<h2><a id="user-content-python" class="anchor" aria-hidden="true" href="#python"><span aria-hidden="true" class="octicon octicon-link"></span></a>Python</h2>
+<p>Install NVTX for Python using <code>pip</code> or <code>conda</code>, and use <code>import nvtx</code> in your code:</p>
+<div class="highlight highlight-source-python"><pre><span class="pl-k">import</span> <span class="pl-s1">nvtx</span>
+
+<span class="pl-s1">nvtx</span>.<span class="pl-en">mark</span>(<span class="pl-s1">message</span><span class="pl-c1">=</span><span class="pl-s">"Hello world!"</span>)</pre></div>
+<p>See more details in <a href="https://github.com/NVIDIA/NVTX/tree/release-v3/python">the <code>python</code> directory</a> in the NVIDIA NVTX GitHub repo.</p>
+<h1><a id="user-content-how-do-i-get-nvtx" class="anchor" aria-hidden="true" href="#how-do-i-get-nvtx"><span aria-hidden="true" class="octicon octicon-link"></span></a>How do I get NVTX?</h1>
+<h2><a id="user-content-cc" class="anchor" aria-hidden="true" href="#cc"><span aria-hidden="true" class="octicon octicon-link"></span></a>C/C++</h2>
+<h3><a id="user-content-get-nvtx-from-github" class="anchor" aria-hidden="true" href="#get-nvtx-from-github"><span aria-hidden="true" class="octicon octicon-link"></span></a>Get NVTX from GitHub</h3>
+<p>The C/C++ NVTX headers are provided by the NVIDIA NVTX GitHub repo, in the <code>c</code> directory.  This is the most up-to-date copy of NVTX.  Copying that directory into your codebase is sufficient to use NVTX.</p>
+<p>The <code>release-v3</code> branch is officially supported by NVIDIA tools.  Other branches may have breaking changes at any time and are not recommended for use in production code.</p>
+<h3><a id="user-content-get-nvtx-with-nvidia-developer-tools" class="anchor" aria-hidden="true" href="#get-nvtx-with-nvidia-developer-tools"><span aria-hidden="true" class="octicon octicon-link"></span></a>Get NVTX with NVIDIA Developer Tools</h3>
+<p>Some NVIDIA developer tools include NVTX v3 as part of the installation.  See the documentation of the tools for details about where the NVTX headers are installed.</p>
+<h3><a id="user-content-get-nvtx-with-the-cuda-toolkit" class="anchor" aria-hidden="true" href="#get-nvtx-with-the-cuda-toolkit"><span aria-hidden="true" class="octicon octicon-link"></span></a>Get NVTX with the CUDA Toolkit</h3>
+<p>The CUDA toolkit provides NVTX v3.</p>
+<p>Note that the toolkit may also include older versions for backwards compatibility, so be sure to use version 3 (the <code>nvtx3</code> subdirectory of headers) for best performance, convenience, and support.  Use <code>#include &lt;nvtx3/nvToolsExt.h&gt;</code> instead of <code>#include &lt;nvToolsExt.h&gt;</code> to ensure your code is including v3.</p>
+<h3><a id="user-content-get-nvtx-using-cmake-package-manager-cpm" class="anchor" aria-hidden="true" href="#get-nvtx-using-cmake-package-manager-cpm"><span aria-hidden="true" class="octicon octicon-link"></span></a>Get NVTX using CMake Package Manager (CPM)</h3>
+<p><a href="https://github.com/cpm-cmake/CPM.cmake">CMake Package Manager (CPM)</a> is a utility that automatically downloads dependencies when CMake first runs on a project.  Since NVTX v3 is just a few headers, the download will be fast.  The downloaded files can be stored in an external cache directory to avoid redownloading during clean builds, and to enable offline builds.  First, download <code>CPM.cmake</code> from CPM's repo and save it in your project.  Then you can fetch NVTX directly from GitHub with CMake code like this (CMake 3.14 or greater is required):</p>
+<div class="highlight highlight-source-cmake"><pre><span class="pl-c1">include</span>(path/to/CPM.cmake)
+
+CPMAddPackage(
+    <span class="pl-k">NAME</span> NVTX
+    GITHUB_REPOSITORY NVIDIA/NVTX
+    GIT_TAG release-v3
+    SOURCE_SUBDIR c
+    )
+
+<span class="pl-c1">add_executable</span>(some_c_program main.c)
+<span class="pl-c1">target_link_libraries</span>(some_c_program <span class="pl-k">PRIVATE</span> nvtx3-c)
+
+<span class="pl-c1">add_executable</span>(some_cpp_program main.cpp)
+<span class="pl-c1">target_link_libraries</span>(some_cpp_program <span class="pl-k">PRIVATE</span> nvtx3-cpp)</pre></div>
+<h2><a id="user-content-python-1" class="anchor" aria-hidden="true" href="#python-1"><span aria-hidden="true" class="octicon octicon-link"></span></a>Python</h2>
+<h3><a id="user-content-get-nvtx-using-conda" class="anchor" aria-hidden="true" href="#get-nvtx-using-conda"><span aria-hidden="true" class="octicon octicon-link"></span></a>Get NVTX using Conda</h3>
+<pre><code>conda install -c conda-forge nvtx
+</code></pre>
+<h3><a id="user-content-get-nvtx-using-pip" class="anchor" aria-hidden="true" href="#get-nvtx-using-pip"><span aria-hidden="true" class="octicon octicon-link"></span></a>Get NVTX using PIP</h3>
+<pre><code>python3 -m pip install nvtx
+</code></pre>
+<h1><a id="user-content-what-tools-support-nvtx" class="anchor" aria-hidden="true" href="#what-tools-support-nvtx"><span aria-hidden="true" class="octicon octicon-link"></span></a>What tools support NVTX?</h1>
+<p>These NVIDIA tools provide built-in support for NVTX:</p>
+<ul>
+<li>
+<strong>Nsight Systems</strong> logs NVTX calls and shows them on a timeline alongside driver/OS/hardware events</li>
+<li>
+<strong>Nsight Compute</strong> uses NVTX ranges to focus where deep-dive GPU performance analysis occurs</li>
+<li>
+<strong>Nsight Graphics</strong> uses NVTX ranges to set bounds for range profiling in the Frame Debugger</li>
+<li>The <strong>CUPTI</strong> API supports recording traces of NVTX calls</li>
+</ul>
+<p>Other tools may provide NVTX support as well -- see the tool documentation for details.</p>
+<h1><a id="user-content-which-platforms-does-nvtx-support" class="anchor" aria-hidden="true" href="#which-platforms-does-nvtx-support"><span aria-hidden="true" class="octicon octicon-link"></span></a>Which platforms does NVTX support?</h1>
+<p>NVTX was designed to work on:</p>
+<ul>
+<li>Windows</li>
+<li>Linux and other POSIX-like platforms (including cygwin)</li>
+<li>Android</li>
+</ul>
+<p>Both 64-bit and 32-bit processes are supported.  There are no restrictions on CPU architecture.</p>
+<p>NVTX relies on the platform's standard API to load a dynamic library (.dll) or shared object (.so).  Platforms with this functionality disabled cannot work with NVTX.</p>
+<p>NVTX is <em>not</em> supported in GPU code, such as <code>__device__</code> functions in CUDA.  While NVTX for GPU may intuitively seem useful, keep in mind that GPUs are best utilized with thousands or millions of threads running the same function in parallel.  A tool tracing ranges in every thread would produce an unreasonably large amount of data, and would incur large performance overhead to manage this data.  Efficient instrumentation of CUDA GPU code is possible with the <a href="https://docs.nvidia.com/cuda/parallel-thread-execution/index.html#miscellaneous-instructions-pmevent" rel="nofollow">pmevent</a> PTX instruction, which can be monitored by hardware performance counters with no overhead.</p>
+<p>See the documentation for individual tools to see which platforms they support.</p>
+<h1><a id="user-content-which-languagescompilers-does-nvtx-support" class="anchor" aria-hidden="true" href="#which-languagescompilers-does-nvtx-support"><span aria-hidden="true" class="octicon octicon-link"></span></a>Which languages/compilers does NVTX support?</h1>
+<h2><a id="user-content-c" class="anchor" aria-hidden="true" href="#c"><span aria-hidden="true" class="octicon octicon-link"></span></a>C</h2>
+<p>The NVTX C API is a header-only library, implemented using <strong>standard C89</strong>.  The headers can be compiled with <code>-std=gnu90</code> or newer using many common compilers.  Tested compilers include:</p>
+<ul>
+<li>GNU gcc</li>
+<li>clang</li>
+<li>Microsoft Visual C++</li>
+<li>NVIDIA nvcc</li>
+</ul>
+<p>C89 support in these compilers has not changed in many years, so even very old compiler versions should work.</p>
+<p>See more details in <a href="https://github.com/NVIDIA/NVTX/tree/release-v3/c">the <code>c</code> directory</a> of the NVIDIA NVTX GitHub repo, and the <a href="https://nvidia.github.io/NVTX/doxygen/index.html" rel="nofollow">NVTX C API Reference</a>.</p>
+<h2><a id="user-content-c-1" class="anchor" aria-hidden="true" href="#c-1"><span aria-hidden="true" class="octicon octicon-link"></span></a>C++</h2>
+<p>The NVTX C++ API is a header-only library, implemented as a wrapper over the NVTX C API, using <strong>standard C++11</strong>.  The C++ headers are provided alongside the C headers.  NVTX C++ is implemented , and can be compiled with <code>-std=c++11</code> or newer using many common compilers.  Tested compilers include:</p>
+<ul>
+<li>GNU g++ (4.8.5 to 11.1)</li>
+<li>clang (3.5.2 to 12.0)</li>
+<li>Microsoft Visual C++ (VS 2015 to VS 2022)
+<ul>
+<li>On VS 2017.7 and newer, NVTX enables better error message output</li>
+</ul>
+</li>
+<li>NVIDIA nvcc (CUDA 7.0 and newer)</li>
+</ul>
+<p>See more details in <a href="https://github.com/NVIDIA/NVTX/tree/release-v3/c">the <code>c</code> directory</a> of the NVIDIA NVTX GitHub repo, and the <a href="https://nvidia.github.io/NVTX/doxygen-cpp/index.html" rel="nofollow">NVTX C++ API Reference</a>.</p>
+<h2><a id="user-content-python-2" class="anchor" aria-hidden="true" href="#python-2"><span aria-hidden="true" class="octicon octicon-link"></span></a>Python</h2>
+<p>The NVTX Python API provides native Python wrappers for a subset of the NVTX C API.  NVTX Python requires <strong>Python 3.6 or newer</strong>.  It has been tested on Linux, with Python 3.6 to 3.9.</p>
+<p>See more details in <a href="https://github.com/NVIDIA/NVTX/tree/release-v3/python">the <code>python</code> directory</a> of the NVIDIA NVTX GitHub repo.</p>
+<h2><a id="user-content-other-languages" class="anchor" aria-hidden="true" href="#other-languages"><span aria-hidden="true" class="octicon octicon-link"></span></a>Other languages</h2>
+<p>Any language that can call into C with normal calling conventions can work with the NVTX C API.  There are two general approaches to implement NVTX wrappers in other languages:</p>
+<ol>
+<li>Write C code that #includes and exposes NVTX functionality through a language binding interface.  Since the NVTX C API uses pointers and unions, wrappers for other languages may benefit from a more idiomatic API for ease of use.  NVTX for Python uses this approach, based on Cython.</li>
+<li>Make a dynamic library that exports the NVTX C API directly, and use C interop bindings from the other language to call into this dynamic library.  To create a dynamic library from the NVTX v3 C headers, simply compile this .c file as a dynamic library:</li>
+</ol>
+<div class="highlight highlight-source-c"><pre>    #<span class="pl-k">define</span> <span class="pl-en">NVTX_EXPORT_API</span>
+    #<span class="pl-k">include</span> <span class="pl-s"><span class="pl-pds">&lt;</span>nvtx3/nvToolsExt.h<span class="pl-pds">&gt;</span></span>
+    <span class="pl-c"><span class="pl-c">//</span> #include any other desired NVTX C API headers here to export them</span></pre></div>
+<p>Older versions of NVTX distributed a dynamic library with C API exported.  Projects depending on that library can use the code above to recreate a compatible library from NVTX v3.</p>
+<p><em>NOTE:</em> Official Fortran support coming soon!</p>
+<h1><a id="user-content-how-much-overhead-does-nvtx-add-to-my-code" class="anchor" aria-hidden="true" href="#how-much-overhead-does-nvtx-add-to-my-code"><span aria-hidden="true" class="octicon octicon-link"></span></a>How much overhead does NVTX add to my code?</h1>
+<p>The first call to any NVTX API function in a process will trigger initialization of the library.  The implementation checks an environment variable to see if a tool wishes to intercept the NVTX calls.</p>
+<p>When no tool is present, initialization disables all the NVTX API functions.  Subsequent NVTX API calls are a handful of instructions in a likely-inlined function to jump over the disabled call.</p>
+<p>When a tool is present, initialization configures the NVTX API so all subsequent calls jump directly into that tool's implementation.  Overhead in this case is entirely determined by what the tool does.</p>
+<p>The first NVTX call can incur significant overhead while loading and initializing the tool.  If this first call happens in a latency-sensitive part of the program (e.g. a game with low frame-rate detection), it may cause the program to behave differently with the tool vs. without the tool.  The <code>nvtxInitialize</code> C API function is provided for this situation, to allow force-initializing NVTX at a convenient time, without any other contextual meaning like a marker.  It is not necessary to use <code>nvtxInitialize</code> in other cases.</p>
+<h1><a id="user-content-how-do-i-disable-all-nvtx-calls-at-compile-time" class="anchor" aria-hidden="true" href="#how-do-i-disable-all-nvtx-calls-at-compile-time"><span aria-hidden="true" class="octicon octicon-link"></span></a>How do I disable all NVTX calls at compile-time?</h1>
+<p>Providing non-public information to tools via NVTX is helpful in internal builds, but may not be acceptable for public release builds.  The entire NVTX C and C++ APIs can be preprocessed out with a single macro before including any NVTX headers:</p>
+<div class="highlight highlight-source-c"><pre>#<span class="pl-k">define</span> <span class="pl-en">NVTX_DISABLE</span></pre></div>
+<p>Or add <code>-DNVTX_DISABLE</code> to the compiler command line, only in the configuration for public builds.  This avoids having to manually add <code>#if</code>s around NVTX calls solely for the purpose of disabling all of them in specific build configurations.</p>
+<h1><a id="user-content-general-usage-guidelines" class="anchor" aria-hidden="true" href="#general-usage-guidelines"><span aria-hidden="true" class="octicon octicon-link"></span></a>General Usage Guidelines</h1>
+<h2><a id="user-content-add-ranges-around-important-sections-of-code" class="anchor" aria-hidden="true" href="#add-ranges-around-important-sections-of-code"><span aria-hidden="true" class="octicon octicon-link"></span></a>Add ranges around important sections of code</h2>
+<p>Developer tools often show low-level information about what the hardware or operating system is doing, but without correlation to the high-level structure of your program.  Annotate sections of your code with NVTX ranges to add contextual information, so the information reported by tools can be extended to show where in your program the low-level events occur.  This also enables some tools to target only these important parts of your program, and to choose which parts to target in the tool options -- no need to recompile your code to target other sections!</p>
+<h2><a id="user-content-give-dont-take" class="anchor" aria-hidden="true" href="#give-dont-take"><span aria-hidden="true" class="octicon octicon-link"></span></a>Give, don't take</h2>
+<p>NVTX is primarily a <em>one-way</em> API.  Your program gives information to the tool, but it does not get actionable information back from the tool.  Some NVTX functions return values, but these should only be used as inputs to other NVTX functions.  Programs should not behave differently based on these values, because it is important for tools to see programs behaving the same way they would without any tools present!</p>
+<h2><a id="user-content-avoid-depending-on-any-particular-tool" class="anchor" aria-hidden="true" href="#avoid-depending-on-any-particular-tool"><span aria-hidden="true" class="octicon octicon-link"></span></a>Avoid depending on any particular tool</h2>
+<p>Do not use NVTX for any functionality that is required for your program to work correctly.  If a program depends on a particular tool being present to work, then it would be impossible to use any other NVTX tools with this program.  NVTX does not currently support multiple tools being attached to the same program.</p>
+<h2><a id="user-content-isolate-nvtx-annotations-in-a-library-using-a-domain" class="anchor" aria-hidden="true" href="#isolate-nvtx-annotations-in-a-library-using-a-domain"><span aria-hidden="true" class="octicon octicon-link"></span></a>Isolate NVTX annotations in a library using a Domain</h2>
+<p>It is possible for a program to use many libraries, all of which include NVTX annotations.  When running such a program in a tool, it is helpful if the user can keep these libraries' annotations separate.  A library should isolate its annotations from other libraries by creating a "domain", and performing all marker/range/naming annotations within that domain.  Tools can provide options for which domains to enable, and use domains to group annotation data by library.</p>
+<p>The domain also acts as a namespace:  Different domains may use the same hard-coded values for category IDs without conflict.  The NVTX C++ API provides initialize-on-first-use for domains to avoid the need for up-front initialization.</p>
+<h2><a id="user-content-use-categories-to-organize-annotations" class="anchor" aria-hidden="true" href="#use-categories-to-organize-annotations"><span aria-hidden="true" class="octicon octicon-link"></span></a>Use categories to organize annotations</h2>
+<p>While domains are meant to keep the annotations from different libraries separate, it may be useful within a library to have separate categories for annotations.  NVTX markers and ranges provide a "category ID" field for this purpose.  This integer may be hard-coded, like an <code>enum</code> in C/C++.  NVTX provides API functions to name to a category ID value, so tools can display meaningful names for categories.  Tools are encouraged to logically group annotations into categories.  Using slashes in category names like filesystem paths allows the user to create a hierarchy of categories, and tools should handle these as a hierarchy.</p>
+<h2><a id="user-content-avoid-slow-processing-to-prepare-arguments-for-nvtx-calls" class="anchor" aria-hidden="true" href="#avoid-slow-processing-to-prepare-arguments-for-nvtx-calls"><span aria-hidden="true" class="octicon octicon-link"></span></a>Avoid slow processing to prepare arguments for NVTX calls</h2>
+<p>When tools are not present, the first NVTX call quickly configures the API to make all subsequent NVTX calls into no-ops.  However, any processing done before making an NVTX call to prepare the arguments for the call is not disabled.  Using a function like <code>sprintf</code> to generate a message string dynamically for each call will add overhead even in the case when no tool is present!  Instead of generating message strings, is more efficient to pass a hard-coded string for the message, and variable as a <em>payload</em>.</p>
+<h2><a id="user-content-register-strings-that-will-be-used-many-times" class="anchor" aria-hidden="true" href="#register-strings-that-will-be-used-many-times"><span aria-hidden="true" class="octicon octicon-link"></span></a>Register strings that will be used many times</h2>
+<p>In each NVTX marker or range, tools may copy the message string into a log file, or test the string (e.g. with a regex) to see if it matches some criteria for triggering other functionality.  If the same message string is used repeatedly, this work in the tool would be redundant.  To reduce the tool overhead and help keep log files smaller, NVTX provides functions to "register" a message string.  These functions return a handle that can be used in markers and ranges in place of a message string.  This allows tools to log or test message strings just once, when they are registered.  Logs will be smaller when storing handle values instead of large strings, and string tests reduce to lookup of precomputed answers. The <code>NVTX3_FUNC_RANGE</code> macros, for example, register the function's name and save the handle in a local static variable for efficient reuse in subsequent calls to that function.  Some tools may require using registered strings for overhead-sensitive functionality, such as using NVTX ranges to start/stop data collection in Nsight Systems.</p>
+
+</body>
 </html>
