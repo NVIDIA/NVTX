@@ -45,8 +45,10 @@ The NVTX row shows the function's name "some_function" in the top-level range an
 
 # What kinds of annotation does NVTX provide?
 
+## Markers
 **Markers** annotate a specific point in a program's execution with a message.  Optional extra fields may be provided: a category, a color, and a payload value.
 
+## Ranges
 **Ranges** annotate a range between two points in a program's execution, like a related pair of markers.  There are two types of ranges:
 - Push/Pop ranges, which can be nested to form a stack
     - The Pop call is automatically associated with a prior Push call on the same thread
@@ -56,7 +58,10 @@ The NVTX row shows the function's name "some_function" in the top-level range an
 
 The C++ and Python interfaces provide objects and decorators for automatically managing the lifetimes of ranges.
 
-**Resource naming** associates a displayable name string with an object.  For example, naming CPU threads allows a tool that displays thread activity on a timeline to have meaningful labels for its rows.
+## Resource naming/tracking
+**Resource naming** associates a displayable name string with an object.  For example, naming CPU threads allows a tool that displays thread activity on a timeline to have more meaningful labels for its rows than an numeric thread ID.
+
+**Resource tracking** extends the idea of naming to include object lifetime tracking, as well as important usage of the object.  For example, a mutex provided by platform API (e.g. pthread_mutex, CriticalSection) can be tracked by a tool that intercepts its lock/unlock API calls, so using NVTX to name these mutex objects would be sufficient to see the names of mutexes being locked/unlocked on a timeline.  However, manually implemented spin-locks may not have an interceptible API, so tools can't automatically detect when they are used.  Use NVTX to annotate these types of mutexes where they are locked/unlocked to enable tools to track them just like standard platform API mutexes.
 
 # How do I use NVTX in my code?
 
@@ -93,7 +98,9 @@ The NVTX C++ API is a set of wrappers around the C API, so the C API functions a
 
 Since the C and C++ APIs are header-only, dependency-free, and don't require explicit initialization, they are suitable for annotating other header-only libraries.  Libraries using different versions of the NVTX headers in the same translation unit or different translation units will not have conflicts, as long as best practices are followed.
 
-See [the `c` directory](/c) in this repo for C/C++ details.
+See more details in [the `c` directory](/c) of this repo, and in the API reference guides:
+- [NVTX C API Reference](https://nvidia.github.io/NVTX/doxygen/index.html)
+- [NVTX C++ API Reference](https://nvidia.github.io/NVTX/doxygen-cpp/index.html)
 
 ## Python
 
@@ -104,14 +111,14 @@ import nvtx
 nvtx.mark(message="Hello world!")
 ```
 
-See [the `python` directory](/python) in this repo for Python details.
+See more details in [the `python` directory](/python) in this repo.
 
 # How do I get NVTX?
 
 ## C/C++
 ### Get NVTX from GitHub
 
-The C/C++ NVTX headers are provided by this repo, in the `c` directory.  This is the most up-to-date copy of NVTX.  Copying that directory into your codebase is sufficient to use NVTX.
+The C/C++ NVTX headers are provided by the NVIDIA NVTX GitHub repo, in the `c` directory.  This is the most up-to-date copy of NVTX.  Copying that directory into your codebase is sufficient to use NVTX.
 
 The `release-v3` branch is officially supported by NVIDIA tools.  Other branches may have breaking changes at any time and are not recommended for use in production code.
 
@@ -190,11 +197,10 @@ The NVTX C API is a header-only library, implemented using **standard C89**.  Th
 - clang
 - Microsoft Visual C++
 - NVIDIA nvcc
-- MinGW
 
 C89 support in these compilers has not changed in many years, so even very old compiler versions should work.
 
-See more details in [the `c` directory of this repo](/c), and the [NVTX C API Reference](https://nvidia.github.io/NVTX/doxygen/index.html).
+See more details in [the `c` directory](/c) of this repo, and the [NVTX C API Reference](https://nvidia.github.io/NVTX/doxygen/index.html).
 
 ## C++
 
@@ -202,16 +208,16 @@ The NVTX C++ API is a header-only library, implemented as a wrapper over the NVT
 - GNU g++ (4.8.5 to 11.1)
 - clang (3.5.2 to 12.0)
 - Microsoft Visual C++ (VS 2015 to VS 2022)
-    - VS 2017.7 or newer recommended for better error messages
-- NVIDIA nvcc (CUDA 7.0 or newer)
+    - On VS 2017.7 and newer, NVTX enables better error message output
+- NVIDIA nvcc (CUDA 7.0 and newer)
 
-See more details in [the `c` directory of this repo](/c), and the [NVTX C++ API Reference](https://nvidia.github.io/NVTX/doxygen-cpp/index.html).
+See more details in [the `c` directory](/c) of this repo, and the [NVTX C++ API Reference](https://nvidia.github.io/NVTX/doxygen-cpp/index.html).
 
 ## Python
 
 The NVTX Python API provides native Python wrappers for a subset of the NVTX C API.  NVTX Python requires **Python 3.6 or newer**.  It has been tested on Linux, with Python 3.6 to 3.9.
 
-See more details in [the `python` directory of this repo](/python).
+See more details in [the `python` directory](/python) of this repo.
 
 ## Other languages
 
@@ -219,7 +225,7 @@ Any language that can call into C with normal calling conventions can work with 
 
 1. Write C code that #includes and exposes NVTX functionality through a language binding interface.  Since the NVTX C API uses pointers and unions, wrappers for other languages may benefit from a more idiomatic API for ease of use.  NVTX for Python uses this approach, based on Cython.
 2. Make a dynamic library that exports the NVTX C API directly, and use C interop bindings from the other language to call into this dynamic library.  To create a dynamic library from the NVTX v3 C headers, simply compile this .c file as a dynamic library:
-```
+```c
     #define NVTX_EXPORT_API
     #include <nvtx3/nvToolsExt.h>
     // #include any other desired NVTX C API headers here to export them
