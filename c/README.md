@@ -6,8 +6,8 @@ The NVTX API is written in C, and the NVTX C++ API is implemented as wrappers fo
 
 ## NVTX API Reference Guides
 
-[NVTX C++ API Reference](https://nvidia.github.io/NVTX/doxygen-cpp/index.html)
 [NVTX C API Reference](https://nvidia.github.io/NVTX/doxygen/index.html)
+[NVTX C++ API Reference](https://nvidia.github.io/NVTX/doxygen-cpp/index.html)
 
 The NVTX C and C++ header files include Doxygen comments to provide reference documentation.  The API references were generated from these Doxygen comments.
 
@@ -215,10 +215,8 @@ The NVTX C API is a header-only library, implemented using **standard C89**.  Th
 - clang
 - Microsoft Visual C++
 - NVIDIA nvcc
-- MinGW
 
 C89 support in these compilers has not changed in many years, so even very old compiler versions should work.
-
 
 ## C++
 
@@ -226,5 +224,5 @@ The NVTX C++ API is a header-only library, implemented as a wrapper over the NVT
 - GNU g++ (4.8.5 to 11.1)
 - clang (3.5.2 to 12.0)
 - Microsoft Visual C++ (VS 2015 to VS 2022)
-    - VS 2017.7 or newer recommended for better error messages
-- NVIDIA nvcc (CUDA 7.0 or newer)
+    - On VS 2017.7 and newer, NVTX enables better error message output
+- NVIDIA nvcc (CUDA 7.0 and newer)
