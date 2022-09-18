@@ -32,7 +32,7 @@ DOXYFILE_ENCODING      = UTF-8
 # title of most generated pages and in a few other places.
 # The default value is: My Project.
 
-PROJECT_NAME           = "NVTX C++"
+PROJECT_NAME           = "NVTX C++ API Reference"
 
 # The PROJECT_NUMBER tag can be used to enter a project or revision number. This
 # could be handy for archiving the generated documentation or if some version
@@ -58,7 +58,7 @@ PROJECT_LOGO           =
 # entered, it will be relative to the location where doxygen was started. If
 # left blank the current directory will be used.
 
-OUTPUT_DIRECTORY       = docs
+OUTPUT_DIRECTORY       = ../../docs/doxygen-cpp
 
 # If the CREATE_SUBDIRS tag is set to YES then doxygen will create 4096 sub-
 # directories (in 2 levels) under the output directory of each output format and
@@ -313,8 +313,7 @@ OPTIMIZE_OUTPUT_SLICE  = NO
 # Note that for custom extensions you also need to set FILE_PATTERNS otherwise
 # the files are not read by doxygen.
 
-EXTENSION_MAPPING      = cu=C++ \
-                         cuh=C++
+EXTENSION_MAPPING      =
 
 # If the MARKDOWN_SUPPORT tag is enabled then doxygen pre-processes all comments
 # according to the Markdown format, which allows for more readable
@@ -553,7 +552,7 @@ INTERNAL_DOCS          = NO
 # (including Cygwin) ands Mac users are advised to set this option to NO.
 # The default value is: system dependent.
 
-CASE_SENSE_NAMES       = YES
+CASE_SENSE_NAMES       = NO
 
 # If the HIDE_SCOPE_NAMES tag is set to NO then doxygen will show members with
 # their full class and namespace scopes in the documentation. If set to YES, the
@@ -573,7 +572,7 @@ HIDE_COMPOUND_REFERENCE= NO
 # the files that are included by a file in the documentation of that file.
 # The default value is: YES.
 
-SHOW_INCLUDE_FILES     = YES
+SHOW_INCLUDE_FILES     = NO
 
 # If the SHOW_GROUPED_MEMB_INC tag is set to YES then Doxygen will add for each
 # grouped member an include statement to the documentation, telling the reader
@@ -820,7 +819,7 @@ WARN_LOGFILE           =
 # spaces. See also FILE_PATTERNS and EXTENSION_MAPPING
 # Note: If this tag is empty the current directory is searched.
 
-INPUT                  = include/nvtx3/nvtx3.hpp
+INPUT                  = ../../c/include/nvtx3/nvtx3.hpp
 
 # This tag can be used to specify the character encoding of the source files
 # that doxygen parses. Internally doxygen uses the UTF-8 encoding. Doxygen uses
@@ -847,18 +846,13 @@ INPUT_ENCODING         = UTF-8
 # C comment), *.py, *.pyw, *.f90, *.f95, *.f03, *.f08, *.f, *.for, *.tcl, *.vhd,
 # *.vhdl, *.ucf, *.qsf and *.ice.
 
-FILE_PATTERNS          = *.cpp \
-                         *.hpp \
-                         *.h \
-                         *.c \
-                         *.cu \
-                         *.cuh
+FILE_PATTERNS          =
 
 # The RECURSIVE tag can be used to specify whether or not subdirectories should
 # be searched for input files as well.
 # The default value is: NO.
 
-RECURSIVE              = YES
+RECURSIVE              = NO
 
 # The EXCLUDE tag can be used to specify files and/or directories that should be
 # excluded from the INPUT source files. This way you can easily exclude a
@@ -894,7 +888,7 @@ EXCLUDE_PATTERNS       =
 # Note that the wildcards are matched against the file with absolute path, so to
 # exclude all test directories use the pattern */test/*
 
-EXCLUDE_SYMBOLS        = org::apache
+EXCLUDE_SYMBOLS        = detail::*,*::detail::*
 
 # The EXAMPLE_PATH tag can be used to specify one or more files or directories
 # that contain example code fragments that are included (see the \include
@@ -920,7 +914,7 @@ EXAMPLE_RECURSIVE      = NO
 # that contain images that are to be included in the documentation (see the
 # \image command).
 
-IMAGE_PATH             = docs
+IMAGE_PATH             =
 
 # The INPUT_FILTER tag can be used to specify a program that doxygen should
 # invoke to filter for each input file. Doxygen will invoke the filter program
@@ -989,7 +983,7 @@ USE_MDFILE_AS_MAINPAGE =
 # also VERBATIM_HEADERS is set to NO.
 # The default value is: NO.
 
-SOURCE_BROWSER         = NO
+SOURCE_BROWSER         = YES
 
 # Setting the INLINE_SOURCES tag to YES will include the body of functions,
 # classes and enums directly into the documentation.
@@ -1134,7 +1128,7 @@ GENERATE_HTML          = YES
 # The default directory is: html.
 # This tag requires that the tag GENERATE_HTML is set to YES.
 
-HTML_OUTPUT            = html
+HTML_OUTPUT            = .
 
 # The HTML_FILE_EXTENSION tag can be used to specify the file extension for each
 # generated HTML page (for example: .htm, .php, .asp).
@@ -1217,7 +1211,7 @@ HTML_EXTRA_FILES       =
 # Minimum value: 0, maximum value: 359, default value: 220.
 # This tag requires that the tag GENERATE_HTML is set to YES.
 
-HTML_COLORSTYLE_HUE    = 220
+HTML_COLORSTYLE_HUE    = 86
 
 # The HTML_COLORSTYLE_SAT tag controls the purity (or saturation) of the colors
 # in the HTML output. For a value of 0 the output will use grayscales only. A
@@ -1225,7 +1219,7 @@ HTML_COLORSTYLE_HUE    = 220
 # Minimum value: 0, maximum value: 255, default value: 100.
 # This tag requires that the tag GENERATE_HTML is set to YES.
 
-HTML_COLORSTYLE_SAT    = 100
+HTML_COLORSTYLE_SAT    = 210
 
 # The HTML_COLORSTYLE_GAMMA tag controls the gamma correction applied to the
 # luminance component of the colors in the HTML output. Values below 100
@@ -1236,7 +1230,7 @@ HTML_COLORSTYLE_SAT    = 100
 # Minimum value: 40, maximum value: 240, default value: 80.
 # This tag requires that the tag GENERATE_HTML is set to YES.
 
-HTML_COLORSTYLE_GAMMA  = 80
+HTML_COLORSTYLE_GAMMA  = 240
 
 # If the HTML_TIMESTAMP tag is set to YES then the footer of each generated HTML
 # page will contain the date and time when the page was generated. Setting this

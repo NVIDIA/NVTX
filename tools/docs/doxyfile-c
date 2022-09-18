@@ -32,7 +32,7 @@ DOXYFILE_ENCODING      = UTF-8
 # title of most generated pages and in a few other places.
 # The default value is: My Project.
 
-PROJECT_NAME           = "NVTX"
+PROJECT_NAME           = "NVTX C API Reference"
 
 # The PROJECT_NUMBER tag can be used to enter a project or revision number. This
 # could be handy for archiving the generated documentation or if some version
@@ -58,7 +58,7 @@ PROJECT_LOGO           =
 # entered, it will be relative to the location where doxygen was started. If
 # left blank the current directory will be used.
 
-OUTPUT_DIRECTORY       = generated
+OUTPUT_DIRECTORY       = ../../docs/doxygen
 
 # If the CREATE_SUBDIRS tag is set to YES then doxygen will create 4096 sub-
 # directories (in 2 levels) under the output directory of each output format and
@@ -148,7 +148,7 @@ INLINE_INHERITED_MEMB  = NO
 # shortest path that makes the file name unique will be used
 # The default value is: YES.
 
-FULL_PATH_NAMES        = YES
+FULL_PATH_NAMES        = NO
 
 # The STRIP_FROM_PATH tag can be used to strip a user-defined part of the path.
 # Stripping is only done if one of the specified strings matches the left-hand
@@ -160,7 +160,7 @@ FULL_PATH_NAMES        = YES
 # will be relative from the directory where doxygen is started.
 # This tag requires that the tag FULL_PATH_NAMES is set to YES.
 
-STRIP_FROM_PATH        = ../../public_dist
+STRIP_FROM_PATH        =
 
 # The STRIP_FROM_INC_PATH tag can be used to strip a user-defined part of the
 # path mentioned in the documentation of a class, which tells the reader which
@@ -265,7 +265,7 @@ TCL_SUBST              =
 # members will be omitted, etc.
 # The default value is: NO.
 
-OPTIMIZE_OUTPUT_FOR_C  = NO
+OPTIMIZE_OUTPUT_FOR_C  = YES
 
 # Set the OPTIMIZE_OUTPUT_JAVA tag to YES if your project consists of Java or
 # Python sources only. Doxygen will then generate output that is more tailored
@@ -819,7 +819,11 @@ WARN_LOGFILE           =
 # spaces. See also FILE_PATTERNS and EXTENSION_MAPPING
 # Note: If this tag is empty the current directory is searched.
 
-INPUT                  = ../../../public_dist/include/nvtx3
+INPUT                  = ../../c/include/nvtx3/nvToolsExt.h        \
+                         ../../c/include/nvtx3/nvToolsExtCuda.h    \
+                         ../../c/include/nvtx3/nvToolsExtCudaRt.h  \
+                         ../../c/include/nvtx3/nvToolsExtOpenCL.h  \
+                         ../../c/include/nvtx3/nvToolsExtSync.h
 
 # This tag can be used to specify the character encoding of the source files
 # that doxygen parses. Internally doxygen uses the UTF-8 encoding. Doxygen uses
@@ -1128,7 +1132,7 @@ GENERATE_HTML          = YES
 # The default directory is: html.
 # This tag requires that the tag GENERATE_HTML is set to YES.
 
-HTML_OUTPUT            = html
+HTML_OUTPUT            = .
 
 # The HTML_FILE_EXTENSION tag can be used to specify the file extension for each
 # generated HTML page (for example: .htm, .php, .asp).
@@ -1211,7 +1215,7 @@ HTML_EXTRA_FILES       =
 # Minimum value: 0, maximum value: 359, default value: 220.
 # This tag requires that the tag GENERATE_HTML is set to YES.
 
-HTML_COLORSTYLE_HUE    = 220
+HTML_COLORSTYLE_HUE    = 86
 
 # The HTML_COLORSTYLE_SAT tag controls the purity (or saturation) of the colors
 # in the HTML output. For a value of 0 the output will use grayscales only. A
@@ -1219,7 +1223,7 @@ HTML_COLORSTYLE_HUE    = 220
 # Minimum value: 0, maximum value: 255, default value: 100.
 # This tag requires that the tag GENERATE_HTML is set to YES.
 
-HTML_COLORSTYLE_SAT    = 100
+HTML_COLORSTYLE_SAT    = 210
 
 # The HTML_COLORSTYLE_GAMMA tag controls the gamma correction applied to the
 # luminance component of the colors in the HTML output. Values below 100
@@ -1230,7 +1234,7 @@ HTML_COLORSTYLE_SAT    = 100
 # Minimum value: 40, maximum value: 240, default value: 80.
 # This tag requires that the tag GENERATE_HTML is set to YES.
 
-HTML_COLORSTYLE_GAMMA  = 80
+HTML_COLORSTYLE_GAMMA  = 240
 
 # If the HTML_TIMESTAMP tag is set to YES then the footer of each generated HTML
 # page will contain the date and time when the page was generated. Setting this
@@ -2243,7 +2247,7 @@ HIDE_UNDOC_RELATIONS   = YES
 # set to NO
 # The default value is: YES.
 
-HAVE_DOT               = NO
+HAVE_DOT               = YES
 
 # The DOT_NUM_THREADS specifies the number of dot invocations doxygen is allowed
 # to run in parallel. When set to 0 doxygen will base this on the number of
@@ -2285,7 +2289,7 @@ DOT_FONTPATH           =
 # The default value is: YES.
 # This tag requires that the tag HAVE_DOT is set to YES.
 
-CLASS_GRAPH            = YES
+CLASS_GRAPH            = NO
 
 # If the COLLABORATION_GRAPH tag is set to YES then doxygen will generate a
 # graph for each documented class showing the direct and indirect implementation
@@ -2294,14 +2298,14 @@ CLASS_GRAPH            = YES
 # The default value is: YES.
 # This tag requires that the tag HAVE_DOT is set to YES.
 
-COLLABORATION_GRAPH    = YES
+COLLABORATION_GRAPH    = NO
 
 # If the GROUP_GRAPHS tag is set to YES then doxygen will generate a graph for
 # groups, showing the direct groups dependencies.
 # The default value is: YES.
 # This tag requires that the tag HAVE_DOT is set to YES.
 
-GROUP_GRAPHS           = YES
+GROUP_GRAPHS           = NO
 
 # If the UML_LOOK tag is set to YES, doxygen will generate inheritance and
 # collaboration diagrams in a style similar to the OMG's Unified Modeling
