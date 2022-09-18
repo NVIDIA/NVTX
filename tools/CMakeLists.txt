@@ -15,22 +15,12 @@
 #=============================================================================
 cmake_minimum_required(VERSION 3.14 FATAL_ERROR)
 
-project(NVTX-CPP VERSION 0.1.0 LANGUAGES CXX)
+project(NVTX-Tools VERSION 0.1.0 LANGUAGES CXX)
 
 include(cmake/CPM.cmake)
 
-# Include the nvtx-c directory to access the nvtx-c CMake target
+# Include the c directory to access the nvtx3-c and nvtx3-cpp targets
 add_subdirectory(../c nvtx-c)
-
-###################################################################################################
-# - nvtx target -----------------------------------------------------------------------------------
-add_library(nvtx3-cpp INTERFACE)
-target_include_directories(nvtx3-cpp INTERFACE
-    "$<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>"
-    "$<INSTALL_INTERFACE:include>")
-
-target_compile_features(nvtx3-cpp INTERFACE cxx_std_11)
-target_link_libraries(nvtx3-cpp INTERFACE nvtx3-c)
 
 # Build options
 option(BUILD_TESTS "Configure CMake to build tests" ON)
@@ -43,12 +33,3 @@ endif(BUILD_TESTS)
 if(BUILD_BENCHMARKS)
     add_subdirectory(benchmarks)
 endif(BUILD_BENCHMARKS)
-
-###################################################################################################
-# - build doxygen ---------------------------------------------------------------------------------
-add_custom_command(OUTPUT BUILD_DOXYGEN
-   WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
-   COMMAND doxygen doxygen/Doxyfile
-   VERBATIM)
-
-add_custom_target(docs DEPENDS BUILD_DOXYGEN)
