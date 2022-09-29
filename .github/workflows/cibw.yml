@@ -3,11 +3,6 @@ name: Build wheels for NVTX
 on:
   workflow_dispatch:
     inputs:
-      repo:
-        description: 'NVTX repo to use'
-        required: true
-        default: 'NVIDIA/NVTX'
-        type: string
       branchOrTag:
         description: 'Branch or tag to checkout'
         required: true
@@ -18,11 +13,6 @@ on:
         required: false
         type: integer
         default: 0
-      publishToPyPI:
-        description: 'Publish to PyPI'
-        required: false
-        default: false
-        type: boolean
 
 jobs:
   build:
@@ -44,7 +34,6 @@ jobs:
     - uses: actions/checkout@v2
       with:
         fetch-depth: 0  # unshallow fetch for setuptools-scm
-        repository: ${{ inputs.repo }}
         ref: ${{ inputs.branchOrTag }}
 
     - name: Check out PR code if prNumber is specified
@@ -52,7 +41,6 @@ jobs:
       uses: dawidd6/action-checkout-pr@v1
       with:
         pr: ${{ inputs.prNumber }}
-        repo: ${{ inputs.repo }}
 
     - name: Set up QEMU
       if: matrix.qemu
@@ -91,37 +79,3 @@ jobs:
       with:
         path: dist
         name: nvtx-wheels
-
-  publish:
-    needs: build
-    name: Publish release to Pypi
-    runs-on: ubuntu-latest
-    if: success() && ${{ inputs.publishToPyPI }}
-    steps:
-    - uses: actions/checkout@v2
-      with:
-        fetch-depth: 0  # unshallow fetch for setuptools-scm
-
-    - name: Set up Python 3.9
-      uses: actions/setup-python@v2
-      with:
-        python-version: '3.9'
-
-    - name: Download assets
-      uses: actions/download-artifact@v1.0.0
-      with:
-        name: nvtx-wheels
-        path: python/dist
-
-    - name: Build sdist and publish package to PyPI
-      working-directory: python
-      run: |
-        python -m pip install toml twine
-        BUILD_REQUIREMENTS=`python -c 'import toml; print(" ".join(toml.load("pyproject.toml")["build-system"]["requires"]))'`
-        python -m pip install ${BUILD_REQUIREMENTS}
-        python setup.py sdist
-        twine upload dist/*
-      env:
-        TWINE_USERNAME: ${{ secrets.pypi_username }}
-        TWINE_PASSWORD: ${{ secrets.pypi_password }}
-        C_INCLUDE_PATH: "../c/include"
