@@ -1,0 +1,9 @@
+For C API:
+- First, delete all contents of ../../docs/doxygen directory -- that is where the output files go
+- In this directory, run "doxgen doxyfile-c"
+- The generated output should appear in ../../docs/doxygen
+
+For C++ API:
+- First, delete all contents of ../../docs/doxygen-cpp directory -- that is where the output files go
+- In this directory, run "doxgen doxyfile-cpp"
+- The generated output should appear in ../../docs/doxygen-cpp

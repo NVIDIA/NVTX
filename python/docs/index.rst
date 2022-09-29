@@ -54,7 +54,7 @@ information from the annotated code:
 
    nsys profile python demo.py
 
-This produces a ``.qdrep`` file containing information about the annotated code.
+This produces an ``.nsys-rep`` file containing information about the annotated code.
 Opening that file in the Nsight Systems GUI,
 you can see a timeline of execution of your program:
 

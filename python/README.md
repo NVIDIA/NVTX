@@ -2,13 +2,19 @@
 
 ## Installation
 
+Install using conda:
 ```
-pip install nvtx
+conda install -c conda-forge nvtx
+```
+
+...or using pip:
+```
+python -m pip install nvtx
 ```
 
 ## Quick start
 
-1. Annotate the parts of your Python code that you wish to profile/analyse:
+1. Annotate the parts of your Python code you wish to profile/analyze:
    
    ```python
    # demo.py
@@ -25,18 +31,17 @@ pip install nvtx
    my_function()
    ```
 
-2. Use [Nsight systems](https://developer.nvidia.com/nsight-systems) to
+2. Use [NVIDIA Nsight Systems](https://developer.nvidia.com/nsight-systems) to
    collect profile data:
 
    ```
-   nsight-sys profile -t nvtx python demo.py
+   nsys profile -t nvtx python demo.py
    ```
    
 3. Visualize the results using the Nsight systems GUI:
 
-   ![demo](docs/images/demo_timeline.png)
+   ![demo](docs/images/timeline.png)
 
 ## Documentation
 
-See [here](https://github.com/NVIDIA/NVTX/blob/dev/python/docs/basic.rst) for
-detailed docs.
+See [here](docs/index.rst) for detailed docs.

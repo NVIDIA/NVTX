@@ -18,7 +18,7 @@
 # -- Project information -----------------------------------------------------
 
 project = "nvtx"
-copyright = "2020, NVIDIA Corporation"
+copyright = "2020-2022, NVIDIA Corporation"
 author = "NVIDIA Corporation"
 
 # The full version, including alpha/beta/rc tags
