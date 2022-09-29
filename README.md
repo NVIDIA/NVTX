@@ -134,7 +134,7 @@ Note that the toolkit may also include older versions for backwards compatibilit
 
 ### Get NVTX using CMake Package Manager (CPM)
 
-[CMake Package Manager (CPM)](https://github.com/cpm-cmake/CPM.cmake) is a utility that automatically downloads dependencies when CMake first runs on a project.  Since NVTX v3 is just a few headers, the download will be fast.  The downloaded files can be stored in an external cache directory to avoid redownloading during clean builds, and to enable offline builds.  First, download `CPM.cmake` from CPM's repo and save it in your project.  Then you can fetch NVTX directly from GitHub with CMake code like this (CMake 3.14 or greater is required):
+[CMake Package Manager (CPM)](https://github.com/cpm-cmake/CPM.cmake) is a utility that automatically downloads dependencies when CMake first runs on a project.  The downloaded files can be stored in an external cache directory to avoid redownloading during clean builds, and to enable offline builds.  First, download `CPM.cmake` from CPM's repo and save it in your project.  Then you can fetch NVTX directly from GitHub with CMake code like this (CMake 3.14 or greater is required):
 
 ```cmake
 include(path/to/CPM.cmake)
@@ -142,7 +142,8 @@ include(path/to/CPM.cmake)
 CPMAddPackage(
     NAME NVTX
     GITHUB_REPOSITORY NVIDIA/NVTX
-    GIT_TAG release-v3
+    GIT_TAG v3.1.0
+    GIT_SHALLOW TRUE
     SOURCE_SUBDIR c
     )
 
@@ -152,6 +153,9 @@ target_link_libraries(some_c_program PRIVATE nvtx3-c)
 add_executable(some_cpp_program main.cpp)
 target_link_libraries(some_cpp_program PRIVATE nvtx3-cpp)
 ```
+
+Note that this downloads the entire repo, not just the required `c` directory.  CPM does not yet provide a way to download only specific parts of a repo.  Avoid downloading the full history of the repo by using `GIT_SHALLOW TRUE` to download only the commit specified by GIT_TAG.
+
 ## Python
 ### Get NVTX using Conda
 ```

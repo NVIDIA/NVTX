@@ -5,7 +5,7 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>NVTX - NVIDIA Tools Extension Library</title>
-  <link rel="stylesheet" href="../tools/docs/github-markdown-css/github-markdown.css">
+  <link rel="stylesheet" href="github-markdown.css">
   <style>
     .markdown-body {
       box-sizing: border-box;
@@ -121,13 +121,14 @@
 <p>The CUDA toolkit provides NVTX v3.</p>
 <p>Note that the toolkit may also include older versions for backwards compatibility, so be sure to use version 3 (the <code>nvtx3</code> subdirectory of headers) for best performance, convenience, and support.  Use <code>#include &lt;nvtx3/nvToolsExt.h&gt;</code> instead of <code>#include &lt;nvToolsExt.h&gt;</code> to ensure your code is including v3.</p>
 <h3><a id="user-content-get-nvtx-using-cmake-package-manager-cpm" class="anchor" aria-hidden="true" href="#get-nvtx-using-cmake-package-manager-cpm"><span aria-hidden="true" class="octicon octicon-link"></span></a>Get NVTX using CMake Package Manager (CPM)</h3>
-<p><a href="https://github.com/cpm-cmake/CPM.cmake">CMake Package Manager (CPM)</a> is a utility that automatically downloads dependencies when CMake first runs on a project.  Since NVTX v3 is just a few headers, the download will be fast.  The downloaded files can be stored in an external cache directory to avoid redownloading during clean builds, and to enable offline builds.  First, download <code>CPM.cmake</code> from CPM's repo and save it in your project.  Then you can fetch NVTX directly from GitHub with CMake code like this (CMake 3.14 or greater is required):</p>
+<p><a href="https://github.com/cpm-cmake/CPM.cmake">CMake Package Manager (CPM)</a> is a utility that automatically downloads dependencies when CMake first runs on a project.  The downloaded files can be stored in an external cache directory to avoid redownloading during clean builds, and to enable offline builds.  First, download <code>CPM.cmake</code> from CPM's repo and save it in your project.  Then you can fetch NVTX directly from GitHub with CMake code like this (CMake 3.14 or greater is required):</p>
 <div class="highlight highlight-source-cmake"><pre><span class="pl-c1">include</span>(path/to/CPM.cmake)
 
 CPMAddPackage(
     <span class="pl-k">NAME</span> NVTX
     GITHUB_REPOSITORY NVIDIA/NVTX
-    GIT_TAG release-v3
+    GIT_TAG v3.1.0
+    GIT_SHALLOW TRUE
     SOURCE_SUBDIR c
     )
 
@@ -136,6 +137,7 @@ CPMAddPackage(
 
 <span class="pl-c1">add_executable</span>(some_cpp_program main.cpp)
 <span class="pl-c1">target_link_libraries</span>(some_cpp_program <span class="pl-k">PRIVATE</span> nvtx3-cpp)</pre></div>
+<p>Note that this downloads the entire repo, not just the required <code>c</code> directory.  CPM does not yet provide a way to download only specific parts of a repo.  Avoid downloading the full history of the repo by using <code>GIT_SHALLOW TRUE</code> to download only the commit specified by GIT_TAG.</p>
 <h2><a id="user-content-python-1" class="anchor" aria-hidden="true" href="#python-1"><span aria-hidden="true" class="octicon octicon-link"></span></a>Python</h2>
 <h3><a id="user-content-get-nvtx-using-conda" class="anchor" aria-hidden="true" href="#get-nvtx-using-conda"><span aria-hidden="true" class="octicon octicon-link"></span></a>Get NVTX using Conda</h3>
 <pre><code>conda install -c conda-forge nvtx
