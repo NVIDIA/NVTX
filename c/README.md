@@ -1,12 +1,13 @@
 # NVTX for C and C++
 
-This README covers NVTX topics specific to C/C++.  See the README in the [NVTX root page](/..) for general NVTX information.
+This README covers NVTX topics specific to C/C++.  For general NVTX information, see the README in the [NVTX repo root](https://github.com/NVIDIA/NVTX).
 
 The NVTX API is written in C, and the NVTX C++ API is implemented as wrappers for parts of the C API.  In C++, both the NVTX C and NVTX C++ APIs can be used.
 
 ## NVTX API Reference Guides
 
 [NVTX C API Reference](https://nvidia.github.io/NVTX/doxygen/index.html)
+
 [NVTX C++ API Reference](https://nvidia.github.io/NVTX/doxygen-cpp/index.html)
 
 The NVTX C and C++ header files include Doxygen comments to provide reference documentation.  The API references were generated from these Doxygen comments.
