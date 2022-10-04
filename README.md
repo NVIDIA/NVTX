@@ -37,7 +37,7 @@ void some_function()
 
 Normally, this program waits for 6 seconds, and does nothing else.
 
-Launch it from **NVIDIA Nsight Systems**, and you'll see this execution on a timeline:
+Launch it from [NVIDIA Nsight Systems](https://developer.nvidia.com/nsight-systems), and you'll see this execution on a timeline:
 
 ![alt text](https://raw.githubusercontent.com/jrhemstad/nvtx_wrappers/master/docs/example_range.png "Example NVTX Ranges in Nsight Systems")
 
@@ -92,8 +92,23 @@ void example()
 }
 ```
 
-For projects that use CMake, the included `CMakeLists.txt` provides targets `nvtx3-c` and `nvtx3-cpp` that set the include search paths and the `-ldl` linker option where required.
+### CMake
 
+For projects that use **CMake**, the included `CMakeLists.txt` provides targets `nvtx3-c` and `nvtx3-cpp` that set the include search paths and the `-ldl` linker option where required.  The examples below show all that's required to be able to #include the NVTX headers from source code:
+
+```cmake
+# Example C program
+add_executable(some_c_program main.c)
+target_link_libraries(some_c_program PRIVATE nvtx3-c)
+# In main.c: #include <nvtx3/nvToolsExt.h>
+
+# Example C++ program
+add_executable(some_cpp_program main.cpp)
+target_link_libraries(some_cpp_program PRIVATE nvtx3-cpp)
+# In main.cpp: #include <nvtx3/nvt3.hpp>
+```
+
+### C/C++ Notes
 The NVTX C++ API is a set of wrappers around the C API, so the C API functions are usable from C++ as well.
 
 Since the C and C++ APIs are header-only, dependency-free, and don't require explicit initialization, they are suitable for annotating other header-only libraries.  Libraries using different versions of the NVTX headers in the same translation unit or different translation units will not have conflicts, as long as best practices are followed.
@@ -120,21 +135,23 @@ See more details in [the `python` directory](/python) in this repo.
 
 The C/C++ NVTX headers are provided by the NVIDIA NVTX GitHub repo, in the `c` directory.  This is the most up-to-date copy of NVTX.  Copying that directory into your codebase is sufficient to use NVTX.
 
-The `release-v3` branch is officially supported by NVIDIA tools.  Other branches may have breaking changes at any time and are not recommended for use in production code.
+The `release-v3` branch is the version officially supported by NVIDIA tools.  Other branches may incur breaking changes at any time and are not recommended for use in production code.  The `release-v3-c-cpp` branch is maintained as a copy of the `c` directory from `release-v3`, so downloading `release-v3-c-cpp` is a lightweight way to get all that is needed to build C/C++ programs with NVTX.
 
 ### Get NVTX with NVIDIA Developer Tools
 
-Some NVIDIA developer tools include NVTX v3 as part of the installation.  See the documentation of the tools for details about where the NVTX headers are installed.
+Some NVIDIA developer tools include the NVTX v3 library as part of the installation.  See the documentation of the tools for details about where the NVTX headers are installed.
 
 ### Get NVTX with the CUDA Toolkit
 
 The CUDA toolkit provides NVTX v3.
 
-Note that the toolkit may also include older versions for backwards compatibility, so be sure to use version 3 (the `nvtx3` subdirectory of headers) for best performance, convenience, and support.  Use `#include <nvtx3/nvToolsExt.h>` instead of `#include <nvToolsExt.h>` to ensure your code is including v3.
+Note that the toolkit may also include older versions for backwards compatibility, so be sure to use version 3 (the `nvtx3` subdirectory of headers) for best performance, convenience, and support.  Use `#include <nvtx3/nvToolsExt.h>` instead of `#include <nvToolsExt.h>` to ensure code is including v3!
 
 ### Get NVTX using CMake Package Manager (CPM)
 
-[CMake Package Manager (CPM)](https://github.com/cpm-cmake/CPM.cmake) is a utility that automatically downloads dependencies when CMake first runs on a project.  The downloaded files can be stored in an external cache directory to avoid redownloading during clean builds, and to enable offline builds.  First, download `CPM.cmake` from CPM's repo and save it in your project.  Then you can fetch NVTX directly from GitHub with CMake code like this (CMake 3.14 or greater is required):
+[CMake Package Manager (CPM)](https://github.com/cpm-cmake/CPM.cmake) is a utility that automatically downloads dependencies when CMake first runs on a project, and adds their `CMakeLists.txt` to the build.  The downloaded files can be stored in an external cache directory to avoid redownloading during clean builds, and to enable offline builds once the cache is populated.
+
+To use CPM, download `CPM.cmake` from [CPM's repo](https://github.com/cpm-cmake/CPM.cmake/blob/master/cmake/CPM.cmake) and save it in your project.  Then you can fetch NVTX directly from GitHub with CMake code like this (CMake 3.14 or greater is required):
 
 ```cmake
 include(path/to/CPM.cmake)
@@ -142,19 +159,19 @@ include(path/to/CPM.cmake)
 CPMAddPackage(
     NAME NVTX
     GITHUB_REPOSITORY NVIDIA/NVTX
-    GIT_TAG v3.1.0
-    GIT_SHALLOW TRUE
-    SOURCE_SUBDIR c
-    )
+    GIT_TAG v3.1.0-c-cpp
+    GIT_SHALLOW TRUE)
 
+# Example C program
 add_executable(some_c_program main.c)
 target_link_libraries(some_c_program PRIVATE nvtx3-c)
 
+# Example C++ program
 add_executable(some_cpp_program main.cpp)
 target_link_libraries(some_cpp_program PRIVATE nvtx3-cpp)
 ```
 
-Note that this downloads the entire repo, not just the required `c` directory.  CPM does not yet provide a way to download only specific parts of a repo.  Avoid downloading the full history of the repo by using `GIT_SHALLOW TRUE` to download only the commit specified by GIT_TAG.
+Note that this downloads from GitHub using a version tag with the suffix `-c-cpp`.  The `v3.x.y` tags points to the `release-v3` branch, which contains the entire repo.  The `v3.x.y-c-cpp` tags point to a separate branch called `release-v3-c-cpp` containing only the `c` directory of the repo, which is the bare minimum needed to use NVTX in a C or C++ project.  If you specify `GIT_TAG v3.x.y` to download the full repo, the `SOURCE_SUBDIR c` option is also needed to tell CMake where `CMakeLists.txt` is in the downloaded repo.  Also, avoid downloading the full history of the repo by using `GIT_SHALLOW TRUE` to download only the requested version.
 
 ## Python
 ### Get NVTX using Conda
@@ -170,10 +187,10 @@ python3 -m pip install nvtx
 
 These NVIDIA tools provide built-in support for NVTX:
 
-- **Nsight Systems** logs NVTX calls and shows them on a timeline alongside driver/OS/hardware events
-- **Nsight Compute** uses NVTX ranges to focus where deep-dive GPU performance analysis occurs
-- **Nsight Graphics** uses NVTX ranges to set bounds for range profiling in the Frame Debugger
-- The **CUPTI** API supports recording traces of NVTX calls
+- [Nsight Systems](https://developer.nvidia.com/nsight-systems) logs NVTX calls and shows them on a timeline alongside driver/OS/hardware events
+- [Nsight Compute](https://developer.nvidia.com/nsight-compute) uses NVTX ranges to focus where deep-dive GPU performance analysis occurs
+- [Nsight Graphics](https://developer.nvidia.com/nsight-graphics) uses NVTX ranges to set bounds for range profiling in the Frame Debugger
+- The [CUPTI](https://developer.nvidia.com/cupti) API supports recording traces of NVTX calls
 
 Other tools may provide NVTX support as well -- see the tool documentation for details.
 
@@ -186,7 +203,7 @@ NVTX was designed to work on:
 
 Both 64-bit and 32-bit processes are supported.  There are no restrictions on CPU architecture.
 
-NVTX relies on the platform's standard API to load a dynamic library (.dll) or shared object (.so).  Platforms with this functionality disabled cannot work with NVTX.
+NVTX *may* work on other POSIX-like platforms, but support is not guaranteed.  NVTX relies on the platform's standard API to load a dynamic library (.dll) or shared object (.so).  Platforms without dynamic library functionality cannot support NVTX.
 
 NVTX is _not_ supported in GPU code, such as `__device__` functions in CUDA.  While NVTX for GPU may intuitively seem useful, keep in mind that GPUs are best utilized with thousands or millions of threads running the same function in parallel.  A tool tracing ranges in every thread would produce an unreasonably large amount of data, and would incur large performance overhead to manage this data.  Efficient instrumentation of CUDA GPU code is possible with the [pmevent](https://docs.nvidia.com/cuda/parallel-thread-execution/index.html#miscellaneous-instructions-pmevent) PTX instruction, which can be monitored by hardware performance counters with no overhead.
 
@@ -196,7 +213,7 @@ See the documentation for individual tools to see which platforms they support.
 
 ## C
 
-The NVTX C API is a header-only library, implemented using **standard C89**.  The headers can be compiled with `-std=gnu90` or newer using many common compilers.  Tested compilers include:
+The NVTX C API is a header-only library, implemented using **standard C89/C90**.  The headers can be compiled with `-std=gnu90` or newer using many common compilers.  Tested compilers include:
 - GNU gcc
 - clang
 - Microsoft Visual C++
@@ -264,11 +281,11 @@ Developer tools often show low-level information about what the hardware or oper
 
 ## Give, don't take
 
-NVTX is primarily a *one-way* API.  Your program gives information to the tool, but it does not get actionable information back from the tool.  Some NVTX functions return values, but these should only be used as inputs to other NVTX functions.  Programs should not behave differently based on these values, because it is important for tools to see programs behaving the same way they would without any tools present!
+NVTX is primarily a *one-way* API.  Your program gives information to the tool, but it does not get actionable information back from the tool.  Some NVTX functions return values, but these should only be used as inputs to other NVTX functions.  Programs should not behave differently based on these values, because it is important that tools can see programs behaving the same way they would without any tools present!
 
 ## Avoid depending on any particular tool
 
-Do not use NVTX for any functionality that is required for your program to work correctly.  If a program depends on a particular tool being present to work, then it would be impossible to use any other NVTX tools with this program.  NVTX does not currently support multiple tools being attached to the same program.
+Do not use NVTX for any functionality that is required for your program to work correctly.  If a program depends on a particular tool being present to work, then it would be impossible to use any *other* NVTX tools with this program.  NVTX does not currently support multiple tools being attached to the same program.
 
 ## Isolate NVTX annotations in a library using a Domain
 
