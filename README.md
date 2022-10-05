@@ -92,23 +92,6 @@ void example()
 }
 ```
 
-### CMake
-
-For projects that use **CMake**, the included `CMakeLists.txt` provides targets `nvtx3-c` and `nvtx3-cpp` that set the include search paths and the `-ldl` linker option where required.  The examples below show all that's required to be able to #include the NVTX headers from source code:
-
-```cmake
-# Example C program
-add_executable(some_c_program main.c)
-target_link_libraries(some_c_program PRIVATE nvtx3-c)
-# In main.c: #include <nvtx3/nvToolsExt.h>
-
-# Example C++ program
-add_executable(some_cpp_program main.cpp)
-target_link_libraries(some_cpp_program PRIVATE nvtx3-cpp)
-# In main.cpp: #include <nvtx3/nvt3.hpp>
-```
-
-### C/C++ Notes
 The NVTX C++ API is a set of wrappers around the C API, so the C API functions are usable from C++ as well.
 
 Since the C and C++ APIs are header-only, dependency-free, and don't require explicit initialization, they are suitable for annotating other header-only libraries.  Libraries using different versions of the NVTX headers in the same translation unit or different translation units will not have conflicts, as long as best practices are followed.
@@ -116,6 +99,155 @@ Since the C and C++ APIs are header-only, dependency-free, and don't require exp
 See more details in [the `c` directory](/c) of this repo, and in the API reference guides:
 - [NVTX C API Reference](https://nvidia.github.io/NVTX/doxygen/index.html)
 - [NVTX C++ API Reference](https://nvidia.github.io/NVTX/doxygen-cpp/index.html)
+
+### CMake
+
+For projects that use CMake, the CMake scripts included with NVTX provide targets `nvtx3-c` and `nvtx3-cpp`.  Use `target_link_libraries` to make any CMake target use `nvtx3-c` for the C API only and `nvtx3-cpp` for both the C and C++ APIs.  Since NVTX is a header-only library, these targets simply add the include search path for the NVTX headers and add the `-ldl` linker option where required.  Example usage:
+
+```cmake
+# Example C program
+add_executable(some_c_program main.c)
+target_link_libraries(some_c_program PRIVATE nvtx3-c)
+# main.c can now do #include <nvtx3/nvToolsExt.h>
+
+# Example C++ program
+add_executable(some_cpp_program main.cpp)
+target_link_libraries(some_cpp_program PRIVATE nvtx3-cpp)
+# main.cpp can now do #include <nvtx3/nvtx3.hpp>
+```
+
+NVTX provides two different ways to define the CMake targets:
+
+#### Normal CMake targets (non-IMPORTED)
+
+Non-IMPORTED targets are global to the entire build.  In a typical CMake codebase, `add_subdirectory` is used to include every directory in a source tree, where each contains a `CMakeLists.txt` file that defines targets usable anywhere in the build.  The NVTX `CMakeLists.txt` file defines normal (non-IMPORTED) targets when `add_subdirectory` is called on that directory.
+
+This example code layout has a few imported third-party libraries and a separate directory for its own source.  It shows that adding the NVTX directory to CMake allows the `nvtx3-cpp` to be used elsewhere in the source tree:
+
+- CMakeLists.txt
+    ```cmake
+    add_subdirectory(Imports)
+    add_subdirectory(Source)
+    ```
+- Imports/
+    - CMakeLists.txt
+        ```cmake
+        add_subdirectory(SomeLibrary)
+        add_subdirectory(NVTX)
+        add_subdirectory(SomeOtherLibrary)
+        ```
+    - SomeLibrary/
+    - NVTX/ *(this is the downloaded copy of NVTX)*
+        - CMakeLists.txt  *(defines* `nvtx3-c` *and* `nvtx3-cpp` *targets)*
+        - nvtxImportedTargets.cmake *(helper script)*
+        - include/
+            - nvtx3/ *(all NVTX headers)*
+    - SomeOtherLibrary/
+- Source/
+    - CMakeLists.txt
+        ```cmake
+        add_executable(my_program main.cpp)
+        target_link_libraries(my_program PRIVATE nvtx3-cpp)
+        ```
+    - main.cpp *(does* `#include <nvtx3/nvtx3.hpp>`*)*
+
+Another example is when the NVTX directory must be added with a relative path that is not a subdirectory.  In this case, CMake requires a second parameter to `add_subdirectory` to give a unique name for the directory where build output goes:
+- Utils/
+    - SomeLibrary/
+    - NVTX/ *(this is the downloaded copy of NVTX)*
+        - CMakeLists.txt  *(defines* `nvtx3-c` *and* `nvtx3-cpp` *targets)*
+        - nvtxImportedTargets.cmake *(helper script)*
+        - include/
+            - nvtx3/ *(all NVTX headers)*
+    - SomeOtherLibrary/
+- Project1/
+- Project2/
+- Project3/
+    - CMakeLists.txt
+        ```cmake
+        add_subdirectory("${CMAKE_CURRENT_LIST_DIR}/../Utils/NVTX" "ImportNVTX")
+
+        add_executable(my_program main.cpp)
+        target_link_libraries(my_program PRIVATE nvtx3-cpp)
+        ```
+    - main.cpp *(does* `#include <nvtx3/nvtx3.hpp>`*)*
+
+When defining normal (non-IMPORTED) targets, the NVTX CMake scripts avoid target-already-defined errors by checking if the targets exist before attempting to define them.  This enables the following scenarios:
+- The same NVTX directory can be added more than once
+- Multiple directories with copies of the same NVTX version can be added
+- Multiple directories different versions of NVTX can be added
+    - If newest version is added first, everything should work:
+        - The `nvtx3-c`/`nvtx3-cpp` targets will point to the newest version
+    - If a new version is added after an old version:
+        - The `nvtx3-c`/`nvtx3-cpp` targets will point to an old version
+        - If features of the newest version are used, compilation will fail
+        - The NVTX CMake scripts print a warning for this case
+
+Normal (non-IMPORTED) targets will be defined when using CPM (CMake Package Manager) to fetch NVTX directly from the internet.  Thus, NVTX targets defined via CPM follow the behavior described above.  This example shows usage of CPM instead of a local copy of NVTX:
+
+- Source/
+    - CMakeLists.txt
+        ```cmake
+        include(path/to/CPM.cmake)
+
+        CPMAddPackage(
+            NAME NVTX
+            GITHUB_REPOSITORY NVIDIA/NVTX
+            GIT_TAG v3.1.0-c-cpp
+            GIT_SHALLOW TRUE)
+
+        add_executable(my_program main.cpp)
+        target_link_libraries(my_program PRIVATE nvtx3-cpp)
+        ```
+    - main.cpp *(does* `#include <nvtx3/nvtx3.hpp>`*)*
+
+See CPM section below in "How do I get NVTX?" for more details.
+
+#### IMPORTED CMake targets
+
+`IMPORTED` targets are scoped to the directory where they are defined.  These are useful when defining targets for dependencies of a `SHARED` or `STATIC` library, because they won't conflict with targets of the same name elsewhere in the build.  This lets a library ensure it is using the expected version of its own dependencies without imposing that version on other parts of the build.  NVTX provides the `nvtxImportedTargets.cmake` script to define the targets `nvtx3-c` and `nvtx3-cpp` as `IMPORTED`.  Use `include("path/to/nvtxImportedTargets.cmake")` from any CMakeLists.txt file to define the NVTX targets with scope locally to that directory.
+
+This example shows a program that imports multiple third-party libraries, which each import their own copy of NVTX:
+
+- CMakeLists.txt
+    ```cmake
+    add_subdirectory(Imports)
+    add_subdirectory(Source)
+    ```
+- Imports/
+    - CMakeLists.txt
+        ```cmake
+        add_subdirectory(Foo)
+        add_subdirectory(Bar)
+        ```
+    - Foo/
+        - CMakeLists.txt
+            ```cmake
+            include(Detail/NVTX/nvtxImportedTargets.cmake)
+            add_library(foo STATIC foo.cpp)
+            target_link_libraries(foo PRIVATE nvtx3-cpp)
+            ```
+        - Detail/
+            - NVTX/ *(downloaded copy of NVTX, ***version 3.1***)*
+        - foo.cpp  *(does* `#include <nvtx3/nvtx3.hpp>`*)*
+    - Bar/
+        - CMakeLists.txt
+            ```cmake
+            include(Detail/NVTX/nvtxImportedTargets.cmake)
+            add_library(bar SHARED bar.cpp)
+            target_link_libraries(bar PRIVATE nvtx3-cpp)
+            ```
+        - Detail/
+            - NVTX/ *(downloaded copy of NVTX, ***version 3.2***)*
+        - bar.cpp  *(does* `#include <nvtx3/nvtx3.hpp>`*)*
+- Source/
+    - CMakeLists.txt
+        ```cmake
+        add_executable(my_program main.cpp)
+        target_link_libraries(my_program PRIVATE foo bar)
+        ```
+
+Note that in this example, Foo uses an older version of NVTX than Bar, and Foo is added before Bar.  Since the NVTX CMake target definitions are local within the Foo and Bar directories, both libraries will use their own copies.  Bar can safely use NVTX version 3.2 features, even though Foo used version 3.1 earlier.  There will be no warnings printed that an older NVTX version was added before a newer one, unlike the case with global (non-IMPORTED) target definitions (see above). 
 
 ## Python
 
