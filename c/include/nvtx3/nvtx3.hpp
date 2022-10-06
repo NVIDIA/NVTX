@@ -613,12 +613,12 @@
 
 // Macro wrappers for C++ attributes: [[maybe_unused]] and [[nodiscard]]
 #if defined(__has_cpp_attribute)
-#  if __has_cpp_attribute(maybe_unused)
-#    define NVTX3_MAYBE_UNUSED [[maybe_unused]]
-#  endif
-#  if __has_cpp_attribute(nodiscard)
-#    define NVTX3_NO_DISCARD [[nodiscard]]
-#  endif
+  #if __has_cpp_attribute(maybe_unused)
+    #define NVTX3_MAYBE_UNUSED [[maybe_unused]]
+  #endif
+  #if __has_cpp_attribute(nodiscard)
+    #define NVTX3_NO_DISCARD [[nodiscard]]
+  #endif
 #else
 #define NVTX3_MAYBE_UNUSED
 #define NVTX3_NO_DISCARD
@@ -808,7 +808,7 @@ class domain {
     typename std::enable_if<
       detail::is_c_string<decltype(D::name)>::value
     , int>::type = 0>
-  static domain const& get() noexcept
+  NVTX3_NO_DISCARD static domain const& get() noexcept
   {
     static domain const d(D::name);
     return d;
@@ -823,7 +823,7 @@ class domain {
     typename std::enable_if<
       !detail::is_c_string<decltype(D::name)>::value
     , int>::type = 0>
-  static domain const& get() noexcept
+  NVTX3_NO_DISCARD static domain const& get() noexcept
   {
     NVTX3_STATIC_ASSERT(detail::always_false<D>::value,
       "Type used to identify an NVTX domain must contain a static constexpr member "
@@ -841,7 +841,7 @@ class domain {
     typename std::enable_if<
       !detail::has_name<D>::value
     , int>::type = 0>
-  static domain const& get() noexcept
+  NVTX3_NO_DISCARD static domain const& get() noexcept
   {
     NVTX3_STATIC_ASSERT(detail::always_false<D>::value,
       "Type used to identify an NVTX domain must contain a static constexpr member "
@@ -851,7 +851,7 @@ class domain {
   }
 #else
   template <typename D = global>
-  static domain const& get() noexcept
+  NVTX3_NO_DISCARD static domain const& get() noexcept
   {
     static domain const d(D::name);
     return d;
@@ -951,7 +951,7 @@ class domain {
  *
  */
 template <>
-inline domain const& domain::get<domain::global>() noexcept
+NVTX3_NO_DISCARD inline domain const& domain::get<domain::global>() noexcept
 {
   static domain const d{};
   return d;
@@ -1277,7 +1277,7 @@ class named_category_in final : public category {
       !detail::is_c_string<decltype(C::name)>::value ||
       !detail::is_uint32<decltype(C::id)>::value
     , int>::type = 0>
-  static named_category_in const& get() noexcept
+  NVTX3_NO_DISCARD static named_category_in const& get() noexcept
   {
     NVTX3_STATIC_ASSERT(detail::is_c_string<decltype(C::name)>::value,
       "Type used to name an NVTX category must contain a static constexpr member "
@@ -1299,7 +1299,7 @@ class named_category_in final : public category {
       !detail::has_name<C>::value ||
       !detail::has_id<C>::value
     , int>::type = 0>
-  static named_category_in const& get() noexcept
+  NVTX3_NO_DISCARD static named_category_in const& get() noexcept
   {
     NVTX3_STATIC_ASSERT(detail::has_name<C>::value,
       "Type used to name an NVTX category must contain a static constexpr member "
@@ -1312,7 +1312,7 @@ class named_category_in final : public category {
   }
 #else
   template <typename C>
-  static named_category_in const& get() noexcept
+  NVTX3_NO_DISCARD static named_category_in const& get() noexcept
   {
     static named_category_in const cat(C::id, C::name);
     return cat;
@@ -1458,7 +1458,7 @@ class registered_string_in {
     typename std::enable_if<
       detail::is_c_string<decltype(M::message)>::value
     , int>::type = 0>
-  static registered_string_in const& get() noexcept
+  NVTX3_NO_DISCARD static registered_string_in const& get() noexcept
   {
     static registered_string_in const regstr(M::message);
     return regstr;
@@ -1473,6 +1473,8 @@ class registered_string_in {
     typename std::enable_if<
       !detail::is_c_string<decltype(M::message)>::value
     , int>::type = 0>
+  NVTX3_NO_DISCARD static registered_string_in const& get() noexcept
+  {
   static registered_string_in const& get() noexcept
   {
     NVTX3_STATIC_ASSERT(detail::always_false<M>::value,
@@ -1491,6 +1493,8 @@ class registered_string_in {
     typename std::enable_if<
       !detail::has_message<M>::value
     , int>::type = 0>
+  NVTX3_NO_DISCARD static registered_string_in const& get() noexcept
+  {
   static registered_string_in const& get() noexcept
   {
     NVTX3_STATIC_ASSERT(detail::always_false<M>::value,
@@ -1502,6 +1506,8 @@ class registered_string_in {
   }
 #else
   template <typename M>
+  NVTX3_NO_DISCARD static registered_string_in const& get() noexcept
+  {
   static registered_string_in const& get() noexcept
   {
     static registered_string_in const regstr(M::message);
