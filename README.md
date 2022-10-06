@@ -59,7 +59,7 @@ The NVTX row shows the function's name "some_function" in the top-level range an
 The C++ and Python interfaces provide objects and decorators for automatically managing the lifetimes of ranges.
 
 ## Resource naming/tracking
-**Resource naming** associates a displayable name string with an object.  For example, naming CPU threads allows a tool that displays thread activity on a timeline to have more meaningful labels for its rows than an numeric thread ID.
+**Resource naming** associates a displayable name string with an object.  For example, naming CPU threads allows a tool that displays thread activity on a timeline to have more meaningful labels for its rows than a numeric thread ID.
 
 **Resource tracking** extends the idea of naming to include object lifetime tracking, as well as important usage of the object.  For example, a mutex provided by platform API (e.g. pthread_mutex, CriticalSection) can be tracked by a tool that intercepts its lock/unlock API calls, so using NVTX to name these mutex objects would be sufficient to see the names of mutexes being locked/unlocked on a timeline.  However, manually implemented spin-locks may not have an interceptible API, so tools can't automatically detect when they are used.  Use NVTX to annotate these types of mutexes where they are locked/unlocked to enable tools to track them just like standard platform API mutexes.
 
