@@ -50,6 +50,15 @@ repoBaseUrl = "https://github.com/NVIDIA/NVTX/tree/release-v3"
 markdownText = markdownText.replace("(/c)",      "(" + repoBaseUrl + "/c)")
 markdownText = markdownText.replace("(/python)", "(" + repoBaseUrl + "/python)")
 
+# Github replaces image links to external sites in README files with mangled things
+# for "security".  This means README.md cannot directly link to docs/images using
+# github.io links (which it treats as external) with getting them mangled.  Solution
+# is to instead have READMEs on github link to raw.githubusercontent.com.  Replace
+# those links here with local links, so README.md converted to index.html for
+# github.io will get the local images from github.io's hosting.
+rawContextBaseUrl = "https://raw.githubusercontent.com/NVIDIA/NVTX/release-v3/docs/"
+markdownText = markdownText.replace(rawContextBaseUrl, "")
+
 # Replace mentions of "this repo", which makes sense in the GitHub repo's markdown files,
 # with a name that makes more sense in docs hosted outside the GitHub repo.
 markdownText = markdownText.replace("this repo", "the NVIDIA NVTX GitHub repo")
