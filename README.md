@@ -39,7 +39,7 @@ Normally, this program waits for 6 seconds, and does nothing else.
 
 Launch it from [NVIDIA Nsight Systems](https://developer.nvidia.com/nsight-systems), and you'll see this execution on a timeline:
 
-![alt text](https://raw.githubusercontent.com/jrhemstad/nvtx_wrappers/master/docs/example_range.png "Example NVTX Ranges in Nsight Systems")
+![alt text](https://raw.githubusercontent.com/NVIDIA/NVTX/release-v3/docs/images/example_range.png "Example NVTX Ranges in Nsight Systems")
 
 The NVTX row shows the function's name "some_function" in the top-level range and the "loop range" message in the nested ranges.  The loop iterations each last for the expected one second.
 
