@@ -14,7 +14,7 @@
 
 #if defined(_WIN32) 
 
-#include <Windows.h>
+#include <windows.h>
 
 #else
 #include <unistd.h>
@@ -25,6 +25,10 @@
 
 #if defined(__linux__) || defined(__CYGWIN__)
 #include <sched.h>
+#endif
+
+#if defined(__linux__)
+#include <linux/limits.h>
 #endif
 
 #include <limits.h>
