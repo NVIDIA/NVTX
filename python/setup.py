@@ -23,6 +23,9 @@ except Exception:
 include_dirs = [os.path.dirname(sysconfig.get_path("include")),]
 library_dirs = [get_python_lib()]
 
+if nvtx_dir := os.getenv("NVTX_DIR"):
+    include_dirs.insert(0, os.path.join(nvtx_dir, "include"))
+
 extensions = [
     Extension(
         "*",
@@ -55,7 +58,7 @@ extensions += cythonize(
 
 setup(
     name="nvtx",
-    version="0.2.5",
+    version="0.2.6",
     description="PyNVTX - Python code annotation library",
     url="https://github.com/NVIDIA/nvtx",
     author="NVIDIA Corporation",
