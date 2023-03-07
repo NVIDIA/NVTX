@@ -23,8 +23,8 @@ except Exception:
 include_dirs = [os.path.dirname(sysconfig.get_path("include")),]
 library_dirs = [get_python_lib()]
 
-if nvtx_dir := os.getenv("NVTX_DIR"):
-    include_dirs.insert(0, os.path.join(nvtx_dir, "include"))
+if nvtx_include_dir := os.getenv("NVTX_INCLUDE_DIR"):
+    include_dirs.insert(0, nvtx_include_dir)
 
 extensions = [
     Extension(
