@@ -26,4 +26,4 @@ library. On systems with CUDA installed, this is typically the CUDA
 include directory (e.g., ``/usr/local/cuda/include``).
 ::
 
-   NVTX_DIR=/path/to/nvtx/prefix/ python -m pip install nvtx --no-binary nvtx
+   NVTX_PREFIX=/path/to/nvtx/prefix/ python -m pip install nvtx --no-binary nvtx
