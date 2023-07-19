@@ -21,6 +21,8 @@ except Exception:
     nthreads = 0
 
 include_dirs = [os.path.dirname(sysconfig.get_path("include")),]
+if os.getenv("CUDA_HOME"):
+    include_dirs.insert(0, os.path.join(os.environ["CUDA_HOME"], "include"))
 library_dirs = [get_python_lib()]
 
 if nvtx_include_dir := os.getenv("NVTX_PREFIX"):
