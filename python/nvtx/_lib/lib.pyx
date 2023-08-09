@@ -14,9 +14,6 @@ from nvtx.utils.cached import CachedInstanceMeta
 cpdef bytes _to_bytes(object s):
     return s if isinstance(s, bytes) else s.encode()
 
-# cpdef nvtxStringHandle_t _to_handle(object o):
-#     return o.c_obj
-
 def initialize():
     nvtxInitialize(NULL)
 
