@@ -6,6 +6,7 @@
 
 from nvtx._lib.lib import (
     Domain,
+    RegisteredString,
     EventAttributes,
     pop_range,
     push_range,

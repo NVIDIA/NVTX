@@ -76,6 +76,8 @@ cdef extern from "nvtx3/nvToolsExt.h" nogil:
     cdef nvtxDomainHandle_t nvtxDomainCreateA(const char* name)
     cdef void nvtxDomainDestroy(nvtxDomainHandle_t domain)
 
+    cdef nvtxStringHandle_t nvtxDomainRegisterStringA(nvtxDomainHandle_t domain, const char* string)
+
     cdef int nvtxDomainRangePushEx(
         nvtxDomainHandle_t domain,
         const nvtxEventAttributes_t* eventAttrib
@@ -106,6 +108,7 @@ cdef extern from "nvtx3/nvToolsExt.h" nogil:
 cdef class EventAttributes:
     cdef bytes _message
     cdef object _color
+    cdef nvtxStringHandle_t string_handle
     cdef nvtxEventAttributes_t c_obj
 
 
@@ -113,6 +116,9 @@ cdef class DomainHandle:
     cdef bytes _name
     cdef nvtxDomainHandle_t c_obj
 
+cdef class StringHandle:
+    cdef bytes _string
+    cdef nvtxStringHandle_t c_obj
 
 cdef class RangeId:
     cdef nvtxRangeId_t c_obj

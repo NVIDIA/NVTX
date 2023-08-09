@@ -11,6 +11,7 @@ from functools import wraps
 
 from nvtx._lib import (
     Domain,
+    RegisteredString,
     EventAttributes,
     mark as libnvtx_mark,
     pop_range as libnvtx_pop_range,
@@ -33,7 +34,7 @@ class annotate:
 
         Parameters
         ----------
-        message : str, optional
+        message : str or RegisteredString, optional
             A message associated with the annotated code range.
             When used as a decorator, the default value of message
             is the name of the function being decorated.
@@ -68,11 +69,15 @@ class annotate:
         ...
         """
 
-        self.domain = Domain(domain)
+        if isinstance(message, RegisteredString):
+            self.domain = message.domain
+            message = message.handle
+        else:
+            self.domain = Domain(domain)
  
         category_id = None
         if isinstance(category, int):
-            category_id =  category
+            category_id = category
         elif isinstance(category, str):
             category_id = self.domain.get_category_id(category)
         self.attributes = EventAttributes(message, color, category_id)
@@ -111,8 +116,8 @@ def mark(message=None, color="blue", domain=None, category=None):
 
     Parameters
     ----------
-    message : str
-        A message associatedn with the event.
+    message : str or RegisteredString, optional
+        A message associated with the event.
     color : str, color, optional
         Color associated with the event.
     domain : str, optional
@@ -123,7 +128,12 @@ def mark(message=None, color="blue", domain=None, category=None):
         under which the event is scoped. If unspecified, the event is
         not associated with a category.
     """
-    domain = Domain(domain)
+    if isinstance(message, RegisteredString):
+        domain = message.domain
+        message = message.handle
+    else:
+        domain = Domain(domain)
+
     category_id = None
     if isinstance(category, int):
         category_id =  category
@@ -139,7 +149,7 @@ def push_range(message=None, color="blue", domain=None, category=None):
 
     Parameters
     ----------
-    message : str, optional
+    message : str or RegisteredString, optional
         A message associated with the annotated code range.
     color : str, color, optional
         A color associated with the annotated code range.
@@ -160,7 +170,12 @@ def push_range(message=None, color="blue", domain=None, category=None):
     >>> time.sleep(1)
     >>> nvtx.pop_range(domain="my_domain")
     """
-    domain = Domain(domain)
+    if isinstance(message, RegisteredString):
+        domain = message.domain
+        message = message.handle
+    else:
+        domain = Domain(domain)
+    
     category_id = None
     if isinstance(category, int):
         category_id =  category
@@ -188,7 +203,7 @@ def start_range(message=None, color="blue", domain=None, category=None):
 
     Parameters
     ----------
-    message : str, optional
+    message : str or RegisteredString, optional
         A message associated with the annotated code range.
     color : str, color, optional
         A color associated with the annotated code range.
@@ -213,7 +228,12 @@ def start_range(message=None, color="blue", domain=None, category=None):
     >>> time.sleep(1)
     >>> nvtx.end_range(range_id, domain="my_domain")
     """
-    domain = Domain(domain)
+    if isinstance(message, RegisteredString):
+        domain = message.domain
+        message = message.handle
+    else:
+        domain = Domain(domain)
+
     category_id = None
     if isinstance(category, int):
         category_id =  category
@@ -236,6 +256,34 @@ def end_range(range_id):
     """
     libnvtx_end_range(range_id)
 
+def register_string(message, domain=None):
+    """
+    Register a string for repeated use and/or for nvtx filtering in
+    Nsight Systems and Nsight Compute.
+
+    Parameters
+    ----------
+    message : str
+        A message associated with the annotated code range.
+    domain : str, optional
+        Name of a domain under which the code range is scoped.
+        The default domain name is "NVTX".
+
+    Returns
+    -------
+    An object of type `RangeId` that must be passed to the `end_range()` function.
+
+    Examples
+    --------
+    >>> import time
+    >>> import nvtx
+    >>> registration = nvtx.register_string("Range A", domain="my_domain")
+    >>> range_id = nvtx.start_range(registration)
+    >>> time.sleep(1)
+    >>> nvtx.end_range(range_id)
+    """
+    domain = Domain(domain)
+    return RegisteredString(domain, message)
 
 def enabled():
     """
@@ -258,3 +306,4 @@ if not enabled():
     def pop_range(domain=None): pass
     def start_range(message=None, color=None, domain=None, category=None): pass
     def end_range(range_id): pass
+    def register_string(message, domain=None): pass
