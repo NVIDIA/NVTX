@@ -21,37 +21,25 @@ def initialize():
 cdef class EventAttributes:
 
     def __init__(self, object message=None, color=None, category=None):
-        self._color = color
         self.c_obj = nvtxEventAttributes_t(0)
         self.c_obj.version = NVTX_VERSION
         self.c_obj.size = NVTX_EVENT_ATTRIB_STRUCT_SIZE
         self.c_obj.colorType = NVTX_COLOR_ARGB
-        self.c_obj.color = color_to_hex(self._color)
-        if category is not None:
-            self.c_obj.category = category
+        self.c_obj.messageType = NVTX_MESSAGE_TYPE_REGISTERED
 
-        if isinstance(message, str):
-            self.c_obj.messageType = NVTX_MESSAGE_TYPE_ASCII
-            self.message = message
-        else:
-            self.c_obj.messageType = NVTX_MESSAGE_TYPE_REGISTERED
-            self.c_obj.message.registered = <nvtxStringHandle_t> (<StringHandle> message).c_obj
+        self.message = message
+        self.color = color
+        self.category = category
+
 
     @property
     def message(self):
-        if self.c_obj.messageType == NVTX_MESSAGE_TYPE_ASCII:
-            return self._message.decode()
-        return None
+        return self._message.string
 
     @message.setter
     def message(self, object value):
-        if not isinstance(value, str):
-            return
-
-        if value is None:
-            value = b""
-        self._message = _to_bytes(value)
-        self.c_obj.message.ascii = self._message
+        self._message = value
+        self.c_obj.message.registered = (<StringHandle> self._message.handle).c_obj
 
     @property
     def color(self):
@@ -61,6 +49,16 @@ cdef class EventAttributes:
     def color(self, value):
         self._color = value
         self.c_obj.color = color_to_hex(self._color)
+
+    @property
+    def category(self):
+        return self._category
+    
+    @category.setter
+    def category(self, value):
+        if value is not None:
+            self._category = value
+            self.c_obj.category = value
 
 
 cdef class DomainHandle:
@@ -127,7 +125,7 @@ class RegisteredString(metaclass=CachedInstanceMeta):
     def __init__(self, domain, string=None):
         self.string = string
         self.domain = domain
-        self.handle = StringHandle(domain.handle, string)
+        self.handle = StringHandle(domain, string)
 
 cdef class RangeId:
     """

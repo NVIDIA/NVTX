@@ -12,5 +12,5 @@ from nvtx._lib.lib import (
     push_range,
     start_range,
     end_range,
-    mark
+    mark,
 )

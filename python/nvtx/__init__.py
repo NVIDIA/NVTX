@@ -11,8 +11,7 @@ from nvtx.nvtx import (
     push_range,
     start_range,
     end_range,
-    mark,
-    register_string
+    mark
 )
 
 from nvtx._lib.profiler import Profile

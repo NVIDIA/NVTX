@@ -2,6 +2,7 @@ import sys
 from runpy import run_path
 from optparse import OptionParser
 
+
 def main():
     from nvtx import Profile
 
@@ -14,14 +15,14 @@ def main():
         dest="linenos",
         default=True,
         help="Include file and line number information in annotations. Otherwise, "
-              "only the function name is used."
+        "only the function name is used.",
     )
     parser.add_option(
         "--no-linenos",
         action="store_false",
         dest="linenos",
         default=True,
-        help="Do not include file and line number information in annotations."
+        help="Do not include file and line number information in annotations.",
     )
     parser.add_option(
         "--annotate-cfuncs",
@@ -35,10 +36,7 @@ def main():
     script_file = args[0]
 
     sys.argv = args
-    profiler = Profile(
-        linenos=options.linenos,
-        annotate_cfuncs=options.annotate_cfuncs
-    )
+    profiler = Profile(linenos=options.linenos, annotate_cfuncs=options.annotate_cfuncs)
 
     profiler.enable()
 
@@ -46,6 +44,7 @@ def main():
         run_path(script_file)
     finally:
         profiler.disable()
+
 
 if __name__ == "__main__":
     main()

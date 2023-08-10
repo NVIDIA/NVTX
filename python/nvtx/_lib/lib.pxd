@@ -106,8 +106,9 @@ cdef extern from "nvtx3/nvToolsExt.h" nogil:
 
 
 cdef class EventAttributes:
-    cdef bytes _message
+    cdef object _message
     cdef object _color
+    cdef uint32_t _category
     cdef nvtxStringHandle_t string_handle
     cdef nvtxEventAttributes_t c_obj
 
