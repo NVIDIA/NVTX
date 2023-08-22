@@ -34,7 +34,7 @@ cdef class EventAttributes:
 
     @property
     def message(self):
-        return self._message.string
+        return self._message
 
     @message.setter
     def message(self, object value):

@@ -41,7 +41,7 @@ class annotate:
             is the name of the function being decorated.
             When used as a context manager, the default value is the empty
             string.
-            Messaged are cached and are registered as Registered Strings
+            Messages are cached and are registered as Registered Strings
             in NVTX.
             Caching a very large number of messages may lead to increased
             memory usage.
@@ -88,7 +88,7 @@ class annotate:
         return (
             self.__class__,
             (
-                self.attributes.message,
+                self.attributes.message.string,
                 self.attributes.color,
                 self.domain.name,
                 self.attributes.category,
@@ -127,7 +127,7 @@ def mark(message=None, color="blue", domain=None, category=None):
     ----------
     message : str, optional
         A message associated with the event.
-        Messaged are cached and are registered as Registered Strings
+        Messages are cached and are registered as Registered Strings
         in NVTX.
         Caching a very large number of messages may lead to increased
         memory usage.
@@ -161,7 +161,7 @@ def push_range(message=None, color="blue", domain=None, category=None):
     ----------
     message : str, optional
         A message associated with the annotated code range.
-        Messaged are cached and are registered as Registered Strings
+        Messages are cached and are registered as Registered Strings
         in NVTX.
         Caching a very large number of messages may lead to increased
         memory usage.
@@ -216,7 +216,7 @@ def start_range(message=None, color="blue", domain=None, category=None):
     ----------
     message : str, optional
         A message associated with the annotated code range.
-        Messaged are cached and are registered as Registered Strings
+        Messages are cached and are registered as Registered Strings
         in NVTX.
         Caching a very large number of messages may lead to increased
         memory usage.
