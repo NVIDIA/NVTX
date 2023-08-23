@@ -60,7 +60,7 @@ extensions += cythonize(
 
 setup(
     name="nvtx",
-    version="0.2.6",
+    version="0.2.7",
     description="PyNVTX - Python code annotation library",
     url="https://github.com/NVIDIA/nvtx",
     author="NVIDIA Corporation",
