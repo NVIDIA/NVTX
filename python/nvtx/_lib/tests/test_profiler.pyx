@@ -27,8 +27,8 @@ def test_profiler_message():
 
     def foo():
         got_message = prof.__attrib.message
-        got_fname = got_message.split(":")[0]
-        got_funcname = got_message.split("(")[1][:-1]
+        got_fname = got_message.string.split(":")[0]
+        got_funcname = got_message.string.split("(")[1][:-1]
         assert got_fname == "test_profiler.pyx"
         # assert got_lineno == ???  # see note above
         assert got_funcname == "foo"
