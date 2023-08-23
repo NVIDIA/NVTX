@@ -11,16 +11,18 @@ from functools import wraps
 
 from nvtx._lib import (
     Domain,
+    RegisteredString,
     EventAttributes,
     mark as libnvtx_mark,
     pop_range as libnvtx_pop_range,
     push_range as libnvtx_push_range,
     start_range as libnvtx_start_range,
-    end_range as libnvtx_end_range
+    end_range as libnvtx_end_range,
 )
 
 
 _ENABLED = not os.getenv("NVTX_DISABLE", False)
+
 
 class annotate:
     """
@@ -37,8 +39,12 @@ class annotate:
             A message associated with the annotated code range.
             When used as a decorator, the default value of message
             is the name of the function being decorated.
-            When used as a context manager, the default value
-            is the empty string.
+            When used as a context manager, the default value is the empty
+            string.
+            Messages are cached and are registered as Registered Strings
+            in NVTX.
+            Caching a very large number of messages may lead to increased
+            memory usage.
         color : str or color, optional
             A color associated with the annotated code range.
             Supports `matplotlib` colors if it is available.
@@ -69,10 +75,11 @@ class annotate:
         """
 
         self.domain = Domain(domain)
- 
+        message = RegisteredString(self.domain.handle, message)
+
         category_id = None
         if isinstance(category, int):
-            category_id =  category
+            category_id = category
         elif isinstance(category, str):
             category_id = self.domain.get_category_id(category)
         self.attributes = EventAttributes(message, color, category_id)
@@ -80,7 +87,12 @@ class annotate:
     def __reduce__(self):
         return (
             self.__class__,
-            (self.attributes.message, self.attributes.color, self.domain.name),
+            (
+                self.attributes.message.string,
+                self.attributes.color,
+                self.domain.name,
+                self.attributes.category,
+            ),
         )
 
     def __enter__(self):
@@ -93,7 +105,9 @@ class annotate:
 
     def __call__(self, func):
         if not self.attributes.message:
-            self.attributes.message = func.__name__
+            self.attributes.message = RegisteredString(
+                self.domain.handle, func.__name__
+            )
 
         @wraps(func)
         def inner(*args, **kwargs):
@@ -111,8 +125,12 @@ def mark(message=None, color="blue", domain=None, category=None):
 
     Parameters
     ----------
-    message : str
-        A message associatedn with the event.
+    message : str, optional
+        A message associated with the event.
+        Messages are cached and are registered as Registered Strings
+        in NVTX.
+        Caching a very large number of messages may lead to increased
+        memory usage.
     color : str, color, optional
         Color associated with the event.
     domain : str, optional
@@ -124,9 +142,11 @@ def mark(message=None, color="blue", domain=None, category=None):
         not associated with a category.
     """
     domain = Domain(domain)
+    message = RegisteredString(domain.handle, message)
+
     category_id = None
     if isinstance(category, int):
-        category_id =  category
+        category_id = category
     elif isinstance(category, str):
         category_id = domain.get_category_id(category)
     attributes = EventAttributes(message, color, category_id)
@@ -141,6 +161,10 @@ def push_range(message=None, color="blue", domain=None, category=None):
     ----------
     message : str, optional
         A message associated with the annotated code range.
+        Messages are cached and are registered as Registered Strings
+        in NVTX.
+        Caching a very large number of messages may lead to increased
+        memory usage.
     color : str, color, optional
         A color associated with the annotated code range.
         Supports
@@ -161,9 +185,11 @@ def push_range(message=None, color="blue", domain=None, category=None):
     >>> nvtx.pop_range(domain="my_domain")
     """
     domain = Domain(domain)
+    message = RegisteredString(domain.handle, message)
+
     category_id = None
     if isinstance(category, int):
-        category_id =  category
+        category_id = category
     elif isinstance(category, str):
         category_id = domain.get_category_id(category)
     libnvtx_push_range(EventAttributes(message, color, category_id), domain.handle)
@@ -190,6 +216,10 @@ def start_range(message=None, color="blue", domain=None, category=None):
     ----------
     message : str, optional
         A message associated with the annotated code range.
+        Messages are cached and are registered as Registered Strings
+        in NVTX.
+        Caching a very large number of messages may lead to increased
+        memory usage.
     color : str, color, optional
         A color associated with the annotated code range.
         Supports
@@ -214,9 +244,11 @@ def start_range(message=None, color="blue", domain=None, category=None):
     >>> nvtx.end_range(range_id, domain="my_domain")
     """
     domain = Domain(domain)
+    message = RegisteredString(domain.handle, message)
+
     category_id = None
     if isinstance(category, int):
-        category_id =  category
+        category_id = category
     elif isinstance(category, str):
         category_id = domain.get_category_id(category)
     marker_id = libnvtx_start_range(
@@ -245,16 +277,27 @@ def enabled():
 
 
 if not enabled():
+
     class annotate(contextlib.nullcontext):
         def __init__(self, *args, **kwargs):
             pass
+
         def __call__(self, func):
             return func
 
     # Could use a decorator here but overheads are significant enough
     # not to. See https://github.com/NVIDIA/NVTX/pull/24 for discussion.
-    def mark(message=None, color=None, domain=None, category=None): pass
-    def push_range(message=None, color=None, domain=None, category=None): pass
-    def pop_range(domain=None): pass
-    def start_range(message=None, color=None, domain=None, category=None): pass
-    def end_range(range_id): pass
+    def mark(message=None, color=None, domain=None, category=None):
+        pass
+
+    def push_range(message=None, color=None, domain=None, category=None):
+        pass
+
+    def pop_range(domain=None):
+        pass
+
+    def start_range(message=None, color=None, domain=None, category=None):
+        pass
+
+    def end_range(range_id):
+        pass

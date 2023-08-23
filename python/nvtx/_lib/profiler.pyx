@@ -1,14 +1,15 @@
 import os
-import  sys
+import sys
 import threading
 
 from nvtx._lib import (
+    Domain,
+    RegisteredString,
     push_range as libnvtx_push_range,
     pop_range as libnvtx_pop_range
 )
 
-from nvtx._lib.lib cimport EventAttributes, DomainHandle
-
+from nvtx._lib.lib cimport EventAttributes
 
 cdef class Profile:
 
@@ -35,8 +36,9 @@ cdef class Profile:
         """
         self.linenos = linenos
         self.annotate_cfuncs = annotate_cfuncs
-        self.__domain = DomainHandle("nvtx.py")
-        self.__attrib = EventAttributes("", "blue", None)
+        self.__domain = Domain("nvtx.py").handle
+        message = RegisteredString(self.__domain, "")
+        self.__attrib = EventAttributes(message, "blue", None)
 
     def _profile(self, frame, event, arg):
         # profile function meant to be used with sys.setprofile
@@ -58,7 +60,7 @@ cdef class Profile:
         return None
 
     cdef push_range(self, message):
-        self.__attrib.message = message
+        self.__attrib.message = RegisteredString(self.__domain, message)
         libnvtx_push_range(self.__attrib, self.__domain)
 
     cdef pop_range(self):
