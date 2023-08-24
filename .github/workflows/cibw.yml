@@ -62,7 +62,7 @@ jobs:
         for pyver in 3.8 3.9 3.10 3.11; do
           docker run --rm \
             -v $(pwd)/dist:/wheels \
-            ${{ matrix.docker_py_container}}:$pyver-bullseye \
+            ${{ matrix.docker_py_container }}:$pyver-bullseye \
             sh -c \
             "python3 -m pip install --verbose --find-links=file:///wheels --no-index nvtx && python3 -m pip check && python3 -c 'import nvtx; print(nvtx.annotate())';" ;\
         done
