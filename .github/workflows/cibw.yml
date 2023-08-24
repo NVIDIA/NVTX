@@ -31,10 +31,26 @@ jobs:
           name: 'ubuntu-qemu-aarch64'
           qemu: true
     steps:
-    - uses: actions/checkout@v3
+    - name: Check out repository
+      uses: actions/checkout@v3
       with:
         fetch-depth: 0  # unshallow fetch for setuptools-scm
         ref: ${{ inputs.branchOrTag }}
+
+    - name: Set up Python
+      # Only build sdists on x86_64
+      if: matrix.cibw_archs_linux == 'x86_64'
+      uses: actions/setup-python@v4
+      with:
+        python-version: "3.x"
+
+    - name: Build source distribution
+      # Only build sdists on x86_64
+      if: matrix.cibw_archs_linux == 'x86_64'
+      run: |
+        python3 -m pip install build --user
+        python3 -m build --sdist --outdir dist/ ./python/
+
     - name: Set up QEMU
       if: matrix.qemu
       uses: docker/setup-qemu-action@v2
