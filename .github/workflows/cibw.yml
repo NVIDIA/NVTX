@@ -31,7 +31,7 @@ jobs:
           name: 'ubuntu-qemu-aarch64'
           qemu: true
     steps:
-    - uses: actions/checkout@v2
+    - uses: actions/checkout@v3
       with:
         fetch-depth: 0  # unshallow fetch for setuptools-scm
         ref: ${{ inputs.branchOrTag }}
@@ -42,10 +42,10 @@ jobs:
         platforms: arm64
 
     - name: Build wheels
-      uses: pypa/cibuildwheel@v2.4.0
+      uses: pypa/cibuildwheel@v2.15.0
       env:
-        CIBW_SKIP: "*musllinux*"
-        CIBW_BUILD: "cp38-* cp39-* cp310-*"
+        CIBW_SKIP: "*musllinux* cp36-* cp37-*"
+        CIBW_BUILD: "cp*"
         CIBW_ARCHS_LINUX: ${{ matrix.cibw_archs_linux }}
         CIBW_MANYLINUX_X86_64_IMAGE: manylinux2014
         CIBW_MANYLINUX_AARCH64_IMAGE: manylinux2014
@@ -59,16 +59,16 @@ jobs:
 
     - name: Run docker smoke tests for all python versions
       run: |
-        for pyver in 3.8 3.9 3.10; do
+        for pyver in 3.8 3.9 3.10 3.11; do
           docker run --rm \
             -v $(pwd)/dist:/wheels \
-            ${{ matrix.docker_py_container}}:$pyver-bullseye \
+            ${{ matrix.docker_py_container }}:$pyver-bullseye \
             sh -c \
             "python3 -m pip install --verbose --find-links=file:///wheels --no-index nvtx && python3 -m pip check && python3 -c 'import nvtx; print(nvtx.annotate())';" ;\
         done
 
     - name: Upload distributions
-      uses: actions/upload-artifact@v2
+      uses: actions/upload-artifact@v3
       with:
         path: dist
         name: nvtx-wheels
