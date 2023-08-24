@@ -31,7 +31,7 @@ jobs:
           name: 'ubuntu-qemu-aarch64'
           qemu: true
     steps:
-    - uses: actions/checkout@v2
+    - uses: actions/checkout@v3
       with:
         fetch-depth: 0  # unshallow fetch for setuptools-scm
         ref: ${{ inputs.branchOrTag }}
