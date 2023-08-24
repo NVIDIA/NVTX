@@ -68,7 +68,7 @@ jobs:
         done
 
     - name: Upload distributions
-      uses: actions/upload-artifact@v2
+      uses: actions/upload-artifact@v3
       with:
         path: dist
         name: nvtx-wheels
