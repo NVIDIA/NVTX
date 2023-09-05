@@ -280,7 +280,7 @@ if not enabled():
 
     class annotate(contextlib.nullcontext):
         def __init__(self, *args, **kwargs):
-            pass
+            super().__init__()
 
         def __call__(self, func):
             return func
