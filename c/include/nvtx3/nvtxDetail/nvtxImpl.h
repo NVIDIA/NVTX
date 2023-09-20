@@ -69,10 +69,6 @@
 extern "C" {
 #endif /* __cplusplus */
 
-#ifdef __GNUC__
-#pragma GCC visibility push(hidden)
-#endif
-
 /* ---- Forward declare all functions referenced in globals ---- */
 
 NVTX_LINKONCE_FWDDECL_FUNCTION void NVTX_VERSIONED_IDENTIFIER(nvtxInitOnce)(void);
@@ -428,10 +424,6 @@ NVTX_LINKONCE_DEFINE_FUNCTION void NVTX_API NVTX_VERSIONED_IDENTIFIER(nvtxEtiSet
 /* ---- Define implementations of initialization functions ---- */
 
 #include "nvtxInit.h"
-
-#ifdef __GNUC__
-#pragma GCC visibility pop
-#endif
 
 #ifdef __cplusplus
 } /* extern "C" */
