@@ -259,3 +259,13 @@ def test_push_pop(message, color, domain, category):
 )
 def test_mark(message, color, domain, category):
     nvtx.mark(message, color, domain, category)
+
+
+def test_annotation_gets_name_from_func():
+    # GH #86: test that annotate() with no arguments
+    # uses the name of the function as the message
+    ann = nvtx.annotate()
+    def foo():
+        pass
+    ann(foo)
+    assert ann.attributes.message.string == "foo"
