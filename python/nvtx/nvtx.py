@@ -104,7 +104,7 @@ class annotate:
         return False
 
     def __call__(self, func):
-        if not self.attributes.message:
+        if not self.attributes.message.string:
             self.attributes.message = RegisteredString(
                 self.domain.handle, func.__name__
             )
