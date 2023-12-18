@@ -20,7 +20,8 @@ try:
 except Exception:
     nthreads = 0
 
-include_dirs = [os.path.dirname(sysconfig.get_path("include")),]
+include_dirs = [os.path.dirname(sysconfig.get_path("include")),
+                os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "c", "include")]
 if os.getenv("CUDA_HOME"):
     include_dirs.insert(0, os.path.join(os.environ["CUDA_HOME"], "include"))
 library_dirs = [get_python_lib()]
