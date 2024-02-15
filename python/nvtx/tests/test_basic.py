@@ -40,8 +40,16 @@ import nvtx
         "abc def"
     ]
 )
-def test_annotate_context_manager(message, color, domain):
-    with nvtx.annotate(message=message, color=color, domain=domain):
+@pytest.mark.parametrize(
+    "payload",
+    [
+        None,
+        1,
+        1.0
+    ]
+)
+def test_annotate_context_manager(message, color, domain, payload):
+    with nvtx.annotate(message=message, color=color, domain=domain, payload=payload):
         pass
 
 
@@ -74,8 +82,16 @@ def test_annotate_context_manager(message, color, domain):
         "abc def"
     ]
 )
-def test_annotate_decorator(message, color, domain):
-    @nvtx.annotate(message=message, color=color, domain=domain)
+@pytest.mark.parametrize(
+    "payload",
+    [
+        None,
+        1,
+        1.0
+    ]
+)
+def test_annotate_decorator(message, color, domain, payload):
+    @nvtx.annotate(message=message, color=color, domain=domain, payload=payload)
     def foo():
         pass
 
@@ -186,8 +202,16 @@ def test_get_category_id():
         1,
     ]
 )
-def test_start_end(message, color, domain, category):
-    rng = nvtx.start_range(message, color, domain, category)
+@pytest.mark.parametrize(
+    "payload",
+    [
+        None,
+        1,
+        1.0
+    ]
+)
+def test_start_end(message, color, domain, category, payload):
+    rng = nvtx.start_range(message, color, domain, category, payload)
     nvtx.end_range(rng)
 
 
@@ -222,8 +246,16 @@ def test_start_end(message, color, domain, category):
         1,
     ]
 )
-def test_push_pop(message, color, domain, category):
-    nvtx.push_range(message, color, domain, category)
+@pytest.mark.parametrize(
+    "payload",
+    [
+        None,
+        1,
+        1.0
+    ]
+)
+def test_push_pop(message, color, domain, category, payload):
+    nvtx.push_range(message, color, domain, category, payload)
     nvtx.pop_range()
     
 
@@ -257,8 +289,16 @@ def test_push_pop(message, color, domain, category):
         1,
     ]
 )
-def test_mark(message, color, domain, category):
-    nvtx.mark(message, color, domain, category)
+@pytest.mark.parametrize(
+    "payload",
+    [
+        None,
+        1,
+        1.0
+    ]
+)
+def test_mark(message, color, domain, category, payload):
+    nvtx.mark(message, color, domain, category, payload)
 
 
 def test_annotation_gets_name_from_func():
