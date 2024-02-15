@@ -20,7 +20,6 @@ from nvtx._lib import (
     end_range as libnvtx_end_range,
 )
 
-
 _ENABLED = not os.getenv("NVTX_DISABLE", False)
 
 
@@ -29,7 +28,7 @@ class annotate:
     Annotate code ranges using a context manager or a decorator.
     """
 
-    def __init__(self, message=None, color=None, domain=None, category=None):
+    def __init__(self, message=None, color=None, domain=None, category=None, payload=None):
         """
         Annotate a function or a code range.
 
@@ -55,6 +54,8 @@ class annotate:
             A string or an integer specifying the category within the domain
             under which the code range is scoped. If unspecified, the code
             range is not associated with a category.
+        payload : int or float, optional
+            A numeric value to be associated with this event
 
         Examples
         --------
@@ -82,7 +83,7 @@ class annotate:
             category_id = category
         elif isinstance(category, str):
             category_id = self.domain.get_category_id(category)
-        self.attributes = EventAttributes(message, color, category_id)
+        self.attributes = EventAttributes(message, color, category_id, payload)
 
     def __reduce__(self):
         return (
@@ -119,7 +120,7 @@ class annotate:
         return inner
 
 
-def mark(message=None, color="blue", domain=None, category=None):
+def mark(message=None, color="blue", domain=None, category=None, payload=None):
     """
     Mark an instantaneous event.
 
@@ -140,6 +141,8 @@ def mark(message=None, color="blue", domain=None, category=None):
         A string or an integer specifying the category within the domain
         under which the event is scoped. If unspecified, the event is
         not associated with a category.
+    payload : int or float, optional
+            A numeric value to be associated with this event
     """
     domain = Domain(domain)
     message = RegisteredString(domain.handle, message)
@@ -149,11 +152,11 @@ def mark(message=None, color="blue", domain=None, category=None):
         category_id = category
     elif isinstance(category, str):
         category_id = domain.get_category_id(category)
-    attributes = EventAttributes(message, color, category_id)
+    attributes = EventAttributes(message, color, category_id, payload)
     libnvtx_mark(attributes, domain.handle)
 
 
-def push_range(message=None, color="blue", domain=None, category=None):
+def push_range(message=None, color="blue", domain=None, category=None, payload=None):
     """
     Mark the beginning of a code range.
 
@@ -175,6 +178,8 @@ def push_range(message=None, color="blue", domain=None, category=None):
         A string or an integer specifying the category within the domain
         under which the code range is scoped. If unspecified, the code range
         is not associated with a category.
+    payload : int or float, optional
+            A numeric value to be associated with this event
 
     Examples
     --------
@@ -192,7 +197,8 @@ def push_range(message=None, color="blue", domain=None, category=None):
         category_id = category
     elif isinstance(category, str):
         category_id = domain.get_category_id(category)
-    libnvtx_push_range(EventAttributes(message, color, category_id), domain.handle)
+    libnvtx_push_range(EventAttributes(message, color, category_id, payload),
+                       domain.handle)
 
 
 def pop_range(domain=None):
@@ -208,7 +214,7 @@ def pop_range(domain=None):
     libnvtx_pop_range(Domain(domain).handle)
 
 
-def start_range(message=None, color="blue", domain=None, category=None):
+def start_range(message=None, color="blue", domain=None, category=None, payload=None):
     """
     Mark the beginning of a code range.
 
@@ -230,6 +236,8 @@ def start_range(message=None, color="blue", domain=None, category=None):
         A string or an integer specifying the category within the domain
         under which the code range is scoped. If unspecified, the code range
         is not associated with a category.
+    payload : int or float, optional
+            A numeric value to be associated with this event
 
     Returns
     -------
@@ -252,8 +260,7 @@ def start_range(message=None, color="blue", domain=None, category=None):
     elif isinstance(category, str):
         category_id = domain.get_category_id(category)
     marker_id = libnvtx_start_range(
-        EventAttributes(message, color, category_id), domain.handle
-    )
+        EventAttributes(message, color, category_id, payload), domain.handle)
     return marker_id
 
 
@@ -287,16 +294,16 @@ if not enabled():
 
     # Could use a decorator here but overheads are significant enough
     # not to. See https://github.com/NVIDIA/NVTX/pull/24 for discussion.
-    def mark(message=None, color=None, domain=None, category=None):
+    def mark(message=None, color=None, domain=None, category=None, payload=None):
         pass
 
-    def push_range(message=None, color=None, domain=None, category=None):
+    def push_range(message=None, color=None, domain=None, category=None, payload=None):
         pass
 
     def pop_range(domain=None):
         pass
 
-    def start_range(message=None, color=None, domain=None, category=None):
+    def start_range(message=None, color=None, domain=None, category=None, payload=None):
         pass
 
     def end_range(range_id):

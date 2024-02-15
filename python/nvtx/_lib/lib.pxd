@@ -109,6 +109,7 @@ cdef class EventAttributes:
     cdef object _message
     cdef object _color
     cdef uint32_t _category
+    cdef object _payload
     cdef nvtxStringHandle_t string_handle
     cdef nvtxEventAttributes_t c_obj
 

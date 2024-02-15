@@ -20,7 +20,7 @@ def initialize():
 
 cdef class EventAttributes:
 
-    def __init__(self, object message=None, color=None, category=None):
+    def __init__(self, object message=None, color=None, category=None, payload=None):
         self.c_obj = nvtxEventAttributes_t(0)
         self.c_obj.version = NVTX_VERSION
         self.c_obj.size = NVTX_EVENT_ATTRIB_STRUCT_SIZE
@@ -30,7 +30,7 @@ cdef class EventAttributes:
         self.message = message
         self.color = color
         self.category = category
-
+        self.payload = payload
 
     @property
     def message(self):
@@ -59,6 +59,24 @@ cdef class EventAttributes:
         if value is not None:
             self._category = value
             self.c_obj.category = value
+
+    @property
+    def payload(self):
+        return self._payload
+
+    @payload.setter
+    def payload(self, value):
+        if value is not None:
+            self._payload = value
+
+            if isinstance(self._payload, int):
+                self.c_obj.payload.llValue = self._payload
+                self.c_obj.payloadType = NVTX_PAYLOAD_TYPE_INT64
+            elif isinstance(self._payload, float):
+                self.c_obj.payload.dValue = self._payload
+                self.c_obj.payloadType = NVTX_PAYLOAD_TYPE_DOUBLE
+            else:
+                raise RuntimeError('Payload must be int or float') 
 
 
 cdef class DomainHandle:
