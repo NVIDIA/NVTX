@@ -1,5 +1,11 @@
 # NVTX (NVIDIA Tools Extension Library)
 
+<table><tr>
+<th><b><a href="https://nvidia.github.io/NVTX/doxygen/index.html">C Docs</a></b></th>
+<th><b><a href="https://nvidia.github.io/NVTX/doxygen-cpp/index.html">C++ Docs</a></b></th>
+<th><b><a href="https://nvtx.readthedocs.io/en/latest">Python Docs</a></b></th>
+</tr></table>
+
 NVTX is a cross-platform API for annotating source code to provide contextual information to developer tools.
 
 The NVTX API is written in C, with wrappers provided for C++ and Python.
