@@ -13,7 +13,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #=============================================================================
-cmake_minimum_required(VERSION 3.10)
+cmake_minimum_required(VERSION 3.19)
 
 # This file is typically used by calling add_subdirectory on this directory or add
 # this directory as an external package.  In this case, the NVTX library targets
