@@ -620,6 +620,19 @@
 #define NVTX3_CONSTEXPR_IF_CPP14
 #endif
 
+// Macro wrappers for C++ attributes: [[maybe_unused]] and [[nodiscard]]
+#if defined(__has_cpp_attribute)
+  #if __has_cpp_attribute(maybe_unused)
+    #define NVTX3_MAYBE_UNUSED [[maybe_unused]]
+  #endif
+  #if __has_cpp_attribute(nodiscard)
+    #define NVTX3_NO_DISCARD [[nodiscard]]
+  #endif
+#else
+#define NVTX3_MAYBE_UNUSED
+#define NVTX3_NO_DISCARD
+#endif // __has_cpp_attribute
+
  /* Use a macro for static asserts, which defaults to static_assert, but that
   * testing tools can replace with a logging function.  For example:
   * #define NVTX3_STATIC_ASSERT(c, m) \
@@ -804,7 +817,7 @@ class domain {
     typename std::enable_if<
       detail::is_c_string<decltype(D::name)>::value
     , int>::type = 0>
-  static domain const& get() noexcept
+  NVTX3_NO_DISCARD static domain const& get() noexcept
   {
     static domain const d(D::name);
     return d;
@@ -819,7 +832,7 @@ class domain {
     typename std::enable_if<
       !detail::is_c_string<decltype(D::name)>::value
     , int>::type = 0>
-  static domain const& get() noexcept
+  NVTX3_NO_DISCARD static domain const& get() noexcept
   {
     NVTX3_STATIC_ASSERT(detail::always_false<D>::value,
       "Type used to identify an NVTX domain must contain a static constexpr member "
@@ -837,7 +850,7 @@ class domain {
     typename std::enable_if<
       !detail::has_name<D>::value
     , int>::type = 0>
-  static domain const& get() noexcept
+  NVTX3_NO_DISCARD static domain const& get() noexcept
   {
     NVTX3_STATIC_ASSERT(detail::always_false<D>::value,
       "Type used to identify an NVTX domain must contain a static constexpr member "
@@ -847,7 +860,7 @@ class domain {
   }
 #else
   template <typename D = global>
-  static domain const& get() noexcept
+  NVTX3_NO_DISCARD static domain const& get() noexcept
   {
     static domain const d(D::name);
     return d;
@@ -911,7 +924,7 @@ class domain {
    * "global" NVTX domain.
    *
    */
-  domain() noexcept {}
+  constexpr domain() noexcept {}
 
   /**
    * @brief Intentionally avoid calling nvtxDomainDestroy on the `domain` object.
@@ -947,7 +960,7 @@ class domain {
  *
  */
 template <>
-inline domain const& domain::get<domain::global>() noexcept
+NVTX3_NO_DISCARD inline domain const& domain::get<domain::global>() noexcept
 {
   static domain const d{};
   return d;
@@ -1273,7 +1286,7 @@ class named_category_in final : public category {
       !detail::is_c_string<decltype(C::name)>::value ||
       !detail::is_uint32<decltype(C::id)>::value
     , int>::type = 0>
-  static named_category_in const& get() noexcept
+  NVTX3_NO_DISCARD static named_category_in const& get() noexcept
   {
     NVTX3_STATIC_ASSERT(detail::is_c_string<decltype(C::name)>::value,
       "Type used to name an NVTX category must contain a static constexpr member "
@@ -1295,7 +1308,7 @@ class named_category_in final : public category {
       !detail::has_name<C>::value ||
       !detail::has_id<C>::value
     , int>::type = 0>
-  static named_category_in const& get() noexcept
+  NVTX3_NO_DISCARD static named_category_in const& get() noexcept
   {
     NVTX3_STATIC_ASSERT(detail::has_name<C>::value,
       "Type used to name an NVTX category must contain a static constexpr member "
@@ -1308,7 +1321,7 @@ class named_category_in final : public category {
   }
 #else
   template <typename C>
-  static named_category_in const& get() noexcept
+  NVTX3_NO_DISCARD static named_category_in const& get() noexcept
   {
     static named_category_in const cat(C::id, C::name);
     return cat;
@@ -1454,7 +1467,7 @@ class registered_string_in {
     typename std::enable_if<
       detail::is_c_string<decltype(M::message)>::value
     , int>::type = 0>
-  static registered_string_in const& get() noexcept
+  NVTX3_NO_DISCARD static registered_string_in const& get() noexcept
   {
     static registered_string_in const regstr(M::message);
     return regstr;
@@ -1469,6 +1482,8 @@ class registered_string_in {
     typename std::enable_if<
       !detail::is_c_string<decltype(M::message)>::value
     , int>::type = 0>
+  NVTX3_NO_DISCARD static registered_string_in const& get() noexcept
+  {
   static registered_string_in const& get() noexcept
   {
     NVTX3_STATIC_ASSERT(detail::always_false<M>::value,
@@ -1487,6 +1502,8 @@ class registered_string_in {
     typename std::enable_if<
       !detail::has_message<M>::value
     , int>::type = 0>
+  NVTX3_NO_DISCARD static registered_string_in const& get() noexcept
+  {
   static registered_string_in const& get() noexcept
   {
     NVTX3_STATIC_ASSERT(detail::always_false<M>::value,
@@ -1498,6 +1515,8 @@ class registered_string_in {
   }
 #else
   template <typename M>
+  NVTX3_NO_DISCARD static registered_string_in const& get() noexcept
+  {
   static registered_string_in const& get() noexcept
   {
     static registered_string_in const regstr(M::message);
@@ -2066,7 +2085,7 @@ class event_attributes {
  * \endcode
  */
 template <class D = domain::global>
-class scoped_range_in {
+class NVTX3_MAYBE_UNUSED scoped_range_in {
  public:
   /**
    * @brief Construct a `scoped_range_in` with the specified
@@ -2158,7 +2177,7 @@ namespace detail {
 
 /// @cond internal
 template <typename D = domain::global>
-class optional_scoped_range_in
+class NVTX3_MAYBE_UNUSED optional_scoped_range_in
 {
 public:
   optional_scoped_range_in() = default;
@@ -2309,7 +2328,7 @@ inline constexpr bool operator!=(range_handle lhs, range_handle rhs) noexcept { 
  * @return Unique handle to be passed to `end_range_in` to end the range.
  */
 template <typename D = domain::global>
-inline range_handle start_range_in(event_attributes const& attr) noexcept
+NVTX3_NO_DISCARD inline range_handle start_range_in(event_attributes const& attr) noexcept
 {
 #ifndef NVTX_DISABLE
   return range_handle{nvtxDomainRangeStartEx(domain::get<D>(), attr.get())};
@@ -2350,7 +2369,7 @@ inline range_handle start_range_in(event_attributes const& attr) noexcept
  * @return Unique handle to be passed to `end_range` to end the range.
  */
 template <typename D = domain::global, typename... Args>
-inline range_handle start_range_in(Args const&... args) noexcept
+NVTX3_NO_DISCARD inline range_handle start_range_in(Args const&... args) noexcept
 {
 #ifndef NVTX_DISABLE
   return start_range_in<D>(event_attributes{args...});
@@ -2385,7 +2404,7 @@ inline range_handle start_range_in(Args const&... args) noexcept
  * of the range.
  * @return Unique handle to be passed to `end_range_in` to end the range.
  */
-inline range_handle start_range(event_attributes const& attr) noexcept
+NVTX3_NO_DISCARD inline range_handle start_range(event_attributes const& attr) noexcept
 {
 #ifndef NVTX_DISABLE
   return start_range_in<domain::global>(attr);
@@ -2423,7 +2442,7 @@ inline range_handle start_range(event_attributes const& attr) noexcept
  * @return Unique handle to be passed to `end_range` to end the range.
  */
 template <typename... Args>
-inline range_handle start_range(Args const&... args) noexcept
+NVTX3_NO_DISCARD inline range_handle start_range(Args const&... args) noexcept
 {
 #ifndef NVTX_DISABLE
   return start_range_in<domain::global>(args...);
@@ -2501,7 +2520,7 @@ inline void end_range(range_handle r) noexcept
  * indicate that the global NVTX domain should be used.
  */
 template <typename D = domain::global>
-class unique_range_in {
+class NVTX3_MAYBE_UNUSED unique_range_in {
  public:
   /**
    * @brief Construct a new unique_range_in object with the specified event attributes
@@ -2881,6 +2900,8 @@ inline void mark(Args const&... args) noexcept
 #undef NVTX3_VERSION_NAMESPACE
 #undef NVTX3_INLINE_IF_REQUESTED
 #undef NVTX3_CONSTEXPR_IF_CPP14
+#undef NVTX3_MAYBE_UNUSED
+#undef NVTX3_NO_DISCARD
 
 #if defined(NVTX3_INLINE_THIS_VERSION)
 #undef NVTX3_INLINE_THIS_VERSION
