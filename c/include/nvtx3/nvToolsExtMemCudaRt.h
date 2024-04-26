@@ -110,7 +110,6 @@ NVTX_DECLSPEC nvtxMemPermissionsHandle_t NVTX_API nvtxMemCudaGetDeviceWidePermis
     nvtxDomainHandle_t domain,
     int device);
 
-
 /** \brief Change the default behavior for all memory mapped in from a particular device.
  *
  * While typically all memory defaults to readable and writable, users may desire to limit
@@ -121,12 +120,11 @@ NVTX_DECLSPEC nvtxMemPermissionsHandle_t NVTX_API nvtxMemCudaGetDeviceWidePermis
  * devicePeer can be NVTX_MEM_CUDA_PEER_ALL_DEVICES
  *
 */
-NVTX_DECLSPEC void NVTX_API  nvtxMemCudaSetPeerAccess(
+NVTX_DECLSPEC void NVTX_API nvtxMemCudaSetPeerAccess(
     nvtxDomainHandle_t domain,
     nvtxMemPermissionsHandle_t permissions,
     int devicePeer, /* device number such as from cudaGetDevice() or NVTX_MEM_CUDA_PEER_ALL_DEVICES */
     uint32_t flags); /* NVTX_MEM_PERMISSIONS_REGION_FLAGS_* */
-
 
 /** @} */ /*END defgroup*/
 
@@ -136,7 +134,7 @@ NVTX_DECLSPEC void NVTX_API  nvtxMemCudaSetPeerAccess(
 
 #ifndef NVTX_NO_IMPL
 #define NVTX_EXT_IMPL_MEM_CUDART_GUARD /* Ensure other headers cannot included directly */
-#include "nvtxExtDetail/nvtxExtImplMemCudaRt1.h"
+#include "nvtxExtDetail/nvtxExtImplMemCudaRt_v1.h"
 #undef NVTX_EXT_IMPL_MEM_CUDART_GUARD
 #endif /*NVTX_NO_IMPL*/
 

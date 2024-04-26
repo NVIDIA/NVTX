@@ -218,7 +218,8 @@ typedef struct nvtxCountersBatch_v1
  *         The counter handle is unique within the NVTX domain.
  */
 NVTX_DECLSPEC nvtxCountersHandle_t NVTX_API nvtxCountersRegister(
-    nvtxDomainHandle_t hDomain, const nvtxCountersAttr_t* attr);
+    nvtxDomainHandle_t hDomain,
+    const nvtxCountersAttr_t* attr);
 
 /**
  * \brief Sample one integer counter by value immediately (the NVTX tool determines the timestamp).
@@ -227,8 +228,10 @@ NVTX_DECLSPEC nvtxCountersHandle_t NVTX_API nvtxCountersRegister(
  * @param hCounter handle of the NVTX counter (group).
  * @param value 64-bit integer counter value.
  */
-NVTX_DECLSPEC void NVTX_API nvtxCountersSampleInt64(nvtxDomainHandle_t hDomain,
-    nvtxCountersHandle_t hCounter, int64_t value);
+NVTX_DECLSPEC void NVTX_API nvtxCountersSampleInt64(
+    nvtxDomainHandle_t hDomain,
+    nvtxCountersHandle_t hCounter,
+    int64_t value);
 
 /**
  * \brief Sample one floating point counter by value immediately (the NVTX tool determines the timestamp).
@@ -237,8 +240,10 @@ NVTX_DECLSPEC void NVTX_API nvtxCountersSampleInt64(nvtxDomainHandle_t hDomain,
  * @param hCounter handle of the NVTX counter (group).
  * @param value 64-bit floating-point counter value.
  */
-NVTX_DECLSPEC void NVTX_API nvtxCountersSampleFloat64(nvtxDomainHandle_t hDomain,
-    nvtxCountersHandle_t hCounter, double value);
+NVTX_DECLSPEC void NVTX_API nvtxCountersSampleFloat64(
+    nvtxDomainHandle_t hDomain,
+    nvtxCountersHandle_t hCounter,
+    double value);
 
 /**
  * \brief Sample a counter group by reference immediately (the NVTX tool determines the timestamp).
@@ -248,8 +253,11 @@ NVTX_DECLSPEC void NVTX_API nvtxCountersSampleFloat64(nvtxDomainHandle_t hDomain
  * @param counters pointer to one or more counter values.
  * @param size size of the counter value(s) in bytes.
  */
-NVTX_DECLSPEC void NVTX_API nvtxCountersSample(nvtxDomainHandle_t hDomain,
-    nvtxCountersHandle_t hCounter, void* values, size_t size);
+NVTX_DECLSPEC void NVTX_API nvtxCountersSample(
+    nvtxDomainHandle_t hDomain,
+    nvtxCountersHandle_t hCounter,
+    void* values,
+    size_t size);
 
 /**
  * \brief Sample without value.
@@ -258,8 +266,10 @@ NVTX_DECLSPEC void NVTX_API nvtxCountersSample(nvtxDomainHandle_t hDomain,
  * @param hCounter handle of the NVTX counter (group).
  * @param reason reason for the missing sample value.
  */
-NVTX_DECLSPEC void NVTX_API nvtxCountersSampleNoValue(nvtxDomainHandle_t hDomain,
-    nvtxCountersHandle_t hCounter, uint8_t reason);
+NVTX_DECLSPEC void NVTX_API nvtxCountersSampleNoValue(
+    nvtxDomainHandle_t hDomain,
+    nvtxCountersHandle_t hCounter,
+    uint8_t reason);
 
 /**
  * \brief Submit a batch of counters in the given domain.
@@ -274,8 +284,11 @@ NVTX_DECLSPEC void NVTX_API nvtxCountersSampleNoValue(nvtxDomainHandle_t hDomain
  * @param counters blob containing counter data and timestamps
  * @param size size of the counter data blob in bytes
  */
-NVTX_DECLSPEC void NVTX_API nvtxCountersSubmitBatch(nvtxDomainHandle_t hDomain,
-    nvtxCountersHandle_t hCounter, const void* counters, size_t size);
+NVTX_DECLSPEC void NVTX_API nvtxCountersSubmitBatch(
+    nvtxDomainHandle_t hDomain,
+    nvtxCountersHandle_t hCounter,
+    const void* counters,
+    size_t size);
 
 /**
  * \brief Submit a batch of counters in the given domain.
@@ -284,7 +297,8 @@ NVTX_DECLSPEC void NVTX_API nvtxCountersSubmitBatch(nvtxDomainHandle_t hDomain,
  * @param hDomain handle of the NVTX domain
  * @param counterBatch Pointer to the counter data to be submitted.
  */
-NVTX_DECLSPEC void NVTX_API nvtxCountersSubmitBatchEx(nvtxDomainHandle_t hDomain,
+NVTX_DECLSPEC void NVTX_API nvtxCountersSubmitBatchEx(
+    nvtxDomainHandle_t hDomain,
     const nvtxCountersBatch_t* counterBatch);
 
 

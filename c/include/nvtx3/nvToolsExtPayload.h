@@ -6,7 +6,7 @@
 * SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception
 */
 
-#include "nvtx3/nvToolsExt.h"
+#include "nvToolsExt.h"
 
 /* Optionally include helper macros. */
 /* #include "nvToolsExtPayloadHelper.h" */
@@ -916,8 +916,8 @@ typedef int64_t (*nvtxTimestampProviderExFn)(void* dataPtr);
  * @param attr NVTX payload schema attributes.
  */
 NVTX_DECLSPEC uint64_t NVTX_API nvtxPayloadSchemaRegister(
-    nvtxDomainHandle_t domain, const nvtxPayloadSchemaAttr_t* attr);
-
+    nvtxDomainHandle_t domain,
+    const nvtxPayloadSchemaAttr_t* attr);
 
 /**
  * \brief Register an enumeration type with the payload extension.
@@ -925,9 +925,9 @@ NVTX_DECLSPEC uint64_t NVTX_API nvtxPayloadSchemaRegister(
  * @param domain NVTX domain handle
  * @param attr NVTX payload enumeration type attributes.
  */
-NVTX_DECLSPEC uint64_t NVTX_API nvtxPayloadEnumRegister(nvtxDomainHandle_t domain,
+NVTX_DECLSPEC uint64_t NVTX_API nvtxPayloadEnumRegister(
+    nvtxDomainHandle_t domain,
     const nvtxPayloadEnumAttr_t* attr);
-
 
 /**
  * \brief Register a scope for deferred counters and events.
@@ -937,7 +937,8 @@ NVTX_DECLSPEC uint64_t NVTX_API nvtxPayloadEnumRegister(nvtxDomainHandle_t domai
  *
  * @return An identifier for the scope.
  */
-NVTX_DECLSPEC uint64_t NVTX_API nvtxScopeRegister(nvtxDomainHandle_t domain,
+NVTX_DECLSPEC uint64_t NVTX_API nvtxScopeRegister(
+    nvtxDomainHandle_t domain,
     const nvtxScopeAttr_t* attr);
 
 /**
@@ -951,8 +952,10 @@ NVTX_DECLSPEC uint64_t NVTX_API nvtxScopeRegister(nvtxDomainHandle_t domain,
  * @param payloadData pointer to an array of structured payloads.
  * @param count number of payload BLOBs.
  */
-NVTX_DECLSPEC void NVTX_API nvtxMarkPayload(nvtxDomainHandle_t domain,
-    const nvtxPayloadData_t* payloadData, size_t count);
+NVTX_DECLSPEC void NVTX_API nvtxMarkPayload(
+    nvtxDomainHandle_t domain,
+    const nvtxPayloadData_t* payloadData,
+    size_t count);
 
 /**
  * \brief Begin a nested thread range with the attributes being passed via the
@@ -965,8 +968,10 @@ NVTX_DECLSPEC void NVTX_API nvtxMarkPayload(nvtxDomainHandle_t domain,
  * @return The level of the range being ended. If an error occurs a negative
  * value is returned on the current thread.
  */
-NVTX_DECLSPEC int NVTX_API nvtxRangePushPayload(nvtxDomainHandle_t domain,
-    const nvtxPayloadData_t* payloadData, size_t count);
+NVTX_DECLSPEC int NVTX_API nvtxRangePushPayload(
+    nvtxDomainHandle_t domain,
+    const nvtxPayloadData_t* payloadData,
+    size_t count);
 
 /**
  * \brief End a nested thread range with an additional custom payload.
@@ -982,8 +987,10 @@ NVTX_DECLSPEC int NVTX_API nvtxRangePushPayload(nvtxDomainHandle_t domain,
  * @return The level of the range being ended. If an error occurs a negative
  * value is returned on the current thread.
  */
-NVTX_DECLSPEC int NVTX_API nvtxRangePopPayload(nvtxDomainHandle_t domain,
-    const nvtxPayloadData_t* payloadData, size_t count);
+NVTX_DECLSPEC int NVTX_API nvtxRangePopPayload(
+    nvtxDomainHandle_t domain,
+    const nvtxPayloadData_t* payloadData,
+    size_t count);
 
 /**
  * \brief Start a thread range with attributes passed via the extended payload.
@@ -995,8 +1002,10 @@ NVTX_DECLSPEC int NVTX_API nvtxRangePopPayload(nvtxDomainHandle_t domain,
  * @return The level of the range being ended. If an error occurs a negative
  * value is returned on the current thread.
  */
-NVTX_DECLSPEC nvtxRangeId_t NVTX_API nvtxRangeStartPayload(nvtxDomainHandle_t domain,
-    const nvtxPayloadData_t* payloadData, size_t count);
+NVTX_DECLSPEC nvtxRangeId_t NVTX_API nvtxRangeStartPayload(
+    nvtxDomainHandle_t domain,
+    const nvtxPayloadData_t* payloadData,
+    size_t count);
 
 /**
  * \brief End a thread range and pass a custom payload.
@@ -1010,8 +1019,11 @@ NVTX_DECLSPEC nvtxRangeId_t NVTX_API nvtxRangeStartPayload(nvtxDomainHandle_t do
  * @param payloadData pointer to an array of structured payloads.
  * @param count number of payload BLOBs.
  */
-NVTX_DECLSPEC void NVTX_API nvtxRangeEndPayload(nvtxDomainHandle_t domain,
-    nvtxRangeId_t id, const nvtxPayloadData_t* payloadData, size_t count);
+NVTX_DECLSPEC void NVTX_API nvtxRangeEndPayload(
+    nvtxDomainHandle_t domain,
+    nvtxRangeId_t id,
+    const nvtxPayloadData_t* payloadData,
+    size_t count);
 
 /**
  * \brief Start a range with event attributes and an extended payload.
@@ -1024,8 +1036,12 @@ NVTX_DECLSPEC void NVTX_API nvtxRangeEndPayload(nvtxDomainHandle_t domain,
  *
  * @return range ID (type is `nvtxRangeId_t`)
  */
-NVTX_DECLSPEC nvtxRangeId_t NVTX_API nvtxPayloadRangeStart(nvtxDomainHandle_t domain,
-    nvtxEventAttributes_t* evtAttr, uint64_t schemaId, void* plAddr, size_t size);
+NVTX_DECLSPEC nvtxRangeId_t NVTX_API nvtxPayloadRangeStart(
+    nvtxDomainHandle_t domain,
+    nvtxEventAttributes_t* evtAttr,
+    uint64_t schemaId,
+    void* plAddr,
+    size_t size);
 
 /**
  * @brief Checks if an NVTX domain is enabled (unofficial and may not work)
@@ -1033,7 +1049,8 @@ NVTX_DECLSPEC nvtxRangeId_t NVTX_API nvtxPayloadRangeStart(nvtxDomainHandle_t do
  * @param domain NVTX domain handle
  * @return 0 if the domain is not enabled.
  */
-NVTX_DECLSPEC uint8_t NVTX_API nvtxDomainIsEnabled(nvtxDomainHandle_t domain);
+NVTX_DECLSPEC uint8_t NVTX_API nvtxDomainIsEnabled(
+    nvtxDomainHandle_t domain);
 
 /**
  * \brief Report a push-pop range in a single call.
@@ -1051,8 +1068,10 @@ NVTX_DECLSPEC uint8_t NVTX_API nvtxDomainIsEnabled(nvtxDomainHandle_t domain);
  * attribute types and attribute values.
  * @param pushTime The timestamp of the push operation (use `nvtxTimestampGet()`).
  */
-NVTX_DECLSPEC void NVTX_API nvtxRangePushPop(nvtxDomainHandle_t domain,
-    const nvtxEventAttributes_t* eventAttrib, uint64_t pushTime);
+NVTX_DECLSPEC void NVTX_API nvtxRangePushPop(
+    nvtxDomainHandle_t domain,
+    const nvtxEventAttributes_t* eventAttrib,
+    uint64_t pushTime);
 
 /**
  * \brief Get a timestamp from the attached NVTX handler/tool.
@@ -1082,7 +1101,9 @@ NVTX_DECLSPEC nvtxTimeDomainHandle_t NVTX_API nvtxTimestampDomainRegister(
  *              typedef uint64_t (*)()
  */
 NVTX_DECLSPEC void NVTX_API nvtxTimestampProvideSource(
-    nvtxTimeDomainHandle_t timeDomain, nvtxTimestampProviderExFn fnPtr, void* dataPtr);
+    nvtxTimeDomainHandle_t timeDomain,
+    nvtxTimestampProviderExFn fnPtr,
+    void* dataPtr);
 
 /**
  * \brief The synchronization point between two time domains is provided by the
@@ -1131,8 +1152,8 @@ NVTX_DECLSPEC void NVTX_API nvtxSubmitDeferred(nvtxDomainHandle_t domain,
 #define NVTX3EXT_CBID_nvtxRangePopPayload            4
 #define NVTX3EXT_CBID_nvtxRangeStartPayload          5
 #define NVTX3EXT_CBID_nvtxRangeEndPayload            6
-/* The following are not official and may change. */
 #define NVTX3EXT_CBID_nvtxDomainIsEnabled            7
+
 #define NVTX3EXT_CBID_nvtxTimestampGet               8
 #define NVTX3EXT_CBID_nvtxTimestampDomainRegister    9
 #define NVTX3EXT_CBID_nvtxTimestampProvideSource    10
