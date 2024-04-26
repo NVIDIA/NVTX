@@ -14,6 +14,11 @@
 #define NVTX_EXT_IMPL_H
 /* ---- Include required platform headers ---- */
 
+#include <stdlib.h>
+#include <stdio.h>
+#include <string.h>
+#include <wchar.h>
+
 #if defined(_WIN32)
 
 #include <Windows.h>
@@ -29,20 +34,12 @@
 #include <sched.h>
 #endif
 
+#include <sys/types.h>
 #include <limits.h>
 #include <dlfcn.h>
 #include <fcntl.h>
-#include <stdlib.h>
-#include <stdio.h>
-#include <sys/types.h>
-#include <unistd.h>
 #include <errno.h>
-
-#include <string.h>
-#include <sys/types.h>
 #include <pthread.h>
-#include <stdlib.h>
-#include <wchar.h>
 
 #endif
 
