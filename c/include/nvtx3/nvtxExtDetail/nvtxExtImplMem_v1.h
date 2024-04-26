@@ -22,7 +22,6 @@ extern "C" {
 #define NVTXMEM_VERSIONED_IDENTIFIER_L2(NAME, VERSION, COMPATID) NVTXMEM_VERSIONED_IDENTIFIER_L3(NAME, VERSION, COMPATID)
 #define NVTX_EXT_MEM_VERSIONED_ID(NAME) NVTXMEM_VERSIONED_IDENTIFIER_L2(NAME, NVTX_VERSION, NVTX_EXT_COMPATID_MEM)
 
-
 #ifdef NVTX_DISABLE
 
 #include "nvtxExtHelperMacros.h"
@@ -126,7 +125,6 @@ NVTX_EXT_FN_IMPL(void, nvtxMemPermissionsUnbind, (nvtxDomainHandle_t domain, uin
 #undef return
 #undef NVTX_EXT_FN_RETURN_INVALID
 /* END: void functions. */
-
 
 #undef NVTX_EXT_FN_IMPL
 
