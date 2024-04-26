@@ -285,7 +285,7 @@ typedef enum nvtxColorType_t
  * ------------------------------------------------------------------------- */
 typedef enum nvtxMessageType_t
 {
-    NVTX_MESSAGE_UNKNOWN          = 0,    /**< Message payload is unused. */
+    NVTX_MESSAGE_UNKNOWN          = 0,    /**< Message attribute is unused. */
     NVTX_MESSAGE_TYPE_ASCII       = 1,    /**< A character sequence is used as payload. */
     NVTX_MESSAGE_TYPE_UNICODE     = 2,     /**< A wide character sequence is used as payload. */
     /* NVTX_VERSION_2 */
@@ -342,7 +342,7 @@ NVTX_DECLSPEC void NVTX_API nvtxInitialize(const void* reserved);
 * ------------------------------------------------------------------------- */
 typedef enum nvtxPayloadType_t
 {
-    NVTX_PAYLOAD_UNKNOWN = 0,   /**< Color payload is unused. */
+    NVTX_PAYLOAD_UNKNOWN = 0,   /**< Payload attribute is unused. */
     NVTX_PAYLOAD_TYPE_UNSIGNED_INT64 = 1,   /**< A 64 bit unsigned integer value is used as payload. */
     NVTX_PAYLOAD_TYPE_INT64 = 2,   /**< A 64 bit signed integer value is used as payload. */
     NVTX_PAYLOAD_TYPE_DOUBLE = 3,   /**< A 64 bit floating point value is used as payload. */
