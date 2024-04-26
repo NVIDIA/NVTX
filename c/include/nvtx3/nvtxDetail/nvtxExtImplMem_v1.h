@@ -67,7 +67,7 @@ NVTX_LINKONCE_DEFINE_FUNCTION void NVTX_EXT_MEM_VERSIONED_ID(nvtxExtMemInitOnce)
 
 #define NVTX_EXT_FN_IMPL(ret_type, fn_name, signature, arg_names) \
 typedef ret_type ( * fn_name##_impl_fntype )signature; \
-/*NVTX_LINKONCE_DEFINE_FUNCTION*/ ret_type NVTX_API fn_name signature { \
+    NVTX_DECLSPEC ret_type NVTX_API fn_name signature { \
     intptr_t slot = NVTX_EXT_MEM_VERSIONED_ID(nvtxExtMemSlots)[NVTX3EXT_CBID_##fn_name + 1]; \
     if (slot != NVTX_EXTENSION_DISABLED) { \
         if (slot != NVTX_EXTENSION_FRESH) { \

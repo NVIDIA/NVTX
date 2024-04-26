@@ -80,7 +80,7 @@ NVTX_LINKONCE_DEFINE_FUNCTION void NVTX_EXT_PAYLOAD_VERSIONED_ID(nvtxExtPayloadI
 
 #define NVTX_EXT_PAYLOAD_IMPL_FN_V1(ret_type, fn_name, signature, arg_names) \
 typedef ret_type (*fn_name##_impl_fntype)signature; \
-/*NVTX_LINKONCE_DEFINE_FUNCTION*/ ret_type NVTX_API fn_name signature { \
+    NVTX_DECLSPEC ret_type NVTX_API fn_name signature { \
     intptr_t slot = NVTX_EXT_PAYLOAD_VERSIONED_ID(nvtxExtPayloadSlots)[NVTX3EXT_CBID_##fn_name + 1]; \
     if (slot != NVTX_EXTENSION_DISABLED) { \
         if (slot != NVTX_EXTENSION_FRESH) { \
@@ -95,24 +95,6 @@ typedef ret_type (*fn_name##_impl_fntype)signature; \
         } \
     } \
     NVTX_EXT_FN_RETURN_INVALID(ret_type) \
-}
-
-#define NVTX_EXT_PAYLOAD_IMPL_FN_V1_VOID(fn_name, signature, arg_names) \
-typedef void (*fn_name##_impl_fntype)signature; \
-/*NVTX_LINKONCE_DEFINE_FUNCTION*/ void NVTX_API fn_name signature { \
-    intptr_t slot = NVTX_EXT_PAYLOAD_VERSIONED_ID(nvtxExtPayloadSlots)[NVTX3EXT_CBID_##fn_name + 1]; \
-    if (slot != NVTX_EXTENSION_DISABLED) { \
-        if (slot != NVTX_EXTENSION_FRESH) { \
-            (*(fn_name##_impl_fntype)slot) arg_names; \
-        } else { \
-            NVTX_EXT_PAYLOAD_VERSIONED_ID(nvtxExtPayloadInitOnce)(); \
-            /* Re-read function slot after extension initialization. */ \
-            slot = NVTX_EXT_PAYLOAD_VERSIONED_ID(nvtxExtPayloadSlots)[NVTX3EXT_CBID_##fn_name + 1]; \
-            if (slot != NVTX_EXTENSION_DISABLED && slot != NVTX_EXTENSION_FRESH) { \
-                (*(fn_name##_impl_fntype)slot) arg_names; \
-            } \
-        } \
-    } \
 }
 
 #endif /*NVTX_DISABLE*/
@@ -152,10 +134,10 @@ NVTX_EXT_PAYLOAD_IMPL_FN_V1(uint64_t, nvtxScopeRegister, (nvtxDomainHandle_t dom
 #define NVTX_EXT_FN_RETURN_INVALID(rtype)
 #define return
 
-NVTX_EXT_PAYLOAD_IMPL_FN_V1_VOID(nvtxMarkPayload, (nvtxDomainHandle_t domain,
+NVTX_EXT_PAYLOAD_IMPL_FN_V1(void, nvtxMarkPayload, (nvtxDomainHandle_t domain,
     const nvtxPayloadData_t* payloadData, size_t count), (domain, payloadData, count))
 
-NVTX_EXT_PAYLOAD_IMPL_FN_V1_VOID(nvtxRangeEndPayload, (nvtxDomainHandle_t domain,
+NVTX_EXT_PAYLOAD_IMPL_FN_V1(void, nvtxRangeEndPayload, (nvtxDomainHandle_t domain,
     nvtxRangeId_t id, const nvtxPayloadData_t* payloadData, size_t count),
     (domain, id, payloadData, count))
 
