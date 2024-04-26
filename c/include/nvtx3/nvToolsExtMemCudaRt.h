@@ -89,7 +89,7 @@ typedef nvtxMemCuArrayRangeDesc_v1 nvtxMemCuArrayRangeDesc_t;
  * This object should also represent the CUDA driver API level context.
 */
 NVTX_DECLSPEC nvtxMemPermissionsHandle_t NVTX_API nvtxMemCudaGetProcessWidePermissions(
-                                                                nvtxDomainHandle_t domain);
+    nvtxDomainHandle_t domain);
 
 /** \brief Get the permission object that represent the CUDA runtime device
  * or cuda driver context
@@ -107,8 +107,8 @@ NVTX_DECLSPEC nvtxMemPermissionsHandle_t NVTX_API nvtxMemCudaGetProcessWidePermi
  * This object should also represent the CUDA driver API level context.
 */
 NVTX_DECLSPEC nvtxMemPermissionsHandle_t NVTX_API nvtxMemCudaGetDeviceWidePermissions(
-                                                                nvtxDomainHandle_t domain,
-                                                                int device);
+    nvtxDomainHandle_t domain,
+    int device);
 
 
 /** \brief Change the default behavior for all memory mapped in from a particular device.
@@ -125,7 +125,7 @@ NVTX_DECLSPEC void NVTX_API  nvtxMemCudaSetPeerAccess(
     nvtxDomainHandle_t domain,
     nvtxMemPermissionsHandle_t permissions,
     int devicePeer, /* device number such as from cudaGetDevice() or NVTX_MEM_CUDA_PEER_ALL_DEVICES */
-    uint32_t flags ); /* NVTX_MEM_PERMISSIONS_REGION_FLAGS_* */
+    uint32_t flags); /* NVTX_MEM_PERMISSIONS_REGION_FLAGS_* */
 
 
 /** @} */ /*END defgroup*/
