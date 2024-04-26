@@ -271,7 +271,7 @@
 #define NVTX_PAYLOAD_ENTRY_TYPE_EVENT_SCOPE_ID   71
 
 /**
- * Thread ID as event scope (see `nvtxGetActiveThreadId` for valid values).
+ * Thread ID as event scope.
  */
 #define NVTX_PAYLOAD_ENTRY_TYPE_THREAD_ID_UINT32 72
 #define NVTX_PAYLOAD_ENTRY_TYPE_THREAD_ID_UINT64 73
@@ -1090,30 +1090,6 @@ do { \
 } while (0)
 #endif /* nvtxPayloadMark */
 
-
-/**
- * Helper macro to get the ID of the currently active thread.
- */
-#ifndef nvtxGetActiveThreadId
-#ifdef __cplusplus
-#define _NVTX_PAYLOAD_CAST_TO_U64(v) static_cast<uint64_t>(v)
-#else
-#define _NVTX_PAYLOAD_CAST_TO_U64(v) (uint64_t)(v)
-#endif
-
-#if defined(_WIN32)
-#include <Windows.h>
-#define nvtxGetActiveThreadId() _NVTX_PAYLOAD_CAST_TO_U64(GetCurrentThreadId())
-#elif defined(__ANDROID__)
-#include <unistd.h>
-#define nvtxGetActiveThreadId() _NVTX_PAYLOAD_CAST_TO_U64(gettid())
-#elif defined(MAC_OS_X)
-#define nvtxGetActiveThreadId() _NVTX_PAYLOAD_CAST_TO_U64(syscall(SYS_thread_selfid))
-#elif defined(__linux__) || defined(__CYGWIN__)
-#define nvtxGetActiveThreadId() _NVTX_PAYLOAD_CAST_TO_U64(syscall(SYS_gettid))
-#endif
-#undef _NVTX_PAYLOAD_CAST_TO_U64
-#endif /* nvtxGetActiveThreadId */
 
 #ifdef __GNUC__
 #pragma GCC visibility push(internal)
