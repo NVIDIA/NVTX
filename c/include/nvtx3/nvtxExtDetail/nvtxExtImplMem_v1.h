@@ -47,7 +47,7 @@ NVTX_LINKONCE_DEFINE_FUNCTION void NVTX_EXT_MEM_VERSIONED_ID(nvtxExtMemInitOnce)
 {
     intptr_t* fnSlots = NVTX_EXT_MEM_VERSIONED_ID(nvtxExtMemSlots) + 1;
     nvtxExtModuleSegment_t segment = {
-        0, // unused (only one segment)
+        0, /* unused (only one segment) */
         NVTX3EXT_CBID_MEM_FN_NUM,
         fnSlots
     };

@@ -644,7 +644,7 @@ NVTX_DECLSPEC void NVTX_API nvtxMemPermissionsUnbind(
 
 typedef enum NvtxExtMemCallbackId
 {
-    // Skip 0 for backwards compatibility.
+    /* CBID 0 is invalid */
     NVTX3EXT_CBID_nvtxMemHeapRegister                  = 1,
     NVTX3EXT_CBID_nvtxMemHeapUnregister                = 2,
     NVTX3EXT_CBID_nvtxMemHeapReset                     = 3,
