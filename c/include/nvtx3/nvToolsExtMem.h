@@ -673,13 +673,13 @@ typedef enum NvtxExtMemCallbackId
 
 /* Extension types are required for the implementation and the NVTX handler. */
 #define NVTX_EXT_TYPES_GUARD /* Ensure other headers cannot include directly */
-#include "nvtxExtDetail/nvtxExtTypes.h"
+#include "nvtxDetail/nvtxExtTypes.h"
 #undef NVTX_EXT_TYPES_GUARD
 
 #ifndef NVTX_NO_IMPL
 /* Ensure other headers cannot included directly */
 #define NVTX_EXT_IMPL_MEM_GUARD
-#include "nvtxExtDetail/nvtxExtImplMem_v1.h"
+#include "nvtxDetail/nvtxExtImplMem_v1.h"
 #undef NVTX_EXT_IMPL_MEM_GUARD
 #endif /*NVTX_NO_IMPL*/
 

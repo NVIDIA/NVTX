@@ -6,7 +6,7 @@
 * SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception
 */
 
-#include "nvtxExtDetail/nvtxExtPayloadHelperInternal.h"
+#include "nvtxDetail/nvtxExtPayloadHelperInternal.h"
 
 
 /* This is just an empty marker (for readability), which can be omitted. */

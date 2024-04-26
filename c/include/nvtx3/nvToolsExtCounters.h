@@ -315,12 +315,12 @@ NVTX_DECLSPEC void NVTX_API nvtxCountersSubmitBatchEx(
 #endif
 
 #define NVTX_EXT_TYPES_GUARD /* Ensure other headers cannot include directly */
-#include "nvtxExtDetail/nvtxExtTypes.h"
+#include "nvtxDetail/nvtxExtTypes.h"
 #undef NVTX_EXT_TYPES_GUARD
 
 #ifndef NVTX_NO_IMPL
 #define NVTX_EXT_IMPL_COUNTERS_GUARD /* Ensure other headers cannot included directly */
-#include "nvtxExtDetail/nvtxExtImplCounters_v1.h"
+#include "nvtxDetail/nvtxExtImplCounters_v1.h"
 #undef NVTX_EXT_IMPL_COUNTERS_GUARD
 #endif /*NVTX_NO_IMPL*/
 

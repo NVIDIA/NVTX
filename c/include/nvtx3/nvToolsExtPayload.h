@@ -1288,12 +1288,12 @@ do { \
 
 /* Extension types are required for the implementation and the NVTX handler. */
 #define NVTX_EXT_TYPES_GUARD
-#include "nvtxExtDetail/nvtxExtTypes.h"
+#include "nvtxDetail/nvtxExtTypes.h"
 #undef NVTX_EXT_TYPES_GUARD
 
 #ifndef NVTX_NO_IMPL
 #define NVTX_EXT_IMPL_PAYLOAD_GUARD
-#include "nvtxExtDetail/nvtxExtImplPayload_v1.h"
+#include "nvtxDetail/nvtxExtImplPayload_v1.h"
 #undef NVTX_EXT_IMPL_PAYLOAD_GUARD
 #endif /* NVTX_NO_IMPL */
 
