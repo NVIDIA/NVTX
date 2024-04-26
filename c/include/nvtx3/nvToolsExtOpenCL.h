@@ -30,11 +30,11 @@ extern "C" {
  */
 
 /*  ------------------------------------------------------------------------- */
-/* \cond SHOW_HIDDEN 
+/* \cond SHOW_HIDDEN
 * \brief Used to build a non-colliding value for resource types separated class
 * \version \NVTX_VERSION_2
 */
-#define NVTX_RESOURCE_CLASS_OPENCL 6 
+#define NVTX_RESOURCE_CLASS_OPENCL 6
 /** \endcond */
 
 /*  ------------------------------------------------------------------------- */

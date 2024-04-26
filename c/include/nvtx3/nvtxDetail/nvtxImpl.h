@@ -12,7 +12,7 @@
 
 /* ---- Include required platform headers ---- */
 
-#if defined(_WIN32) 
+#if defined(_WIN32)
 
 #include <Windows.h>
 
@@ -20,7 +20,7 @@
 #include <unistd.h>
 
 #if defined(__ANDROID__)
-#include <android/api-level.h> 
+#include <android/api-level.h>
 #endif
 
 #if defined(__linux__) || defined(__CYGWIN__)

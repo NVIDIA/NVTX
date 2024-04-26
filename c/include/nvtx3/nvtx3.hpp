@@ -575,10 +575,10 @@
  *
  * The following compiler versions are known to have this problem, and so are
  * set by default to disable the SFINAE-based checks:
- * 
+ *
  * - All MSVC versions prior to VS2017 Update 7 (15.7)
  * - GCC 8.1-8.3 (the problem was fixed in GCC 8.4)
- * 
+ *
  * If you find your compiler hits this problem, you can work around it by
  * defining NVTX3_USE_CHECKED_OVERLOADS_FOR_GET to 0 before including this
  * header, or you can add a check for your compiler version to this #if.

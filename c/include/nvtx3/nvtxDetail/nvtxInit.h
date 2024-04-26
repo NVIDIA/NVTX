@@ -14,7 +14,7 @@
 
 /* Prefer macros over inline functions to reduce symbol resolution at link time */
 
-#if defined(_WIN32) 
+#if defined(_WIN32)
 #define NVTX_PATHCHAR   wchar_t
 #define NVTX_STR(x)     L##x
 #define NVTX_GETENV     _wgetenv
