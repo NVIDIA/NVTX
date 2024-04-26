@@ -17,7 +17,7 @@
  *\brief Specify a binding for this payload schema entry.
  */
 typedef struct nvtxPayloadEntryBind_v1 {
-    struct nvtxPayloadEntrySemantic_v1 header;
+    struct nvtxSemanticsHeader_v1 header;
 
     /* Entry binds to the provided schema entry (index). */
     size_t schemaEntryIdx;

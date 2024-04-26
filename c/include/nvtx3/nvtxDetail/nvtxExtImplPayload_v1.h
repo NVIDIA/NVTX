@@ -140,19 +140,7 @@ NVTX_EXT_PAYLOAD_IMPL_FN_V1(nvtxRangeId_t, nvtxRangeStartPayload,
     (nvtxDomainHandle_t domain, const nvtxPayloadData_t* payloadData, size_t count),
     (domain, payloadData, count))
 
-/* Experimental */
 NVTX_EXT_PAYLOAD_IMPL_FN_V1(uint8_t, nvtxDomainIsEnabled, (nvtxDomainHandle_t domain), (domain))
-
-/* Experimental */
-NVTX_EXT_PAYLOAD_IMPL_FN_V1(int64_t, nvtxTimestampGet, (void), ())
-
-/* Experimental */
-NVTX_EXT_PAYLOAD_IMPL_FN_V1(nvtxTimeDomainHandle_t, nvtxTimestampDomainRegister, (uint64_t eventScope), (eventScope))
-
-/* Experimental */
-NVTX_EXT_PAYLOAD_IMPL_FN_V1_VOID(nvtxTimestampProvideSource,
-    (nvtxTimeDomainHandle_t timeDomain, nvtxTimestampProviderExFn fnPtr, void* dataPtr),
-    (timeDomain, fnPtr, dataPtr))
 
 NVTX_EXT_PAYLOAD_IMPL_FN_V1(uint64_t, nvtxScopeRegister, (nvtxDomainHandle_t domain,
     const nvtxScopeAttr_t* attr), (domain, attr))
@@ -171,32 +159,9 @@ NVTX_EXT_PAYLOAD_IMPL_FN_V1_VOID(nvtxRangeEndPayload, (nvtxDomainHandle_t domain
     nvtxRangeId_t id, const nvtxPayloadData_t* payloadData, size_t count),
     (domain, id, payloadData, count))
 
-/* Experimental */
-NVTX_EXT_PAYLOAD_IMPL_FN_V1_VOID(nvtxTimestampProvideSyncPoint,
-    (nvtxTimeDomainHandle_t domain1, int64_t timestamp1,
-    nvtxTimeDomainHandle_t domain2, int64_t timestamp2),
-    (domain1, timestamp1, domain2, timestamp2))
-
-/* Experimental */
-NVTX_EXT_PAYLOAD_IMPL_FN_V1_VOID(nvtxSubmitDeferred,
-    (nvtxDomainHandle_t domain, const nvtxDeferredEvents_t* events),
-    (domain, events))
-
 #undef return
 #undef NVTX_EXT_FN_RETURN_INVALID
 /* END: void functions. */
-
-NVTX_DECLSPEC nvtxRangeId_t NVTX_API nvtxPayloadRangeStart(
-    nvtxDomainHandle_t domain, nvtxEventAttributes_t* evtAttr,
-    uint64_t schemaId, void* plAddr, size_t size)
-{
-    NVTX_PAYLOAD_EVTATTR_SET(evtAttr, schemaId, plAddr, size)
-    return nvtxDomainRangeStartEx(domain, evtAttr);
-}
-
-NVTX_EXT_PAYLOAD_IMPL_FN_V1_VOID(nvtxRangePushPop, (nvtxDomainHandle_t domain,
-    const nvtxEventAttributes_t* evtAttr, uint64_t pushTime),
-    (domain, evtAttr, pushTime))
 
 /* Keep NVTX_EXT_PAYLOAD_IMPL_FN_V1 defined for a future version of this extension. */
 

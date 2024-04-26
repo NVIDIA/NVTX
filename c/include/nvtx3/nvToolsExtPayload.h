@@ -839,70 +839,6 @@ typedef struct nvtxScopeAttr_v1
     uint64_t scopeId;
 } nvtxScopeAttr_t;
 
-/**
- * \brief Helper struct to submit a batch of events or counters.
- * \category DeferredEvents
- *
- * The event scope is assumed to be the execution context of the call to
- * `nvtxSubmitDeferred`. It can be specified via the event scope semantics for
- * payload entries in `batches` or via `NVTX_PAYLOAD_ENTRY_TYPE_EVENT_SCOPE_ID`
- * in `commonData`.
- *
- * Timestamp arrays or start time plus interval pairs can be provided multiple
- * times via `batches`. Each can be associated to a specific batch via the bind
- * semantics. If there is only a single timestamp batch provided, it is assumed
- * to bind to all value types of all other batches.
- * By default, events are assumed to be chronologically sorted. Otherwise, array
- * semantics can be used to specify the ordering.
- */
-typedef struct nvtxDeferredEvents_v1
-{
-    /**
-     * Pointer to the first element of an array of payload data.
-     * Each data batch is either a set of events, counters or timestamps.
-     */
-    nvtxPayloadData_t* batches;
-
-    /* Number of data batches. */
-    size_t             numBatches;
-
-    /**
-     * Common data might contain an NVTX category, NVTX color, NVTX event scope
-     * or any other value that should be shown/associated with all events or
-     * counters. `0` indicates that there is no common data.
-     *
-     * If an entry in common data specifies a binding (via the binding semantics),
-     * the respective value is only associated to the specified payload.
-     */
-    nvtxPayloadData_t* commonData;
-} nvtxDeferredEvents_t;
-
-/* Forward declaration of opaque event scope registration structure */
-struct nvtxTimeDomainRegistration_st;
-typedef struct nvtxTimeDomainRegistration_st nvtxTimeDomainRegistration;
-
-/**
- * \brief Time domain handle structure.
- *
- * This structure is opaque to the user and is used as a handle to reference
- * a time domain. This type is returned from tools when using the NVTX API to
- * create a time domain.
- */
-typedef nvtxTimeDomainRegistration* nvtxTimeDomainHandle_t;
-
-/**
- * \brief Function signature to be used by `nvtxTimestampProvideSource`.
- *
- * NVTX-instrumented code provides the timestamps via a function of this type.
- */
-typedef int64_t (*nvtxTimestampProviderFn)();
-
-/**
- * \brief Function signature to be used by `nvtxTimestampProvideSourceEx`.
- *
- * NVTX-instrumented code provides the timestamps via a function of this type.
- */
-typedef int64_t (*nvtxTimestampProviderExFn)(void* dataPtr);
 
 #endif /* NVTX_PAYLOAD_TYPEDEFS_V1 */
 
@@ -1026,24 +962,6 @@ NVTX_DECLSPEC void NVTX_API nvtxRangeEndPayload(
     size_t count);
 
 /**
- * \brief Start a range with event attributes and an extended payload.
- *
- * @param domain NVTX domain handle (0 for default domain)
- * @param evtAttr pointer to NVTX event attribute.
- * @param schemaId NVTX payload schema ID
- * @param plAddr Pointer to the binary data (actual payload)
- * @param size Size of the binary payload data in bytes.
- *
- * @return range ID (type is `nvtxRangeId_t`)
- */
-NVTX_DECLSPEC nvtxRangeId_t NVTX_API nvtxPayloadRangeStart(
-    nvtxDomainHandle_t domain,
-    nvtxEventAttributes_t* evtAttr,
-    uint64_t schemaId,
-    void* plAddr,
-    size_t size);
-
-/**
  * @brief Checks if an NVTX domain is enabled (unofficial and may not work)
  *
  * @param domain NVTX domain handle
@@ -1051,83 +969,6 @@ NVTX_DECLSPEC nvtxRangeId_t NVTX_API nvtxPayloadRangeStart(
  */
 NVTX_DECLSPEC uint8_t NVTX_API nvtxDomainIsEnabled(
     nvtxDomainHandle_t domain);
-
-/**
- * \brief Report a push-pop range in a single call.
- * \category NsysInternal
- *
- * This function is called at range pop. Thus, the NVTX handler will immediately
- * take a timestamp (if timing is desired). The timestamp of the push operation
- * is passed as argument and can be retrieved via `nvtxTimestampGet()`.
- *
- * The NVTX handler can assume that no other push operation happend in the same
- * domain in between the push and the pop time of the reported range.
- *
- * @param domain The domain of scoping.
- * @param eventAttrib The event attribute structure defining the range's
- * attribute types and attribute values.
- * @param pushTime The timestamp of the push operation (use `nvtxTimestampGet()`).
- */
-NVTX_DECLSPEC void NVTX_API nvtxRangePushPop(
-    nvtxDomainHandle_t domain,
-    const nvtxEventAttributes_t* eventAttrib,
-    uint64_t pushTime);
-
-/**
- * \brief Get a timestamp from the attached NVTX handler/tool.
- *
- * The timestamp is intended to be passed ...
- * The time source is assumed to be TSC.
- */
-NVTX_DECLSPEC int64_t NVTX_API nvtxTimestampGet(void);
-
-/**
- * \brief Register a time domain using an existing event scope.
- * \category DeferredEvents
- *
- * @param eventScope
- * @return nvtxTimeDomainHandle_t
- */
-NVTX_DECLSPEC nvtxTimeDomainHandle_t NVTX_API nvtxTimestampDomainRegister(
-    uint64_t eventScope);
-
-/**
- * \brief Let the NVTX instrumented code provide its timer.
- * \category DeferredEvents
- *
- * This enables the tool to do the time synchronization.
- *
- * @param fnPtr has to valid to be called all the time.
- *              typedef uint64_t (*)()
- */
-NVTX_DECLSPEC void NVTX_API nvtxTimestampProvideSource(
-    nvtxTimeDomainHandle_t timeDomain,
-    nvtxTimestampProviderExFn fnPtr,
-    void* dataPtr);
-
-/**
- * \brief The synchronization point between two time domains is provided by the
- * NVTX-instrumented code.
- * \category DeferredEvents
- *
- * @param domain1 first time domain
- * @param timestamp1 timestamp in first time domain
- * @param domain2 second time domain
- * @param timestamp2 timestamp in second time domain
- */
-NVTX_DECLSPEC void NVTX_API nvtxTimestampProvideSyncPoint(
-    nvtxTimeDomainHandle_t domain1, int64_t timestamp1,
-    nvtxTimeDomainHandle_t domain2, int64_t timestamp2);
-
-/**
- * \brief Submit deferred events of the same type in the given domain.
- * \category DeferredEvents
- *
- * @param domain NVTX domain
- * @param events pointer to deferred events helper struct.
- */
-NVTX_DECLSPEC void NVTX_API nvtxSubmitDeferred(nvtxDomainHandle_t domain,
-    const nvtxDeferredEvents_t* events);
 
 #endif /* NVTX_PAYLOAD_API_FUNCTIONS_V1 */
 
@@ -1153,15 +994,7 @@ NVTX_DECLSPEC void NVTX_API nvtxSubmitDeferred(nvtxDomainHandle_t domain,
 #define NVTX3EXT_CBID_nvtxRangeStartPayload          5
 #define NVTX3EXT_CBID_nvtxRangeEndPayload            6
 #define NVTX3EXT_CBID_nvtxDomainIsEnabled            7
-
-#define NVTX3EXT_CBID_nvtxTimestampGet               8
-#define NVTX3EXT_CBID_nvtxTimestampDomainRegister    9
-#define NVTX3EXT_CBID_nvtxTimestampProvideSource    10
-#define NVTX3EXT_CBID_nvtxTimestampProvideSyncPoint 11
 #define NVTX3EXT_CBID_nvtxScopeRegister             12
-#define NVTX3EXT_CBID_nvtxSubmitDeferred            13
-/* For internal use only. */
-#define NVTX3EXT_CBID_nvtxRangePushPop              62
 #endif /* NVTX_PAYLOAD_CALLBACK_ID_V1 */
 
 /*** Helper utilities ***/

@@ -17,7 +17,7 @@
  */
 typedef struct nvtxPayloadEntryEventScope_v1
 {
-    struct nvtxPayloadEntrySemantic_v1 header;
+    struct nvtxSemanticsHeader_v1 header;
 
     /* Event scope of a timestamp or counter. */
     uint64_t eventScope;
@@ -31,7 +31,7 @@ typedef struct nvtxPayloadEntryEventScope_v1
  */
 typedef struct nvtxPayloadEntryEventScopeUser_v1
 {
-    struct nvtxPayloadEntrySemantic_v1 header;
+    struct nvtxSemanticsHeader_v1 header;
 
     /* If multiple values define an event scope, different hierarchy levels can
        be set. */

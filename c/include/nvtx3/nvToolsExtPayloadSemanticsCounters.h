@@ -40,7 +40,7 @@ value after the sample point. */
  *\brief Specify additional properties of a counter entry.
  */
 typedef struct nvtxPayloadEntryCounter_v1 {
-    struct nvtxPayloadEntrySemantic_v1 header;
+    struct nvtxSemanticsHeader_v1 header;
 
     /* Apply normalization, scale limits, etc. (see `NVTX_COUNTER_FLAG_*`) */
     uint64_t flags;

@@ -23,7 +23,7 @@
  * relates to one or more events in the same scope.
  */
 typedef struct nvtxPayloadEntryCorrelation_v1 {
-    struct nvtxPayloadEntrySemantic_v1 header;
+    struct nvtxSemanticsHeader_v1 header;
 
     /* The event's execution scope. */
     uint64_t eventScopeId;
@@ -37,7 +37,7 @@ typedef struct nvtxPayloadEntryCorrelation_v1 {
  * correlate to this event.
  */
 typedef struct nvtxPayloadEntryCorrelationSelf_v1 {
-    struct nvtxPayloadEntrySemantic_v1 header;
+    struct nvtxSemanticsHeader_v1 header;
 
     /* The event's execution scope. */
     uint64_t eventScopeId;

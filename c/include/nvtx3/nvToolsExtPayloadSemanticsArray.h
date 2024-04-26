@@ -15,7 +15,7 @@
  */
 typedef struct nvtxPayloadEntryArrayLayout_v1
 {
-    struct nvtxPayloadEntrySemantic_v1 header;
+    struct nvtxSemanticsHeader_v1 header;
 
     /* Index of the entry that specifies the array stride. */
     size_t strideEntryIdx;
@@ -35,7 +35,7 @@ typedef struct nvtxPayloadEntryArrayLayout_v1
  */
 typedef struct nvtxPayloadEntryArrayLength_v1
 {
-    struct nvtxPayloadEntrySemantic_v1 header;
+    struct nvtxSemanticsHeader_v1 header;
 
     /* Index of the payload in the array of payload data (`nvtxPayloadData_t*`).
        `-1` for *this* payload. */
@@ -51,7 +51,7 @@ typedef struct nvtxPayloadEntryArrayLength_v1
  */
 typedef struct nvtxPayloadEntryArrayOrdering_v1
 {
-    struct nvtxPayloadEntrySemantic_v1 header;
+    struct nvtxSemanticsHeader_v1 header;
 
     int16_t orderingType;
     int16_t orderInterleaving;
@@ -65,7 +65,7 @@ typedef struct nvtxPayloadEntryArrayOrdering_v1
  */
 typedef struct nvtxPayloadEntryIsOrdering_v1
 {
-    struct nvtxPayloadEntrySemantic_v1 header;
+    struct nvtxSemanticsHeader_v1 header;
 
     /* array of batch indices + count */
 } nvtxPayloadEntryIsOrdering_t;
