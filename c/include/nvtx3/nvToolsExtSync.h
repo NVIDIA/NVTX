@@ -374,7 +374,7 @@ NVTX_DECLSPEC void NVTX_API nvtxDomainSyncUserReleasing(nvtxSyncUser_t handle);
 #endif /* __cplusplus */
 
 #ifndef NVTX_NO_IMPL
-#define NVTX_IMPL_GUARD_SYNC /* Ensure other headers cannot included directly */
+#define NVTX_IMPL_GUARD_SYNC /* Ensure other headers cannot be included directly */
 #include "nvtxDetail/nvtxImplSync_v3.h"
 #undef NVTX_IMPL_GUARD_SYNC
 #endif /*NVTX_NO_IMPL*/

@@ -133,7 +133,7 @@ NVTX_DECLSPEC void NVTX_API nvtxMemCudaSetPeerAccess(
 #endif
 
 #ifndef NVTX_NO_IMPL
-#define NVTX_EXT_IMPL_MEM_CUDART_GUARD /* Ensure other headers cannot included directly */
+#define NVTX_EXT_IMPL_MEM_CUDART_GUARD /* Ensure other headers cannot be included directly */
 #include "nvtxDetail/nvtxExtImplMemCudaRt_v1.h"
 #undef NVTX_EXT_IMPL_MEM_CUDART_GUARD
 #endif /*NVTX_NO_IMPL*/

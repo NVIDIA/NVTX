@@ -314,12 +314,12 @@ NVTX_DECLSPEC void NVTX_API nvtxCountersSubmitBatchEx(
 #pragma GCC visibility push(internal)
 #endif
 
-#define NVTX_EXT_TYPES_GUARD /* Ensure other headers cannot include directly */
+#define NVTX_EXT_TYPES_GUARD /* Ensure other headers cannot be included directly */
 #include "nvtxDetail/nvtxExtTypes.h"
 #undef NVTX_EXT_TYPES_GUARD
 
 #ifndef NVTX_NO_IMPL
-#define NVTX_EXT_IMPL_COUNTERS_GUARD /* Ensure other headers cannot included directly */
+#define NVTX_EXT_IMPL_COUNTERS_GUARD /* Ensure other headers cannot be included directly */
 #include "nvtxDetail/nvtxExtImplCounters_v1.h"
 #undef NVTX_EXT_IMPL_COUNTERS_GUARD
 #endif /*NVTX_NO_IMPL*/

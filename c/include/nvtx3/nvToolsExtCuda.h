@@ -133,7 +133,7 @@ NVTX_DECLSPEC void NVTX_API nvtxNameCuEventW(CUevent event, const wchar_t* name)
 #endif /* __cplusplus */
 
 #ifndef NVTX_NO_IMPL
-#define NVTX_IMPL_GUARD_CUDA /* Ensure other headers cannot included directly */
+#define NVTX_IMPL_GUARD_CUDA /* Ensure other headers cannot be included directly */
 #include "nvtxDetail/nvtxImplCuda_v3.h"
 #undef NVTX_IMPL_GUARD_CUDA
 #endif /*NVTX_NO_IMPL*/

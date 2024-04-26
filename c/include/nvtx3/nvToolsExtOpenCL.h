@@ -183,7 +183,7 @@ NVTX_DECLSPEC void NVTX_API nvtxNameClEventW(cl_event evnt, const wchar_t* name)
 #endif /* __cplusplus */
 
 #ifndef NVTX_NO_IMPL
-#define NVTX_IMPL_GUARD_OPENCL /* Ensure other headers cannot included directly */
+#define NVTX_IMPL_GUARD_OPENCL /* Ensure other headers cannot be included directly */
 #include "nvtxDetail/nvtxImplOpenCL_v3.h"
 #undef NVTX_IMPL_GUARD_OPENCL
 #endif /*NVTX_NO_IMPL*/

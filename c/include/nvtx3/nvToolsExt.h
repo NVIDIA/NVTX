@@ -1461,7 +1461,7 @@ NVTX_DECLSPEC void NVTX_API nvtxDomainDestroy(nvtxDomainHandle_t domain);
 } /* extern "C" */
 #endif /* __cplusplus */
 
-#define NVTX_IMPL_GUARD /* Ensure other headers cannot included directly */
+#define NVTX_IMPL_GUARD /* Ensure other headers cannot be included directly */
 
 #include "nvtxDetail/nvtxTypes.h"
 
