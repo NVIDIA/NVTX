@@ -159,7 +159,11 @@
 #define NVTX_INLINE_STATIC __inline static
 #else /*defined(__GNUC__)*/
 #define NVTX_API
+#if defined(__cplusplus) || (defined(__STDC_VERSION__) && __STDC_VERSION__ >= 199901L)
 #define NVTX_INLINE_STATIC inline static
+#else
+#define NVTX_INLINE_STATIC __inline__ static
+#endif
 #endif /* Platform */
 
 #if defined(NVTX_NO_IMPL)
