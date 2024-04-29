@@ -1,5 +1,5 @@
 /*
-* Copyright 2021-2023  NVIDIA Corporation.  All rights reserved.
+* Copyright 2021-2024  NVIDIA Corporation.  All rights reserved.
 *
 * Licensed under the Apache License v2.0 with LLVM Exceptions.
 * See https://llvm.org/LICENSE.txt for license information.
@@ -254,36 +254,22 @@
 #define NVTX_PAYLOAD_ENTRY_TYPE_BF16       50
 #define NVTX_PAYLOAD_ENTRY_TYPE_TF32       52
 
-/*** Entry types to be used in deferred events or events without event attributes. ***/
-
 /**
- * \brief Types representing members of @ref nvtxEventAttributes_t.
- *
  * Data types are as defined by NVTXv3 core.
  */
-#define NVTX_PAYLOAD_ENTRY_TYPE_NVTX_CATEGORY    68 /* uint32_t */
-#define NVTX_PAYLOAD_ENTRY_TYPE_NVTX_COLORTYPE   69 /* int32_t */
-#define NVTX_PAYLOAD_ENTRY_TYPE_NVTX_COLOR       70 /* uint32_t */
+#define NVTX_PAYLOAD_ENTRY_TYPE_CATEGORY   68 /* uint32_t */
+#define NVTX_PAYLOAD_ENTRY_TYPE_COLOR_ARGB 69 /* uint32_t */
 
 /**
- * Annotate the scope of events (see `nvtxScopeRegister`).
+ * The scope of events or counters (see `nvtxScopeRegister`).
  */
-#define NVTX_PAYLOAD_ENTRY_TYPE_EVENT_SCOPE_ID   71
+#define NVTX_PAYLOAD_ENTRY_TYPE_SCOPE_ID   70 /* uint64_t */
 
 /**
- * Thread ID as event scope.
+ * Thread ID as scope.
  */
-#define NVTX_PAYLOAD_ENTRY_TYPE_THREAD_ID_UINT32 72
-#define NVTX_PAYLOAD_ENTRY_TYPE_THREAD_ID_UINT64 73
-
-/*** END: Entry types to be used in deferred events. ***/
-
-/**
- * This type marks the union selector member (entry index) in schemas used by
- * a union with internal selector.
- * See @ref NVTX_PAYLOAD_SCHEMA_TYPE_UNION_WITH_INTERNAL_SELECTOR.
- */
-#define NVTX_PAYLOAD_ENTRY_TYPE_UNION_SELECTOR 74
+#define NVTX_PAYLOAD_ENTRY_TYPE_TID_UINT32 73
+#define NVTX_PAYLOAD_ENTRY_TYPE_TID_UINT64 74
 
 /**
  * \brief String types.
@@ -292,7 +278,7 @@
  * assumed to be a fixed-size string with the given length, embedded in the payload.
  * `NVTX_PAYLOAD_ENTRY_FLAG_ARRAY_FIXED_SIZE` is redundant for fixed-size strings.
  *
- * \todo: discuss this paragraph:
+ * \todo(Revise the following paragraph.)
  * Setting the flag `NVTX_PAYLOAD_ENTRY_FLAG_ARRAY_ZERO_TERMINATED` specifies a
  * zero-terminated string. If `arrayOrUnionDetail > 0`, the entry is handled as
  * a zero-terminated array of fixed-size strings.
@@ -311,6 +297,13 @@
  * @ref nvtxDomainRegisterString.
  */
 #define NVTX_PAYLOAD_ENTRY_TYPE_NVTX_REGISTERED_STRING_HANDLE 80
+
+/**
+ * This type marks the union selector member (entry index) in schemas used by
+ * a union with internal selector.
+ * See @ref NVTX_PAYLOAD_SCHEMA_TYPE_UNION_WITH_INTERNAL_SELECTOR.
+ */
+#define NVTX_PAYLOAD_ENTRY_TYPE_UNION_SELECTOR 100
 
 /**
  * \brief Predefined schema ID for payload data that is referenced in another payload.
@@ -442,53 +435,45 @@
 
 #endif /* NVTX_PAYLOAD_ENUM_ATTRS_V1 */
 
-
-#ifndef NVTX_EVENT_SCOPES_V1
-#define NVTX_EVENT_SCOPES_V1
-
 /**
- * \brief NVTX event scopes (for deferred events and counters)
+ * An NVTX scope specifies the execution scope or source of events or counters.
  */
-#define NVTX_EVENT_SCOPE_INVALID       	0
-#define NVTX_EVENT_SCOPE_NONE           1 /* Global/base/root or no scope */
+#ifndef NVTX_SCOPES_V1
+#define NVTX_SCOPES_V1
 
-/* Hardware events */
-#define NVTX_EVENT_SCOPE_HW_MACHINE     2 /* Node/machine name, Device? */
-#define NVTX_EVENT_SCOPE_HW_SOCKET      3
-#define NVTX_EVENT_SCOPE_HW_CPU         4
-#define NVTX_EVENT_SCOPE_HW_CPU_LOGICAL 5
+/** Identifies an invalid scope and indicates an error if returned by `nvtxScopeRegister`. */
+#define NVTX_SCOPE_NONE                    0 /* no scope */
+
+#define NVTX_SCOPE_ROOT                    1
+
+#define NVTX_SCOPE_CURRENT_HW_MACHINE      2 /* Node/machine name */
+#define NVTX_SCOPE_CURRENT_HW_SOCKET       3
+#define NVTX_SCOPE_CURRENT_HW_CPU_PHYSICAL 4 /* Physical CPU core */
+#define NVTX_SCOPE_CURRENT_HW_CPU_LOGICAL  5 /* Logical CPU core */
 /* Innermost HW execution context at registration time */
-#define NVTX_EVENT_SCOPE_HW_INNERMOST   6
+#define NVTX_SCOPE_CURRENT_HW_INNERMOST   15
 
-/* Virtualized hardware, virtual machines */
-#define NVTX_EVENT_SCOPE_VM             7
+/* Virtualized hardware, virtual machines, OS (if you don't know any better)
+\todo: Need to be more precise what information is expected for each of these scopes. */
+#define NVTX_SCOPE_CURRENT_HYPERVISOR     16
+#define NVTX_SCOPE_CURRENT_VM             17
+#define NVTX_SCOPE_CURRENT_KERNEL         18
+#define NVTX_SCOPE_CURRENT_CONTAINER      19
+#define NVTX_SCOPE_CURRENT_OS             20
 
 /* Software scopes */
-#define NVTX_EVENT_SCOPE_SW_PROCESS     8 /* Process scope */
-#define NVTX_EVENT_SCOPE_SW_THREAD      9 /* Thread scope */
+#define NVTX_SCOPE_CURRENT_SW_PROCESS 	  21 /* Process scope */
+#define NVTX_SCOPE_CURRENT_SW_THREAD  	  22 /* Thread scope */
 /* Innermost SW execution context at registration time */
-#define NVTX_EVENT_SCOPE_SW_INNERMOST   10
+#define NVTX_SCOPE_CURRENT_SW_INNERMOST   31
 
-/* Static (user-provided) scope IDs (feed forward) */
-#define NVTX_EVENT_SCOPE_ID_STATIC_START  (1 << 24)
+/** Static (user-provided) scope IDs (feed forward) */
+#define NVTX_SCOPE_ID_STATIC_START  (1 << 24)
 
-/* Dynamically (tool) generated scope IDs */
-#define NVTX_EVENT_SCOPE_ID_DYNAMIC_START 4294967296  /* 1 << 32 */
+/** Dynamically (tool) generated scope IDs */
+#define NVTX_SCOPE_ID_DYNAMIC_START 4294967296  /* 1 << 32 */
 
-#endif /* NVTX_EVENT_SCOPES_V1 */
-
-
-#ifndef NVTX_DEFERRED_EVENTS_SORTING_V1
-#define NVTX_DEFERRED_EVENTS_SORTING_V1
-/**
- * Deferred events are assumed to be in chronologically order by default.
- */
-#define NVTX_DEFERRED_EVENTS_SORTED                  0
-#define NVTX_DEFERRED_EVENTS_SORTED_PER_EVENT_SOURCE 1
-#define NVTX_DEFERRED_EVENTS_UNSORTED                2
-
-#endif /* NVTX_DEFERRED_EVENTS_SORTING_V1 */
-
+#endif /* NVTX_SCOPES_V1 */
 
 #ifdef __cplusplus
 extern "C" {
@@ -866,12 +851,13 @@ NVTX_DECLSPEC uint64_t NVTX_API nvtxPayloadEnumRegister(
     const nvtxPayloadEnumAttr_t* attr);
 
 /**
- * \brief Register a scope for deferred counters and events.
+ * \brief Register a scope.
  *
  * @param domain NVTX domain handle (0 for default domain)
- * @param attr Event scope attributes.
+ * @param attr Scope attributes.
  *
- * @return An identifier for the scope.
+ * @return an identifier for the scope. If the operation was not successful,
+ * `NVTX_SCOPE_NONE` is returned.
  */
 NVTX_DECLSPEC uint64_t NVTX_API nvtxScopeRegister(
     nvtxDomainHandle_t domain,
@@ -1058,7 +1044,7 @@ NVTX_DECLSPEC uint8_t NVTX_API nvtxDomainIsEnabled(
 
 #ifndef nvtxPayloadRangePush
 /**
- * \brief Push a range with extended payload.
+ * \brief Helper macro to push a range with extended payload.
  *
  * @param domain NVTX domain handle (0 for default domain)
  * @param evtAttr pointer to NVTX event attribute.
@@ -1075,7 +1061,7 @@ do { \
 
 #ifndef nvtxPayloadMark
 /**
- * \brief Set a marker with extended payload.
+ * \brief Helper macro to set a marker with extended payload.
  *
  * @param domain NVTX domain handle (0 for default domain)
  * @param evtAttr pointer to NVTX event attribute.
