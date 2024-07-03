@@ -35,39 +35,6 @@
 #endif
 
 
-/** Identifies an invalid scope and indicates an error if returned by `nvtxScopeRegister`. */
-#define NVTX_SCOPE_NONE                   0 /* no scope */
-
-#define NVTX_SCOPE_ROOT                   1
-
-#define NVTX_SCOPE_CURRENT_HW_MACHINE     2 /* Node/machine name, Device? */
-#define NVTX_SCOPE_CURRENT_HW_SOCKET      3
-#define NVTX_SCOPE_CURRENT_HW_CPU         4
-#define NVTX_SCOPE_CURRENT_HW_CPU_LOGICAL 5
-/* Innermost HW execution context at registration time */
-#define NVTX_SCOPE_CURRENT_HW_INNERMOST   6
-
-/* Virtualized hardware, virtual machines, OS (if you don't know any better) */
-#define NVTX_SCOPE_CURRENT_HYPERVISOR     7
-#define NVTX_SCOPE_CURRENT_VM             8
-#define NVTX_SCOPE_CURRENT_KERNEL         9
-#define NVTX_SCOPE_CURRENT_CONTAINER     10
-#define NVTX_SCOPE_CURRENT_OS	         11
-
-/* Software scopes */
-#define NVTX_SCOPE_CURRENT_SW_PROCESS 	 12 /* Process scope */
-#define NVTX_SCOPE_CURRENT_SW_THREAD  	 13 /* Thread scope */
-#define NVTX_SCOPE_CURRENT_SW_FIBER      14
-/* Innermost SW execution context at registration time */
-#define NVTX_SCOPE_CURRENT_SW_INNERMOST  15
-
-/** Static (user-provided) scope IDs (feed forward) */
-#define NVTX_SCOPE_ID_STATIC_START  (1 << 24)
-
-/** Dynamically (tool) generated scope IDs */
-#define NVTX_SCOPE_ID_DYNAMIC_START 4294967296  /* 1 << 32 */
-
-
 /** Identifier of the semantic extension for counters. */
 #define NVTX_SEMANTIC_ID_COUNTERS_V1 5
 
