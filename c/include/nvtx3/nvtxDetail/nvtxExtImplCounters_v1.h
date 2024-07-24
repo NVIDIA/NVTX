@@ -78,7 +78,7 @@ NVTX_LINKONCE_DEFINE_FUNCTION void NVTX_EXT_COUNTERS_VERSIONED_ID(nvtxExtCounter
 
 #define NVTX_EXT_COUNTERS_IMPL_FN_V1(ret_type, fn_name, signature, arg_names) \
 typedef ret_type (*fn_name##_impl_fntype)signature; \
-    NVTX_DECLSPEC ret_type NVTX_API fn_name signature { \
+NVTX_DECLSPEC ret_type NVTX_API fn_name signature { \
     intptr_t slot = NVTX_EXT_COUNTERS_VERSIONED_ID(nvtxExtCountersSlots)[NVTX3EXT_CBID_##fn_name + 1]; \
     if (slot != NVTX_EXTENSION_DISABLED) { \
         if (slot != NVTX_EXTENSION_FRESH) { \
@@ -100,7 +100,7 @@ typedef ret_type (*fn_name##_impl_fntype)signature; \
 /* Non-void functions. */
 #define NVTX_EXT_FN_RETURN_INVALID(rtype) return ((rtype)(intptr_t)-1);
 
-NVTX_EXT_COUNTERS_IMPL_FN_V1(nvtxCountersHandle_t, nvtxCountersRegister,
+NVTX_EXT_COUNTERS_IMPL_FN_V1(uint64_t, nvtxCountersRegister,
     (nvtxDomainHandle_t domain, const nvtxCountersAttr_t* attr),
     (domain, attr))
 
@@ -112,28 +112,20 @@ NVTX_EXT_COUNTERS_IMPL_FN_V1(nvtxCountersHandle_t, nvtxCountersRegister,
 #define return
 
 NVTX_EXT_COUNTERS_IMPL_FN_V1(void, nvtxCountersSampleInt64,
-    (nvtxDomainHandle_t domain, nvtxCountersHandle_t hCounter, int64_t value),
-    (domain, hCounter, value))
+    (nvtxDomainHandle_t domain, uint64_t countersId, int64_t value),
+    (domain, countersId, value))
 
 NVTX_EXT_COUNTERS_IMPL_FN_V1(void, nvtxCountersSampleFloat64,
-    (nvtxDomainHandle_t domain, nvtxCountersHandle_t hCounter, double value),
-    (domain, hCounter, value))
+    (nvtxDomainHandle_t domain, uint64_t countersId, double value),
+    (domain, countersId, value))
 
 NVTX_EXT_COUNTERS_IMPL_FN_V1(void, nvtxCountersSample,
-    (nvtxDomainHandle_t domain, nvtxCountersHandle_t hCounter, void* values, size_t size),
-    (domain, hCounter, values, size))
+    (nvtxDomainHandle_t domain, uint64_t countersId, const void* values, size_t size),
+    (domain, countersId, values, size))
 
 NVTX_EXT_COUNTERS_IMPL_FN_V1(void, nvtxCountersSampleNoValue,
-    (nvtxDomainHandle_t domain, nvtxCountersHandle_t hCounter, uint8_t reason),
-    (domain, hCounter, reason))
-
-NVTX_EXT_COUNTERS_IMPL_FN_V1(void, nvtxCountersSubmitBatch,
-    (nvtxDomainHandle_t domain, nvtxCountersHandle_t hCounters,
-    const void* counters, size_t size), (domain, hCounters, counters, size))
-
-NVTX_EXT_COUNTERS_IMPL_FN_V1(void, nvtxCountersSubmitBatchEx,
-    (nvtxDomainHandle_t domain, const nvtxCountersBatch_t* countersBatch),
-    (domain, countersBatch))
+    (nvtxDomainHandle_t domain, uint64_t countersId, uint8_t reason),
+    (domain, countersId, reason))
 
 #undef return
 #undef NVTX_EXT_FN_RETURN_INVALID

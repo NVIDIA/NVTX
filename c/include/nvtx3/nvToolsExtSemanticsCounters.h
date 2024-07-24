@@ -10,63 +10,87 @@
  * NVTX semantic headers require nvToolsExtPayload.h to be included beforehand.
  */
 
+/** Identifier of the semantic extension for counters. */
 #ifndef NVTX_SEMANTIC_ID_COUNTERS_V1
-#define NVTX_SEMANTIC_ID_COUNTERS_V1 2
+#define NVTX_SEMANTIC_ID_COUNTERS_V1 5
 
-/**
- * Flags to extend the semantics of counters.
- */
+/* Use with the version field of `nvtxSemanticsHeader_t`. */
+#define NVTX_COUNTERS_SEMANTIC_VERSION 2
+
+/***  Flags to augment the counter value. ***/
 #define NVTX_COUNTERS_FLAGS_NONE  0
 
 /**
- * Convert the fixed point value to a normalized floating point value.
- * Unsigned [0f : 1f] or signed [-1f : 1f] is determined by the underlying type
- * this flag is applied to.
+ * Convert the fixed point value to a normalized floating point.
+ * Use the sign/unsign from the underlying type this flag is applied to.
+ * Unsigned [0f : 1f] or signed [-1f : 1f]
  */
-#define NVTX_COUNTERS_FLAG_NORMALIZE    (1 << 1)
+#define NVTX_COUNTERS_FLAG_NORMALIZE  (1 << 1)
 
 /**
- *  Visual tools should apply scale and limits when graphing.
+ * Tools should apply scale and limits when graphing, ideally in a "soft" way to
+ * to see when limits are exceeded.
  */
-#define NVTX_COUNTERS_FLAG_LIMIT_MIN    (1 << 2)
-#define NVTX_COUNTERS_FLAG_LIMIT_MAX    (1 << 3)
+#define NVTX_COUNTERS_FLAG_LIMIT_MIN  (1 << 2)
+#define NVTX_COUNTERS_FLAG_LIMIT_MAX  (1 << 3)
 #define NVTX_COUNTERS_FLAG_LIMITS \
     (NVTX_COUNTERS_FLAG_LIMIT_MIN | NVTX_COUNTERS_FLAG_LIMIT_MAX)
 
 /**
- * Counter time scopes.
+ * Counter value types
  */
-#define NVTX_COUNTERS_FLAG_TIMESCOPE_POINT        (1 << 5)
-#define NVTX_COUNTERS_FLAG_TIMESCOPE_SINCE_LAST   (2 << 5)
-#define NVTX_COUNTERS_FLAG_TIMESCOPE_UNTIL_NEXT   (3 << 5)
-#define NVTX_COUNTERS_FLAG_TIMESCOPE_SINCE_START  (4 << 5)
+#define NVTX_COUNTERS_FLAG_VALUETYPE_ABSOLUTE          (1 << 4)
+/* Delta to previous sample, tool-defined if no previous sample is available. */
+#define NVTX_COUNTERS_FLAG_VALUETYPE_DELTA             (2 << 4)
+#define NVTX_COUNTERS_FLAG_VALUETYPE_DELTA_SINCE_START (3 << 4)
 
 /**
- * Counter value types.
+ * Counter interpolation / effective range of counters.
  */
-#define NVTX_COUNTERS_FLAG_VALUETYPE_ABSOLUTE (1 << 10)
-/** Delta to previous value of same counter type. */
-#define NVTX_COUNTERS_FLAG_VALUETYPE_DELTA    (2 << 10)
+/* No interpolation between samples. */
+#define NVTX_COUNTERS_FLAG_INTERPOLATION_POINT         (1 << 8)
+/* Piecewise constant interpolation between the current and the last sample. */
+#define NVTX_COUNTERS_FLAG_INTERPOLATION_SINCE_LAST    (2 << 8)
+/* Piecewise constant interpolation between the current and the next sample. */
+#define NVTX_COUNTERS_FLAG_INTERPOLATION_UNTIL_NEXT    (3 << 8)
+/* Piecewise linear interpolation between samples. */
+#define NVTX_COUNTERS_FLAG_INTERPOLATION_LINEAR        (4 << 8)
 
 /**
- * Datatypes for the `limits` union.
+ * Datatype for limits union (value of `limitType`).
  */
-#define NVTX_COUNTERS_LIMIT_I64 0
-#define NVTX_COUNTERS_LIMIT_U64 1
-#define NVTX_COUNTERS_LIMIT_F64 2
+#define NVTX_COUNTERS_LIMIT_UNDEFINED 0
+#define NVTX_COUNTERS_LIMIT_I64       1
+#define NVTX_COUNTERS_LIMIT_U64       2
+#define NVTX_COUNTERS_LIMIT_F64       3
+
 
 /**
- *\brief Specify counter semantics.
+ * Union of datatypes that can be used as counter value limits.
  */
-typedef struct nvtxSemanticsCounter_v1 {
-    /** Header of the semantic extensions (with identifier, version, etc.). */
+typedef union
+{
+    int64_t i64;
+    uint64_t u64;
+    double f64;
+} nvtxCounterLimit_t;
+
+/**
+ * \brief Specify additional properties of a counter or counter group.
+ */
+typedef struct nvtxSemanticsCounter_v1
+{
+    /** Header of the semantic extension (with identifier, version, etc.). */
     struct nvtxSemanticsHeader_v1 header;
 
-    /** Flags to provide more context about the counter value. */
+    /**
+     * Flag if normalization, scale limits, etc. should be applied to counter
+     * values.
+     */
     uint64_t flags;
 
-    /** Unit of the counter value (case-insensitive). */
-    const char*  unit;
+    /** Unit of the counter value (case insensitive) */
+    const char* unit;
 
     /** Should be 1 if not used. */
     uint64_t unitScaleNumerator;
@@ -74,15 +98,15 @@ typedef struct nvtxSemanticsCounter_v1 {
     /** Should be 1 if not used. */
     uint64_t unitScaleDenominator;
 
-    /** Determines the used union member. Use defines `NVTX_COUNTER_LIMIT_*`. */
+    /**
+     * Specifies the used union member for `min` and `max`.
+     * Use the defines `NVTX_COUNTERS_LIMIT_*`.
+     */
     int64_t limitType;
 
-    /** Graph limits {minimum, maximum}. */
-    union limits_t {
-        int64_t  i64[2];
-        uint64_t u64[2];
-        double   d[2];
-    } limits;
+    /** Value limits. */
+    nvtxCounterLimit_t min;
+    nvtxCounterLimit_t max;
 } nvtxSemanticsCounter_t;
 
 #endif /* NVTX_SEMANTIC_ID_COUNTERS_V1 */
