@@ -25,7 +25,9 @@
 typedef void* nvtx_payload_pointer_type;
 
 #if (defined(__STDC_VERSION__) && __STDC_VERSION__ >= 201112L)
+#ifndef __APPLE__
 #include <uchar.h>
+#endif
 #include <stdalign.h>
 #endif
 
@@ -71,7 +73,7 @@ MKTYPEDEF(nvtx_payload_pointer_type);
 MKTYPEDEF(wchar_t);
 
 /* `char8_t` is available as of C++20 or C23 */
-#if (defined(__STDC_VERSION__) && __STDC_VERSION__ >= 202311L) || (defined(__cplusplus) && __cplusplus >= 201811L)
+#if ((defined(__STDC_VERSION__) && __STDC_VERSION__ >= 202311L) || (defined(__cplusplus) && __cplusplus >= 201811L)) && !defined(__APPLE__)
     MKTYPEDEF(char8_t);
 #define NVTX_HAVE_CHAR8 1
 #else
@@ -79,7 +81,7 @@ MKTYPEDEF(wchar_t);
 #endif
 
 /* `char16_t` and `char32_t` are available as of C++11 or C11 */
-#if (defined(__STDC_VERSION__) && __STDC_VERSION__ >= 201112L) || (defined(__cplusplus) && __cplusplus >= 200704L)
+#if ((defined(__STDC_VERSION__) && __STDC_VERSION__ >= 201112L) || (defined(__cplusplus) && __cplusplus >= 200704L)) && !defined(__APPLE__)
     MKTYPEDEF(char16_t);
     MKTYPEDEF(char32_t);
 #define NVTX_HAVE_CHAR16_CHAR32 1
