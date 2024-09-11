@@ -25,7 +25,9 @@
 typedef void* nvtx_payload_pointer_type;
 
 #if (defined(__STDC_VERSION__) && __STDC_VERSION__ >= 201112L)
+#ifndef __APPLE__
 #include <uchar.h>
+#endif
 #include <stdalign.h>
 #endif
 
@@ -71,14 +73,20 @@ MKTYPEDEF(nvtx_payload_pointer_type);
 MKTYPEDEF(wchar_t);
 
 /* `char8_t` is available as of C++20 or C23 */
-#if (defined(__STDC_VERSION__) && __STDC_VERSION__ >= 202311L) || (defined(__cplusplus) && __cplusplus >= 201811L)
+#if ((defined(__STDC_VERSION__) && __STDC_VERSION__ >= 202311L) || (defined(__cplusplus) && __cplusplus >= 201811L)) && !defined(__APPLE__)
     MKTYPEDEF(char8_t);
+#define NVTX_HAVE_CHAR8 1
+#else
+#define NVTX_HAVE_CHAR8 0
 #endif
 
 /* `char16_t` and `char32_t` are available as of C++11 or C11 */
-#if (defined(__STDC_VERSION__) && __STDC_VERSION__ >= 201112L) || (defined(__cplusplus) && __cplusplus >= 200704L)
+#if ((defined(__STDC_VERSION__) && __STDC_VERSION__ >= 201112L) || (defined(__cplusplus) && __cplusplus >= 200704L)) && !defined(__APPLE__)
     MKTYPEDEF(char16_t);
     MKTYPEDEF(char32_t);
+#define NVTX_HAVE_CHAR16_CHAR32 1
+#else
+#define NVTX_HAVE_CHAR16_CHAR32 0
 #endif
 
 /* C requires to include stddef.h to use `offsetof` */
@@ -144,13 +152,13 @@ NVTX_EXT_PAYLOAD_VERSIONED_ID(nvtxExtPayloadTypeInfo)[NVTX_PAYLOAD_ENTRY_TYPE_IN
     /*** Special character types ***/
     /* NVTX_PAYLOAD_ENTRY_TYPE_WCHAR */ {sizeof(wchar_t), nvtx_alignof(wchar_t)},
 
-#if (defined(__STDC_VERSION__) && __STDC_VERSION__ >= 202311L) || (defined(__cplusplus) && __cplusplus >= 201811L)
+#if NVTX_HAVE_CHAR8
     /* NVTX_PAYLOAD_ENTRY_TYPE_CHAR8 */ {sizeof(char8_t), nvtx_alignof(char8_t)},
 #else
     /* NVTX_PAYLOAD_ENTRY_TYPE_CHAR8 */ {0, 0},
 #endif
 
-#if (defined(__STDC_VERSION__) && __STDC_VERSION__ >= 201112L) || (defined(__cplusplus) && __cplusplus >= 200704L)
+#if NVTX_HAVE_CHAR16_CHAR32
     /* NVTX_PAYLOAD_ENTRY_TYPE_CHAR16 */ {sizeof(char16_t), nvtx_alignof(char16_t)},
     /* NVTX_PAYLOAD_ENTRY_TYPE_CHAR32 */ {sizeof(char32_t), nvtx_alignof(char32_t)}
 #else
@@ -161,3 +169,5 @@ NVTX_EXT_PAYLOAD_VERSIONED_ID(nvtxExtPayloadTypeInfo)[NVTX_PAYLOAD_ENTRY_TYPE_IN
 
 #undef nvtx_alignof
 #undef nvtx_alignof2
+#undef NVTX_HAVE_CHAR8
+#undef NVTX_HAVE_CHAR16_CHAR32
