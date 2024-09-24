@@ -278,6 +278,12 @@
 #define NVTX_PAYLOAD_ENTRY_TYPE_SCOPE_ID   70 /* uint64_t */
 
 /**
+ * Process ID as scope.
+ */
+#define NVTX_PAYLOAD_ENTRY_TYPE_PID_UINT32 71
+#define NVTX_PAYLOAD_ENTRY_TYPE_PID_UINT64 72
+
+/**
  * Thread ID as scope.
  */
 #define NVTX_PAYLOAD_ENTRY_TYPE_TID_UINT32 73
