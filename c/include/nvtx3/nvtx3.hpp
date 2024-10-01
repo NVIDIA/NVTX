@@ -115,7 +115,7 @@
  * \code{.cpp}
  * #include "nvtx3.hpp"
  * void some_function() {
- *    // Begins a NVTX range with the messsage "some_function"
+ *    // Begins a NVTX range with the message "some_function"
  *    // The range ends when some_function() returns and `r` is destroyed
  *    nvtx3::scoped_range r{"some_function"};
  *
@@ -270,7 +270,7 @@
  * - `unique_range` objects can be destroyed in any order whereas `scoped_range` objects must be
  *    destroyed in exact reverse creation order
  * - `unique_range` can start and end on different threads
- * - `unique_range` is moveable
+ * - `unique_range` is movable
  * - `unique_range` objects can be constructed as heap objects
  *
  * There is extra overhead associated with `unique_range` constructs and therefore use of
@@ -526,8 +526,8 @@
  * nvtx3::event_attributes attr1{"message", nvtx3::category{2}};
  * my_scoped_range r1{attr1};
  *
- * // Alternatively, pass arguments of `event_attributes` ctor directly to
- * // `my_scoped_range`
+ * // Alternatively, pass arguments of `event_attributes` constructor directly
+ * // to `my_scoped_range`
  * my_scoped_range r2{"message", nvtx3::category{2}};
  *
  * // construct on first use a registered string
@@ -581,7 +581,7 @@
  * If you find your compiler hits this problem, you can work around it by
  * defining NVTX3_USE_CHECKED_OVERLOADS_FOR_GET to 0 before including this
  * header, or you can add a check for your compiler version to this #if.
- * Also, please report the issue on the NVTX github page.
+ * Also, please report the issue on the NVTX GitHub page.
  */
 #if !defined(NVTX3_USE_CHECKED_OVERLOADS_FOR_GET)
 #if defined(_MSC_VER) && _MSC_VER < 1914 \
@@ -776,7 +776,7 @@ class domain {
    * `domain::get` for the convenience of the "construct on first use" idiom
    * when using domains with their own use of the NVTX C API.
    *
-   * This function is threadsafe as of C++11. If two or more threads call
+   * This function is thread-safe as of C++11. If two or more threads call
    * `domain::get<D>` concurrently, exactly one of them is guaranteed
    * to construct the `domain` object and the other(s) will receive a
    * reference to the object after it is fully constructed.
@@ -1625,7 +1625,7 @@ using registered_string = registered_string_in<domain::global>;
  * nvtx3::scoped_range range1{attr1};
  *
  * // `range2` contains message "message 2"
- * nvtx3::scoped_range range2{nvtx3::Mesage{"message 2"}};
+ * nvtx3::scoped_range range2{nvtx3::message{"message 2"}};
  *
  * // `std::string` and string literals are implicitly assumed to be
  * // the contents of an `nvtx3::message`
@@ -1913,7 +1913,7 @@ class payload {
  * nvtx3::scoped_range r{attr};
  *
  * // For convenience, `event_attributes` constructor arguments may be passed
- * // to the `scoped_range_in` contructor -- they are forwarded to the
+ * // to the `scoped_range_in` constructor -- they are forwarded to the
  * // `event_attributes` constructor
  * nvtx3::scoped_range r{nvtx3::payload{42}, nvtx3::category{1}, "message"};
  *
@@ -2032,7 +2032,7 @@ class event_attributes {
  * Behavior is undefined if a `scoped_range_in` object is
  * created/destroyed on different threads.
  *
- * `scoped_range_in` is neither moveable nor copyable.
+ * `scoped_range_in` is neither movable nor copyable.
  *
  * `scoped_range_in`s may be nested within other ranges.
  *
@@ -2494,7 +2494,7 @@ inline void end_range(range_handle r) noexcept
  * - `unique_range` objects can be destroyed in an order whereas `scoped_range` objects must be
  *    destroyed in exact reverse creation order
  * - `unique_range` can start and end on different threads
- * - `unique_range` is moveable
+ * - `unique_range` is movable
  * - `unique_range` objects can be constructed as heap objects
  *
  * There is extra overhead associated with `unique_range` constructs and therefore use of

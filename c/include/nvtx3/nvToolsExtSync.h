@@ -157,7 +157,7 @@ typedef enum nvtxResourceSyncLinuxType_t nvtxResourceSyncAndroidType_t;
 * \anchor SYNCUSER_HANDLE_STRUCTURE
 *
 * This structure is opaque to the user and is used as a handle to reference
-* a user defined syncrhonization object.  The tools will return a pointer through the API for the application
+* a user defined synchronization object.  The tools will return a pointer through the API for the application
 * to hold on it's behalf to reference the string in the future.
 *
 */

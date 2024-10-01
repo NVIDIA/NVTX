@@ -274,7 +274,7 @@ typedef enum NvtxExportTableID
     NVTX_ETID_FORCE_INT                    = 0x7fffffff
 } NvtxExportTableID;
 
-typedef void (* NvtxFunctionPointer)(void); /* generic uncallable function pointer, must be casted to appropriate function type */
+typedef void (* NvtxFunctionPointer)(void); /* generic uncallable function pointer, must be cast to appropriate function type */
 typedef NvtxFunctionPointer** NvtxFunctionTable; /* double pointer because array(1) of pointers(2) to function pointers */
 
 typedef struct NvtxExportTableCallbacks

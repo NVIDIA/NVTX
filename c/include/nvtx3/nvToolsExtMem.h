@@ -189,7 +189,7 @@ typedef struct nvtxMemHeapDesc_v1
 
     /** \brief Usage characteristics of the heap
      *
-     * Usage characteristics help tools like memcheckers, santiizer,
+     * Usage characteristics help tools like memcheckers, sanitizers,
      * as well as other debugging and profiling tools to determine some
      * special behaviors they should apply to the heap and it's regions.
      * The value follows the convention NVTX_MEM_HEAP_USAGE_*
@@ -268,8 +268,8 @@ typedef nvtxMemHeapDesc_v1 nvtxMemHeapDesc_t;
  * \brief Create a memory heap to represent a object or range of memory that will be further
  * sub-divided into regions.
  *
- * The handle used to addrss the heap will depend on the heap's type.  Where the heap is virtual
- * memory accessible, the addrss of the heap's memory itself is it's handle. This will likewise
+ * The handle used to address the heap will depend on the heap's type.  Where the heap is virtual
+ * memory accessible, the address of the heap's memory itself is it's handle. This will likewise
  * be returned from the function.
  *
  * For more advanced types, where the heap is not virtual memory accessible the tools may be
@@ -575,7 +575,7 @@ NVTX_DECLSPEC void NVTX_API nvtxMemPermissionsReset(
   * EX After eliminating any errors from read and write, a developer may chose to ensure
   * that atomics are in their own region, removing standard read/write, and replacing with
   * this strict atomic only access.  This way they know that conventional reads or writes
-  * will not cause unepected issues.
+  * will not cause unexpected issues.
  **/
 #define NVTX_MEM_PERMISSIONS_BIND_FLAGS_STRICT_ATOMIC 0x4
 
@@ -603,7 +603,7 @@ NVTX_DECLSPEC void NVTX_API nvtxMemPermissionsReset(
  * This could apply to work done either on the GPU like a kernel launch or to
  * CPU based callbacks like cudaStreamAddCallback if the tools supports it.
  *
- * Binding is applies locally to a CPU thread so that if N CPU threads are enqueing
+ * Binding is applies locally to a CPU thread so that if N CPU threads are enqueuing
  * work to the same stream (like the default stream) that there cannot be a race
  * condition between thread binding vs launching their work. IE users should
  * expect the permissions bound in the thread to be honored by the proceeding

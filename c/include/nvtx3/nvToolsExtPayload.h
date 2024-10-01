@@ -1006,7 +1006,7 @@ NVTX_DECLSPEC uint8_t NVTX_API nvtxDomainIsEnabled(
  * \brief Helper macro to attach a single payload to an NVTX event attribute.
  *
  * @param evtAttr NVTX event attribute (variable name)
- * @param pldata_addr Adress of `nvtxPayloadData_t` variable.
+ * @param pldata_addr Address of `nvtxPayloadData_t` variable.
  * @param schema_id NVTX binary payload schema ID.
  * @param pl_addr Address of the (actual) payload.
  * @param sz size of the (actual) payload.
