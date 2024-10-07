@@ -1021,7 +1021,7 @@ struct argb final : rgb {
 
 /**
  * @brief Represents a custom color that can be associated with an NVTX event
- * via it's `event_attributes`.
+ * via its `event_attributes`.
  *
  * Specifying colors for NVTX events is a convenient way to visually
  * differentiate among different events in a visualization tool such as Nsight

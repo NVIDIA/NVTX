@@ -191,7 +191,7 @@ typedef struct nvtxMemHeapDesc_v1
      *
      * Usage characteristics help tools like memcheckers, sanitizers,
      * as well as other debugging and profiling tools to determine some
-     * special behaviors they should apply to the heap and it's regions.
+     * special behaviors they should apply to the heap and its regions.
      * The value follows the convention NVTX_MEM_HEAP_USAGE_*
      *
      * Default Value is 0, which is invalid.
@@ -269,7 +269,7 @@ typedef nvtxMemHeapDesc_v1 nvtxMemHeapDesc_t;
  * sub-divided into regions.
  *
  * The handle used to address the heap will depend on the heap's type.  Where the heap is virtual
- * memory accessible, the address of the heap's memory itself is it's handle. This will likewise
+ * memory accessible, the address of the heap's memory itself is its handle. This will likewise
  * be returned from the function.
  *
  * For more advanced types, where the heap is not virtual memory accessible the tools may be
@@ -559,7 +559,7 @@ NVTX_DECLSPEC void NVTX_API nvtxMemPermissionsReset(
  /** \brief Upon binding, with the thread, exclude parent scope write regions instead of overlaying on top of them.
   *
    * EX A developer may chose to first prevent all writes except the ones specified to avoid
-  * OOB writes, since there are typically less regions written to than read from.
+  * OOB writes, since there are typically fewer regions written to than read from.
  **/
 #define NVTX_MEM_PERMISSIONS_BIND_FLAGS_STRICT_WRITE 0x2
 

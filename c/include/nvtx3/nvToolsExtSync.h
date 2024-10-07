@@ -158,7 +158,7 @@ typedef enum nvtxResourceSyncLinuxType_t nvtxResourceSyncAndroidType_t;
 *
 * This structure is opaque to the user and is used as a handle to reference
 * a user defined synchronization object.  The tools will return a pointer through the API for the application
-* to hold on it's behalf to reference the string in the future.
+* to hold on its behalf to reference the string in the future.
 *
 */
 typedef struct nvtxSyncUser* nvtxSyncUser_t;
