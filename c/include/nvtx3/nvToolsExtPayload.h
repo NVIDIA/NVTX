@@ -403,6 +403,13 @@
  */
 #define NVTX_PAYLOAD_SCHEMA_FLAG_COUNTER_GROUP  (1 << 3)
 
+/**
+ * The schema defines a range or marker. An NVTX handler can expect that the
+ * schema contains a message and timestamp(s).
+ */
+#define NVTX_PAYLOAD_SCHEMA_FLAG_RANGE_PUSHPOP  (2 << 3)
+#define NVTX_PAYLOAD_SCHEMA_FLAG_RANGE_STARTEND (3 << 3)
+#define NVTX_PAYLOAD_SCHEMA_FLAG_MARK           (4 << 3)
 
 #endif /* NVTX_PAYLOAD_SCHEMA_FLAGS_V1 */
 
@@ -478,12 +485,87 @@
 #define NVTX_SCOPE_ID_STATIC_START  (1 << 24)
 
 /* Dynamically (tool) generated scope IDs */
-#define NVTX_SCOPE_ID_DYNAMIC_START 4294967296  /* 1 << 32 */
+#define NVTX_SCOPE_ID_DYNAMIC_START ((uint64_t)1 << 32)
 
 #endif /* NVTX_SCOPES_V1 */
 
+#ifndef NVTX_TIME_V1
+#define NVTX_TIME_V1
+
+/**
+ * Timestamp source is not known, e.g. NIC or switch. The NVTX handler can
+ * assume that at least two synchronization points are created with NVTX
+ * instrumentation.
+ */
+#define NVTX_TIMESTAMP_TYPE_NONE  0
+
+/** The timestamp was provided by the NVTX handler via `nvtxTimestampGet()`. */
+#define NVTX_TIMESTAMP_TYPE_TOOL_PROVIDED  1
+
+/** CPU timestamp sources */
+#define NVTX_TIMESTAMP_TYPE_CPU_TSC  /* RDTSC on x86, CNTVCT on ARM */ 10
+#define NVTX_TIMESTAMP_TYPE_CPU_TSC_NONVIRTUALIZED /* CNTPCT on ARM */ 11
+#define NVTX_TIMESTAMP_TYPE_CPU_CLOCK_GETTIME_REALTIME                 12
+#define NVTX_TIMESTAMP_TYPE_CPU_CLOCK_GETTIME_REALTIME_COARSE          13
+#define NVTX_TIMESTAMP_TYPE_CPU_CLOCK_GETTIME_MONOTONIC                14
+#define NVTX_TIMESTAMP_TYPE_CPU_CLOCK_GETTIME_MONOTONIC_RAW            15
+#define NVTX_TIMESTAMP_TYPE_CPU_CLOCK_GETTIME_MONOTONIC_COARSE         16
+#define NVTX_TIMESTAMP_TYPE_CPU_CLOCK_GETTIME_BOOTTIME                 17
+#define NVTX_TIMESTAMP_TYPE_CPU_CLOCK_GETTIME_PROCESS_CPUTIME_ID       18
+#define NVTX_TIMESTAMP_TYPE_CPU_CLOCK_GETTIME_THREAD_CPUTIME_ID        19
+
+#define NVTX_TIMESTAMP_TYPE_WIN_QPC      30
+#define NVTX_TIMESTAMP_TYPE_WIN_GSTAFT   31
+#define NVTX_TIMESTAMP_TYPE_WIN_GSTAFTP  32
+
+#define NVTX_TIMESTAMP_TYPE_C_TIME          40
+#define NVTX_TIMESTAMP_TYPE_C_CLOCK         41
+#define NVTX_TIMESTAMP_TYPE_C_TIMESPEC_GET  42
+
+#define NVTX_TIMESTAMP_TYPE_CPP_STEADY_CLOCK           50
+#define NVTX_TIMESTAMP_TYPE_CPP_HIGH_RESOLUTION_CLOCK  51
+#define NVTX_TIMESTAMP_TYPE_CPP_SYSTEM_CLOCK           52
+#define NVTX_TIMESTAMP_TYPE_CPP_UTC_CLOCK              53
+#define NVTX_TIMESTAMP_TYPE_CPP_TAI_CLOCK              54
+#define NVTX_TIMESTAMP_TYPE_CPP_GPS_CLOCK              55
+#define NVTX_TIMESTAMP_TYPE_CPP_FILE_CLOCK             56
+
+/** GPU timestamp sources */
+#define NVTX_TIMESTAMP_TYPE_GPU_GLOBALTIMER  80 /* e.g. PTIMER */
+
+/** Returned by `nvtxTimeDomainRegister` if time domain registration failed. */
+#define NVTX_TIME_DOMAIN_ID_NONE 0
+
+/** Static (user-provided) time domain IDs (feed forward) */
+#define NVTX_TIME_DOMAIN_ID_STATIC_START  (1 << 24)
+
+/* Dynamically (tool) generated time domain IDs */
+#define NVTX_TIME_DOMAIN_ID_DYNAMIC_START ((uint64_t)1 << 32)
+
+/** Timer properties */
+#define NVTX_TIMER_FLAG_NONE             0
+#define NVTX_TIMER_FLAG_CLOCK_MONOTONIC  (1 << 1)
+#define NVTX_TIMER_FLAG_CLOCK_STEADY     (1 << 2)
+
+/** Point in time when the timer starts (its value is 0). */
+#define NVTX_TIMER_START_UNKNOWN         0
+#define NVTX_TIMER_START_SYSTEM_BOOT     1
+#define NVTX_TIMER_START_VM_BOOT         2
+#define NVTX_TIMER_START_UNIX_EPOCH      3 /* 1 January 1970 */
+#define NVTX_TIMER_START_WIN_FILETIME    4 /* 1 January 1601 */
+
+/**
+ * Flags specifying whether it is safe or unsafe to call the timestamp
+ * provider after process teardown.
+ */
+#define NVTX_TIMER_SOURCE_SAFE_CALL_AFTER_PROCESS_TEARDOWN   0
+#define NVTX_TIMER_SOURCE_UNSAFE_CALL_AFTER_PROCESS_TEARDOWN 1
+
+#endif /* NVTX_TIME_V1 */
+
 #ifndef NVTX_BATCH_FLAGS_V1
 #define NVTX_BATCH_FLAGS_V1
+
 /**
  * Timestamp ordering flags for a batch of deferred events or counters.
  * By default, chronological order by the first timestamp of the event or
@@ -903,7 +985,8 @@ typedef struct nvtxEventBatch_v1
      * Identifier of the data layout of a deferred event in the array of events.
      * Only layouts with static payload size are allowed. The size of an event
      * in the array is specified by the static payload size during the schema
-     * registration.
+     * registration. The time domain of event timestamps is provided via time
+     * semantics in the schema registration.
      */
     uint64_t    eventSchemaId;
 
@@ -991,8 +1074,8 @@ NVTX_DECLSPEC void NVTX_API nvtxMarkPayload(
  * payload.
  *
  * @param domain NVTX domain handle
- * @param payloadData pointer to an array of structured payloads.
- * @param count number of payload BLOBs.
+ * @param payloadData Pointer to an array of extended payloads.
+ * @param count Number of payloads.
  *
  * @return The level of the range being ended. If an error occurs a negative
  * value is returned on the current thread.
@@ -1081,6 +1164,7 @@ NVTX_DECLSPEC int64_t NVTX_API nvtxTimestampGet(void);
  * to the time domain definitions.
  *
  * @param domain NVTX domain handle (0 for default domain).
+ * @param timeAttr Time domain attributes (timestamp type, scope, flags, etc.).
  * @return time domain ID.
  */
 NVTX_DECLSPEC uint64_t NVTX_API nvtxTimeDomainRegister(
@@ -1088,28 +1172,37 @@ NVTX_DECLSPEC uint64_t NVTX_API nvtxTimeDomainRegister(
     const nvtxTimeDomainAttr_t* timeAttr);
 
 /**
- * Provide the pointer to a function that returns a timestamp as `int64_t`.
+ * Provide the pointer to a function that returns a timestamp.
  * This enables the tool to create time synchronization points.
  *
  * @param domain NVTX domain handle (0 for default domain).
- * @param flag Indicates if it is safe to call the timestamp provider after
+ * @param timeDomainId time domain identifier or timestamp type ID, if it is
+ *                     unambiguous.
+ * @param flags indicates if it is safe to call the timestamp provider after
  *             process teardown.
+ * @param timestampProviderFn Pointer to a function that returns a timestamp.
  */
 NVTX_DECLSPEC void NVTX_API nvtxTimerSource(
     nvtxDomainHandle_t domain,
     uint64_t timeDomainId,
     uint64_t flags,
-    int64_t (*nvtxTimestampProviderFn)());
+    int64_t (*timestampProviderFn)());
 
 /**
  * Same as `nvtxTimerSource`, but with an additional data pointer argument.
  *
  * @param domain NVTX domain handle (0 for default domain).
+ * @param timeDomainId time domain identifier or timestamp type ID, if it is
+ *                     unambiguous.
+ * @param flags indicates if it is safe to call the timestamp provider after
+ *             process teardown.
+ * @param timestampProviderFn Pointer to a function that returns a timestamp.
+ * @param data Pointer to data that is passed to the timestamp provider function.
  */
 NVTX_DECLSPEC void NVTX_API nvtxTimerSourceWithData(
     nvtxDomainHandle_t domain,
     uint64_t timeDomainId,
-    uint64_t flags, /** \todo safe or not safe to call after process teardown */
+    uint64_t flags,
     int64_t (*timestampProviderFn)(void* data),
     void* data);
 
@@ -1118,10 +1211,14 @@ NVTX_DECLSPEC void NVTX_API nvtxTimerSourceWithData(
  * Two synchronization points are required to enable a timestamp conversion.
  * The tool must know one of the time domains or it least must be able to chain
  * conversions to enable the conversion between the given timestamps.
- * Instead of the time domain ID, the timestamp type can be provided if it is
- * unambiguous which timer is used, e.g. CPU TSC.
  *
  * @param domain NVTX domain handle (0 for default domain).
+ * @param timeDomainId1 time domain 1 ID or timestamp type ID, if it is
+ *                      unambiguous.
+ * @param timeDomainId2 time domain 2 ID or timestamp type ID, if it is
+ *                      unambiguous.
+ * @param timestamp1 Timestamp in the first time domain.
+ * @param timestamp2 Timestamp in the second time domain.
  */
 NVTX_DECLSPEC void NVTX_API nvtxTimeSyncPoint(
     nvtxDomainHandle_t domain,
@@ -1134,6 +1231,12 @@ NVTX_DECLSPEC void NVTX_API nvtxTimeSyncPoint(
  * The same as `nvtxTimeSyncPoint` but with multiple synchronization points.
  *
  * @param domain NVTX domain handle (0 for default domain).
+ * @param timeDomainIdSrc source time domain ID or timestamp type ID, if it is
+ *                        unambiguous.
+ * @param timeDomainIdDst destination time domain ID or timestamp type ID, if it
+ *                        is unambiguous.
+ * @param syncPoints Pointer to an array of synchronization points.
+ * @param count Number of synchronization points.
  */
 NVTX_DECLSPEC void NVTX_API nvtxTimeSyncPointTable(
     nvtxDomainHandle_t domain,
@@ -1146,6 +1249,13 @@ NVTX_DECLSPEC void NVTX_API nvtxTimeSyncPointTable(
  * @brief Pass a conversion factor between two time domains to the NVTX handler.
  *
  * @param domain NVTX domain handle (0 for default domain).
+ * @param timeDomainIdSrc source time domain ID or timestamp type ID, if it is
+ *                        unambiguous.
+ * @param timeDomainIdDst destination time domain ID or timestamp type ID, if it
+ *                        is unambiguous.
+ * @param slope Conversion factor between the two time domains.
+ * @param timestampSrc Timestamp in the source time domain.
+ * @param timestampDst Timestamp in the destination time domain.
  */
 NVTX_DECLSPEC void NVTX_API nvtxTimestampConversionFactor(
     nvtxDomainHandle_t domain,
@@ -1170,12 +1280,12 @@ NVTX_DECLSPEC void NVTX_API nvtxEventSubmit(
 /**
  * \brief Submit a batch of deferred events in the given domain.
  *
- * @param domain NVTX domain
- * @param eventData Pointer to deferred events data struct.
+ * @param domain NVTX domain handle (0 for default domain).
+ * @param eventBatch Pointer to deferred events batch details.
  */
 NVTX_DECLSPEC void NVTX_API nvtxEventBatchSubmit(
     nvtxDomainHandle_t domain,
-    const nvtxEventBatch_t* eventData);
+    const nvtxEventBatch_t* eventBatch);
 
 #endif /* NVTX_PAYLOAD_API_FUNCTIONS_DEFERRED_V1 */
 

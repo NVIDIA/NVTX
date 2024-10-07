@@ -167,8 +167,8 @@ NVTX_EXT_PAYLOAD_IMPL_FN_V1(void, nvtxRangeEndPayload, (nvtxDomainHandle_t domai
     (domain, id, payloadData, count))
 
 NVTX_EXT_PAYLOAD_IMPL_FN_V1(void, nvtxTimerSource,
-    (nvtxDomainHandle_t domain, uint64_t timeId, uint64_t flags, int64_t (*timestampProviderFn)()),
-    (domain, timeId, flags, timestampProviderFn))
+    (nvtxDomainHandle_t domain, uint64_t timeDomainId, uint64_t flags, int64_t (*timestampProviderFn)()),
+    (domain, timeDomainId, flags, timestampProviderFn))
 
 NVTX_EXT_PAYLOAD_IMPL_FN_V1(void, nvtxTimerSourceWithData,
     (nvtxDomainHandle_t domain, uint64_t timeDomainId, uint64_t flags, int64_t (*timestampProviderFn)(void* data), void* data),
@@ -194,7 +194,7 @@ NVTX_EXT_PAYLOAD_IMPL_FN_V1(void, nvtxEventSubmit,
     (domain, payloadData, numPayloads))
 
 NVTX_EXT_PAYLOAD_IMPL_FN_V1(void, nvtxEventBatchSubmit, (nvtxDomainHandle_t domain,
-    const nvtxEventBatch_t* events), (domain, events))
+    const nvtxEventBatch_t* eventBatch), (domain, eventBatch))
 
 #undef return
 #undef NVTX_EXT_FN_RETURN_INVALID
