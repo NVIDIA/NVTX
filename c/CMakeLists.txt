@@ -17,7 +17,7 @@
 # Licensed under the Apache License v2.0 with LLVM Exceptions.
 # See LICENSE.txt for license information.
 #=============================================================================
-cmake_minimum_required(VERSION 3.10)
+cmake_minimum_required(VERSION 3.19)
 
 # This file is typically used by calling add_subdirectory on this directory or add
 # this directory as an external package.  In this case, the NVTX library targets

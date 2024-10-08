@@ -17,7 +17,7 @@
 # Licensed under the Apache License v2.0 with LLVM Exceptions.
 # See LICENSE.txt for license information.
 #=============================================================================
-cmake_minimum_required(VERSION 3.10)
+cmake_minimum_required(VERSION 3.19)
 
 set(NVTX3_VERSION 3.1.0)
 
