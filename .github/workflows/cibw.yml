@@ -22,14 +22,24 @@ jobs:
       matrix:
         include:
         - os: 'ubuntu-latest'
-          cibw_archs_linux: "x86_64"
+          cibw_archs: "x86_64"
           docker_py_container: "python"
           name: 'ubuntu-x86_64'
+          build_sdist: true
         - os: 'ubuntu-latest'
-          cibw_archs_linux: "aarch64"
+          cibw_archs: "aarch64"
           docker_py_container: "arm64v8/python"
           name: 'ubuntu-qemu-aarch64'
           qemu: true
+          build_sdist: false
+        - os: 'windows-latest'
+          cibw_archs: "amd64"
+          name: 'windows-x86_64'
+          build_sdist: false
+        - os: 'macos-latest'
+          cibw_archs: "all"
+          name: 'macos'
+          build_sdist: false
     steps:
     - name: Check out repository
       uses: actions/checkout@v3
@@ -39,14 +49,14 @@ jobs:
 
     - name: Set up Python
       # Only build sdists on x86_64
-      if: matrix.cibw_archs_linux == 'x86_64'
+      if: matrix.build_sdist
       uses: actions/setup-python@v4
       with:
         python-version: "3.x"
 
     - name: Build source distribution
       # Only build sdists on x86_64
-      if: matrix.cibw_archs_linux == 'x86_64'
+      if: matrix.build_sdist
       run: |
         python3 -m pip install build --user
         python3 -m build --sdist --outdir dist/ ./python/
@@ -62,7 +72,7 @@ jobs:
       env:
         CIBW_SKIP: "*musllinux* cp36-* cp37-*"
         CIBW_BUILD: "cp*"
-        CIBW_ARCHS_LINUX: ${{ matrix.cibw_archs_linux }}
+        CIBW_ARCHS: ${{ matrix.cibw_archs }}
         CIBW_MANYLINUX_X86_64_IMAGE: manylinux2014
         CIBW_MANYLINUX_AARCH64_IMAGE: manylinux2014
         CIBW_TEST_COMMAND: "pytest {package}/nvtx/tests"
