@@ -1,0 +1,436 @@
+name: Test
+
+on: [pull_request, merge_group]
+
+jobs:
+  test-ubuntu-22-04:
+    name: Ubuntu 22.04
+    runs-on: ubuntu-22.04
+    steps:
+    - uses: actions/checkout@v4
+
+    - uses: conda-incubator/setup-miniconda@v3
+      with:
+        auto-update-conda: true
+
+    - name: Install Toolchain
+      run: |
+        sudo apt-get update
+        sudo apt-get -y install {gcc,g++}-{9,10,11,12} clang-{11,12,13,14,15} ninja-build
+        conda create -y --name cuda-env
+        conda install -y --name cuda-env cuda-minimal-build
+        rm -f "$CONDA/envs/cuda-env/bin/ld"
+
+    - name: Build (GCC 9)
+      run: |
+        cd tests
+        mkdir build-gcc-9
+        cd build-gcc-9
+        cmake -G "Ninja" -DCMAKE_C_COMPILER=gcc-9 -DCMAKE_CXX_COMPILER=g++-9 -DCMAKE_CUDA_COMPILER="$CONDA/envs/cuda-env/bin/nvcc" ..
+        ninja
+    - name: Build (GCC 10)
+      run: |
+        cd tests
+        mkdir build-gcc-10
+        cd build-gcc-10
+        cmake -G "Ninja" -DCMAKE_C_COMPILER=gcc-10 -DCMAKE_CXX_COMPILER=g++-10 -DCMAKE_CUDA_COMPILER="$CONDA/envs/cuda-env/bin/nvcc" ..
+        ninja
+    - name: Build (GCC 11)
+      run: |
+        cd tests
+        mkdir build-gcc-11
+        cd build-gcc-11
+        cmake -G "Ninja" -DCMAKE_C_COMPILER=gcc-11 -DCMAKE_CXX_COMPILER=g++-11 -DCMAKE_CUDA_COMPILER="$CONDA/envs/cuda-env/bin/nvcc" ..
+        ninja
+    - name: Build (GCC 12)
+      run: |
+        cd tests
+        mkdir build-gcc-12
+        cd build-gcc-12
+        cmake -G "Ninja" -DCMAKE_C_COMPILER=gcc-12 -DCMAKE_CXX_COMPILER=g++-12 -DCMAKE_CUDA_COMPILER="$CONDA/envs/cuda-env/bin/nvcc" ..
+        ninja
+
+    - name: Build (Clang 11)
+      run: |
+        cd tests
+        mkdir build-clang-11
+        cd build-clang-11
+        cmake -G "Ninja" -DCMAKE_C_COMPILER=clang-11 -DCMAKE_CXX_COMPILER=clang++-11 -DCMAKE_CUDA_COMPILER="$CONDA/envs/cuda-env/bin/nvcc" ..
+        ninja
+    - name: Build (Clang 12)
+      run: |
+        cd tests
+        mkdir build-clang-12
+        cd build-clang-12
+        cmake -G "Ninja" -DCMAKE_C_COMPILER=clang-12 -DCMAKE_CXX_COMPILER=clang++-12 -DCMAKE_CUDA_COMPILER="$CONDA/envs/cuda-env/bin/nvcc" ..
+        ninja
+    - name: Build (Clang 13)
+      run: |
+        cd tests
+        mkdir build-clang-13
+        cd build-clang-13
+        cmake -G "Ninja" -DCMAKE_C_COMPILER=clang-13 -DCMAKE_CXX_COMPILER=clang++-13 -DCMAKE_CUDA_COMPILER="$CONDA/envs/cuda-env/bin/nvcc" ..
+        ninja
+    - name: Build (Clang 14)
+      run: |
+        cd tests
+        mkdir build-clang-14
+        cd build-clang-14
+        cmake -G "Ninja" -DCMAKE_C_COMPILER=clang-14 -DCMAKE_CXX_COMPILER=clang++-14 -DCMAKE_CUDA_COMPILER="$CONDA/envs/cuda-env/bin/nvcc" ..
+        ninja
+    - name: Build (Clang 15)
+      run: |
+        cd tests
+        mkdir build-clang-15
+        cd build-clang-15
+        cmake -G "Ninja" -DCMAKE_C_COMPILER=clang-15 -DCMAKE_CXX_COMPILER=clang++-15 -DCMAKE_CUDA_COMPILER="$CONDA/envs/cuda-env/bin/nvcc" ..
+        ninja
+
+    - name: Run (GCC 9)
+      run: |
+        cd tests/build-gcc-9
+        ctest -V
+    - name: Run (GCC 10)
+      run: |
+        cd tests/build-gcc-10
+        ctest -V
+    - name: Run (GCC 11)
+      run: |
+        cd tests/build-gcc-11
+        ctest -V
+    - name: Run (GCC 12)
+      run: |
+        cd tests/build-gcc-12
+        ctest -V
+
+    - name: Run (Clang 11)
+      run: |
+        cd tests/build-clang-11
+        ctest -V
+    - name: Run (Clang 12)
+      run: |
+        cd tests/build-clang-12
+        ctest -V
+    - name: Run (Clang 13)
+      run: |
+        cd tests/build-clang-13
+        ctest -V
+    - name: Run (Clang 14)
+      run: |
+        cd tests/build-clang-14
+        ctest -V
+    - name: Run (Clang 15)
+      run: |
+        cd tests/build-clang-15
+        ctest -V
+
+  test-ubuntu-20-04:
+    name: Ubuntu 20.04
+    runs-on: ubuntu-20.04
+    steps:
+    - uses: actions/checkout@v4
+
+    - uses: conda-incubator/setup-miniconda@v3
+      with:
+        auto-update-conda: true
+
+    - name: Install Toolchain
+      run: |
+        sudo apt-get update
+        sudo apt-get -y install {gcc,g++}-{7,8,9,10} clang-{7,8,9,10,11,12} ninja-build
+        conda create -y --name cuda-env
+        conda install -y --name cuda-env cuda-minimal-build
+        rm -f "$CONDA/envs/cuda-env/bin/ld"
+
+    - name: Build (GCC 7)
+      run: |
+        cd tests
+        mkdir build-gcc-7
+        cd build-gcc-7
+        cmake -G "Ninja" -DCMAKE_C_COMPILER=gcc-7 -DCMAKE_CXX_COMPILER=g++-7 -DCMAKE_CUDA_COMPILER="$CONDA/envs/cuda-env/bin/nvcc" ..
+        ninja
+    - name: Build (GCC 8)
+      run: |
+        cd tests
+        mkdir build-gcc-8
+        cd build-gcc-8
+        cmake -G "Ninja" -DCMAKE_C_COMPILER=gcc-8 -DCMAKE_CXX_COMPILER=g++-8 -DCMAKE_CUDA_COMPILER="$CONDA/envs/cuda-env/bin/nvcc" ..
+        ninja
+    - name: Build (GCC 9)
+      run: |
+        cd tests
+        mkdir build-gcc-9
+        cd build-gcc-9
+        cmake -G "Ninja" -DCMAKE_C_COMPILER=gcc-9 -DCMAKE_CXX_COMPILER=g++-9 -DCMAKE_CUDA_COMPILER="$CONDA/envs/cuda-env/bin/nvcc" ..
+        ninja
+    - name: Build (GCC 10)
+      run: |
+        cd tests
+        mkdir build-gcc-10
+        cd build-gcc-10
+        cmake -G "Ninja" -DCMAKE_C_COMPILER=gcc-10 -DCMAKE_CXX_COMPILER=g++-10 -DCMAKE_CUDA_COMPILER="$CONDA/envs/cuda-env/bin/nvcc" ..
+        ninja
+
+    - name: Build (Clang 7)
+      run: |
+        cd tests
+        mkdir build-clang-7
+        cd build-clang-7
+        cmake -G "Ninja" -DCMAKE_C_COMPILER=clang-7 -DCMAKE_CXX_COMPILER=clang++-7 -DCMAKE_CUDA_COMPILER="$CONDA/envs/cuda-env/bin/nvcc" ..
+        ninja
+    - name: Build (Clang 8)
+      run: |
+        cd tests
+        mkdir build-clang-8
+        cd build-clang-8
+        cmake -G "Ninja" -DCMAKE_C_COMPILER=clang-8 -DCMAKE_CXX_COMPILER=clang++-8 -DCMAKE_CUDA_COMPILER="$CONDA/envs/cuda-env/bin/nvcc" ..
+        ninja
+    - name: Build (Clang 9)
+      run: |
+        cd tests
+        mkdir build-clang-9
+        cd build-clang-9
+        cmake -G "Ninja" -DCMAKE_C_COMPILER=clang-9 -DCMAKE_CXX_COMPILER=clang++-9 -DCMAKE_CUDA_COMPILER="$CONDA/envs/cuda-env/bin/nvcc" ..
+        ninja
+    - name: Build (Clang 10)
+      run: |
+        cd tests
+        mkdir build-clang-10
+        cd build-clang-10
+        cmake -G "Ninja" -DCMAKE_C_COMPILER=clang-10 -DCMAKE_CXX_COMPILER=clang++-10 -DCMAKE_CUDA_COMPILER="$CONDA/envs/cuda-env/bin/nvcc" ..
+        ninja
+    - name: Build (Clang 11)
+      run: |
+        cd tests
+        mkdir build-clang-11
+        cd build-clang-11
+        cmake -G "Ninja" -DCMAKE_C_COMPILER=clang-11 -DCMAKE_CXX_COMPILER=clang++-11 -DCMAKE_CUDA_COMPILER="$CONDA/envs/cuda-env/bin/nvcc" ..
+        ninja
+    - name: Build (Clang 12)
+      run: |
+        cd tests
+        mkdir build-clang-12
+        cd build-clang-12
+        cmake -G "Ninja" -DCMAKE_C_COMPILER=clang-12 -DCMAKE_CXX_COMPILER=clang++-12 -DCMAKE_CUDA_COMPILER="$CONDA/envs/cuda-env/bin/nvcc" ..
+        ninja
+
+    - name: Run (GCC 7)
+      run: |
+        cd tests/build-gcc-7
+        ctest -V
+    - name: Run (GCC 8)
+      run: |
+        cd tests/build-gcc-8
+        ctest -V
+    - name: Run (GCC 9)
+      run: |
+        cd tests/build-gcc-9
+        ctest -V
+    - name: Run (GCC 10)
+      run: |
+        cd tests/build-gcc-10
+        ctest -V
+
+    - name: Run (Clang 7)
+      run: |
+        cd tests/build-clang-7
+        ctest -V
+    - name: Run (Clang 8)
+      run: |
+        cd tests/build-clang-8
+        ctest -V
+    - name: Run (Clang 9)
+      run: |
+        cd tests/build-clang-9
+        ctest -V
+    - name: Run (Clang 10)
+      run: |
+        cd tests/build-clang-10
+        ctest -V
+    - name: Run (Clang 11)
+      run: |
+        cd tests/build-clang-11
+        ctest -V
+    - name: Run (Clang 12)
+      run: |
+        cd tests/build-clang-12
+        ctest -V
+
+  test-windows-2022:
+    name: Windows Server 2022
+    runs-on: windows-2022
+    steps:
+    - uses: actions/checkout@v4
+
+    - uses: conda-incubator/setup-miniconda@v3
+      with:
+        auto-update-conda: true
+
+    - name: Conda - Create Environment
+      shell: cmd
+      run: |
+        conda create -y --name cuda-env
+
+    - name: Conda - Install CUDA Toolchain
+      shell: cmd
+      run: |
+        conda install -y --name cuda-env cuda-minimal-build
+
+    - name: Build (VS 2022)
+      shell: cmd
+      run: |
+        cd tests
+        mkdir build
+        cd build
+        "C:\Program Files\Microsoft Visual Studio\2022\Enterprise\VC\Auxiliary\Build\vcvars64.bat" && cmake -G "Ninja" -DCMAKE_CUDA_COMPILER="%CONDA%/envs/cuda-env/Library/bin/nvcc.exe" .. && ninja
+
+    - name: Run (VS 2022)
+      shell: cmd
+      run: |
+        cd tests/build
+        "C:\Program Files\Microsoft Visual Studio\2022\Enterprise\VC\Auxiliary\Build\vcvars64.bat" && ctest -V
+
+  test-windows-2019:
+    name: Windows Server 2019
+    runs-on: windows-2019
+    steps:
+    - uses: actions/checkout@v4
+
+    - uses: conda-incubator/setup-miniconda@v3
+      with:
+        auto-update-conda: true
+
+    - name: Conda - Create Environment
+      shell: cmd
+      run: |
+        conda create -y --name cuda-env
+
+    - name: Conda - Install CUDA Toolchain
+      shell: cmd
+      run: |
+        conda install -y --name cuda-env cuda-minimal-build
+
+    - name: Build (VS 2019)
+      shell: cmd
+      run: |
+        cd tests
+        mkdir build
+        cd build
+        "C:\Program Files (x86)\Microsoft Visual Studio\2019\Enterprise\VC\Auxiliary\Build\vcvars64.bat" && cmake -G "Ninja" -DCMAKE_CUDA_COMPILER="%CONDA%/envs/cuda-env/Library/bin/nvcc.exe" .. && ninja
+
+    - name: Run (VS 2019)
+      shell: cmd
+      run: |
+        cd tests/build
+        "C:\Program Files (x86)\Microsoft Visual Studio\2019\Enterprise\VC\Auxiliary\Build\vcvars64.bat" && ctest -V
+
+  test-macos-12:
+    name: macOS 12
+    runs-on: macos-12
+    steps:
+    - uses: actions/checkout@v4
+
+    - name: Install Toolchain
+      run: |
+        brew install ninja
+
+    - name: Build (AppleClang)
+      run: |
+        cd tests
+        mkdir build-appleclang
+        cd build-appleclang
+        cmake -G "Ninja" ..
+        ninja
+
+    - name: Build (GCC)
+      run: |
+        cd tests
+        mkdir build-gcc
+        cd build-gcc
+        GCC_VERSION="$(brew list --versions gcc | cut '-d ' -f2 | cut '-d.' -f1)"
+        cmake -G "Ninja" -DCMAKE_C_COMPILER="gcc-$GCC_VERSION" -DCMAKE_CXX_COMPILER="g++-$GCC_VERSION" ..
+        ninja
+
+    - name: Run (AppleClang)
+      run: |
+        cd tests/build-appleclang
+        ctest -V
+
+    - name: Run (GCC)
+      run: |
+        cd tests/build-gcc
+        ctest -V
+
+  test-macos-13:
+    name: macOS 13
+    runs-on: macos-13
+    steps:
+    - uses: actions/checkout@v4
+
+    - name: Install Toolchain
+      run: |
+        brew install ninja
+
+    - name: Build (AppleClang)
+      run: |
+        cd tests
+        mkdir build-appleclang
+        cd build-appleclang
+        cmake -G "Ninja" ..
+        ninja
+
+    - name: Build (GCC)
+      run: |
+        cd tests
+        mkdir build-gcc
+        cd build-gcc
+        GCC_VERSION="$(brew list --versions gcc | cut '-d ' -f2 | cut '-d.' -f1)"
+        cmake -G "Ninja" -DCMAKE_C_COMPILER="gcc-$GCC_VERSION" -DCMAKE_CXX_COMPILER="g++-$GCC_VERSION" ..
+        ninja
+
+    - name: Run (AppleClang)
+      run: |
+        cd tests/build-appleclang
+        ctest -V
+
+    - name: Run (GCC)
+      run: |
+        cd tests/build-gcc
+        ctest -V
+
+  test-macos-14:
+    name: macOS 14
+    runs-on: macos-14
+    steps:
+    - uses: actions/checkout@v4
+
+    - name: Install Toolchain
+      run: |
+        brew install ninja
+
+    - name: Build (AppleClang)
+      run: |
+        cd tests
+        mkdir build-appleclang
+        cd build-appleclang
+        cmake -G "Ninja" ..
+        ninja
+
+    - name: Build (GCC)
+      run: |
+        cd tests
+        mkdir build-gcc
+        cd build-gcc
+        GCC_VERSION="$(brew list --versions gcc | cut '-d ' -f2 | cut '-d.' -f1)"
+        cmake -G "Ninja" -DCMAKE_C_COMPILER="gcc-$GCC_VERSION" -DCMAKE_CXX_COMPILER="g++-$GCC_VERSION" ..
+        ninja
+
+    - name: Run (AppleClang)
+      run: |
+        cd tests/build-appleclang
+        ctest -V
+
+    - name: Run (GCC)
+      run: |
+        cd tests/build-gcc
+        ctest -V
