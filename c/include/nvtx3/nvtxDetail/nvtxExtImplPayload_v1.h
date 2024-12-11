@@ -60,6 +60,10 @@ ret_val fn_name signature { \
  * initialized to `0` (`NVTX_EXTENSION_FRESH`).
  */
 #define NVTX_EXT_PAYLOAD_SLOT_COUNT 63
+
+/* Avoid warnings about missing extern declaration. */
+NVTX_LINKONCE_FWDDECL_GLOBAL intptr_t
+NVTX_EXT_PAYLOAD_VERSIONED_ID(nvtxExtPayloadSlots)[NVTX_EXT_PAYLOAD_SLOT_COUNT + 1];
 NVTX_LINKONCE_DEFINE_GLOBAL intptr_t
 NVTX_EXT_PAYLOAD_VERSIONED_ID(nvtxExtPayloadSlots)[NVTX_EXT_PAYLOAD_SLOT_COUNT + 1]
     = {0};

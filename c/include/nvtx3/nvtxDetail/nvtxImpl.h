@@ -185,6 +185,8 @@ typedef struct nvtxGlobals_t
     NvtxFunctionPointer* functionTable_SYNC  [NVTX_CBID_SYNC_SIZE   + 1];
 } nvtxGlobals_t;
 
+/* Avoid warnings about missing extern declaration. */
+NVTX_LINKONCE_FWDDECL_GLOBAL nvtxGlobals_t NVTX_VERSIONED_IDENTIFIER(nvtxGlobals);
 NVTX_LINKONCE_DEFINE_GLOBAL nvtxGlobals_t NVTX_VERSIONED_IDENTIFIER(nvtxGlobals) =
 {
     NVTX_INIT_STATE_FRESH,

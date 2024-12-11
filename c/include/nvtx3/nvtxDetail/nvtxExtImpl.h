@@ -92,6 +92,8 @@ typedef struct nvtxExtGlobals1_t
     NvtxExtInitializeInjectionFunc_t injectionFnPtr;
 } nvtxExtGlobals1_t;
 
+/* Avoid warnings about missing extern declaration. */
+NVTX_LINKONCE_FWDDECL_GLOBAL nvtxExtGlobals1_t NVTX_VERSIONED_IDENTIFIER(nvtxExtGlobals1);
 NVTX_LINKONCE_DEFINE_GLOBAL nvtxExtGlobals1_t NVTX_VERSIONED_IDENTIFIER(nvtxExtGlobals1) =
 {
     (NvtxExtInitializeInjectionFunc_t)0

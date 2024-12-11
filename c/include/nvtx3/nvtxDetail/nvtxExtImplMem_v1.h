@@ -50,10 +50,16 @@ ret_val fn_name signature { \
  * Function slots for the memory extension. First entry is the module
  * state, initialized to `0` (`NVTX_EXTENSION_FRESH`).
  */
+
+/* Avoid warnings about missing extern declaration. */
+NVTX_LINKONCE_FWDDECL_GLOBAL intptr_t
+NVTX_EXT_MEM_VERSIONED_ID(nvtxExtMemSlots)[NVTX3EXT_CBID_MEM_FN_NUM + 2];
 NVTX_LINKONCE_DEFINE_GLOBAL intptr_t
 NVTX_EXT_MEM_VERSIONED_ID(nvtxExtMemSlots)[NVTX3EXT_CBID_MEM_FN_NUM + 2]
     = {0};
 
+/* Avoid warnings about missing prototype. */
+NVTX_LINKONCE_FWDDECL_FUNCTION void NVTX_EXT_MEM_VERSIONED_ID(nvtxExtMemInitOnce)(void);
 NVTX_LINKONCE_DEFINE_FUNCTION void NVTX_EXT_MEM_VERSIONED_ID(nvtxExtMemInitOnce)(void)
 {
     intptr_t* fnSlots = NVTX_EXT_MEM_VERSIONED_ID(nvtxExtMemSlots) + 1;
