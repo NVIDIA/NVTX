@@ -1475,8 +1475,6 @@ class registered_string_in {
     , int>::type = 0>
   NVTX3_NO_DISCARD static registered_string_in const& get() noexcept
   {
-  static registered_string_in const& get() noexcept
-  {
     NVTX3_STATIC_ASSERT(detail::always_false<M>::value,
       "Type used to register an NVTX string must contain a static constexpr member "
       "called 'message' of type const char* or const wchar_t* -- 'message' member is "
@@ -1495,8 +1493,6 @@ class registered_string_in {
     , int>::type = 0>
   NVTX3_NO_DISCARD static registered_string_in const& get() noexcept
   {
-  static registered_string_in const& get() noexcept
-  {
     NVTX3_STATIC_ASSERT(detail::always_false<M>::value,
       "Type used to register an NVTX string must contain a static constexpr member "
       "called 'message' of type const char* or const wchar_t* -- 'message' member "
@@ -1507,8 +1503,6 @@ class registered_string_in {
 #else
   template <typename M>
   NVTX3_NO_DISCARD static registered_string_in const& get() noexcept
-  {
-  static registered_string_in const& get() noexcept
   {
     static registered_string_in const regstr(M::message);
     return regstr;
