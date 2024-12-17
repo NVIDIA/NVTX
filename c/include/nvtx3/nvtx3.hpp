@@ -611,18 +611,20 @@
 #define NVTX3_CONSTEXPR_IF_CPP14
 #endif
 
-// Macro wrappers for C++ attributes: [[maybe_unused]] and [[nodiscard]]
-#if defined(__has_cpp_attribute)
-  #if __has_cpp_attribute(maybe_unused)
-    #define NVTX3_MAYBE_UNUSED [[maybe_unused]]
-  #endif
-  #if __has_cpp_attribute(nodiscard)
-    #define NVTX3_NO_DISCARD [[nodiscard]]
-  #endif
+// Macro wrappers for C++ attributes
+#if !defined(__has_cpp_attribute)
+#define __has_cpp_attribute(x) 0
+#endif
+#if __has_cpp_attribute(maybe_unused)
+#define NVTX3_MAYBE_UNUSED [[maybe_unused]]
 #else
 #define NVTX3_MAYBE_UNUSED
+#endif
+#if __has_cpp_attribute(nodiscard)
+#define NVTX3_NO_DISCARD [[nodiscard]]
+#else
 #define NVTX3_NO_DISCARD
-#endif // __has_cpp_attribute
+#endif
 
  /* Use a macro for static asserts, which defaults to static_assert, but that
   * testing tools can replace with a logging function.  For example:
