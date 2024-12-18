@@ -167,17 +167,13 @@
 #define NVTX_VERSION 3
 
 /* Platform-dependent defines:
- * 
+ *
  * - NVTX_API - Calling conventions (only used on Windows, and only effects
  *   32-bit x86 builds, i.e. callee pops stack instead of caller)
  *
- * - NVTX_INLINE_STATIC - Ensure function has internal linkage, and suggest
- *   avoiding code-gen of the function.  Without this, function has external
- *   linkage with a strong symbol, so linker expects only one definition.
- * 
  * - NVTX_DYNAMIC_EXPORT - Make function an exported entry point from a
  *   dynamic library or shared object.
- * 
+ *
  * - NVTX_EXPORT_UNMANGLED_FUNCTION_NAME - When used inside the body of a
  *   function declared with NVTX_DYNAMIC_EXPORT, ensures the symbol exported
  *   for the function is the exact string of the function's name as written
@@ -187,11 +183,15 @@
  *   functions with the mangling applied.  Forcing the exports to avoid any
  *   mangling simplifies usage across platforms and from other languages.
  */
-#if defined(_MSC_VER)
+#if defined(_WIN32)
 
 #define NVTX_API __stdcall
-#define NVTX_INLINE_STATIC __inline static
+
+#if defined(_MSC_VER)
 #define NVTX_DYNAMIC_EXPORT __declspec(dllexport)
+#else
+#define NVTX_DYNAMIC_EXPORT __attribute__((visibility("default"))) __declspec(dllexport)
+#endif
 
 #if defined(_M_IX86) || defined(_M_ARM64EC)
 #define NVTX_EXPORT_UNMANGLED_FUNCTION_NAME _Pragma("comment(linker, \"/EXPORT:\" __FUNCTION__ \"=\" __FUNCDNAME__)")
@@ -199,19 +199,35 @@
 #define NVTX_EXPORT_UNMANGLED_FUNCTION_NAME
 #endif
 
-#else /* GCC-like compiler */
+#else /* POSIX-like platform */
 
 #define NVTX_API
+
+#define NVTX_DYNAMIC_EXPORT __attribute__((visibility("default")))
+
+#define NVTX_EXPORT_UNMANGLED_FUNCTION_NAME
+
+#endif /* Platform-dependent defines */
+
+/* Compiler-dependent defines:
+ *
+ * - NVTX_INLINE_STATIC - Ensure function has internal linkage, and suggest
+ *   avoiding code-gen of the function.  Without this, function has external
+ *   linkage with a strong symbol, so linker expects only one definition.
+ */
+#if defined(_MSC_VER)
+
+#define NVTX_INLINE_STATIC __inline static
+
+#else /* GCC-like compiler */
+
 #if defined(__cplusplus) || (defined(__STDC_VERSION__) && __STDC_VERSION__ >= 199901L)
 #define NVTX_INLINE_STATIC inline static
 #else
 #define NVTX_INLINE_STATIC __inline__ static
 #endif
-#define NVTX_DYNAMIC_EXPORT __attribute__((visibility("default")))
-#define NVTX_EXPORT_UNMANGLED_FUNCTION_NAME
 
-#endif /* Platform-dependent defines */
-
+#endif /* Compiler-dependent defines */
 
 
 /* API linkage/export options:
