@@ -58,7 +58,7 @@ NVTX_LINKONCE_DEFINE_FUNCTION void NVTX_EXT_MEM_VERSIONED_ID(nvtxExtMemInitOnce)
 {
     intptr_t* fnSlots = NVTX_EXT_MEM_VERSIONED_ID(nvtxExtMemSlots) + 1;
     nvtxExtModuleSegment_t segment = {
-        0, /* unused (only one segment) */
+        1, /* only one segment, hard-code ID */
         NVTX3EXT_CBID_MEM_FN_NUM,
         fnSlots
     };
@@ -80,14 +80,15 @@ NVTX_LINKONCE_DEFINE_FUNCTION void NVTX_EXT_MEM_VERSIONED_ID(nvtxExtMemInitOnce)
 #define NVTX_EXT_FN_IMPL(ret_type, fn_name, signature, arg_names) \
 typedef ret_type ( * fn_name##_impl_fntype )signature; \
     NVTX_DECLSPEC ret_type NVTX_API fn_name signature { \
-    intptr_t slot = NVTX_EXT_MEM_VERSIONED_ID(nvtxExtMemSlots)[NVTX3EXT_CBID_##fn_name + 1]; \
+    intptr_t* pSlot = &NVTX_EXT_MEM_VERSIONED_ID(nvtxExtMemSlots)[NVTX3EXT_CBID_##fn_name]; \
+    intptr_t slot = *pSlot; \
     if (slot != NVTX_EXTENSION_DISABLED) { \
         if (slot != NVTX_EXTENSION_FRESH) { \
             return (*(fn_name##_impl_fntype)slot) arg_names; \
         } else { \
             NVTX_EXT_MEM_VERSIONED_ID(nvtxExtMemInitOnce)(); \
             /* Re-read function slot after extension initialization. */ \
-            slot = NVTX_EXT_MEM_VERSIONED_ID(nvtxExtMemSlots)[NVTX3EXT_CBID_##fn_name + 1]; \
+            slot = *pSlot; \
             if (slot != NVTX_EXTENSION_DISABLED && slot != NVTX_EXTENSION_FRESH) { \
                 return (*(fn_name##_impl_fntype)slot) arg_names; \
             } \

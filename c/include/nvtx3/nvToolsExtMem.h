@@ -311,7 +311,7 @@ NVTX_DECLSPEC void NVTX_API nvtxMemHeapReset(
  * The regionHandleArrayOut arg points to an array where the tool will provide region handles. If
  * a pointer is provided, it is expected to have regionCount elements. This pointer can be NULL if
  * regionType is NVTX_MEM_TYPE_VIRTUAL_ADDRESS. In this case, the user can use the pointer to the
- * virtual memory to reference the region in other related functions which accept nvtMemRegionRef_t.
+ * virtual memory to reference the region in other related functions which accept nvtxMemRegionRef_t.
  */
 typedef struct nvtxMemRegionsRegisterBatch_v1
 {
@@ -353,7 +353,7 @@ NVTX_DECLSPEC void NVTX_API nvtxMemRegionsRegister(
  * The regionHandleArrayOut arg points to an array where the tool will provide region handles. If
  * a pointer if provided, it is expected to have regionCount elements. This pointer can be NULL if
  * regionType is NVTX_MEM_TYPE_VIRTUAL_ADDRESS. In this case, the user can use the pointer to the
- * virtual memory to reference the region in other related functions which accept nvtMemRegionRef_t.
+ * virtual memory to reference the region in other related functions which accept nvtxMemRegionRef_t.
  */
 typedef struct nvtxMemRegionsResizeBatch_v1
 {
@@ -396,7 +396,7 @@ NVTX_DECLSPEC void NVTX_API nvtxMemRegionsResize(
  * If a pointer if provided, it is expected to have regionCount elements.
  * This pointer can be NULL if regionType is NVTX_MEM_TYPE_VIRTUAL_ADDRESS.  In this case,
  * the user can use the pointer to the virtual memory to reference the region in other
- * related functions which accept a nvtMemRegionRef_t.
+ * related functions which accept a nvtxMemRegionRef_t.
  */
 typedef struct nvtxMemRegionsUnregisterBatch_v1
 {
@@ -671,12 +671,13 @@ typedef enum NvtxExtMemCallbackId
     NVTX3EXT_CBID_nvtxMemPermissionsBind               = 12,
     NVTX3EXT_CBID_nvtxMemPermissionsUnbind             = 13,
 
-    /* 14-16 in nvtExtImplMemCudaRt1.h */
+    /* 14-17 in nvtxExtImplMemCudaRt_v1.h */
     NVTX3EXT_CBID_nvtxMemCudaGetProcessWidePermissions = 14,
     NVTX3EXT_CBID_nvtxMemCudaGetDeviceWidePermissions  = 15,
     NVTX3EXT_CBID_nvtxMemCudaSetPeerAccess             = 16,
+    NVTX3EXT_CBID_nvtxMemCudaMarkInitialized           = 17,
 
-    NVTX3EXT_CBID_MEM_FN_NUM                           = 17
+    NVTX3EXT_CBID_MEM_FN_NUM                           = 18
 } NvtxExtMemCallbackId;
 
 #ifdef __GNUC__

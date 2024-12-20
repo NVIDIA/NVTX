@@ -17,6 +17,7 @@
  * Licensed under the Apache License v2.0 with LLVM Exceptions.
  * See https://nvidia.github.io/NVTX/LICENSE.txt for license information.
  */
+
 #ifndef NVTOOLSEXTV3_MEM_CUDART_V1
 #define NVTOOLSEXTV3_MEM_CUDART_V1
 
@@ -28,7 +29,6 @@
 #ifdef __cplusplus
 extern "C" {
 #endif /* __cplusplus */
-
 
 /** \brief The memory is from a CUDA runtime array.
  *
@@ -137,6 +137,46 @@ NVTX_DECLSPEC void NVTX_API nvtxMemCudaSetPeerAccess(
     nvtxMemPermissionsHandle_t permissions,
     int devicePeer, /* device number such as from cudaGetDevice() or NVTX_MEM_CUDA_PEER_ALL_DEVICES */
     uint32_t flags); /* NVTX_MEM_PERMISSIONS_REGION_FLAGS_* */
+
+/** \brief Mark memory ranges as initialized.
+*
+* The heap refers the the heap within which the region resides.
+* This can be from nvtxMemHeapRegister, NVTX_MEM_HEAP_HANDLE_PROCESS_WIDE, or one provided from other extension API.
+*
+* The regionType arg will define which type is used in regionDescArray.
+* The most commonly used type is NVTX_MEM_TYPE_VIRTUAL_ADDRESS.
+*
+* The regionCount arg is how many element are in regionDescArray and regionHandleArrayOut.
+*
+* The regionHandleArrayOut arg points to an array where the tool will provide region handles.
+* If a pointer if provided, it is expected to have regionCount elements.
+* This pointer can be NULL if regionType is NVTX_MEM_TYPE_VIRTUAL_ADDRESS.  In this case,
+* the user can use the pointer to the virtual memory to reference the region in other
+* related functions which accept a nvtxMemRegionRef_t.
+*/
+typedef struct nvtxMemMarkInitializedBatch_v1
+{
+    uint16_t extCompatID; /* Set to NVTX_EXT_COMPATID_MEM */
+    uint16_t structSize; /* Size of the structure. */
+
+    uint32_t regionType; /* NVTX_MEM_TYPE_* */
+
+    size_t regionDescCount;
+    size_t regionDescElementSize;
+    void const* regionDescElements; /* this will also become the handle for this region */
+
+} nvtxMemMarkInitializedBatch_v1;
+typedef nvtxMemMarkInitializedBatch_v1 nvtxMemMarkInitializedBatch_t;
+
+/** \brief Register a region of memory inside of a heap of linear process virtual memory
+*
+* stream is the CUDA stream where the range was accessed and initialized.
+*/
+NVTX_DECLSPEC void NVTX_API nvtxMemCudaMarkInitialized(
+    nvtxDomainHandle_t domain,
+    cudaStream_t stream,
+    uint8_t isPerThreadStream, /* 0 for false, otherwise true */
+    nvtxMemMarkInitializedBatch_t const* desc);
 
 /** @} */ /*END defgroup*/
 
