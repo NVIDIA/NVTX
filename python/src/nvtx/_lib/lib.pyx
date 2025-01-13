@@ -16,7 +16,7 @@
 # Licensed under the Apache License v2.0 with LLVM Exceptions.
 # See https://nvidia.github.io/NVTX/LICENSE.txt for license information.
 
-from libc.stdint cimport uint32_t
+from functools import lru_cache
 
 from nvtx._lib.lib cimport *
 from nvtx.colors import color_to_hex
@@ -117,6 +117,7 @@ class Domain:
         self.handle = DomainHandle(name)
         self.categories = {}
 
+    @lru_cache(maxsize=None)
     def get_category_id(self, name):
         """
         Returns the category ID corresponding to the category `name`.
@@ -124,15 +125,14 @@ class Domain:
         and the corresponding id.
         """
         cdef DomainHandle dh = self.handle
-        if name not in self.categories:
-            category_id = len(self.categories) + 1
-            self.categories[name] = category_id
-            nvtxDomainNameCategoryA(
-                dh.c_obj,
-                category_id,
-                _to_bytes(name)
-            )
-        return self.categories[name]
+        category_id = len(self.categories) + 1
+        self.categories[name] = category_id
+        nvtxDomainNameCategoryA(
+            dh.c_obj,
+            category_id,
+            _to_bytes(name)
+        )
+        return category_id
 
 cdef class StringHandle:
 
