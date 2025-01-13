@@ -20,7 +20,6 @@ from functools import lru_cache
 
 from nvtx._lib.lib cimport *
 from nvtx.colors import color_to_hex
-from nvtx.utils.cached import CachedInstanceMeta
 
 
 cpdef bytes _to_bytes(object s):
@@ -111,11 +110,22 @@ cdef class DomainHandle:
         nvtxDomainDestroy(self.c_obj)
 
 
+class RegisteredString:
+    def __init__(self, domain, string=None):
+        self.string = string
+        self.domain = domain
+        self.handle = StringHandle(domain, string)
+
+
 class Domain:
     def __init__(self, name=None):
         self.name = name
         self.handle = DomainHandle(name)
         self.categories = {}
+    
+    @lru_cache(maxsize=None)
+    def get_registered_string(self, string):
+        return RegisteredString(self.handle, string)
 
     @lru_cache(maxsize=None)
     def get_category_id(self, name):
@@ -150,12 +160,6 @@ cdef class StringHandle:
     def string(self):
         return self._string.decode()
 
-
-class RegisteredString(metaclass=CachedInstanceMeta):
-    def __init__(self, domain, string=None):
-        self.string = string
-        self.domain = domain
-        self.handle = StringHandle(domain, string)
 
 cdef class RangeId:
     """

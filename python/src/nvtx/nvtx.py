@@ -23,7 +23,6 @@ from functools import wraps, lru_cache
 
 from nvtx._lib import (
     Domain,
-    RegisteredString,
     EventAttributes,
     mark as libnvtx_mark,
     pop_range as libnvtx_pop_range,
@@ -93,7 +92,7 @@ class annotate:
         """
 
         self.domain = get_domain(domain)
-        message = RegisteredString(self.domain.handle, message)
+        message = self.domain.get_registered_string(message)
 
         category_id = None
         if isinstance(category, int):
@@ -123,9 +122,7 @@ class annotate:
 
     def __call__(self, func):
         if not self.attributes.message.string:
-            self.attributes.message = RegisteredString(
-                self.domain.handle, func.__name__
-            )
+            self.attributes.message = self.domain.get_registered_string(func.__name__)
 
         @wraps(func)
         def inner(*args, **kwargs):
@@ -162,7 +159,7 @@ def mark(message=None, color="blue", domain=None, category=None, payload=None):
             A numeric value to be associated with this event
     """
     domain = get_domain(domain)
-    message = RegisteredString(domain.handle, message)
+    message = domain.get_registered_string(message)
 
     category_id = None
     if isinstance(category, int):
@@ -207,7 +204,7 @@ def push_range(message=None, color="blue", domain=None, category=None, payload=N
     >>> nvtx.pop_range(domain="my_domain")
     """
     domain = get_domain(domain)
-    message = RegisteredString(domain.handle, message)
+    message = domain.get_registered_string(message)
 
     category_id = None
     if isinstance(category, int):
@@ -269,7 +266,7 @@ def start_range(message=None, color="blue", domain=None, category=None, payload=
     >>> nvtx.end_range(range_id, domain="my_domain")
     """
     domain = get_domain(domain)
-    message = RegisteredString(domain.handle, message)
+    message = domain.get_registered_string(message)
 
     category_id = None
     if isinstance(category, int):
