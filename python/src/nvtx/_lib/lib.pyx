@@ -111,7 +111,7 @@ cdef class DomainHandle:
         nvtxDomainDestroy(self.c_obj)
 
 
-class Domain(metaclass=CachedInstanceMeta):
+class Domain:
     def __init__(self, name=None):
         self.name = name
         self.handle = DomainHandle(name)

@@ -19,7 +19,7 @@
 import contextlib
 import os
 
-from functools import wraps
+from functools import wraps, lru_cache
 
 from nvtx._lib import (
     Domain,
@@ -33,6 +33,11 @@ from nvtx._lib import (
 )
 
 _ENABLED = not os.getenv("NVTX_DISABLE", False)
+
+
+@lru_cache(maxsize=None)
+def get_domain(name):
+    return Domain(name)
 
 
 class annotate:
@@ -87,7 +92,7 @@ class annotate:
         ...
         """
 
-        self.domain = Domain(domain)
+        self.domain = get_domain(domain)
         message = RegisteredString(self.domain.handle, message)
 
         category_id = None
@@ -156,7 +161,7 @@ def mark(message=None, color="blue", domain=None, category=None, payload=None):
     payload : int or float, optional
             A numeric value to be associated with this event
     """
-    domain = Domain(domain)
+    domain = get_domain(domain)
     message = RegisteredString(domain.handle, message)
 
     category_id = None
@@ -201,7 +206,7 @@ def push_range(message=None, color="blue", domain=None, category=None, payload=N
     >>> time.sleep(1)
     >>> nvtx.pop_range(domain="my_domain")
     """
-    domain = Domain(domain)
+    domain = get_domain(domain)
     message = RegisteredString(domain.handle, message)
 
     category_id = None
@@ -223,7 +228,7 @@ def pop_range(domain=None):
         The domain under which the code range is scoped. The default
         domain is "NVTX".
     """
-    libnvtx_pop_range(Domain(domain).handle)
+    libnvtx_pop_range(get_domain(domain).handle)
 
 
 def start_range(message=None, color="blue", domain=None, category=None, payload=None):
@@ -263,7 +268,7 @@ def start_range(message=None, color="blue", domain=None, category=None, payload=
     >>> time.sleep(1)
     >>> nvtx.end_range(range_id, domain="my_domain")
     """
-    domain = Domain(domain)
+    domain = get_domain(domain)
     message = RegisteredString(domain.handle, message)
 
     category_id = None
