@@ -143,6 +143,12 @@ class Domain:
             _to_bytes(name)
         )
         return category_id
+    
+    @lru_cache(maxsize=None)
+    def get_event_attributes(self, message=None, color='blue', category=None, payload=None):
+        if isinstance(category, str):
+            category = self.get_category_id(category)
+        return EventAttributes(self.get_registered_string(message), color, category, payload)
 
 cdef class StringHandle:
 
