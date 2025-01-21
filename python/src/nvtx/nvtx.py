@@ -19,12 +19,10 @@
 import contextlib
 import os
 
-from functools import wraps
+from functools import wraps, lru_cache
 
 from nvtx._lib import (
     Domain,
-    RegisteredString,
-    EventAttributes,
     mark as libnvtx_mark,
     pop_range as libnvtx_pop_range,
     push_range as libnvtx_push_range,
@@ -33,6 +31,11 @@ from nvtx._lib import (
 )
 
 _ENABLED = not os.getenv("NVTX_DISABLE", False)
+
+
+@lru_cache(maxsize=None)
+def get_domain(name):
+    return Domain(name)
 
 
 class annotate:
@@ -87,15 +90,8 @@ class annotate:
         ...
         """
 
-        self.domain = Domain(domain)
-        message = RegisteredString(self.domain.handle, message)
-
-        category_id = None
-        if isinstance(category, int):
-            category_id = category
-        elif isinstance(category, str):
-            category_id = self.domain.get_category_id(category)
-        self.attributes = EventAttributes(message, color, category_id, payload)
+        self.domain = get_domain(domain)
+        self.attributes = self.domain.get_event_attributes(message, color, category, payload)
 
     def __reduce__(self):
         return (
@@ -118,9 +114,7 @@ class annotate:
 
     def __call__(self, func):
         if not self.attributes.message.string:
-            self.attributes.message = RegisteredString(
-                self.domain.handle, func.__name__
-            )
+            self.attributes.message = self.domain.get_registered_string(func.__name__)
 
         @wraps(func)
         def inner(*args, **kwargs):
@@ -156,16 +150,8 @@ def mark(message=None, color="blue", domain=None, category=None, payload=None):
     payload : int or float, optional
             A numeric value to be associated with this event
     """
-    domain = Domain(domain)
-    message = RegisteredString(domain.handle, message)
-
-    category_id = None
-    if isinstance(category, int):
-        category_id = category
-    elif isinstance(category, str):
-        category_id = domain.get_category_id(category)
-    attributes = EventAttributes(message, color, category_id, payload)
-    libnvtx_mark(attributes, domain.handle)
+    domain = get_domain(domain)
+    libnvtx_mark(domain.get_event_attributes(message, color, category, payload), domain.handle)
 
 
 def push_range(message=None, color="blue", domain=None, category=None, payload=None):
@@ -201,15 +187,8 @@ def push_range(message=None, color="blue", domain=None, category=None, payload=N
     >>> time.sleep(1)
     >>> nvtx.pop_range(domain="my_domain")
     """
-    domain = Domain(domain)
-    message = RegisteredString(domain.handle, message)
-
-    category_id = None
-    if isinstance(category, int):
-        category_id = category
-    elif isinstance(category, str):
-        category_id = domain.get_category_id(category)
-    libnvtx_push_range(EventAttributes(message, color, category_id, payload),
+    domain = get_domain(domain)
+    libnvtx_push_range(domain.get_event_attributes(message, color, category, payload),
                        domain.handle)
 
 
@@ -223,7 +202,7 @@ def pop_range(domain=None):
         The domain under which the code range is scoped. The default
         domain is "NVTX".
     """
-    libnvtx_pop_range(Domain(domain).handle)
+    libnvtx_pop_range(get_domain(domain).handle)
 
 
 def start_range(message=None, color="blue", domain=None, category=None, payload=None):
@@ -263,17 +242,9 @@ def start_range(message=None, color="blue", domain=None, category=None, payload=
     >>> time.sleep(1)
     >>> nvtx.end_range(range_id, domain="my_domain")
     """
-    domain = Domain(domain)
-    message = RegisteredString(domain.handle, message)
-
-    category_id = None
-    if isinstance(category, int):
-        category_id = category
-    elif isinstance(category, str):
-        category_id = domain.get_category_id(category)
-    marker_id = libnvtx_start_range(
-        EventAttributes(message, color, category_id, payload), domain.handle)
-    return marker_id
+    domain = get_domain(domain)
+    return libnvtx_start_range(
+        domain.get_event_attributes(message, color, category, payload), domain.handle)
 
 
 def end_range(range_id):

@@ -121,11 +121,11 @@ def test_pickle_annotate():
 
 
 def test_domain_reuse():
-    a = nvtx._lib.Domain("x")
-    b = nvtx._lib.Domain("x")
+    a = nvtx.get_domain("x")
+    b = nvtx.get_domain("x")
     assert a is b
 
-    c = nvtx._lib.Domain("y")
+    c = nvtx.get_domain("y")
     assert a is not c
 
 

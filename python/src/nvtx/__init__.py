@@ -23,7 +23,8 @@ from nvtx.nvtx import (
     push_range,
     start_range,
     end_range,
-    mark
+    mark,
+    get_domain,
 )
 
 from nvtx._lib.profiler import Profile

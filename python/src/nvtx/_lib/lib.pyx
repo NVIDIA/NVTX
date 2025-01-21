@@ -16,11 +16,10 @@
 # Licensed under the Apache License v2.0 with LLVM Exceptions.
 # See https://nvidia.github.io/NVTX/LICENSE.txt for license information.
 
-from libc.stdint cimport uint32_t
+from functools import lru_cache
 
 from nvtx._lib.lib cimport *
 from nvtx.colors import color_to_hex
-from nvtx.utils.cached import CachedInstanceMeta
 
 
 cpdef bytes _to_bytes(object s):
@@ -111,12 +110,24 @@ cdef class DomainHandle:
         nvtxDomainDestroy(self.c_obj)
 
 
-class Domain(metaclass=CachedInstanceMeta):
+class RegisteredString:
+    def __init__(self, domain, string=None):
+        self.string = string
+        self.domain = domain
+        self.handle = StringHandle(domain, string)
+
+
+class Domain:
     def __init__(self, name=None):
         self.name = name
         self.handle = DomainHandle(name)
         self.categories = {}
+    
+    @lru_cache(maxsize=None)
+    def get_registered_string(self, string):
+        return RegisteredString(self.handle, string)
 
+    @lru_cache(maxsize=None)
     def get_category_id(self, name):
         """
         Returns the category ID corresponding to the category `name`.
@@ -124,15 +135,20 @@ class Domain(metaclass=CachedInstanceMeta):
         and the corresponding id.
         """
         cdef DomainHandle dh = self.handle
-        if name not in self.categories:
-            category_id = len(self.categories) + 1
-            self.categories[name] = category_id
-            nvtxDomainNameCategoryA(
-                dh.c_obj,
-                category_id,
-                _to_bytes(name)
-            )
-        return self.categories[name]
+        category_id = len(self.categories) + 1
+        self.categories[name] = category_id
+        nvtxDomainNameCategoryA(
+            dh.c_obj,
+            category_id,
+            _to_bytes(name)
+        )
+        return category_id
+    
+    @lru_cache(maxsize=None)
+    def get_event_attributes(self, message=None, color='blue', category=None, payload=None):
+        if isinstance(category, str):
+            category = self.get_category_id(category)
+        return EventAttributes(self.get_registered_string(message), color, category, payload)
 
 cdef class StringHandle:
 
@@ -150,12 +166,6 @@ cdef class StringHandle:
     def string(self):
         return self._string.decode()
 
-
-class RegisteredString(metaclass=CachedInstanceMeta):
-    def __init__(self, domain, string=None):
-        self.string = string
-        self.domain = domain
-        self.handle = StringHandle(domain, string)
 
 cdef class RangeId:
     """
