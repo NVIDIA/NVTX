@@ -34,7 +34,7 @@ _ENABLED = not os.getenv("NVTX_DISABLE", False)
 
 
 @lru_cache(maxsize=None)
-def get_domain(name):
+def get_domain(name=None):
     return Domain(name)
 
 
