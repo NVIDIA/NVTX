@@ -21,6 +21,7 @@ import pickle
 import pytest
 
 import nvtx
+from nvtx.nvtx import dummy_domain
 
 
 @pytest.mark.parametrize(
@@ -115,18 +116,11 @@ def test_pickle_annotate():
     pickled = pickle.dumps(orig)
     unpickled = pickle.loads(pickled)
 
-    assert orig.attributes.message == unpickled.attributes.message
-    assert orig.attributes.color == unpickled.attributes.color
-    assert orig.domain == unpickled.domain
+    assert orig.init_args == unpickled.init_args
 
 
-def test_domain_reuse():
-    a = nvtx.get_domain("x")
-    b = nvtx.get_domain("x")
-    assert a is b
-
-    c = nvtx.get_domain("y")
-    assert a is not c
+def test_disabled_domain():
+    assert nvtx.get_domain("x") is dummy_domain
 
 
 @pytest.mark.parametrize(
@@ -174,15 +168,6 @@ def test_domain_reuse():
 def test_categories_basic(message, color, domain, category):
     with nvtx.annotate(message=message, domain=domain, category=category):
         pass
-
-
-def test_get_category_id():
-    dom = nvtx._lib.Domain("foo")
-    id1 = dom.get_category_id("bar")
-    id2 = dom.get_category_id("bar")
-    assert id1 == id2
-    id3 = dom.get_category_id("baz")
-    assert id2 != id3
 
 
 @pytest.mark.parametrize(
@@ -325,11 +310,8 @@ def test_mark(message, color, domain, category, payload):
     domain.mark(attributes)
 
 
-def test_annotation_gets_name_from_func():
-    # GH #86: test that annotate() with no arguments
-    # uses the name of the function as the message
-    ann = nvtx.annotate()
+def test_domain_disabled_no_func_annotation():
     def foo():
         pass
-    ann(foo)
-    assert ann.attributes.message.string == "foo"
+
+    assert nvtx.annotate()(foo) is foo

@@ -106,6 +106,9 @@ cdef class DomainHandle:
     def name(self):
         return self._name.decode()
 
+    def enabled(self):
+        return bool(nvtxDomainIsEnabled(self.c_obj))
+
     def __dealloc__(self):
         nvtxDomainDestroy(self.c_obj)
 
@@ -116,13 +119,48 @@ class RegisteredString:
         self.domain = domain
         self.handle = StringHandle(domain, string)
 
+class DummyDomain:
+    def get_registered_string(self, string):
+        pass
+
+    def get_category_id(self, name):
+        pass
+    
+    def get_event_attributes(self, message=None, color=None, category=None, payload=None):
+        pass
+
+    def mark(self, EventAttributes attributes):
+        pass
+
+    def push_range(self, EventAttributes attributes):
+        pass
+
+    def pop_range(self):
+        pass
+
+    def start_range(self, EventAttributes attributes):
+        return 0
+
+    def end_range(self, nvtxRangeId_t range_id):
+        pass
+
+
+dummy_domain = DummyDomain()
 
 class Domain:
+    def __new__(cls, name=None):
+        handle = DomainHandle(name)
+        if handle.enabled():
+            obj = super().__new__(cls)
+            obj.handle = handle
+            return obj
+        else:
+            return dummy_domain
+
     def __init__(self, name=None):
         self.name = name
-        self.handle = DomainHandle(name)
         self.categories = {}
-    
+
     @lru_cache(maxsize=None)
     def get_registered_string(self, string):
         return RegisteredString(self.handle, string)
