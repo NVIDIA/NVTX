@@ -925,8 +925,8 @@ NVTX_DECLSPEC void NVTX_API nvtxRangeEnd(nvtxRangeId_t id);
 * eventAttrib.message.unicode = L"Level 1";
 * nvtxDomainRangePushEx(domain, &eventAttrib);
 *
-* nvtxDomainRangePop(domain); //level 1
-* nvtxDomainRangePop(domain); //level 0
+* nvtxDomainRangePop(domain); // Level 1
+* nvtxDomainRangePop(domain); // Level 0
 * \endcode
 *
 * \sa
@@ -962,8 +962,8 @@ NVTX_DECLSPEC int NVTX_API nvtxDomainRangePushEx(nvtxDomainHandle_t domain, cons
  * eventAttrib.message.unicode = L"Level 1";
  * nvtxRangePushEx(&eventAttrib);
  *
- * nvtxRangePop();
- * nvtxRangePop();
+ * nvtxRangePop(); // Level 1
+ * nvtxRangePop(); // Level 0
  * \endcode
  *
  * \sa
@@ -987,8 +987,8 @@ NVTX_DECLSPEC int NVTX_API nvtxRangePushEx(const nvtxEventAttributes_t* eventAtt
  * \code
  * nvtxRangePushA("Level 0");
  * nvtxRangePushW(L"Level 1");
- * nvtxRangePop();
- * nvtxRangePop();
+ * nvtxRangePop(); // Level 1
+ * nvtxRangePop(); // Level 0
  * \endcode
  *
  * \sa
@@ -1010,11 +1010,23 @@ NVTX_DECLSPEC int NVTX_API nvtxRangePushW(const wchar_t* message);
 *
 * \par Example:
 * \code
-* nvtxDomainHandle_t domain = nvtxDomainCreate("example library");
-* nvtxDomainRangePushA(domain, "Level 0");
-* nvtxDomainRangePushW(domain, L"Level 1");
-* nvtxDomainRangePop(domain);
-* nvtxDomainRangePop(domain);
+* nvtxDomainHandle_t domain = nvtxDomainCreateA("example domain");
+* nvtxEventAttributes_t eventAttrib = {0};
+* eventAttrib.version = NVTX_VERSION;
+* eventAttrib.size = NVTX_EVENT_ATTRIB_STRUCT_SIZE;
+* eventAttrib.colorType = NVTX_COLOR_ARGB;
+* eventAttrib.color = 0xFFFF0000;
+* eventAttrib.messageType = NVTX_MESSAGE_TYPE_ASCII;
+* eventAttrib.message.ascii = "Level 0";
+* nvtxDomainRangePushEx(domain, &eventAttrib);
+*
+* // Re-use eventAttrib
+* eventAttrib.messageType = NVTX_MESSAGE_TYPE_UNICODE;
+* eventAttrib.message.unicode = L"Level 1";
+* nvtxDomainRangePushEx(domain, &eventAttrib);
+*
+* nvtxDomainRangePop(domain); // Level 1
+* nvtxDomainRangePop(domain); // Level 0
 * \endcode
 *
 * \sa
@@ -1037,8 +1049,8 @@ NVTX_DECLSPEC int NVTX_API nvtxDomainRangePop(nvtxDomainHandle_t domain);
  * \code
  * nvtxRangePushA("Level 0");
  * nvtxRangePushW(L"Level 1");
- * nvtxRangePop();
- * nvtxRangePop();
+ * nvtxRangePop(); // Level 1
+ * nvtxRangePop(); // Level 0
  * \endcode
  *
  * \sa
