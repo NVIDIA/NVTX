@@ -57,7 +57,7 @@
         #define NVTX_LINKONCE_DEFINE_FUNCTION extern "C" inline
     #else
         #define NVTX_LINKONCE_DEFINE_GLOBAL   __declspec(selectany)
-        #define NVTX_LINKONCE_DEFINE_FUNCTION __inline
+        #define NVTX_LINKONCE_DEFINE_FUNCTION
     #endif
     #define NVTX_LINKONCE_FWDDECL_GLOBAL      extern
 #else /* All others: Assume GCC, clang, or compatible */
