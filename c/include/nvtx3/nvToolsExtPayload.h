@@ -149,7 +149,7 @@
 
 /** \todo: Keep this in the header? */
 /**
- * @note The ‘array’ flags assume that the array is embedded. Otherwise,
+ * @note The 'array' flags assume that the array is embedded. Otherwise,
  * @ref NVTX_PAYLOAD_ENTRY_FLAG_POINTER has to be additionally specified. Some
  * combinations may be invalid based on the `NVTX_PAYLOAD_SCHEMA_TYPE_*` this
  * entry is enclosed. For instance, variable length embedded arrays are valid
@@ -834,8 +834,8 @@ typedef struct nvtxScopeAttr_v1
      *
      * A GPU can be specified using its
      * - unique identifier (UUID) with "GPU[UUID:#]",
-     * - CUDA device ID (sensitive to CUDA_VISIBLE_DEVICES) with "GPU[CUDAID:#]”,
-     * - NVML (nvidia-smi) device ID with “GPU[NVSMI:#]”
+     * - CUDA device ID (sensitive to CUDA_VISIBLE_DEVICES) with "GPU[CUDAID:#]",
+     * - NVML (nvidia-smi) device ID with "GPU[NVSMI:#]"
      * (replace `#` with the actual device ID).
      * For display purposes, a tool is recommended to show a pretty name.
      */

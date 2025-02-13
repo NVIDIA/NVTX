@@ -108,7 +108,7 @@ typedef struct nvtxCounterAttr_v1
 
     /**
      * A static counter ID must be unique within the domain,
-   	 * >= NVTX_COUNTER_ID_STATIC_START, and < NVTX_COUNTER_ID_DYNAMIC_START.
+     * >= NVTX_COUNTER_ID_STATIC_START, and < NVTX_COUNTER_ID_DYNAMIC_START.
      * Use NVTX_COUNTER_ID_NONE to let the tool create a (dynamic) counter ID.
      */
     uint64_t counterId;

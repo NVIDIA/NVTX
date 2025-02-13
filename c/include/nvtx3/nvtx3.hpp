@@ -570,7 +570,7 @@
  * static_assert) than the compiler would produce otherwise.  These compilers
  * will generate errors while compiling this file such as:
  *
- *  error: ‘name’ is not a member of ‘nvtx3::v1::domain::global’
+ *  error: 'name' is not a member of 'nvtx3::v1::domain::global'
  *
  * The following compiler versions are known to have this problem, and so are
  * set by default to disable the SFINAE-based checks:
