@@ -35,6 +35,7 @@
 #define NVTX_DLLOPEN(x) LoadLibraryW(x)
 #define NVTX_DLLFUNC    GetProcAddress
 #define NVTX_DLLCLOSE   FreeLibrary
+#define NVTX_DLLDEFAULT (NVTX_DLLHANDLE)0
 #define NVTX_YIELD()    SwitchToThread()
 #define NVTX_MEMBAR()   MemoryBarrier()
 #define NVTX_ATOMIC_WRITE_32(address, value)                        InterlockedExchange((volatile LONG*)address, value)
@@ -48,6 +49,11 @@
 #define NVTX_DLLOPEN(x) dlopen(x, RTLD_LAZY)
 #define NVTX_DLLFUNC    dlsym
 #define NVTX_DLLCLOSE   dlclose
+#if !defined(__APPLE__)
+#define NVTX_DLLDEFAULT (NVTX_DLLHANDLE)0
+#else
+#define NVTX_DLLDEFAULT RTLD_DEFAULT
+#endif
 #define NVTX_YIELD()    sched_yield()
 #define NVTX_MEMBAR()   __sync_synchronize()
 /* Ensure full memory barrier for atomics, to match Windows functions */
@@ -230,7 +236,7 @@ NVTX_LINKONCE_DEFINE_FUNCTION int NVTX_VERSIONED_IDENTIFIER(nvtxInitializeInject
     static const char initFuncPreinjectName[] = "InitializeInjectionNvtx2Preinject";
 #endif
     NvtxInitializeInjectionNvtxFunc_t init_fnptr = (NvtxInitializeInjectionNvtxFunc_t)0;
-    NVTX_DLLHANDLE injectionLibraryHandle = (NVTX_DLLHANDLE)0;
+    NVTX_DLLHANDLE injectionLibraryHandle = NVTX_DLLDEFAULT;
     int entryPointStatus = 0;
 
 #if NVTX_SUPPORT_DYNAMIC_INJECTION_LIBRARY
@@ -364,7 +370,7 @@ NVTX_LINKONCE_DEFINE_FUNCTION int NVTX_VERSIONED_IDENTIFIER(nvtxInitializeInject
     if (!init_fnptr)
     {
         /* Use POSIX global symbol chain to query for init function from any module */
-        init_fnptr = (NvtxInitializeInjectionNvtxFunc_t)NVTX_DLLFUNC(0, initFuncPreinjectName);
+        init_fnptr = (NvtxInitializeInjectionNvtxFunc_t)NVTX_DLLFUNC(NVTX_DLLDEFAULT, initFuncPreinjectName);
     }
 #endif
 
