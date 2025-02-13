@@ -85,7 +85,7 @@
 *       - Check for env var NVTX_INJECTION64_PATH (or "32" in 32-bit process)
 *         - Treat env var value as path to dynamic library, try loading it
 *         - If it loads, try get the exported symbol "InitializeInjectionNvtx2"
-*         - If this returns a non-null pointer, the search finishes here 
+*         - If this returns a non-null pointer, the search finishes here
 *       - (Android only) Look for libNvtxInjection64.so (or "32" in 32-bit process)
 *         - Must be in the /data/data/<package name>/files" directory
 *         - Treat env var value as path to dynamic library, try loading it
@@ -115,7 +115,7 @@
 *       - Check for env var NVTX_INJECTION64_PATH (or "32" in 32-bit process)
 *         - Treat env var value as path to dynamic library, try loading it
 *         - If it loads, try get the exported symbol "InitializeInjectionNvtx2"
-*         - If this returns a non-null pointer, the search finishes here 
+*         - If this returns a non-null pointer, the search finishes here
 *       - (Android only) Look for libNvtxInjection64.so (or "32" in 32-bit process)
 *         - Must be in the /data/data/<package name>/files" directory
 *         - Treat env var value as path to dynamic library, try loading it

@@ -238,11 +238,11 @@
  *   definition linker errors.  An optimizing compiler should inline these
  *   implementations, ensuring that the overhead of making an NVTX call is as
  *   low as possible, even without enabling link-time optimizations.
- * 
+ *
  * - NVTX_NO_IMPL - Use when writing NVTX tools.  If this macro is defined,
  *   the NVTX headers will provide all the typedefs, macros, and declarations
  *   of API functions (not marked inline), but no function implementations.
- * 
+ *
  * - NVTX_EXPORT_API - NVTX is normally used in C/C++ applications by simply
  *   including the headers.  There is no need to link with a static library,
  *   or to ship a dynamic library with the application (this was changed in
@@ -313,7 +313,7 @@
 
 /* Platform-dependent helpers for defining global variables in header files.
  * Ensures the linker uses only one instance when multiple source files include
- * the headers, avoiding duplicate-definition linker errors. */ 
+ * the headers, avoiding duplicate-definition linker errors. */
 #include "nvtxDetail/nvtxLinkOnce.h"
 
 /* Macros for applying major-version-specific suffix to NVTX global symbols, so
