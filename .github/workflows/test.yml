@@ -1,6 +1,13 @@
 name: Test
 
-on: [pull_request, merge_group]
+on:
+  push:
+    branches:
+    - dev
+    - release-v3
+    - test-*
+  pull_request: {}
+  merge_group: {}
 
 jobs:
   test-ubuntu-24-04:
