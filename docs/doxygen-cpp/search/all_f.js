@@ -1,5 +1,4 @@
 var searchData=
 [
-  ['_7escoped_5frange_5fin_0',['~scoped_range_in',['../classnvtx3_1_1v1_1_1scoped__range__in.html#aebf31fd1548c4bf5196332db9ee90fb1',1,'nvtx3::v1::scoped_range_in']]],
-  ['_7eunique_5frange_5fin_1',['~unique_range_in',['../classnvtx3_1_1v1_1_1unique__range__in.html#a931bde31ac0aeb60e8f3050a29c60f83',1,'nvtx3::v1::unique_range_in']]]
+  ['value_5ftype_0',['value_type',['../classnvtx3_1_1v1_1_1color.html#a6327e421cdd233398693a2804aea942f',1,'nvtx3::v1::color::value_type'],['../structnvtx3_1_1v1_1_1range__handle.html#a77be25af5cf21fde96c18bf30727f109',1,'nvtx3::v1::range_handle::value_type']]]
 ];
