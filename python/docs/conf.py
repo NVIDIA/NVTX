@@ -18,11 +18,11 @@
 # -- Project information -----------------------------------------------------
 
 project = "nvtx"
-copyright = "2020-2022, NVIDIA Corporation"
+copyright = "2020-2025, NVIDIA Corporation"
 author = "NVIDIA Corporation"
 
 # The full version, including alpha/beta/rc tags
-release = "0.2.5"
+release = "0.2.11"
 
 
 # -- General configuration ---------------------------------------------------
