@@ -1,46 +1,55 @@
 /*
-* Copyright 2009-2022  NVIDIA Corporation.  All rights reserved.
-*
-* Licensed under the Apache License v2.0 with LLVM Exceptions.
-* See https://llvm.org/LICENSE.txt for license information.
-* SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception
-*/
+ * SPDX-FileCopyrightText: Copyright (c) 2009-2025 NVIDIA CORPORATION & AFFILIATES. All rights reserved.
+ * SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *
+ * Licensed under the Apache License v2.0 with LLVM Exceptions.
+ * See https://nvidia.github.io/NVTX/LICENSE.txt for license information.
+ */
 
 #ifndef NVTX_IMPL_GUARD
 #error Never include this file directly -- it is automatically included by nvToolsExt.h (except when NVTX_NO_IMPL is defined).
 #endif
 
+#include <stdlib.h>
+#include <stdio.h>
+#include <string.h>
+#include <wchar.h>
+
 /* ---- Include required platform headers ---- */
 
-#if defined(_WIN32) 
+#if defined(_WIN32)
 
-#include <Windows.h>
+#include <windows.h>
 
 #else
 #include <unistd.h>
 
 #if defined(__ANDROID__)
-#include <android/api-level.h> 
+#include <android/api-level.h>
 #endif
 
 #if defined(__linux__) || defined(__CYGWIN__)
 #include <sched.h>
 #endif
 
+#include <sys/types.h>
 #include <limits.h>
 #include <dlfcn.h>
 #include <fcntl.h>
-#include <stdlib.h>
-#include <stdio.h>
-#include <sys/types.h>
-#include <unistd.h>
 #include <errno.h>
-
-#include <string.h>
-#include <sys/types.h>
 #include <pthread.h>
-#include <stdlib.h>
-#include <wchar.h>
 
 #endif
 
@@ -136,8 +145,8 @@ typedef struct nvtxGlobals_t
     nvtxNameClEventA_fakeimpl_fntype nvtxNameClEventA_impl_fnptr;
     nvtxNameClEventW_fakeimpl_fntype nvtxNameClEventW_impl_fnptr;
 
-    nvtxNameCudaDeviceA_impl_fntype nvtxNameCudaDeviceA_impl_fnptr;
-    nvtxNameCudaDeviceW_impl_fntype nvtxNameCudaDeviceW_impl_fnptr;
+    nvtxNameCudaDeviceA_fakeimpl_fntype nvtxNameCudaDeviceA_impl_fnptr;
+    nvtxNameCudaDeviceW_fakeimpl_fntype nvtxNameCudaDeviceW_impl_fnptr;
     nvtxNameCudaStreamA_fakeimpl_fntype nvtxNameCudaStreamA_impl_fnptr;
     nvtxNameCudaStreamW_fakeimpl_fntype nvtxNameCudaStreamW_impl_fnptr;
     nvtxNameCudaEventA_fakeimpl_fntype nvtxNameCudaEventA_impl_fnptr;
@@ -159,12 +168,12 @@ typedef struct nvtxGlobals_t
     nvtxDomainDestroy_impl_fntype nvtxDomainDestroy_impl_fnptr;
     nvtxInitialize_impl_fntype nvtxInitialize_impl_fnptr;
 
-    nvtxDomainSyncUserCreate_impl_fntype nvtxDomainSyncUserCreate_impl_fnptr;
-    nvtxDomainSyncUserDestroy_impl_fntype nvtxDomainSyncUserDestroy_impl_fnptr;
-    nvtxDomainSyncUserAcquireStart_impl_fntype nvtxDomainSyncUserAcquireStart_impl_fnptr;
-    nvtxDomainSyncUserAcquireFailed_impl_fntype nvtxDomainSyncUserAcquireFailed_impl_fnptr;
-    nvtxDomainSyncUserAcquireSuccess_impl_fntype nvtxDomainSyncUserAcquireSuccess_impl_fnptr;
-    nvtxDomainSyncUserReleasing_impl_fntype nvtxDomainSyncUserReleasing_impl_fnptr;
+    nvtxDomainSyncUserCreate_fakeimpl_fntype nvtxDomainSyncUserCreate_impl_fnptr;
+    nvtxDomainSyncUserDestroy_fakeimpl_fntype nvtxDomainSyncUserDestroy_impl_fnptr;
+    nvtxDomainSyncUserAcquireStart_fakeimpl_fntype nvtxDomainSyncUserAcquireStart_impl_fnptr;
+    nvtxDomainSyncUserAcquireFailed_fakeimpl_fntype nvtxDomainSyncUserAcquireFailed_impl_fnptr;
+    nvtxDomainSyncUserAcquireSuccess_fakeimpl_fntype nvtxDomainSyncUserAcquireSuccess_impl_fnptr;
+    nvtxDomainSyncUserReleasing_fakeimpl_fntype nvtxDomainSyncUserReleasing_impl_fnptr;
 
     /* Tables of function pointers -- Extra null added to the end to ensure
     *  a crash instead of silent corruption if a tool reads off the end. */
