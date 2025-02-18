@@ -23,6 +23,7 @@ from functools import wraps, lru_cache
 
 from nvtx._lib import (
     Domain,
+    dummy_domain,
     mark as libnvtx_mark,
     pop_range as libnvtx_pop_range,
     push_range as libnvtx_push_range,
@@ -90,29 +91,27 @@ class annotate:
         ...
         """
 
+        self.init_args = message, color, domain, category, payload
         self.domain = get_domain(domain)
-        self.attributes = self.domain.get_event_attributes(message, color, category, payload)
+        if self.domain is not dummy_domain:
+            self.attributes = self.domain.get_event_attributes(message, color, category, payload)
 
     def __reduce__(self):
-        return (
-            self.__class__,
-            (
-                self.attributes.message.string,
-                self.attributes.color,
-                self.domain.name,
-                self.attributes.category,
-            ),
-        )
+        return self.__class__, self.init_args
 
     def __enter__(self):
-        libnvtx_push_range(self.attributes, self.domain.handle)
+        if self.domain is not dummy_domain:
+            libnvtx_push_range(self.attributes, self.domain.handle)
         return self
 
-    def __exit__(self, *exc):
-        libnvtx_pop_range(self.domain.handle)
+    def __exit__(self, exc_type, exc_value, traceback):
+        if self.domain is not dummy_domain:
+            libnvtx_pop_range(self.domain.handle)
         return False
 
     def __call__(self, func):
+        if self.domain is dummy_domain:
+            return func
         if not self.attributes.message.string:
             self.attributes.message = self.domain.get_registered_string(func.__name__)
 
@@ -151,7 +150,8 @@ def mark(message=None, color="blue", domain=None, category=None, payload=None):
             A numeric value to be associated with this event
     """
     domain = get_domain(domain)
-    libnvtx_mark(domain.get_event_attributes(message, color, category, payload), domain.handle)
+    if domain is not dummy_domain:
+        libnvtx_mark(domain.get_event_attributes(message, color, category, payload), domain.handle)
 
 
 def push_range(message=None, color="blue", domain=None, category=None, payload=None):
@@ -188,8 +188,9 @@ def push_range(message=None, color="blue", domain=None, category=None, payload=N
     >>> nvtx.pop_range(domain="my_domain")
     """
     domain = get_domain(domain)
-    libnvtx_push_range(domain.get_event_attributes(message, color, category, payload),
-                       domain.handle)
+    if domain is not dummy_domain:
+        libnvtx_push_range(domain.get_event_attributes(message, color, category, payload),
+                           domain.handle)
 
 
 def pop_range(domain=None):
@@ -202,7 +203,9 @@ def pop_range(domain=None):
         The domain under which the code range is scoped. The default
         domain is "NVTX".
     """
-    libnvtx_pop_range(get_domain(domain).handle)
+    domain = get_domain(domain)
+    if domain is not dummy_domain:
+        libnvtx_pop_range(domain.handle)
 
 
 def start_range(message=None, color="blue", domain=None, category=None, payload=None):
@@ -244,8 +247,9 @@ def start_range(message=None, color="blue", domain=None, category=None, payload=
     >>> nvtx.end_range(range_id, domain="my_domain")
     """
     domain = get_domain(domain)
-    return libnvtx_start_range(
-        domain.get_event_attributes(message, color, category, payload), domain.handle)
+    if domain is not dummy_domain:
+        return libnvtx_start_range(
+            domain.get_event_attributes(message, color, category, payload), domain.handle)
 
 
 def end_range(range_id):
@@ -257,7 +261,8 @@ def end_range(range_id):
     range_id : tuple of int
         The tuple object returned by `start_range`.
     """
-    libnvtx_end_range(*range_id)
+    if range_id is not None:
+        libnvtx_end_range(*range_id)
 
 
 def enabled():

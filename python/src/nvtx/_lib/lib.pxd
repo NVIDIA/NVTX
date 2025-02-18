@@ -16,7 +16,7 @@
 # Licensed under the Apache License v2.0 with LLVM Exceptions.
 # See https://nvidia.github.io/NVTX/LICENSE.txt for license information.
 
-from libc.stdint cimport uint16_t, uint32_t, uint64_t, int32_t, int64_t
+from libc.stdint cimport uint8_t, uint16_t, uint32_t, uint64_t, int32_t, int64_t
 from libc.stddef cimport wchar_t
 
 cdef extern from "nvtx3/nvToolsExt.h" nogil:
@@ -115,6 +115,9 @@ cdef extern from "nvtx3/nvToolsExt.h" nogil:
         uint32_t category,
         const char* name
     )
+
+cdef extern from "nvtx3/nvToolsExtPayload.h" nogil:
+    cdef uint8_t nvtxDomainIsEnabled(nvtxDomainHandle_t domain)
 
 
 cdef class EventAttributes:
