@@ -34,7 +34,7 @@ _ENABLED = not os.getenv("NVTX_DISABLE", False)
 
 
 @lru_cache(maxsize=None)
-def get_domain(name):
+def get_domain(name=None):
     return Domain(name)
 
 
@@ -232,7 +232,8 @@ def start_range(message=None, color="blue", domain=None, category=None, payload=
 
     Returns
     -------
-    An object of type `RangeId` that must be passed to the `end_range()` function.
+    tuple of int:
+        A tuple of the form (range_id, domain_handle) that must be passed to `end_range`.
 
     Examples
     --------
@@ -253,10 +254,10 @@ def end_range(range_id):
 
     Parameters
     ----------
-    range_id : RangeId
-        The `RangeId` object returned by the `start_range` function.
+    range_id : tuple of int
+        The tuple object returned by `start_range`.
     """
-    libnvtx_end_range(range_id)
+    libnvtx_end_range(*range_id)
 
 
 def enabled():

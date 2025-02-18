@@ -133,7 +133,3 @@ cdef class DomainHandle:
 cdef class StringHandle:
     cdef bytes _string
     cdef nvtxStringHandle_t c_obj
-
-cdef class RangeId:
-    cdef nvtxRangeId_t c_obj
-    cdef DomainHandle domain

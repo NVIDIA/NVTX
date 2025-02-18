@@ -143,12 +143,27 @@ class Domain:
             _to_bytes(name)
         )
         return category_id
-    
+
     @lru_cache(maxsize=None)
     def get_event_attributes(self, message=None, color='blue', category=None, payload=None):
         if isinstance(category, str):
             category = self.get_category_id(category)
         return EventAttributes(self.get_registered_string(message), color, category, payload)
+
+    def mark(self, EventAttributes attributes):
+        nvtxDomainMarkEx((<DomainHandle>self.handle).c_obj, &attributes.c_obj)
+
+    def push_range(self, EventAttributes attributes):
+        nvtxDomainRangePushEx((<DomainHandle>self.handle).c_obj, &attributes.c_obj)
+
+    def pop_range(self):
+        nvtxDomainRangePop((<DomainHandle>self.handle).c_obj)
+
+    def start_range(self, EventAttributes attributes):
+        return nvtxDomainRangeStartEx((<DomainHandle>self.handle).c_obj, &attributes.c_obj)
+
+    def end_range(self, nvtxRangeId_t range_id):
+        nvtxDomainRangeEnd((<DomainHandle>self.handle).c_obj, range_id)
 
 cdef class StringHandle:
 
@@ -167,15 +182,6 @@ cdef class StringHandle:
         return self._string.decode()
 
 
-cdef class RangeId:
-    """
-    Handle to code range created using start_range()
-    """
-    def __cinit__(self, nvtxRangeId_t range_id, DomainHandle domain):
-        self.c_obj = range_id
-        self.domain = domain
-
-
 def push_range(EventAttributes attributes, DomainHandle domain):
     nvtxDomainRangePushEx(domain.c_obj, &attributes.c_obj)
 
@@ -185,13 +191,11 @@ def pop_range(DomainHandle domain):
 
 
 def start_range(EventAttributes attributes, DomainHandle domain):
-    cdef nvtxRangeId_t c_rng_id = nvtxDomainRangeStartEx(domain.c_obj, &attributes.c_obj)
-    rng_id = RangeId(c_rng_id, domain)
-    return rng_id
+    return nvtxDomainRangeStartEx(domain.c_obj, &attributes.c_obj), domain
 
 
-def end_range(RangeId range_id):
-    nvtxDomainRangeEnd(range_id.domain.c_obj, range_id.c_obj)
+def end_range(nvtxRangeId_t range_id, DomainHandle domain):
+    nvtxDomainRangeEnd(domain.c_obj, range_id)
 
 
 def mark(EventAttributes attributes, DomainHandle domain):

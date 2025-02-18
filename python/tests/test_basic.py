@@ -225,6 +225,10 @@ def test_get_category_id():
 def test_start_end(message, color, domain, category, payload):
     rng = nvtx.start_range(message, color, domain, category, payload)
     nvtx.end_range(rng)
+    
+    domain = nvtx.get_domain(domain)
+    attributes = domain.get_event_attributes(message, color, category, payload)
+    domain.end_range(domain.start_range(attributes))
 
 
 
@@ -269,7 +273,11 @@ def test_start_end(message, color, domain, category, payload):
 def test_push_pop(message, color, domain, category, payload):
     nvtx.push_range(message, color, domain, category, payload)
     nvtx.pop_range()
-    
+
+    domain = nvtx.get_domain(domain)
+    attributes = domain.get_event_attributes(message, color, category, payload)
+    domain.push_range(attributes)
+    domain.pop_range()
 
 
 @pytest.mark.parametrize(
@@ -311,6 +319,10 @@ def test_push_pop(message, color, domain, category, payload):
 )
 def test_mark(message, color, domain, category, payload):
     nvtx.mark(message, color, domain, category, payload)
+
+    domain = nvtx.get_domain(domain)
+    attributes = domain.get_event_attributes(message, color, category, payload)
+    domain.mark(attributes)
 
 
 def test_annotation_gets_name_from_func():
