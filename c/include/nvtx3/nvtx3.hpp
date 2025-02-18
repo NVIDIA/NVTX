@@ -1,17 +1,21 @@
 /*
- *  Copyright (c) 2020-2022, NVIDIA CORPORATION.
+ * SPDX-FileCopyrightText: Copyright (c) 2020-2025 NVIDIA CORPORATION & AFFILIATES. All rights reserved.
+ * SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception
  *
- *  Licensed under the Apache License, Version 2.0 (the "License");
- *  you may not use this file except in compliance with the License.
- *  You may obtain a copy of the License at
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
  *
- *      http://www.apache.org/licenses/LICENSE-2.0
+ *     http://www.apache.org/licenses/LICENSE-2.0
  *
- *  Unless required by applicable law or agreed to in writing, software
- *  distributed under the License is distributed on an "AS IS" BASIS,
- *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- *  See the License for the specific language governing permissions and
- *  limitations under the License.
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *
+ * Licensed under the Apache License v2.0 with LLVM Exceptions.
+ * See https://nvidia.github.io/NVTX/LICENSE.txt for license information.
  */
 
 /* Temporary helper #defines, #undef'ed at end of header */
@@ -111,7 +115,7 @@
  * \code{.cpp}
  * #include "nvtx3.hpp"
  * void some_function() {
- *    // Begins a NVTX range with the messsage "some_function"
+ *    // Begins a NVTX range with the message "some_function"
  *    // The range ends when some_function() returns and `r` is destroyed
  *    nvtx3::scoped_range r{"some_function"};
  *
@@ -266,7 +270,7 @@
  * - `unique_range` objects can be destroyed in any order whereas `scoped_range` objects must be
  *    destroyed in exact reverse creation order
  * - `unique_range` can start and end on different threads
- * - `unique_range` is moveable
+ * - `unique_range` is movable
  * - `unique_range` objects can be constructed as heap objects
  *
  * There is extra overhead associated with `unique_range` constructs and therefore use of
@@ -522,8 +526,8 @@
  * nvtx3::event_attributes attr1{"message", nvtx3::category{2}};
  * my_scoped_range r1{attr1};
  *
- * // Alternatively, pass arguments of `event_attributes` ctor directly to
- * // `my_scoped_range`
+ * // Alternatively, pass arguments of `event_attributes` constructor directly
+ * // to `my_scoped_range`
  * my_scoped_range r2{"message", nvtx3::category{2}};
  *
  * // construct on first use a registered string
@@ -561,18 +565,27 @@
 
 /* Temporary helper #defines, removed with #undef at end of header */
 
-#if !defined(NVTX3_USE_CHECKED_OVERLOADS_FOR_GET)
-#if defined(_MSC_VER) && _MSC_VER < 1914
-/* Microsoft's compiler prior to VS2017 Update 7 (15.7) uses an older parser
- * that does not work with domain::get's specialization for domain::global,
- * and would require extra conditions to make SFINAE work for the overloaded
- * get() functions.  This macro disables use of overloaded get() in order to
- * work with VS2015 and versions of VS2017 below 15.7, without penalizing
- * users of newer compilers.  Building with this flag set to 0 means errors
- * when defining tag structs (see documentation for domain, named_category,
- * and registered_string) will have more complex compiler error messages
- * instead of the clear static_assert messages from the get() overloads.
+/* Some compilers do not correctly support SFINAE, which is used in this API
+ * to detect common usage errors and provide clearer error messages (by using
+ * static_assert) than the compiler would produce otherwise.  These compilers
+ * will generate errors while compiling this file such as:
+ *
+ *  error: 'name' is not a member of 'nvtx3::v1::domain::global'
+ *
+ * The following compiler versions are known to have this problem, and so are
+ * set by default to disable the SFINAE-based checks:
+ *
+ * - All MSVC versions prior to VS2017 Update 7 (15.7)
+ * - GCC 8.1-8.3 (the problem was fixed in GCC 8.4)
+ *
+ * If you find your compiler hits this problem, you can work around it by
+ * defining NVTX3_USE_CHECKED_OVERLOADS_FOR_GET to 0 before including this
+ * header, or you can add a check for your compiler version to this #if.
+ * Also, please report the issue on the NVTX GitHub page.
  */
+#if !defined(NVTX3_USE_CHECKED_OVERLOADS_FOR_GET)
+#if defined(_MSC_VER) && _MSC_VER < 1914 \
+  || defined(__GNUC__) && __GNUC__ == 8 && __GNUC_MINOR__ < 4
 #define NVTX3_USE_CHECKED_OVERLOADS_FOR_GET 0
 #else
 #define NVTX3_USE_CHECKED_OVERLOADS_FOR_GET 1
@@ -611,13 +624,28 @@
 #define NVTX3_CONSTEXPR_IF_CPP14
 #endif
 
+// Macro wrappers for C++ attributes
+#if !defined(__has_cpp_attribute)
+#define __has_cpp_attribute(x) 0
+#endif
+#if __has_cpp_attribute(maybe_unused)
+#define NVTX3_MAYBE_UNUSED [[maybe_unused]]
+#else
+#define NVTX3_MAYBE_UNUSED
+#endif
+#if __has_cpp_attribute(nodiscard)
+#define NVTX3_NO_DISCARD [[nodiscard]]
+#else
+#define NVTX3_NO_DISCARD
+#endif
+
  /* Use a macro for static asserts, which defaults to static_assert, but that
   * testing tools can replace with a logging function.  For example:
   * #define NVTX3_STATIC_ASSERT(c, m) \
   *   do { if (!(c)) printf("static_assert would fail: %s\n", m); } while (0)
   */
 #if !defined(NVTX3_STATIC_ASSERT)
-#define NVTX3_STATIC_ASSERT(condition, message) static_assert(condition, message);
+#define NVTX3_STATIC_ASSERT(condition, message) static_assert(condition, message)
 #define NVTX3_STATIC_ASSERT_DEFINED_HERE
 #endif
 
@@ -763,7 +791,7 @@ class domain {
    * `domain::get` for the convenience of the "construct on first use" idiom
    * when using domains with their own use of the NVTX C API.
    *
-   * This function is threadsafe as of C++11. If two or more threads call
+   * This function is thread-safe as of C++11. If two or more threads call
    * `domain::get<D>` concurrently, exactly one of them is guaranteed
    * to construct the `domain` object and the other(s) will receive a
    * reference to the object after it is fully constructed.
@@ -795,7 +823,7 @@ class domain {
     typename std::enable_if<
       detail::is_c_string<decltype(D::name)>::value
     , int>::type = 0>
-  static domain const& get() noexcept
+  NVTX3_NO_DISCARD static domain const& get() noexcept
   {
     static domain const d(D::name);
     return d;
@@ -810,7 +838,7 @@ class domain {
     typename std::enable_if<
       !detail::is_c_string<decltype(D::name)>::value
     , int>::type = 0>
-  static domain const& get() noexcept
+  NVTX3_NO_DISCARD static domain const& get() noexcept
   {
     NVTX3_STATIC_ASSERT(detail::always_false<D>::value,
       "Type used to identify an NVTX domain must contain a static constexpr member "
@@ -828,7 +856,7 @@ class domain {
     typename std::enable_if<
       !detail::has_name<D>::value
     , int>::type = 0>
-  static domain const& get() noexcept
+  NVTX3_NO_DISCARD static domain const& get() noexcept
   {
     NVTX3_STATIC_ASSERT(detail::always_false<D>::value,
       "Type used to identify an NVTX domain must contain a static constexpr member "
@@ -838,7 +866,7 @@ class domain {
   }
 #else
   template <typename D = global>
-  static domain const& get() noexcept
+  NVTX3_NO_DISCARD static domain const& get() noexcept
   {
     static domain const d(D::name);
     return d;
@@ -902,7 +930,7 @@ class domain {
    * "global" NVTX domain.
    *
    */
-  domain() noexcept {}
+  constexpr domain() noexcept {}
 
   /**
    * @brief Intentionally avoid calling nvtxDomainDestroy on the `domain` object.
@@ -938,7 +966,7 @@ class domain {
  *
  */
 template <>
-inline domain const& domain::get<domain::global>() noexcept
+NVTX3_NO_DISCARD inline domain const& domain::get<domain::global>() noexcept
 {
   static domain const d{};
   return d;
@@ -1008,7 +1036,7 @@ struct argb final : rgb {
 
 /**
  * @brief Represents a custom color that can be associated with an NVTX event
- * via it's `event_attributes`.
+ * via its `event_attributes`.
  *
  * Specifying colors for NVTX events is a convenient way to visually
  * differentiate among different events in a visualization tool such as Nsight
@@ -1043,7 +1071,7 @@ class color {
    * @brief Construct a `color` using the alpha, red, green, blue components
    * in `argb`.
    *
-   * @param argb The alpha, red, green, blue components of the desired `color`
+   * @param argb_ The alpha, red, green, blue components of the desired `color`
    */
   constexpr color(argb argb_) noexcept
     : color{from_bytes_msb_to_lsb(argb_.alpha, argb_.red, argb_.green, argb_.blue)}
@@ -1056,7 +1084,7 @@ class color {
    *
    * Uses maximum value for the alpha channel (opacity) of the `color`.
    *
-   * @param rgb The red, green, blue components of the desired `color`
+   * @param rgb_ The red, green, blue components of the desired `color`
    */
   constexpr color(rgb rgb_) noexcept
     : color{from_bytes_msb_to_lsb(0xFF, rgb_.red, rgb_.green, rgb_.blue)}
@@ -1264,7 +1292,7 @@ class named_category_in final : public category {
       !detail::is_c_string<decltype(C::name)>::value ||
       !detail::is_uint32<decltype(C::id)>::value
     , int>::type = 0>
-  static named_category_in const& get() noexcept
+  NVTX3_NO_DISCARD static named_category_in const& get() noexcept
   {
     NVTX3_STATIC_ASSERT(detail::is_c_string<decltype(C::name)>::value,
       "Type used to name an NVTX category must contain a static constexpr member "
@@ -1286,7 +1314,7 @@ class named_category_in final : public category {
       !detail::has_name<C>::value ||
       !detail::has_id<C>::value
     , int>::type = 0>
-  static named_category_in const& get() noexcept
+  NVTX3_NO_DISCARD static named_category_in const& get() noexcept
   {
     NVTX3_STATIC_ASSERT(detail::has_name<C>::value,
       "Type used to name an NVTX category must contain a static constexpr member "
@@ -1299,7 +1327,7 @@ class named_category_in final : public category {
   }
 #else
   template <typename C>
-  static named_category_in const& get() noexcept
+  NVTX3_NO_DISCARD static named_category_in const& get() noexcept
   {
     static named_category_in const cat(C::id, C::name);
     return cat;
@@ -1329,7 +1357,7 @@ class named_category_in final : public category {
     (void)id;
     (void)name;
 #endif
-  };
+  }
 
   /**
    * @brief Construct a `named_category_in` with the specified `id` and `name`.
@@ -1349,7 +1377,7 @@ class named_category_in final : public category {
     (void)id;
     (void)name;
 #endif
-  };
+  }
 };
 
 /**
@@ -1445,7 +1473,7 @@ class registered_string_in {
     typename std::enable_if<
       detail::is_c_string<decltype(M::message)>::value
     , int>::type = 0>
-  static registered_string_in const& get() noexcept
+  NVTX3_NO_DISCARD static registered_string_in const& get() noexcept
   {
     static registered_string_in const regstr(M::message);
     return regstr;
@@ -1460,7 +1488,7 @@ class registered_string_in {
     typename std::enable_if<
       !detail::is_c_string<decltype(M::message)>::value
     , int>::type = 0>
-  static registered_string_in const& get() noexcept
+  NVTX3_NO_DISCARD static registered_string_in const& get() noexcept
   {
     NVTX3_STATIC_ASSERT(detail::always_false<M>::value,
       "Type used to register an NVTX string must contain a static constexpr member "
@@ -1478,7 +1506,7 @@ class registered_string_in {
     typename std::enable_if<
       !detail::has_message<M>::value
     , int>::type = 0>
-  static registered_string_in const& get() noexcept
+  NVTX3_NO_DISCARD static registered_string_in const& get() noexcept
   {
     NVTX3_STATIC_ASSERT(detail::always_false<M>::value,
       "Type used to register an NVTX string must contain a static constexpr member "
@@ -1489,7 +1517,7 @@ class registered_string_in {
   }
 #else
   template <typename M>
-  static registered_string_in const& get() noexcept
+  NVTX3_NO_DISCARD static registered_string_in const& get() noexcept
   {
     static registered_string_in const regstr(M::message);
     return regstr;
@@ -1564,7 +1592,7 @@ class registered_string_in {
 
 private:
   // Default constructor is only used internally for static_assert(false) cases.
-  registered_string_in() noexcept {};
+  registered_string_in() noexcept {}
 public:
   ~registered_string_in() = default;
   registered_string_in(registered_string_in const&) = default;
@@ -1612,7 +1640,7 @@ using registered_string = registered_string_in<domain::global>;
  * nvtx3::scoped_range range1{attr1};
  *
  * // `range2` contains message "message 2"
- * nvtx3::scoped_range range2{nvtx3::Mesage{"message 2"}};
+ * nvtx3::scoped_range range2{nvtx3::message{"message 2"}};
  *
  * // `std::string` and string literals are implicitly assumed to be
  * // the contents of an `nvtx3::message`
@@ -1900,7 +1928,7 @@ class payload {
  * nvtx3::scoped_range r{attr};
  *
  * // For convenience, `event_attributes` constructor arguments may be passed
- * // to the `scoped_range_in` contructor -- they are forwarded to the
+ * // to the `scoped_range_in` constructor -- they are forwarded to the
  * // `event_attributes` constructor
  * nvtx3::scoped_range r{nvtx3::payload{42}, nvtx3::category{1}, "message"};
  *
@@ -1927,9 +1955,9 @@ class event_attributes {
         0,                              // color value
         NVTX_PAYLOAD_UNKNOWN,           // payload type
         0,                              // reserved 4B
-        0,                              // payload value (union)
+        {0},                            // payload value (union)
         NVTX_MESSAGE_UNKNOWN,           // message type
-        0                               // message value (union)
+        {0}                             // message value (union)
       }
   {
   }
@@ -2019,7 +2047,7 @@ class event_attributes {
  * Behavior is undefined if a `scoped_range_in` object is
  * created/destroyed on different threads.
  *
- * `scoped_range_in` is neither moveable nor copyable.
+ * `scoped_range_in` is neither movable nor copyable.
  *
  * `scoped_range_in`s may be nested within other ranges.
  *
@@ -2057,7 +2085,7 @@ class event_attributes {
  * \endcode
  */
 template <class D = domain::global>
-class scoped_range_in {
+class NVTX3_MAYBE_UNUSED scoped_range_in {
  public:
   /**
    * @brief Construct a `scoped_range_in` with the specified
@@ -2149,7 +2177,7 @@ namespace detail {
 
 /// @cond internal
 template <typename D = domain::global>
-class optional_scoped_range_in
+class NVTX3_MAYBE_UNUSED optional_scoped_range_in
 {
 public:
   optional_scoped_range_in() = default;
@@ -2227,7 +2255,7 @@ struct range_handle {
    * \endcode
    *
    */
-  constexpr explicit operator bool() const noexcept { return get_value() != null_range_id; };
+  constexpr explicit operator bool() const noexcept { return get_value() != null_range_id; }
 
   /**
    * @brief Implicit conversion from `nullptr` constructs a null handle.
@@ -2300,7 +2328,7 @@ inline constexpr bool operator!=(range_handle lhs, range_handle rhs) noexcept { 
  * @return Unique handle to be passed to `end_range_in` to end the range.
  */
 template <typename D = domain::global>
-inline range_handle start_range_in(event_attributes const& attr) noexcept
+NVTX3_NO_DISCARD inline range_handle start_range_in(event_attributes const& attr) noexcept
 {
 #ifndef NVTX_DISABLE
   return range_handle{nvtxDomainRangeStartEx(domain::get<D>(), attr.get())};
@@ -2337,11 +2365,11 @@ inline range_handle start_range_in(event_attributes const& attr) noexcept
  * @tparam D Type containing `name` member used to identify the `domain`
  * to which the range belongs. Else, `domain::global` to indicate that the
  * global NVTX domain should be used.
- * @param args[in] Variadic parameter pack of the arguments for an `event_attributes`.
+ * @param[in] args Variadic parameter pack of the arguments for an `event_attributes`.
  * @return Unique handle to be passed to `end_range` to end the range.
  */
 template <typename D = domain::global, typename... Args>
-inline range_handle start_range_in(Args const&... args) noexcept
+NVTX3_NO_DISCARD inline range_handle start_range_in(Args const&... args) noexcept
 {
 #ifndef NVTX_DISABLE
   return start_range_in<D>(event_attributes{args...});
@@ -2376,7 +2404,7 @@ inline range_handle start_range_in(Args const&... args) noexcept
  * of the range.
  * @return Unique handle to be passed to `end_range_in` to end the range.
  */
-inline range_handle start_range(event_attributes const& attr) noexcept
+NVTX3_NO_DISCARD inline range_handle start_range(event_attributes const& attr) noexcept
 {
 #ifndef NVTX_DISABLE
   return start_range_in<domain::global>(attr);
@@ -2410,11 +2438,11 @@ inline range_handle start_range(event_attributes const& attr) noexcept
  * nvtx3::end_range(h); // Ends the range
  * \endcode
  *
- * @param args[in] Variadic parameter pack of the arguments for an `event_attributes`.
+ * @param[in] args Variadic parameter pack of the arguments for an `event_attributes`.
  * @return Unique handle to be passed to `end_range` to end the range.
  */
 template <typename... Args>
-inline range_handle start_range(Args const&... args) noexcept
+NVTX3_NO_DISCARD inline range_handle start_range(Args const&... args) noexcept
 {
 #ifndef NVTX_DISABLE
   return start_range_in<domain::global>(args...);
@@ -2481,7 +2509,7 @@ inline void end_range(range_handle r) noexcept
  * - `unique_range` objects can be destroyed in an order whereas `scoped_range` objects must be
  *    destroyed in exact reverse creation order
  * - `unique_range` can start and end on different threads
- * - `unique_range` is moveable
+ * - `unique_range` is movable
  * - `unique_range` objects can be constructed as heap objects
  *
  * There is extra overhead associated with `unique_range` constructs and therefore use of
@@ -2492,7 +2520,7 @@ inline void end_range(range_handle r) noexcept
  * indicate that the global NVTX domain should be used.
  */
 template <typename D = domain::global>
-class unique_range_in {
+class NVTX3_MAYBE_UNUSED unique_range_in {
  public:
   /**
    * @brief Construct a new unique_range_in object with the specified event attributes
@@ -2872,6 +2900,8 @@ inline void mark(Args const&... args) noexcept
 #undef NVTX3_VERSION_NAMESPACE
 #undef NVTX3_INLINE_IF_REQUESTED
 #undef NVTX3_CONSTEXPR_IF_CPP14
+#undef NVTX3_MAYBE_UNUSED
+#undef NVTX3_NO_DISCARD
 
 #if defined(NVTX3_INLINE_THIS_VERSION)
 #undef NVTX3_INLINE_THIS_VERSION

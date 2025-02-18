@@ -2,6 +2,7 @@
 
 import json
 import requests
+import sys
 
 inFileName = "../../README.md"
 outFileName = "../../docs/index.html"

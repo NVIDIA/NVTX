@@ -1,10 +1,22 @@
 /*
-* Copyright 2009-2022  NVIDIA Corporation.  All rights reserved.
-*
-* Licensed under the Apache License v2.0 with LLVM Exceptions.
-* See https://llvm.org/LICENSE.txt for license information.
-* SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception
-*/
+ * SPDX-FileCopyrightText: Copyright (c) 2009-2025 NVIDIA CORPORATION & AFFILIATES. All rights reserved.
+ * SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *
+ * Licensed under the Apache License v2.0 with LLVM Exceptions.
+ * See https://nvidia.github.io/NVTX/LICENSE.txt for license information.
+ */
 
 #include "nvToolsExt.h"
 
@@ -15,23 +27,23 @@
 extern "C" {
 #endif /* __cplusplus */
 
-/* \cond SHOW_HIDDEN 
+/* \cond SHOW_HIDDEN
 * \version \NVTX_VERSION_2
 */
 #define NVTX_SYNCUSER_ATTRIB_STRUCT_SIZE ( (uint16_t)( sizeof(nvtxSyncUserAttributes_v0) ) )
 /** \endcond */
 
 
-/** 
+/**
 * \page PAGE_SYNCHRONIZATION Synchronization
 *
 * This section covers a subset of the API that allow users to track additional
-* synchronization details of their application.   Naming OS synchronization primitives 
-* may allow users to better understand the data collected by traced synchronization 
+* synchronization details of their application.   Naming OS synchronization primitives
+* may allow users to better understand the data collected by traced synchronization
 * APIs.  Additionally, a user defined synchronization object can allow the users to
 * to tell the tools when the user is building their own synchronization system
 * that do not rely on the OS to provide behaviors and instead use techniques like
-* atomic operations and spinlocks.  
+* atomic operations and spinlocks.
 *
 * See module \ref SYNCHRONIZATION for details.
 *
@@ -59,7 +71,7 @@ extern "C" {
 *
 *     bool Lock() {
 *          nvtxDomainSyncUserAcquireStart(hSync);
-*          bool acquired = __sync_bool_compare_and_swap(&bLocked, 0, 1);//atomic compiler intrinsic 
+*          bool acquired = __sync_bool_compare_and_swap(&bLocked, 0, 1);//atomic compiler intrinsic
 
 *          if (acquired) {
 *              nvtxDomainSyncUserAcquireSuccess(hSync);
@@ -76,12 +88,12 @@ extern "C" {
 *     }
 * };
 * \endcode
-* 
+*
 * \version \NVTX_VERSION_2
 */
 
 /*  ------------------------------------------------------------------------- */
-/* \cond SHOW_HIDDEN 
+/* \cond SHOW_HIDDEN
 * \brief Used to build a non-colliding value for resource types separated class
 * \version \NVTX_VERSION_2
 */
@@ -145,8 +157,8 @@ typedef enum nvtxResourceSyncLinuxType_t nvtxResourceSyncAndroidType_t;
 * \anchor SYNCUSER_HANDLE_STRUCTURE
 *
 * This structure is opaque to the user and is used as a handle to reference
-* a user defined syncrhonization object.  The tools will return a pointer through the API for the application
-* to hold on it's behalf to reference the string in the future.
+* a user defined synchronization object.  The tools will return a pointer through the API for the application
+* to hold on its behalf to reference the string in the future.
 *
 */
 typedef struct nvtxSyncUser* nvtxSyncUser_t;
@@ -154,8 +166,8 @@ typedef struct nvtxSyncUser* nvtxSyncUser_t;
 /** \brief User Defined Synchronization Object Attributes Structure.
 * \anchor USERDEF_SYNC_ATTRIBUTES_STRUCTURE
 *
-* This structure is used to describe the attributes of a user defined synchronization 
-* object.  The layout of the structure is defined by a specific version of the tools 
+* This structure is used to describe the attributes of a user defined synchronization
+* object.  The layout of the structure is defined by a specific version of the tools
 * extension library and can change between different versions of the Tools Extension
 * library.
 *
@@ -259,7 +271,7 @@ typedef struct nvtxSyncUserAttributes_v0
 typedef struct nvtxSyncUserAttributes_v0 nvtxSyncUserAttributes_t;
 
 /* ------------------------------------------------------------------------- */
-/** \brief Create a user defined synchronization object 
+/** \brief Create a user defined synchronization object
 * This is used to track non-OS synchronization working with spinlocks and atomics
 *
 * \param domain - Domain to own the resource
@@ -317,7 +329,7 @@ NVTX_DECLSPEC void NVTX_API nvtxDomainSyncUserAcquireStart(nvtxSyncUser_t handle
 /* ------------------------------------------------------------------------- */
 /** \brief Signal to tools of failure in acquiring a user defined synchronization object
 * This should be called after \ref nvtxDomainSyncUserAcquireStart
-* 
+*
 * \param handle - A handle to the object to operate on.
 *
 * \sa
@@ -374,7 +386,7 @@ NVTX_DECLSPEC void NVTX_API nvtxDomainSyncUserReleasing(nvtxSyncUser_t handle);
 #endif /* __cplusplus */
 
 #ifndef NVTX_NO_IMPL
-#define NVTX_IMPL_GUARD_SYNC /* Ensure other headers cannot included directly */
+#define NVTX_IMPL_GUARD_SYNC /* Ensure other headers cannot be included directly */
 #include "nvtxDetail/nvtxImplSync_v3.h"
 #undef NVTX_IMPL_GUARD_SYNC
 #endif /*NVTX_NO_IMPL*/

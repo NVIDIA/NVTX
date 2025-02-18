@@ -1,7 +1,11 @@
 <map id="nvToolsExt.h" name="nvToolsExt.h">
-<area shape="rect" id="node1" title=" " alt="" coords="278,5,382,31"/>
-<area shape="rect" id="node2" href="$nv_tools_ext_cuda_8h_source.html" title=" " alt="" coords="5,79,143,104"/>
-<area shape="rect" id="node3" href="$nv_tools_ext_cuda_rt_8h_source.html" title=" " alt="" coords="167,79,317,104"/>
-<area shape="rect" id="node4" href="$nv_tools_ext_open_c_l_8h_source.html" title=" " alt="" coords="342,79,497,104"/>
-<area shape="rect" id="node5" href="$nv_tools_ext_sync_8h_source.html" title=" " alt="" coords="521,79,656,104"/>
+<area shape="rect" id="Node000001" title=" " alt="" coords="278,5,382,31"/>
+<area shape="rect" id="Node000002" href="$nv_tools_ext_cuda_8h_source.html" title=" " alt="" coords="5,79,143,104"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="277,37,116,81,115,76,275,32"/>
+<area shape="rect" id="Node000003" href="$nv_tools_ext_cuda_rt_8h_source.html" title=" " alt="" coords="167,79,317,104"/>
+<area shape="poly" id="edge2_Node000001_Node000003" title=" " alt="" coords="307,41,258,81,255,76,304,37"/>
+<area shape="rect" id="Node000004" href="$nv_tools_ext_open_c_l_8h_source.html" title=" " alt="" coords="342,79,497,104"/>
+<area shape="poly" id="edge3_Node000001_Node000004" title=" " alt="" coords="357,37,406,76,403,81,353,41"/>
+<area shape="rect" id="Node000005" href="$nv_tools_ext_sync_8h_source.html" title=" " alt="" coords="521,79,656,104"/>
+<area shape="poly" id="edge4_Node000001_Node000005" title=" " alt="" coords="385,32,547,76,546,81,384,37"/>
 </map>
