@@ -46,77 +46,113 @@ extern "C" {
 #error The library does not support your configuration!
 #endif
 
+#ifndef NVTX_SUPPORT_ALREADY_INJECTED_LIBRARY
 /* Define this to 1 for platforms that where pre-injected libraries can be discovered. */
 #if defined(_WIN32)
-/* TODO */
+/* Windows has no process-wide table of dynamic library symbols, so this can't be supported. */
 #define NVTX_SUPPORT_ALREADY_INJECTED_LIBRARY 0
 #else
+/* POSIX platforms allow calling dlsym on a null module to use the process-wide table.
+ * Note: Still disabled in load sequence version 2.  Needs to support following the
+ * RTLD_NEXT chain, and needs more testing before support can be enabled by default. */
 #define NVTX_SUPPORT_ALREADY_INJECTED_LIBRARY 0
 #endif
+#endif
 
+#ifndef NVTX_SUPPORT_ENV_VARS
 /* Define this to 1 for platforms that support environment variables. */
 /* TODO: Detect UWP, a.k.a. Windows Store app, and set this to 0. */
 /* Try:  #if defined(WINAPI_FAMILY_PARTITION) && WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP) */
 #define NVTX_SUPPORT_ENV_VARS 1
+#endif
 
+#ifndef NVTX_SUPPORT_DYNAMIC_INJECTION_LIBRARY
 /* Define this to 1 for platforms that support dynamic/shared libraries */
 #define NVTX_SUPPORT_DYNAMIC_INJECTION_LIBRARY 1
+#endif
 
-/* Injection libraries implementing InitializeInjectionNvtxExtension may be statically linked,
- * which will override any dynamic injection. This is useful for platforms, where dynamic
- * injection is not available. Since weak symbols, not explicitly marked extern, are
- * guaranteed to be initialized to zero, if no definitions are found by the linker, the
- * dynamic injection process proceeds normally, if pfnInitializeInjectionNvtx2 is 0. */
+#ifndef NVTX_SUPPORT_ANDROID_INJECTION_LIBRARY_IN_PACKAGE
+#if defined(__ANDROID__)
+#define NVTX_SUPPORT_ANDROID_INJECTION_LIBRARY_IN_PACKAGE 1
+#else
+#define NVTX_SUPPORT_ANDROID_INJECTION_LIBRARY_IN_PACKAGE 0
+#endif
+#endif
+
+#ifndef NVTX_SUPPORT_STATIC_INJECTION_LIBRARY
+/* On platforms that support weak symbols (i.e. non-Windows), injection libraries may
+*  be statically linked into an application.  This is useful for platforms where dynamic
+*  injection is not available.  Weak symbols not marked extern are definitions, not just
+*  declarations.  They are guaranteed to be initialized to zero if no normal definitions
+*  are found by the linker to override them.  This means the NVTX load sequence can safely
+*  detect the presence of a static injection -- if InitializeInjectionNvtxExtension_fnptr is zero,
+*  there is no static injection. */
 #if defined(__GNUC__) && !defined(_WIN32) && !defined(__CYGWIN__)
 #define NVTX_SUPPORT_STATIC_INJECTION_LIBRARY 1
-/* To statically inject an NVTX library, define InitializeInjectionNvtxExtension_fnptr as a normal
- * symbol (not weak) pointing to the implementation of InitializeInjectionNvtxExtension, which
- * does not need to be named "InitializeInjectionNvtxExtension" as it is necessary in a dynamic
- * injection library. */
-__attribute__((weak)) NvtxExtInitializeInjectionFunc_t InitializeInjectionNvtxExtension_fnptr;
 #else
 #define NVTX_SUPPORT_STATIC_INJECTION_LIBRARY 0
 #endif
+#endif
 
+#if NVTX_SUPPORT_STATIC_INJECTION_LIBRARY && !defined(NVTX_STATIC_INJECTION_IMPL)
+/* To make an NVTX injection library support static injection, it must do these things:
+*  - Define InitializeInjectionNvtxExtension_fnptr as a normal symbol (not weak), pointing to
+*    the implementation of InitializeInjectionNvtxExtension (which does not need to be a
+*    dynamic export if only supporting static injection).
+*  - Define NVTX_STATIC_INJECTION_IMPL so the weak definition below is skipped.
+*  - Compile the static injection files with -fPIC if they are to be linked with other
+*    files compiled this way.  If you forget this, GCC will simply tell you to add it.
+*  When building the application, there a few ways to link in a static injection:
+*  - Compile the injection's source files normally, and include the .o files as inputs
+*    to the linker.
+*  - If the injection is provided as an archive (.a file), it will not resolve any
+*    unresolved symbols, so the linker will skip it by default.  This can be fixed
+*    by wrapping the static injection's name on the linker command line with options
+*    to treat it differently.  For example:
+*      gcc example.o libfoo.a -Wl,--whole-archive libinj-static.a -Wl,--no-whole-archive libbar.a
+*    Note that libinj-static.a is bracketed by options to turn on "whole archive" and
+*    then back off again afterwards, so libfoo.a and libbar.a are linked normally.
+*  - In CMake, a static injection can be added with options like this:
+*      target_link_libraries(app PRIVATE -Wl,--whole-archive inj-static -Wl,--no-whole-archive)
+*/
+__attribute__((weak)) NvtxExtInitializeInjectionFunc_t InitializeInjectionNvtxExtension_fnptr;
+#endif
 
-
-/* This function tries to find or load an NVTX injection library and get the address of its
- * `InitializeInjectionExtension` function. If such a function pointer is found, it is called and
- * passed the address of this NVTX instance's `nvtxGetExportTable` function, so that the injection
- * can attach to this instance.
- * If the initialization fails for any reason, any dynamic library loaded will  be freed, and all
- * NVTX implementation functions will be set to no-ops. If the initialization succeeds, NVTX
- * functions that are not attached to the tool will be set to no-ops. This is implemented as one
- * function instead of several small functions to minimize the number of weak symbols the linker
- * must resolve. The order of search is:
- *  1) Pre-injected library exporting InitializeInjectionNvtxExtension
- *  2) Loadable library exporting InitializeInjectionNvtxExtension
- *      - Path specified by env var NVTX_INJECTION??_PATH (?? is 32 or 64)
- *      - On Android, libNvtxInjection??.so within the package (?? is 32 or 64)
- *  3) Statically-linked injection library defining InitializeInjectionNvtx2_fnptr
- */
+/* This function tries to find or load an NVTX injection library and get the
+*  address of its InitializeInjectionExtension function.  If such a function pointer
+*  is found, it is called, and passed the address of this NVTX instance's
+*  nvtxGetExportTable function, so the injection can attach to this instance.
+*  If the initialization fails for any reason, any dynamic library loaded will
+*  be freed, and all NVTX implementation functions will be set to no-ops.  If
+*  initialization succeeds, NVTX functions not attached to the tool will be set
+*  to no-ops.  This is implemented as one function instead of several small
+*  functions to minimize the number of weak symbols the linker must resolve.
+*  Order of search is:
+*  - Pre-injected library exporting InitializeInjectionNvtxExtension
+*  - Loadable library exporting InitializeInjectionNvtxExtension
+*      - Path specified by env var NVTX_INJECTION??_PATH (?? is 32 or 64)
+*      - On Android, libNvtxInjection??.so within the package (?? is 32 or 64)
+*  - Statically-linked injection library defining InitializeInjectionNvtxExtension_fnptr
+*/
 NVTX_LINKONCE_FWDDECL_FUNCTION int NVTX_VERSIONED_IDENTIFIER(nvtxExtLoadInjectionLibrary)(
     NvtxExtInitializeInjectionFunc_t* out_init_fnptr);
 NVTX_LINKONCE_DEFINE_FUNCTION int NVTX_VERSIONED_IDENTIFIER(nvtxExtLoadInjectionLibrary)(
     NvtxExtInitializeInjectionFunc_t* out_init_fnptr)
 {
-    const char* const initFuncName = "InitializeInjectionNvtxExtension";
+    static const char initFuncName[] = "InitializeInjectionNvtxExtension";
+#if NVTX_SUPPORT_ALREADY_INJECTED_LIBRARY
+    static const char initFuncPreinjectName[] = "InitializeInjectionNvtxExtensionPreinject";
+#endif
     NvtxExtInitializeInjectionFunc_t init_fnptr = (NvtxExtInitializeInjectionFunc_t)0;
-    NVTX_DLLHANDLE injectionLibraryHandle = (NVTX_DLLHANDLE)0;
+    NVTX_DLLHANDLE injectionLibraryHandle = NVTX_DLLDEFAULT;
 
     if (out_init_fnptr)
     {
         *out_init_fnptr = (NvtxExtInitializeInjectionFunc_t)0;
     }
 
-#if NVTX_SUPPORT_ALREADY_INJECTED_LIBRARY
-    /* Use POSIX global symbol chain to query for init function from any module. */
-    init_fnptr = (NvtxExtInitializeInjectionFunc_t)NVTX_DLLFUNC(0, initFuncName);
-#endif
-
 #if NVTX_SUPPORT_DYNAMIC_INJECTION_LIBRARY
     /* Try discovering dynamic injection library to load */
-    if (!init_fnptr)
     {
 #if NVTX_SUPPORT_ENV_VARS
         /* If env var NVTX_INJECTION64_PATH is set, it should contain the path
@@ -144,7 +180,7 @@ NVTX_LINKONCE_DEFINE_FUNCTION int NVTX_VERSIONED_IDENTIFIER(nvtxExtLoadInjection
 #endif
 #endif
 
-#if defined(__ANDROID__)
+#if NVTX_SUPPORT_ANDROID_INJECTION_LIBRARY_IN_PACKAGE
         if (!injectionLibraryPath)
         {
             const char *bits = (sizeof(void*) == 4) ? "32" : "64";
@@ -215,7 +251,7 @@ NVTX_LINKONCE_DEFINE_FUNCTION int NVTX_VERSIONED_IDENTIFIER(nvtxExtLoadInjection
             }
             injectionLibraryPath = injectionLibraryPathBuf;
         }
-#endif
+#endif /* NVTX_SUPPORT_ANDROID_INJECTION_LIBRARY_IN_PACKAGE */
 
         /* At this point, `injectionLibraryPath` is specified if a dynamic
            injection library was specified by a tool. */
@@ -241,13 +277,23 @@ NVTX_LINKONCE_DEFINE_FUNCTION int NVTX_VERSIONED_IDENTIFIER(nvtxExtLoadInjection
             }
         }
     }
+#endif /* NVTX_SUPPORT_DYNAMIC_INJECTION_LIBRARY */
+
+#if NVTX_SUPPORT_ALREADY_INJECTED_LIBRARY
+    if (!init_fnptr)
+    {
+        /* Use POSIX global symbol chain to query for init function from any module */
+        init_fnptr = (NvtxExtInitializeInjectionFunc_t)NVTX_DLLFUNC(NVTX_DLLDEFAULT, initFuncPreinjectName);
+    }
 #endif
 
 #if NVTX_SUPPORT_STATIC_INJECTION_LIBRARY
     if (!init_fnptr)
     {
-        /* Check weakly-defined function pointer.  A statically-linked injection can define
-           this as a normal symbol and it will take precedence over a dynamic injection. */
+        /* Check weakly-defined function pointer.  A statically-linked injection can define this
+        *  as a normal symbol and set it to the address of the NVTX init function -- this will
+        *  provide a non-null value here.  If there is no other definition of this symbol, it
+        *  will be null here. */
         if (InitializeInjectionNvtxExtension_fnptr)
         {
             init_fnptr = InitializeInjectionNvtxExtension_fnptr;

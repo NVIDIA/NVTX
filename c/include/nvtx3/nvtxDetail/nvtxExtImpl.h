@@ -24,12 +24,13 @@
 
 #ifndef NVTX_EXT_IMPL_H
 #define NVTX_EXT_IMPL_H
-/* ---- Include required platform headers ---- */
 
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
 #include <wchar.h>
+
+/* ---- Include required platform headers ---- */
 
 #if defined(_WIN32)
 
@@ -75,11 +76,11 @@
 #ifdef __cplusplus
 extern "C" {
 #endif /* __cplusplus */
-/*
+
 #ifdef __GNUC__
 #pragma GCC visibility push(hidden)
 #endif
-*/
+
 #define NVTX_EXTENSION_FRESH 0
 #define NVTX_EXTENSION_DISABLED 1
 #define NVTX_EXTENSION_STARTING 2
@@ -99,11 +100,11 @@ NVTX_LINKONCE_DEFINE_GLOBAL nvtxExtGlobals1_t NVTX_VERSIONED_IDENTIFIER(nvtxExtG
 #define NVTX_EXT_INIT_GUARD
 #include "nvtxExtInit.h"
 #undef NVTX_EXT_INIT_GUARD
-/*
+
 #ifdef __GNUC__
 #pragma GCC visibility pop
 #endif
-*/
+
 #ifdef __cplusplus
 } /* extern "C" */
 #endif /* __cplusplus */
