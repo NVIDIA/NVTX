@@ -33,5 +33,50 @@ cmake_minimum_required(VERSION 3.10)
 # IMPORTED option, which only defines the targets within the scope of the library.
 # This allows the same target name to be used for different NVTX versions.
 
+# Project declaration needs to be before the configuration
+project(nvtx3 VERSION 3.1.1)
+
+# Add installation rules
+include(GNUInstallDirs)
+include(CMakePackageConfigHelpers)
+
 set(NVTX3_TARGETS_NOT_USING_IMPORTED ON)
 include(nvtxImportedTargets.cmake)
+
+
+set(INCLUDE_INSTALL_DIR "${CMAKE_INSTALL_INCLUDEDIR}/nvtx3")
+
+# Configure the config file
+configure_package_config_file(
+    "${CMAKE_CURRENT_SOURCE_DIR}/nvtx3-config.cmake.in"
+    "${CMAKE_CURRENT_BINARY_DIR}/nvtx3-config.cmake"
+    INSTALL_DESTINATION "${CMAKE_INSTALL_LIBDIR}/cmake/nvtx3"
+    PATH_VARS INCLUDE_INSTALL_DIR
+)
+
+# Generate version file
+write_basic_package_version_file(
+    "${CMAKE_CURRENT_BINARY_DIR}/nvtx3-config-version.cmake"
+    VERSION ${PROJECT_VERSION}
+    COMPATIBILITY SameMajorVersion
+)
+
+# Install headers
+install(DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}/include/"
+        DESTINATION "${CMAKE_INSTALL_INCLUDEDIR}"
+        FILES_MATCHING PATTERN "*.h"
+                       PATTERN "*.hpp")
+
+# Install the config files
+install(FILES
+    "${CMAKE_CURRENT_BINARY_DIR}/nvtx3-config.cmake"
+    "${CMAKE_CURRENT_BINARY_DIR}/nvtx3-config-version.cmake"
+    DESTINATION "${CMAKE_INSTALL_LIBDIR}/cmake/nvtx3"
+)
+
+# Install the targets
+install(EXPORT nvtx3-targets
+    FILE nvtx3-targets.cmake
+    NAMESPACE nvtx3::
+    DESTINATION "${CMAKE_INSTALL_LIBDIR}/cmake/nvtx3")
+
