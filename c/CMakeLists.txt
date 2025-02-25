@@ -36,47 +36,47 @@ cmake_minimum_required(VERSION 3.10)
 # Project declaration needs to be before the configuration
 project(nvtx3 VERSION 3.1.1)
 
-# Add installation rules
-include(GNUInstallDirs)
-include(CMakePackageConfigHelpers)
+# Determine if this is the root project
+set(NVTX3_IS_ROOT_PROJECT "${CMAKE_SOURCE_DIR}" STREQUAL "${PROJECT_SOURCE_DIR}")
+option(NVTX3_INSTALL "Install NVTX3" ${NVTX3_IS_ROOT_PROJECT})
 
 set(NVTX3_TARGETS_NOT_USING_IMPORTED ON)
 include(nvtxImportedTargets.cmake)
+set_target_properties(nvtx3-c PROPERTIES EXPORT_PROPERTIES VERSION)
 
+if(NVTX3_INSTALL)
+    # Add installation rules
+    include(GNUInstallDirs)
+    include(CMakePackageConfigHelpers)
 
-set(INCLUDE_INSTALL_DIR "${CMAKE_INSTALL_INCLUDEDIR}/nvtx3")
+    # Configure the config file
+    configure_package_config_file(
+        "${CMAKE_CURRENT_SOURCE_DIR}/nvtx3-config.cmake.in"
+        "${CMAKE_CURRENT_BINARY_DIR}/nvtx3-config.cmake"
+        INSTALL_DESTINATION "${CMAKE_INSTALL_LIBDIR}/cmake/nvtx3"
+    )
 
-# Configure the config file
-configure_package_config_file(
-    "${CMAKE_CURRENT_SOURCE_DIR}/nvtx3-config.cmake.in"
-    "${CMAKE_CURRENT_BINARY_DIR}/nvtx3-config.cmake"
-    INSTALL_DESTINATION "${CMAKE_INSTALL_LIBDIR}/cmake/nvtx3"
-    PATH_VARS INCLUDE_INSTALL_DIR
-)
+    # Generate version file
+    write_basic_package_version_file(
+        "${CMAKE_CURRENT_BINARY_DIR}/nvtx3-config-version.cmake"
+        VERSION ${PROJECT_VERSION}
+        COMPATIBILITY SameMajorVersion
+    )
 
-# Generate version file
-write_basic_package_version_file(
-    "${CMAKE_CURRENT_BINARY_DIR}/nvtx3-config-version.cmake"
-    VERSION ${PROJECT_VERSION}
-    COMPATIBILITY SameMajorVersion
-)
+    # Install headers
+    install(DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}/include/"
+            DESTINATION "${CMAKE_INSTALL_INCLUDEDIR}")
 
-# Install headers
-install(DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}/include/"
-        DESTINATION "${CMAKE_INSTALL_INCLUDEDIR}"
-        FILES_MATCHING PATTERN "*.h"
-                       PATTERN "*.hpp")
+    # Install the config files
+    install(FILES
+        "${CMAKE_CURRENT_BINARY_DIR}/nvtx3-config.cmake"
+        "${CMAKE_CURRENT_BINARY_DIR}/nvtx3-config-version.cmake"
+        DESTINATION "${CMAKE_INSTALL_LIBDIR}/cmake/nvtx3"
+    )
 
-# Install the config files
-install(FILES
-    "${CMAKE_CURRENT_BINARY_DIR}/nvtx3-config.cmake"
-    "${CMAKE_CURRENT_BINARY_DIR}/nvtx3-config-version.cmake"
-    DESTINATION "${CMAKE_INSTALL_LIBDIR}/cmake/nvtx3"
-)
-
-# Install the targets
-install(EXPORT nvtx3-targets
-    FILE nvtx3-targets.cmake
-    NAMESPACE nvtx3::
-    DESTINATION "${CMAKE_INSTALL_LIBDIR}/cmake/nvtx3")
-
+    # Install the targets
+    install(EXPORT nvtx3-targets
+        FILE nvtx3-targets.cmake
+        NAMESPACE nvtx3::
+        DESTINATION "${CMAKE_INSTALL_LIBDIR}/cmake/nvtx3")
+endif()
