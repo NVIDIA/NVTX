@@ -36,7 +36,7 @@ CPMAddPackage(
 function(ConfigureTest CMAKE_TEST_NAME CMAKE_TEST_SRC)
     add_executable(${CMAKE_TEST_NAME} ${CMAKE_TEST_SRC})
     set_target_properties(${CMAKE_TEST_NAME} PROPERTIES POSITION_INDEPENDENT_CODE ON)
-    target_link_libraries(${CMAKE_TEST_NAME} gmock gtest gmock_main 
+    target_link_libraries(${CMAKE_TEST_NAME} gmock gtest gmock_main
                           gtest_main pthread nvtx3-cpp )
     set_target_properties(${CMAKE_TEST_NAME} PROPERTIES
                             RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/gtests")
