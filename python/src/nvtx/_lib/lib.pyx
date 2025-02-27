@@ -64,7 +64,7 @@ cdef class EventAttributes:
     @property
     def category(self):
         return self._category
-    
+
     @category.setter
     def category(self, value):
         if value is not None:
@@ -87,7 +87,7 @@ cdef class EventAttributes:
                 self.c_obj.payload.dValue = self._payload
                 self.c_obj.payloadType = NVTX_PAYLOAD_TYPE_DOUBLE
             else:
-                raise RuntimeError('Payload must be int or float') 
+                raise RuntimeError('Payload must be int or float')
 
 
 cdef class DomainHandle:
@@ -125,7 +125,7 @@ class DummyDomain:
 
     def get_category_id(self, name):
         pass
-    
+
     def get_event_attributes(self, message=None, color=None, category=None, payload=None):
         pass
 

@@ -61,7 +61,7 @@ you can see a timeline of execution of your program:
 .. image:: images/timeline_lib.png
     :align: center
 
-           
+
 Contents
 ========
 

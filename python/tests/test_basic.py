@@ -110,7 +110,7 @@ def test_annotate_decorator(message, color, domain, payload):
 
     foo()
 
-    
+
 def test_pickle_annotate():
     orig = nvtx.annotate(message="foo", color="blue", domain="test")
     pickled = pickle.dumps(orig)
@@ -210,7 +210,7 @@ def test_categories_basic(message, color, domain, category):
 def test_start_end(message, color, domain, category, payload):
     rng = nvtx.start_range(message, color, domain, category, payload)
     nvtx.end_range(rng)
-    
+
     domain = nvtx.get_domain(domain)
     attributes = domain.get_event_attributes(message, color, category, payload)
     domain.end_range(domain.start_range(attributes))
