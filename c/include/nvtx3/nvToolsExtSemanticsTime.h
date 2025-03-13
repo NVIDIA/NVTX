@@ -1,5 +1,5 @@
 /*
- * SPDX-FileCopyrightText: Copyright (c) 2024 NVIDIA CORPORATION & AFFILIATES. All rights reserved.
+ * SPDX-FileCopyrightText: Copyright (c) 2024-2025 NVIDIA CORPORATION & AFFILIATES. All rights reserved.
  * SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -15,7 +15,7 @@
  * limitations under the License.
  *
  * Licensed under the Apache License v2.0 with LLVM Exceptions.
- * See LICENSE.txt for license information.
+ * See https://nvidia.github.io/NVTX/LICENSE.txt for license information.
  */
 
 /**
