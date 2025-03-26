@@ -37,7 +37,10 @@ cmake_minimum_required(VERSION 3.10)
 project(nvtx3 VERSION 3.1.1)
 
 # Determine if this is the root project
-set(NVTX3_IS_ROOT_PROJECT "${CMAKE_SOURCE_DIR}" STREQUAL "${PROJECT_SOURCE_DIR}")
+set(NVTX3_IS_ROOT_PROJECT FALSE)
+if("${CMAKE_SOURCE_DIR}" STREQUAL "${PROJECT_SOURCE_DIR}")
+    set(NVTX3_IS_ROOT_PROJECT TRUE)
+endif()
 option(NVTX3_INSTALL "Install NVTX3" ${NVTX3_IS_ROOT_PROJECT})
 
 set(NVTX3_TARGETS_NOT_USING_IMPORTED ON)
@@ -75,6 +78,7 @@ if(NVTX3_INSTALL)
     )
 
     # Install the targets
+    install(TARGETS nvtx3-c nvtx3-cpp EXPORT nvtx3-targets)
     install(EXPORT nvtx3-targets
         FILE nvtx3-targets.cmake
         NAMESPACE nvtx3::

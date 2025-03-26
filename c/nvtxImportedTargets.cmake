@@ -69,9 +69,6 @@ else()
     add_library(nvtx3::nvtx3-cpp ALIAS nvtx3-cpp)
     set_target_properties(nvtx3-cpp PROPERTIES VERSION ${NVTX3_VERSION})
     target_link_libraries(nvtx3-cpp INTERFACE nvtx3-c)
-
-    # Install the targets
-    install(TARGETS nvtx3-c nvtx3-cpp EXPORT nvtx3-targets)
 endif()
 
 unset(OPTIONALLY_IMPORTED)
