@@ -19,8 +19,16 @@
  */
 
 #define NVTX_EXPORT_API
+
 #include <nvtx3/nvToolsExt.h>
 #include <nvtx3/nvToolsExtCuda.h>
 #include <nvtx3/nvToolsExtCudaRt.h>
 #include <nvtx3/nvToolsExtOpenCL.h>
 #include <nvtx3/nvToolsExtSync.h>
+
+#ifdef SUPPORT_EXTENSIONS
+#include <nvtx3/nvToolsExtMem.h>
+#include <nvtx3/nvToolsExtMemCudaRt.h>
+#include <nvtx3/nvToolsExtPayload.h>
+#include <nvtx3/nvToolsExtCounters.h>
+#endif

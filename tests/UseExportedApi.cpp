@@ -26,6 +26,13 @@
 #include <nvtx3/nvToolsExtOpenCL.h>
 #include <nvtx3/nvToolsExtSync.h>
 
+#ifdef SUPPORT_EXTENSIONS
+#include <nvtx3/nvToolsExtMem.h>
+#include <nvtx3/nvToolsExtMemCudaRt.h>
+#include <nvtx3/nvToolsExtPayload.h>
+#include <nvtx3/nvToolsExtCounters.h>
+#endif
+
 #include <iostream>
 #include <string>
 
@@ -50,7 +57,7 @@
 // as part of the build, then failure to export some symbols would result in failure to include
 // them in this list of symbols to test!
 //
-#define FOR_EACH_EXPORT(func) \
+#define FOR_EACH_EXPORT_CORE(func) \
     func(nvtxDomainCreateA) \
     func(nvtxDomainCreateW) \
     func(nvtxDomainDestroy) \
@@ -118,6 +125,57 @@
 
 // ^ Above line must be left blank, since last line of macro ends with a backslash
 
+#define FOR_EACH_EXPORT_EXTENSIONS(func) \
+    func(nvtxCounterBatchSubmit) \
+    func(nvtxCounterRegister) \
+    func(nvtxCounterSample) \
+    func(nvtxCounterSampleFloat64) \
+    func(nvtxCounterSampleInt64) \
+    func(nvtxCounterSampleNoValue) \
+    func(nvtxDomainIsEnabled) \
+    func(nvtxEventBatchSubmit) \
+    func(nvtxEventSubmit) \
+    func(nvtxMarkPayload) \
+    func(nvtxMemCudaGetDeviceWidePermissions) \
+    func(nvtxMemCudaGetProcessWidePermissions) \
+    func(nvtxMemCudaMarkInitialized) \
+    func(nvtxMemCudaSetPeerAccess) \
+    func(nvtxMemHeapRegister) \
+    func(nvtxMemHeapReset) \
+    func(nvtxMemHeapUnregister) \
+    func(nvtxMemPermissionsAssign) \
+    func(nvtxMemPermissionsBind) \
+    func(nvtxMemPermissionsCreate) \
+    func(nvtxMemPermissionsDestroy) \
+    func(nvtxMemPermissionsReset) \
+    func(nvtxMemPermissionsUnbind) \
+    func(nvtxMemRegionsName) \
+    func(nvtxMemRegionsRegister) \
+    func(nvtxMemRegionsResize) \
+    func(nvtxMemRegionsUnregister) \
+    func(nvtxPayloadEnumRegister) \
+    func(nvtxPayloadSchemaRegister) \
+    func(nvtxRangeEndPayload) \
+    func(nvtxRangePopPayload) \
+    func(nvtxRangePushPayload) \
+    func(nvtxRangeStartPayload) \
+    func(nvtxScopeRegister) \
+    func(nvtxTimeDomainRegister) \
+    func(nvtxTimerSource) \
+    func(nvtxTimerSourceWithData) \
+    func(nvtxTimestampConversionFactor) \
+    func(nvtxTimestampGet) \
+    func(nvtxTimeSyncPoint) \
+    func(nvtxTimeSyncPointTable) \
+
+// ^ Above line must be left blank, since last line of macro ends with a backslash
+
+#ifdef SUPPORT_EXTENSIONS
+#define FOR_EACH_EXPORT(func) FOR_EACH_EXPORT_CORE(func) FOR_EACH_EXPORT_EXTENSIONS(func)
+#else
+#define FOR_EACH_EXPORT(func) FOR_EACH_EXPORT_CORE(func)
+#endif
+
 template <typename FnPtr>
 FnPtr GetExport(
     DLL_HANDLE hDll,
@@ -155,7 +213,13 @@ int RunTest(int argc, const char** argv)
     if (verbose) std::cout << "-------------------------------------\n";
 
     // Construct abs path to export-api library
-    std::string exportApiLib = AbsolutePathToLibraryInCurrentProcessPath("export-api");
+    std::string exportApiLib = AbsolutePathToLibraryInCurrentProcessPath(
+#ifdef SUPPORT_EXTENSIONS
+        "export-api-ext"
+#else
+        "export-api"
+#endif
+    );
 
     // Load export-api library
     DLL_HANDLE hDll = DLL_OPEN(exportApiLib.c_str());

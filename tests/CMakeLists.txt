@@ -283,10 +283,26 @@ target_link_options(export-api PRIVATE
     $<$<AND:$<NOT:$<CXX_COMPILER_ID:MSVC>>,$<PLATFORM_ID:Windows>>:-Wl,--kill-at>
 )
 
+add_library(export-api-ext SHARED "ExportApi.c")
+target_compile_definitions(export-api-ext PRIVATE SUPPORT_EXTENSIONS)
+target_link_libraries(export-api-ext PRIVATE nvtx3-c)
+target_include_directories(export-api-ext PRIVATE "Imports/cuda_lite" "Imports/opencl_lite")
+set_target_properties(export-api-ext PROPERTIES C_VISIBILITY_PRESET hidden CXX_VISIBILITY_PRESET hidden)
+
+target_link_options(export-api-ext PRIVATE
+    $<$<AND:$<NOT:$<CXX_COMPILER_ID:MSVC>>,$<PLATFORM_ID:Windows>>:-Wl,--kill-at>
+)
+
 add_library(use-exported-api SHARED "UseExportedApi.cpp")
 target_link_libraries(use-exported-api PRIVATE nvtx3-cpp)
 target_include_directories(use-exported-api PRIVATE "Imports/cuda_lite" "Imports/opencl_lite")
 set_target_properties(use-exported-api PROPERTIES C_VISIBILITY_PRESET hidden CXX_VISIBILITY_PRESET hidden)
+
+add_library(use-exported-api-ext SHARED "UseExportedApi.cpp")
+target_compile_definitions(use-exported-api-ext PRIVATE SUPPORT_EXTENSIONS)
+target_link_libraries(use-exported-api-ext PRIVATE nvtx3-cpp)
+target_include_directories(use-exported-api-ext PRIVATE "Imports/cuda_lite" "Imports/opencl_lite")
+set_target_properties(use-exported-api-ext PROPERTIES C_VISIBILITY_PRESET hidden CXX_VISIBILITY_PRESET hidden)
 
 enable_testing()
 add_test(NAME "Self" COMMAND runtest -t self)
@@ -364,6 +380,9 @@ add_test(NAME "LinkerDupes with PrintInjectionCpp" COMMAND runtest -t linkerdupe
 add_test(NAME "UseExportedApi" COMMAND runtest -t use-exported-api)
 add_test(NAME "UseExportedApi with PrintInjectionC" COMMAND runtest -t use-exported-api -i inj-c)
 add_test(NAME "UseExportedApi with PrintInjectionCpp" COMMAND runtest -t use-exported-api -i inj-cpp)
+add_test(NAME "UseExportedApiExt" COMMAND runtest -t use-exported-api-ext)
+add_test(NAME "UseExportedApiExt with PrintInjectionC" COMMAND runtest -t use-exported-api-ext -i inj-c)
+add_test(NAME "UseExportedApiExt with PrintInjectionCpp" COMMAND runtest -t use-exported-api-ext -i inj-cpp)
 
 if(APPLE)
     set_property(TEST "CoverageC with PrintInjectionC as Preinjection"
