@@ -48,6 +48,7 @@ if(NVTX3_INSTALL)
     include(CMakePackageConfigHelpers)
 
     # Configure the config file
+    message(STATUS "Writing config file to ${CMAKE_CURRENT_BINARY_DIR}/nvtx3-config.cmake")
     configure_package_config_file(
         "${CMAKE_CURRENT_SOURCE_DIR}/nvtx3-config.cmake.in"
         "${CMAKE_CURRENT_BINARY_DIR}/nvtx3-config.cmake"
