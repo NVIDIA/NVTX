@@ -1043,7 +1043,7 @@ NVTX_DECLSPEC uint64_t NVTX_API nvtxPayloadEnumRegister(
 /**
  * \brief Register a scope.
  *
- * @param domain NVTX domain handle (0 for default domain)
+ * @param domain NVTX domain handle
  * @param attr Scope attributes.
  *
  * @return an identifier for the scope. If the operation was not successful,
@@ -1163,7 +1163,7 @@ NVTX_DECLSPEC int64_t NVTX_API nvtxTimestampGet(void);
  * Timestamps of NVTX events or counters in the scope are interpreted according
  * to the time domain definitions.
  *
- * @param domain NVTX domain handle (0 for default domain).
+ * @param domain NVTX domain handle.
  * @param timeAttr Time domain attributes (timestamp type, scope, flags, etc.).
  * @return time domain ID.
  */
@@ -1175,7 +1175,7 @@ NVTX_DECLSPEC uint64_t NVTX_API nvtxTimeDomainRegister(
  * Provide the pointer to a function that returns a timestamp.
  * This enables the tool to create time synchronization points.
  *
- * @param domain NVTX domain handle (0 for default domain).
+ * @param domain NVTX domain handle.
  * @param timeDomainId time domain identifier or timestamp type ID, if it is
  *                     unambiguous.
  * @param flags indicates if it is safe to call the timestamp provider after
@@ -1191,7 +1191,7 @@ NVTX_DECLSPEC void NVTX_API nvtxTimerSource(
 /**
  * Same as `nvtxTimerSource`, but with an additional data pointer argument.
  *
- * @param domain NVTX domain handle (0 for default domain).
+ * @param domain NVTX domain handle.
  * @param timeDomainId time domain identifier or timestamp type ID, if it is
  *                     unambiguous.
  * @param flags indicates if it is safe to call the timestamp provider after
@@ -1212,7 +1212,7 @@ NVTX_DECLSPEC void NVTX_API nvtxTimerSourceWithData(
  * The tool must know one of the time domains or it least must be able to chain
  * conversions to enable the conversion between the given timestamps.
  *
- * @param domain NVTX domain handle (0 for default domain).
+ * @param domain NVTX domain handle.
  * @param timeDomainId1 time domain 1 ID or timestamp type ID, if it is
  *                      unambiguous.
  * @param timeDomainId2 time domain 2 ID or timestamp type ID, if it is
@@ -1230,7 +1230,7 @@ NVTX_DECLSPEC void NVTX_API nvtxTimeSyncPoint(
 /**
  * The same as `nvtxTimeSyncPoint` but with multiple synchronization points.
  *
- * @param domain NVTX domain handle (0 for default domain).
+ * @param domain NVTX domain handle.
  * @param timeDomainIdSrc source time domain ID or timestamp type ID, if it is
  *                        unambiguous.
  * @param timeDomainIdDst destination time domain ID or timestamp type ID, if it
@@ -1248,7 +1248,7 @@ NVTX_DECLSPEC void NVTX_API nvtxTimeSyncPointTable(
 /**
  * @brief Pass a conversion factor between two time domains to the NVTX handler.
  *
- * @param domain NVTX domain handle (0 for default domain).
+ * @param domain NVTX domain handle.
  * @param timeDomainIdSrc source time domain ID or timestamp type ID, if it is
  *                        unambiguous.
  * @param timeDomainIdDst destination time domain ID or timestamp type ID, if it
@@ -1268,7 +1268,7 @@ NVTX_DECLSPEC void NVTX_API nvtxTimestampConversionFactor(
 /**
  * @brief Submit one deferred event.
  *
- * @param domain NVTX domain handle (0 for default domain).
+ * @param domain NVTX domain handle.
  * @param payloadData Pointer to an array of structured payloads.
  * @param numPayloads Number of payloads of the event.
  */
@@ -1280,7 +1280,7 @@ NVTX_DECLSPEC void NVTX_API nvtxEventSubmit(
 /**
  * \brief Submit a batch of deferred events in the given domain.
  *
- * @param domain NVTX domain handle (0 for default domain).
+ * @param domain NVTX domain handle.
  * @param eventBatch Pointer to deferred events batch details.
  */
 NVTX_DECLSPEC void NVTX_API nvtxEventBatchSubmit(
@@ -1393,7 +1393,7 @@ NVTX_DECLSPEC void NVTX_API nvtxEventBatchSubmit(
 /**
  * \brief Helper macro to push a range with extended payload.
  *
- * @param domain NVTX domain handle (0 for default domain)
+ * @param domain NVTX domain handle
  * @param evtAttr pointer to NVTX event attribute.
  * @param schemaId NVTX payload schema ID
  * @param plAddr Pointer to the binary data (actual payload)
@@ -1410,7 +1410,7 @@ do { \
 /**
  * \brief Helper macro to set a marker with extended payload.
  *
- * @param domain NVTX domain handle (0 for default domain)
+ * @param domain NVTX domain handle
  * @param evtAttr pointer to NVTX event attribute.
  * @param schemaId NVTX payload schema ID
  * @param plAddr Pointer to the binary data (actual payload)

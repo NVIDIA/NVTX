@@ -127,7 +127,7 @@
  * addition the schema is registered. The schema ID will be defined as follows:
  * `const uint64_t struct_id##_schemaId`.
  *
- * @param domain The NVTX domain handle (0 for default domain).
+ * @param domain The NVTX domain handle.
  * All other parameters are similar to `NVTX_DEFINE_STRUCT_WITH_SCHEMA`.
  */
 #define NVTX_DEFINE_STRUCT_WITH_SCHEMA_AND_REGISTER(domain, struct_id, ...) \
@@ -140,7 +140,7 @@
  * This does essentially the same as `NVTX_PAYLOAD_STATIC_SCHEMA_DEFINE`, but in
  * addition, the schema is registered and `uint64_t struct_id##_schemaId` set.
  *
- * @param domain The NVTX domain handle (0 for default domain).
+ * @param domain The NVTX domain handle.
  * All other parameters are similar to `NVTX_PAYLOAD_STATIC_SCHEMA_DEFINE`.
  */
 #define NVTX_DEFINE_SCHEMA_FOR_STRUCT_AND_REGISTER(domain, struct_id, ...) \
@@ -172,7 +172,7 @@
  * used in other helper macros. Instead, `nvtxPayloadSchemaRegister` can also be
  * used, but `&struct_id##Attr` has to be passed.
  *
- * @param domain The NVTX domain handle (0 for default domain).
+ * @param domain The NVTX domain handle.
  * @param struct_id The name of the struct.
  *
  * @return NVTX schema ID
