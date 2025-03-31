@@ -80,6 +80,6 @@ if(NVTX3_INSTALL)
         NAMESPACE nvtx3::
         DESTINATION "${CMAKE_INSTALL_LIBDIR}/cmake/nvtx3")
     export(EXPORT nvtx3-targets
-        FILE ntx3-targets.cmake
+        FILE nvtx3-targets.cmake
         NAMESPACE nvtx3::)
 endif()
