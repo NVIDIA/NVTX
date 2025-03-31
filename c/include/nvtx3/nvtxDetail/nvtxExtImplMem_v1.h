@@ -50,12 +50,13 @@ ret_type fn_name signature { \
  * Function slots for the memory extension. First entry is the module
  * state, initialized to `0` (`NVTX_EXTENSION_FRESH`).
  */
+#define NVTX_EXT_MEM_SLOT_COUNT 63
 
 /* Avoid warnings about missing extern declaration. */
 NVTX_LINKONCE_FWDDECL_GLOBAL intptr_t
-NVTX_EXT_MEM_VERSIONED_ID(nvtxExtMemSlots)[NVTX3EXT_CBID_MEM_FN_NUM + 2];
+NVTX_EXT_MEM_VERSIONED_ID(nvtxExtMemSlots)[NVTX_EXT_MEM_SLOT_COUNT + 1];
 NVTX_LINKONCE_DEFINE_GLOBAL intptr_t
-NVTX_EXT_MEM_VERSIONED_ID(nvtxExtMemSlots)[NVTX3EXT_CBID_MEM_FN_NUM + 2]
+NVTX_EXT_MEM_VERSIONED_ID(nvtxExtMemSlots)[NVTX_EXT_MEM_SLOT_COUNT + 1]
     = {0};
 
 /* Avoid warnings about missing prototype. */
@@ -65,7 +66,7 @@ NVTX_LINKONCE_DEFINE_FUNCTION void NVTX_EXT_MEM_VERSIONED_ID(nvtxExtMemInitOnce)
     intptr_t* fnSlots = NVTX_EXT_MEM_VERSIONED_ID(nvtxExtMemSlots) + 1;
     nvtxExtModuleSegment_t segment = {
         1, /* only one segment, hard-code ID */
-        NVTX3EXT_CBID_MEM_FN_NUM,
+        NVTX_EXT_MEM_SLOT_COUNT,
         fnSlots
     };
 
@@ -86,7 +87,7 @@ NVTX_LINKONCE_DEFINE_FUNCTION void NVTX_EXT_MEM_VERSIONED_ID(nvtxExtMemInitOnce)
 #define NVTX_EXT_MEM_IMPL_FN_V1(ret_type, fn_name, signature, arg_names) \
 typedef ret_type (*fn_name##_impl_fntype)signature; \
 NVTX_DECLSPEC ret_type NVTX_API fn_name signature { \
-    intptr_t* pSlot = &NVTX_EXT_MEM_VERSIONED_ID(nvtxExtMemSlots)[NVTX3EXT_CBID_##fn_name]; \
+    intptr_t* pSlot = &NVTX_EXT_MEM_VERSIONED_ID(nvtxExtMemSlots)[NVTX3EXT_CBID_##fn_name + 1]; \
     intptr_t slot = *pSlot; \
     if (slot != NVTX_EXTENSION_DISABLED) { \
         if (slot != NVTX_EXTENSION_FRESH) { \
