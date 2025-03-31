@@ -38,7 +38,7 @@ extern "C" {
 
 #include "nvtxExtHelperMacros.h"
 
-#define NVTX_EXT_FN_IMPL(ret_val, fn_name, signature, arg_names) \
+#define NVTX_EXT_MEM_IMPL_FN_V1(ret_val, fn_name, signature, arg_names) \
 ret_val fn_name signature { \
     NVTX_EXT_HELPER_UNUSED_ARGS arg_names \
     return ((ret_val)(intptr_t)-1); \
@@ -83,7 +83,7 @@ NVTX_LINKONCE_DEFINE_FUNCTION void NVTX_EXT_MEM_VERSIONED_ID(nvtxExtMemInitOnce)
         NVTX_EXT_MEM_VERSIONED_ID(nvtxExtMemSlots));
 }
 
-#define NVTX_EXT_FN_IMPL(ret_type, fn_name, signature, arg_names) \
+#define NVTX_EXT_MEM_IMPL_FN_V1(ret_type, fn_name, signature, arg_names) \
 typedef ret_type ( * fn_name##_impl_fntype )signature; \
     NVTX_DECLSPEC ret_type NVTX_API fn_name signature { \
     intptr_t* pSlot = &NVTX_EXT_MEM_VERSIONED_ID(nvtxExtMemSlots)[NVTX3EXT_CBID_##fn_name]; \
@@ -108,9 +108,9 @@ typedef ret_type ( * fn_name##_impl_fntype )signature; \
 /* Non-void functions. */
 #define NVTX_EXT_FN_RETURN_INVALID(rtype) return (rtype)0;
 
-NVTX_EXT_FN_IMPL(nvtxMemHeapHandle_t, nvtxMemHeapRegister, (nvtxDomainHandle_t domain, nvtxMemHeapDesc_t const* desc), (domain, desc))
+NVTX_EXT_MEM_IMPL_FN_V1(nvtxMemHeapHandle_t, nvtxMemHeapRegister, (nvtxDomainHandle_t domain, nvtxMemHeapDesc_t const* desc), (domain, desc))
 
-NVTX_EXT_FN_IMPL(nvtxMemPermissionsHandle_t, nvtxMemPermissionsCreate, (nvtxDomainHandle_t domain, int32_t creationflags), (domain, creationflags))
+NVTX_EXT_MEM_IMPL_FN_V1(nvtxMemPermissionsHandle_t, nvtxMemPermissionsCreate, (nvtxDomainHandle_t domain, int32_t creationflags), (domain, creationflags))
 
 #undef NVTX_EXT_FN_RETURN_INVALID
 /* END: Non-void functions. */
@@ -119,33 +119,33 @@ NVTX_EXT_FN_IMPL(nvtxMemPermissionsHandle_t, nvtxMemPermissionsCreate, (nvtxDoma
 #define NVTX_EXT_FN_RETURN_INVALID(rtype)
 #define return
 
-NVTX_EXT_FN_IMPL(void, nvtxMemHeapUnregister, (nvtxDomainHandle_t domain, nvtxMemHeapHandle_t heap), (domain, heap))
+NVTX_EXT_MEM_IMPL_FN_V1(void, nvtxMemHeapUnregister, (nvtxDomainHandle_t domain, nvtxMemHeapHandle_t heap), (domain, heap))
 
-NVTX_EXT_FN_IMPL(void, nvtxMemHeapReset, (nvtxDomainHandle_t domain, nvtxMemHeapHandle_t heap), (domain, heap))
+NVTX_EXT_MEM_IMPL_FN_V1(void, nvtxMemHeapReset, (nvtxDomainHandle_t domain, nvtxMemHeapHandle_t heap), (domain, heap))
 
-NVTX_EXT_FN_IMPL(void, nvtxMemRegionsRegister, (nvtxDomainHandle_t domain, nvtxMemRegionsRegisterBatch_t const* desc), (domain, desc))
+NVTX_EXT_MEM_IMPL_FN_V1(void, nvtxMemRegionsRegister, (nvtxDomainHandle_t domain, nvtxMemRegionsRegisterBatch_t const* desc), (domain, desc))
 
-NVTX_EXT_FN_IMPL(void, nvtxMemRegionsResize, (nvtxDomainHandle_t domain,nvtxMemRegionsResizeBatch_t const* desc), (domain, desc))
+NVTX_EXT_MEM_IMPL_FN_V1(void, nvtxMemRegionsResize, (nvtxDomainHandle_t domain, nvtxMemRegionsResizeBatch_t const* desc), (domain, desc))
 
-NVTX_EXT_FN_IMPL(void, nvtxMemRegionsUnregister, (nvtxDomainHandle_t domain,nvtxMemRegionsUnregisterBatch_t const* desc), (domain, desc))
+NVTX_EXT_MEM_IMPL_FN_V1(void, nvtxMemRegionsUnregister, (nvtxDomainHandle_t domain, nvtxMemRegionsUnregisterBatch_t const* desc), (domain, desc))
 
-NVTX_EXT_FN_IMPL(void, nvtxMemRegionsName, (nvtxDomainHandle_t domain,nvtxMemRegionsNameBatch_t const* desc), (domain, desc))
+NVTX_EXT_MEM_IMPL_FN_V1(void, nvtxMemRegionsName, (nvtxDomainHandle_t domain, nvtxMemRegionsNameBatch_t const* desc), (domain, desc))
 
-NVTX_EXT_FN_IMPL(void, nvtxMemPermissionsAssign, (nvtxDomainHandle_t domain,nvtxMemPermissionsAssignBatch_t const* desc), (domain, desc))
+NVTX_EXT_MEM_IMPL_FN_V1(void, nvtxMemPermissionsAssign, (nvtxDomainHandle_t domain, nvtxMemPermissionsAssignBatch_t const* desc), (domain, desc))
 
-NVTX_EXT_FN_IMPL(void, nvtxMemPermissionsDestroy, (nvtxDomainHandle_t domain, nvtxMemPermissionsHandle_t permissions), (domain, permissions))
+NVTX_EXT_MEM_IMPL_FN_V1(void, nvtxMemPermissionsDestroy, (nvtxDomainHandle_t domain, nvtxMemPermissionsHandle_t permissions), (domain, permissions))
 
-NVTX_EXT_FN_IMPL(void, nvtxMemPermissionsReset, (nvtxDomainHandle_t domain, nvtxMemPermissionsHandle_t permissions), (domain, permissions))
+NVTX_EXT_MEM_IMPL_FN_V1(void, nvtxMemPermissionsReset, (nvtxDomainHandle_t domain, nvtxMemPermissionsHandle_t permissions), (domain, permissions))
 
-NVTX_EXT_FN_IMPL(void, nvtxMemPermissionsBind, (nvtxDomainHandle_t domain, nvtxMemPermissionsHandle_t permissions, uint32_t bindScope, uint32_t bindFlags), (domain, permissions, bindScope, bindFlags))
+NVTX_EXT_MEM_IMPL_FN_V1(void, nvtxMemPermissionsBind, (nvtxDomainHandle_t domain, nvtxMemPermissionsHandle_t permissions, uint32_t bindScope, uint32_t bindFlags), (domain, permissions, bindScope, bindFlags))
 
-NVTX_EXT_FN_IMPL(void, nvtxMemPermissionsUnbind, (nvtxDomainHandle_t domain, uint32_t bindScope), (domain, bindScope))
+NVTX_EXT_MEM_IMPL_FN_V1(void, nvtxMemPermissionsUnbind, (nvtxDomainHandle_t domain, uint32_t bindScope), (domain, bindScope))
 
 #undef return
 #undef NVTX_EXT_FN_RETURN_INVALID
 /* END: void functions. */
 
-#undef NVTX_EXT_FN_IMPL
+/* Keep NVTX_EXT_MEM_IMPL_FN_V1 defined for a future version of this extension. */
 
 #ifdef __cplusplus
 } /* extern "C" */
