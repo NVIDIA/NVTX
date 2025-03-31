@@ -146,7 +146,7 @@ NVTX_EXT_PAYLOAD_IMPL_FN_V1(uint8_t, nvtxDomainIsEnabled, (nvtxDomainHandle_t do
 NVTX_EXT_PAYLOAD_IMPL_FN_V1(uint64_t, nvtxScopeRegister, (nvtxDomainHandle_t domain,
     const nvtxScopeAttr_t* attr), (domain, attr))
 
-NVTX_EXT_PAYLOAD_IMPL_FN_V1(int64_t, nvtxTimestampGet, (), ())
+NVTX_EXT_PAYLOAD_IMPL_FN_V1(int64_t, nvtxTimestampGet, (void), ())
 
 NVTX_EXT_PAYLOAD_IMPL_FN_V1(uint64_t, nvtxTimeDomainRegister,
     (nvtxDomainHandle_t domain, const nvtxTimeDomainAttr_t* attr),
@@ -167,7 +167,7 @@ NVTX_EXT_PAYLOAD_IMPL_FN_V1(void, nvtxRangeEndPayload, (nvtxDomainHandle_t domai
     (domain, id, payloadData, count))
 
 NVTX_EXT_PAYLOAD_IMPL_FN_V1(void, nvtxTimerSource,
-    (nvtxDomainHandle_t domain, uint64_t timeDomainId, uint64_t flags, int64_t (*timestampProviderFn)()),
+    (nvtxDomainHandle_t domain, uint64_t timeDomainId, uint64_t flags, int64_t (*timestampProviderFn)(void)),
     (domain, timeDomainId, flags, timestampProviderFn))
 
 NVTX_EXT_PAYLOAD_IMPL_FN_V1(void, nvtxTimerSourceWithData,

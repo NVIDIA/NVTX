@@ -1186,7 +1186,7 @@ NVTX_DECLSPEC void NVTX_API nvtxTimerSource(
     nvtxDomainHandle_t domain,
     uint64_t timeDomainId,
     uint64_t flags,
-    int64_t (*timestampProviderFn)());
+    int64_t (*timestampProviderFn)(void));
 
 /**
  * Same as `nvtxTimerSource`, but with an additional data pointer argument.
