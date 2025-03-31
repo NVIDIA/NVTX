@@ -36,12 +36,7 @@ cmake_minimum_required(VERSION 3.10)
 # Project declaration needs to be before the configuration
 project(nvtx3 VERSION 3.1.1)
 
-# Determine if this is the root project
-set(NVTX3_IS_ROOT_PROJECT FALSE)
-if("${CMAKE_SOURCE_DIR}" STREQUAL "${PROJECT_SOURCE_DIR}")
-    set(NVTX3_IS_ROOT_PROJECT TRUE)
-endif()
-option(NVTX3_INSTALL "Install NVTX3" ${NVTX3_IS_ROOT_PROJECT})
+option(NVTX3_INSTALL "Install NVTX3" ON)
 
 set(NVTX3_TARGETS_NOT_USING_IMPORTED ON)
 include(nvtxImportedTargets.cmake)
