@@ -3,29 +3,45 @@
    You can adapt this file completely to your liking, but it should at least
    contain the root `toctree` directive.
 
-================================================
-nvtx - Annotate code ranges and events in Python
-================================================
+==================================================
+Python NVTX - Annotate code ranges and events in Python
+==================================================
 
-``nvtx`` gives your tools to annotate your Python code
-(or automatically annotates it for you).
-Annotated code can be analyzed and visualized by third-party applications such as
-`NVIDIA Nsight Systems <https://developer.nvidia.com/nsight-systems>`_.
-For example, you can produce detailed timelines of execution
-of Python programs annotated with ``nvtx``:
+| NVTX is a cross-platform API for annotating source code to provide contextual
+  information to developer tools.
+  The ``nvtx`` package provides a Python interface to the NVTX C API.
+| By default, NVTX API calls do **nothing**. When a program is launched from a developer tool
+  (such as `NVIDIA Nsight Systems <https://developer.nvidia.com/nsight-systems>`_),
+  NVTX API calls are redirected to the tool's functions.
+| Using `NVIDIA Nsight Systems <https://developer.nvidia.com/nsight-systems>`_,
+  The NVTX events can be visualized and analyzed in the timeline view.
 
 .. image:: images/timeline.png
     :align: center
 
+|
+
+Installation
+============
+
+Install using `conda` (preferred):
+::
+
+   conda install -c conda-forge nvtx
+
+Install using `pip`:
+::
+
+   python -m pip install nvtx
 
 Quick Demo
 ==========
 
-Here is an example of using the annotation tools provided  by ``nvtx``:
+Here is an example of using ``nvtx``:
 
 ::
 
-   # example_lib.py
+   # demo.py
 
    import time
    import nvtx
@@ -43,34 +59,34 @@ Here is an example of using the annotation tools provided  by ``nvtx``:
            sleep_for(i)
            my_func()
 
-
-Adding annotations to your code doesn't achieve anything by itself.
-To derive something useful from annotated code,
-you'll need to use a third-party application that supports NVTX annotations.
-The command below uses the Nsight Systems command-line interface to collect
-information from the annotated code:
+Profile the code above using Nsight Systems CLI:
 
 ::
 
    nsys profile python demo.py
 
-This produces an ``.nsys-rep`` file containing information about the annotated code.
-Opening that file in the Nsight Systems GUI,
-you can see a timeline of execution of your program:
+This produces a report file (``.nsys-rep``) which can be viewed in the Nsight Systems GUI:
 
 .. image:: images/timeline_lib.png
     :align: center
 
+|
 
-Contents
-========
+.. toctree::
+   :maxdepth: 2
 
-.. include:: toctree.rst
+   overview
 
+.. toctree::
+   :maxdepth: 1
 
-Indices and tables
-==================
+   reference
 
-* :ref:`genindex`
-* :ref:`modindex`
-* :ref:`search`
+.. toctree::
+    :hidden:
+    :caption: Project Links
+
+    GitHub <https://github.com/NVIDIA/NVTX/>
+    PyPI <https://pypi.org/project/nvtx/>
+    C Docs <https://nvidia.github.io/NVTX/doxygen/>
+    C++ Docs <https://nvidia.github.io/NVTX/doxygen-cpp/>

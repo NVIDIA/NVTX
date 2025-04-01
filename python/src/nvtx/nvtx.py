@@ -20,9 +20,11 @@ import contextlib
 import os
 
 from functools import wraps, lru_cache
+from typing import Optional, Union
 
 from nvtx._lib import (
     Domain,
+    DummyDomain,
     dummy_domain,
     mark as libnvtx_mark,
     pop_range as libnvtx_pop_range,
@@ -35,61 +37,60 @@ _ENABLED = not os.getenv("NVTX_DISABLE", False)
 
 
 @lru_cache(maxsize=None)
-def get_domain(name=None):
+def get_domain(name: Optional[str] = None) -> Union[Domain, DummyDomain]:
+    """
+    Get or create a :class:`Domain` object for a domain name.
+    """
     return Domain(name)
 
 
 class annotate:
     """
     Annotate code ranges using a context manager or a decorator.
+
+    Parameters
+    ----------
+    message
+        A message associated with the annotated code range.
+        When used as a decorator, defaults to the decorated function name.
+        When used as a context manager, defaults to the empty string.
+        Messages are cached and are registered as Registered Strings
+        in NVTX.
+        Caching a very large number of messages may lead to increased
+        memory usage.
+    color
+        A color associated with the annotated code range.
+        Supports `matplotlib` colors if it is available.
+    domain
+        A string specifying the domain under which the code range is
+        scoped. The default domain is named "NVTX".
+    category
+        A string or an integer specifying the category within the domain
+        under which the code range is scoped. If unspecified, the code
+        range is not associated with a category.
+    payload
+        A numeric value to be associated with this event.
+
+    Examples
+    --------
+    >>> import nvtx
+    >>> import time
+
+    Using a decorator:
+
+    >>> @nvtx.annotate(color="red", domain="my_domain"):    # `message` defaults to "func"
+    ... def func():
+    ...     time.sleep(0.1)
+
+    Using a context manager:
+
+    >>> with nvtx.annotate("my_code_range", color="blue"):
+    ...    time.sleep(10)
     """
 
-    def __init__(self, message=None, color=None, domain=None, category=None, payload=None):
-        """
-        Annotate a function or a code range.
-
-        Parameters
-        ----------
-        message : str, optional
-            A message associated with the annotated code range.
-            When used as a decorator, the default value of message
-            is the name of the function being decorated.
-            When used as a context manager, the default value is the empty
-            string.
-            Messages are cached and are registered as Registered Strings
-            in NVTX.
-            Caching a very large number of messages may lead to increased
-            memory usage.
-        color : str or color, optional
-            A color associated with the annotated code range.
-            Supports `matplotlib` colors if it is available.
-        domain : str, optional
-            A string specifying the domain under which the code range is
-            scoped. The default domain is named "NVTX".
-        category : str, int, optional
-            A string or an integer specifying the category within the domain
-            under which the code range is scoped. If unspecified, the code
-            range is not associated with a category.
-        payload : int or float, optional
-            A numeric value to be associated with this event
-
-        Examples
-        --------
-        >>> import nvtx
-        >>> import time
-
-        Using a decorator:
-
-        >>> @nvtx.annotate("my_func", color="red", domain="my_domain")
-        ... def func():
-        ...     time.sleep(0.1)
-
-        Using a context manager:
-
-        >>> with nvtx.annotate("my_code_range", color="blue"):
-        ...    time.sleep(10)
-        ...
-        """
+    def __init__(self, message: Optional[str] = None, color: Optional[Union[str, int]] = None,
+                 domain: Optional[str] = None, category: Optional[Union[str, int]] = None,
+                 payload: Optional[Union[int, float]] = None):
 
         self.init_args = message, color, domain, category, payload
         self.domain = get_domain(domain)
@@ -125,59 +126,78 @@ class annotate:
         return inner
 
 
-def mark(message=None, color="blue", domain=None, category=None, payload=None):
+def mark(message: Optional[str] = None, color: Optional[Union[str, int]] = "blue",
+         domain: Optional[str] = None, category: Optional[Union[str, int]] = None,
+         payload: Optional[Union[int, float]] = None):
     """
     Mark an instantaneous event.
 
     Parameters
     ----------
-    message : str, optional
+    message
         A message associated with the event.
         Messages are cached and are registered as Registered Strings
         in NVTX.
         Caching a very large number of messages may lead to increased
         memory usage.
-    color : str, color, optional
+    color
         Color associated with the event.
-    domain : str, optional
-        A string specifuing the domain under which the event is scoped.
+        Supports `matplotlib` colors if it is available.
+    domain
+        A string specifying the domain under which the event is scoped.
         The default domain is named "NVTX".
-    category : str, int, optional
+    category
         A string or an integer specifying the category within the domain
         under which the event is scoped. If unspecified, the event is
         not associated with a category.
-    payload : int or float, optional
-            A numeric value to be associated with this event
+    payload
+        A numeric value to be associated with this event
+
+    Notes
+    -----
+    For best performance, use :func:`Domain.mark`.
+
+    Examples
+    --------
+    >>> import nvtx
+    >>> nvtx.mark("my_marker", domain="my_domain")
     """
     domain = get_domain(domain)
     if domain is not dummy_domain:
         libnvtx_mark(domain.get_event_attributes(message, color, category, payload), domain.handle)
 
 
-def push_range(message=None, color="blue", domain=None, category=None, payload=None):
+def push_range(message: Optional[str] = None, color: Optional[Union[str, int]] = "blue",
+               domain: Optional[str] = None, category: Optional[Union[str, int]] = None,
+               payload: Optional[Union[int, float]] = None):
     """
     Mark the beginning of a code range.
 
     Parameters
     ----------
-    message : str, optional
+    message
         A message associated with the annotated code range.
         Messages are cached and are registered as Registered Strings
         in NVTX.
         Caching a very large number of messages may lead to increased
         memory usage.
-    color : str, color, optional
+    color
         A color associated with the annotated code range.
-        Supports
-    domain : str, optional
+        Supports `matplotlib` colors if it is available.
+    domain
         Name of a domain under which the code range is scoped.
         The default domain name is "NVTX".
-    category : str, int, optional
+    category
         A string or an integer specifying the category within the domain
         under which the code range is scoped. If unspecified, the code range
         is not associated with a category.
-    payload : int or float, optional
-            A numeric value to be associated with this event
+    payload
+        A numeric value to be associated with this event
+
+    Notes
+    -----
+    When applicable, prefer to use :class:`annotate`.
+    Otherwise, for best performance, use :func:`Domain.push_range` and :func:`Domain.pop_range`.
 
     Examples
     --------
@@ -193,13 +213,13 @@ def push_range(message=None, color="blue", domain=None, category=None, payload=N
                            domain.handle)
 
 
-def pop_range(domain=None):
+def pop_range(domain: Optional[str] = None):
     """
-    Mark the end of a code range that was started with `push_range`.
+    Mark the end of a code range that was started with :func:`push_range`.
 
     Parameters
     ----------
-    domain : str, optional
+    domain
         The domain under which the code range is scoped. The default
         domain is "NVTX".
     """
@@ -208,35 +228,40 @@ def pop_range(domain=None):
         libnvtx_pop_range(domain.handle)
 
 
-def start_range(message=None, color="blue", domain=None, category=None, payload=None):
+def start_range(message: Optional[str] = None, color: Optional[Union[str, int]] = None,
+                domain: Optional[str] = None, category: Optional[Union[str, int]] = None,
+                payload: Optional[Union[int, float]] = None) -> tuple[int, int]:
     """
-    Mark the beginning of a code range.
+    Mark the beginning of a process range.
 
     Parameters
     ----------
-    message : str, optional
-        A message associated with the annotated code range.
+    message
+        A message associated with the range.
         Messages are cached and are registered as Registered Strings
         in NVTX.
         Caching a very large number of messages may lead to increased
         memory usage.
-    color : str, color, optional
-        A color associated with the annotated code range.
-        Supports
-    domain : str, optional
-        Name of a domain under which the code range is scoped.
+    color
+        A color associated with the range.
+        Supports `matplotlib` colors if it is available.
+    domain
+        Name of a domain under which the range is scoped.
         The default domain name is "NVTX".
-    category : str, int, optional
+    category
         A string or an integer specifying the category within the domain
-        under which the code range is scoped. If unspecified, the code range
+        under which the range is scoped. If unspecified, the range
         is not associated with a category.
-    payload : int or float, optional
+    payload
             A numeric value to be associated with this event
 
     Returns
     -------
-    tuple of int:
-        A tuple of the form (range_id, domain_handle) that must be passed to `end_range`.
+    A tuple of the form ``(range_id, domain_handle)`` that must be passed to :func:`end_range`.
+
+    Notes
+    -----
+    For best performance, use :func:`Domain.start_range` and :func:`Domain.end_range`.
 
     Examples
     --------
@@ -244,7 +269,7 @@ def start_range(message=None, color="blue", domain=None, category=None, payload=
     >>> import nvtx
     >>> range_id = nvtx.start_range("my_code_range", domain="my_domain")
     >>> time.sleep(1)
-    >>> nvtx.end_range(range_id, domain="my_domain")
+    >>> nvtx.end_range(range_id)
     """
     domain = get_domain(domain)
     if domain is not dummy_domain:
@@ -252,14 +277,14 @@ def start_range(message=None, color="blue", domain=None, category=None, payload=
             domain.get_event_attributes(message, color, category, payload), domain.handle)
 
 
-def end_range(range_id):
+def end_range(range_id: tuple[int, int]):
     """
-    Mark the end of a code range that was started with `start_range`.
+    Mark the end of a code range that was started with :func:`start_range`.
 
     Parameters
     ----------
-    range_id : tuple of int
-        The tuple object returned by `start_range`.
+    range_id
+        The tuple object returned by :func:`start_range`.
     """
     if range_id is not None:
         libnvtx_end_range(*range_id)

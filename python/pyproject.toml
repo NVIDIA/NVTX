@@ -24,7 +24,7 @@ requires = ["setuptools", "wheel", "Cython==3.0.11"]
 [project]
 name = "nvtx"
 version = "0.2.11"
-description="PyNVTX - Python code annotation library"
+description="Python NVTX - Python code annotation library"
 readme = "README.md"
 license = { text = "Apache 2.0" }
 authors = [{name = "NVIDIA Corporation"}]
@@ -52,6 +52,7 @@ Issues = "https://github.com/NVIDIA/NVTX/issues"
 
 [project.optional-dependencies]
 test = ["pytest", "Cython==3.0.11", "setuptools"]
+docs = ["sphinx", "nvidia_sphinx_theme"]
 
 [tool.setuptools.package-data]
 "nvtx._lib" = ["*.pxd"]

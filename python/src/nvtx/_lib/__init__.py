@@ -18,6 +18,7 @@
 
 from nvtx._lib.lib import (
     Domain,
+    DummyDomain,
     dummy_domain,
     RegisteredString,
     EventAttributes,

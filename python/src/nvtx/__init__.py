@@ -19,12 +19,13 @@
 from nvtx.nvtx import (
     annotate,
     enabled,
-    pop_range,
     push_range,
+    pop_range,
     start_range,
     end_range,
     mark,
     get_domain,
+    Domain,
 )
 
 from nvtx._lib.profiler import Profile
