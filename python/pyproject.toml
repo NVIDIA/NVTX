@@ -45,7 +45,7 @@ classifiers = [
 
 [project.urls]
 Homepage = "https://github.com/NVIDIA/NVTX"
-Documentation = "https://github.com/NVIDIA/NVTX/blob/release-v3/python/docs/index.rst"
+Documentation = "https://nvidia.github.io/NVTX/python/"
 Repository = "https://github.com/NVIDIA/NVTX"
 License = "https://nvidia.github.io/NVTX/LICENSE.txt"
 Issues = "https://github.com/NVIDIA/NVTX/issues"
