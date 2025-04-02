@@ -90,13 +90,13 @@ typedef ret_type ( * fn_name##_impl_fntype )signature; \
     intptr_t slot = *pSlot; \
     if (slot != NVTX_EXTENSION_DISABLED) { \
         if (slot != NVTX_EXTENSION_FRESH) { \
-            return (*(fn_name##_impl_fntype)slot) arg_names; \
+            NVTX_EXT_FN_RETURN (*(fn_name##_impl_fntype)slot) arg_names; \
         } else { \
             NVTX_EXT_MEM_VERSIONED_ID(nvtxExtMemInitOnce)(); \
             /* Re-read function slot after extension initialization. */ \
             slot = *pSlot; \
             if (slot != NVTX_EXTENSION_DISABLED && slot != NVTX_EXTENSION_FRESH) { \
-                return (*(fn_name##_impl_fntype)slot) arg_names; \
+                NVTX_EXT_FN_RETURN (*(fn_name##_impl_fntype)slot) arg_names; \
             } \
         } \
     } \
@@ -106,18 +106,20 @@ typedef ret_type ( * fn_name##_impl_fntype )signature; \
 #endif /* NVTX_DISABLE */
 
 /* Non-void functions. */
+#define NVTX_EXT_FN_RETURN return
 #define NVTX_EXT_FN_RETURN_INVALID(rtype) return (rtype)0;
 
 NVTX_EXT_MEM_IMPL_FN_V1(nvtxMemHeapHandle_t, nvtxMemHeapRegister, (nvtxDomainHandle_t domain, nvtxMemHeapDesc_t const* desc), (domain, desc))
 
 NVTX_EXT_MEM_IMPL_FN_V1(nvtxMemPermissionsHandle_t, nvtxMemPermissionsCreate, (nvtxDomainHandle_t domain, int32_t creationflags), (domain, creationflags))
 
+#undef NVTX_EXT_FN_RETURN
 #undef NVTX_EXT_FN_RETURN_INVALID
 /* END: Non-void functions. */
 
 /* void functions. */
+#define NVTX_EXT_FN_RETURN
 #define NVTX_EXT_FN_RETURN_INVALID(rtype)
-#define return
 
 NVTX_EXT_MEM_IMPL_FN_V1(void, nvtxMemHeapUnregister, (nvtxDomainHandle_t domain, nvtxMemHeapHandle_t heap), (domain, heap))
 
@@ -141,7 +143,7 @@ NVTX_EXT_MEM_IMPL_FN_V1(void, nvtxMemPermissionsBind, (nvtxDomainHandle_t domain
 
 NVTX_EXT_MEM_IMPL_FN_V1(void, nvtxMemPermissionsUnbind, (nvtxDomainHandle_t domain, uint32_t bindScope), (domain, bindScope))
 
-#undef return
+#undef NVTX_EXT_FN_RETURN
 #undef NVTX_EXT_FN_RETURN_INVALID
 /* END: void functions. */
 

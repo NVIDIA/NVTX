@@ -100,13 +100,13 @@ typedef ret_type (*fn_name##_impl_fntype)signature; \
     intptr_t slot = NVTX_EXT_PAYLOAD_VERSIONED_ID(nvtxExtPayloadSlots)[NVTX3EXT_CBID_##fn_name + 1]; \
     if (slot != NVTX_EXTENSION_DISABLED) { \
         if (slot != NVTX_EXTENSION_FRESH) { \
-            return (*(fn_name##_impl_fntype)slot) arg_names; \
+            NVTX_EXT_FN_RETURN (*(fn_name##_impl_fntype)slot) arg_names; \
         } else { \
             NVTX_EXT_PAYLOAD_VERSIONED_ID(nvtxExtPayloadInitOnce)(); \
             /* Re-read function slot after extension initialization. */ \
             slot = NVTX_EXT_PAYLOAD_VERSIONED_ID(nvtxExtPayloadSlots)[NVTX3EXT_CBID_##fn_name + 1]; \
             if (slot != NVTX_EXTENSION_DISABLED && slot != NVTX_EXTENSION_FRESH) { \
-                return (*(fn_name##_impl_fntype)slot) arg_names; \
+                NVTX_EXT_FN_RETURN (*(fn_name##_impl_fntype)slot) arg_names; \
             } \
         } \
     } \
@@ -118,6 +118,7 @@ typedef ret_type (*fn_name##_impl_fntype)signature; \
 
 
 /* Push/pop functions return `NVTX_NO_PUSH_POP_TRACKING` if no tool is attached. */
+#define NVTX_EXT_FN_RETURN return
 #define NVTX_EXT_FN_RETURN_INVALID(rtype) return NVTX_NO_PUSH_POP_TRACKING;
 
 NVTX_EXT_PAYLOAD_IMPL_FN_V1(int, nvtxRangePushPayload,
@@ -128,9 +129,11 @@ NVTX_EXT_PAYLOAD_IMPL_FN_V1(int, nvtxRangePopPayload,
     (nvtxDomainHandle_t domain, const nvtxPayloadData_t* payloadData, size_t count),
     (domain, payloadData, count))
 
+#undef NVTX_EXT_FN_RETURN
 #undef NVTX_EXT_FN_RETURN_INVALID
 
 /* Non-void functions. */
+#define NVTX_EXT_FN_RETURN return
 #define NVTX_EXT_FN_RETURN_INVALID(rtype) return (rtype)0;
 
 NVTX_EXT_PAYLOAD_IMPL_FN_V1(uint64_t, nvtxPayloadSchemaRegister,
@@ -156,12 +159,13 @@ NVTX_EXT_PAYLOAD_IMPL_FN_V1(uint64_t, nvtxTimeDomainRegister,
     (nvtxDomainHandle_t domain, const nvtxTimeDomainAttr_t* attr),
     (domain, attr))
 
+#undef NVTX_EXT_FN_RETURN
 #undef NVTX_EXT_FN_RETURN_INVALID
 /* END: Non-void functions. */
 
 /* void functions. */
+#define NVTX_EXT_FN_RETURN
 #define NVTX_EXT_FN_RETURN_INVALID(rtype)
-#define return
 
 NVTX_EXT_PAYLOAD_IMPL_FN_V1(void, nvtxMarkPayload, (nvtxDomainHandle_t domain,
     const nvtxPayloadData_t* payloadData, size_t count), (domain, payloadData, count))
@@ -200,7 +204,7 @@ NVTX_EXT_PAYLOAD_IMPL_FN_V1(void, nvtxEventSubmit,
 NVTX_EXT_PAYLOAD_IMPL_FN_V1(void, nvtxEventBatchSubmit, (nvtxDomainHandle_t domain,
     const nvtxEventBatch_t* eventBatch), (domain, eventBatch))
 
-#undef return
+#undef NVTX_EXT_FN_RETURN
 #undef NVTX_EXT_FN_RETURN_INVALID
 /* END: void functions. */
 

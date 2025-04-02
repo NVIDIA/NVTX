@@ -29,24 +29,26 @@ extern "C" {
 /* NVTX_EXT_MEM_IMPL_FN_V1 defined in nvtxExtImplMem_v1.h */
 
 /* Non-void functions. */
+#define NVTX_EXT_FN_RETURN return
 #define NVTX_EXT_FN_RETURN_INVALID(rtype) return (rtype)0;
 
 NVTX_EXT_MEM_IMPL_FN_V1(nvtxMemPermissionsHandle_t, nvtxMemCudaGetProcessWidePermissions, (nvtxDomainHandle_t domain), (domain))
 
 NVTX_EXT_MEM_IMPL_FN_V1(nvtxMemPermissionsHandle_t, nvtxMemCudaGetDeviceWidePermissions, (nvtxDomainHandle_t domain, int device), (domain, device))
 
+#undef NVTX_EXT_FN_RETURN
 #undef NVTX_EXT_FN_RETURN_INVALID
 /* END: Non-void functions. */
 
 /* void functions. */
+#define NVTX_EXT_FN_RETURN
 #define NVTX_EXT_FN_RETURN_INVALID(rtype)
-#define return
 
 NVTX_EXT_MEM_IMPL_FN_V1(void, nvtxMemCudaSetPeerAccess, (nvtxDomainHandle_t domain, nvtxMemPermissionsHandle_t permissions, int devicePeer, uint32_t flags), (domain, permissions, devicePeer, flags))
 
 NVTX_EXT_MEM_IMPL_FN_V1(void, nvtxMemCudaMarkInitialized, (nvtxDomainHandle_t domain, cudaStream_t stream, uint8_t isPerThreadStream, nvtxMemMarkInitializedBatch_t const* desc), (domain, stream, isPerThreadStream, desc))
 
-#undef return
+#undef NVTX_EXT_FN_RETURN
 #undef NVTX_EXT_FN_RETURN_INVALID
 /* END: void functions. */
 

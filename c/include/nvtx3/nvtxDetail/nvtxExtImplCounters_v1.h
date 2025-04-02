@@ -98,13 +98,13 @@ NVTX_DECLSPEC ret_type NVTX_API fn_name signature { \
     intptr_t slot = NVTX_EXT_COUNTERS_VERSIONED_ID(nvtxExtCountersSlots)[NVTX3EXT_CBID_##fn_name + 1]; \
     if (slot != NVTX_EXTENSION_DISABLED) { \
         if (slot != NVTX_EXTENSION_FRESH) { \
-            return (*(fn_name##_impl_fntype)slot) arg_names; \
+            NVTX_EXT_FN_RETURN (*(fn_name##_impl_fntype)slot) arg_names; \
         } else { \
             NVTX_EXT_COUNTERS_VERSIONED_ID(nvtxExtCountersInitOnce)(); \
             /* Re-read function slot after extension initialization. */ \
             slot = NVTX_EXT_COUNTERS_VERSIONED_ID(nvtxExtCountersSlots)[NVTX3EXT_CBID_##fn_name + 1]; \
             if (slot != NVTX_EXTENSION_DISABLED && slot != NVTX_EXTENSION_FRESH) { \
-                return (*(fn_name##_impl_fntype)slot) arg_names; \
+                NVTX_EXT_FN_RETURN (*(fn_name##_impl_fntype)slot) arg_names; \
             } \
         } \
     } \
@@ -114,18 +114,20 @@ NVTX_DECLSPEC ret_type NVTX_API fn_name signature { \
 #endif /* NVTX_DISABLE */
 
 /* Non-void functions. */
+#define NVTX_EXT_FN_RETURN return
 #define NVTX_EXT_FN_RETURN_INVALID(rtype) return (rtype)0;
 
 NVTX_EXT_COUNTERS_IMPL_FN_V1(uint64_t, nvtxCounterRegister,
     (nvtxDomainHandle_t domain, const nvtxCounterAttr_t* attr),
     (domain, attr))
 
+#undef NVTX_EXT_FN_RETURN
 #undef NVTX_EXT_FN_RETURN_INVALID
 /* END: Non-void functions. */
 
 /* void functions. */
+#define NVTX_EXT_FN_RETURN
 #define NVTX_EXT_FN_RETURN_INVALID(rtype)
-#define return
 
 NVTX_EXT_COUNTERS_IMPL_FN_V1(void, nvtxCounterSampleInt64,
     (nvtxDomainHandle_t domain, uint64_t counterId, int64_t value),
@@ -147,7 +149,7 @@ NVTX_EXT_COUNTERS_IMPL_FN_V1(void, nvtxCounterBatchSubmit,
     (nvtxDomainHandle_t domain, const nvtxCounterBatch_t* counterData),
     (domain, counterData))
 
-#undef return
+#undef NVTX_EXT_FN_RETURN
 #undef NVTX_EXT_FN_RETURN_INVALID
 /* END: void functions. */
 
