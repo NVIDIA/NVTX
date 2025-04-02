@@ -97,14 +97,15 @@ NVTX_LINKONCE_DEFINE_FUNCTION void NVTX_EXT_PAYLOAD_VERSIONED_ID(nvtxExtPayloadI
 #define NVTX_EXT_PAYLOAD_IMPL_FN_V1(ret_type, fn_name, signature, arg_names) \
 typedef ret_type (*fn_name##_impl_fntype)signature; \
     NVTX_DECLSPEC ret_type NVTX_API fn_name signature { \
-    intptr_t slot = NVTX_EXT_PAYLOAD_VERSIONED_ID(nvtxExtPayloadSlots)[NVTX3EXT_CBID_##fn_name + 1]; \
+    intptr_t* pSlot = &NVTX_EXT_PAYLOAD_VERSIONED_ID(nvtxExtPayloadSlots)[NVTX3EXT_CBID_##fn_name + 1]; \
+    intptr_t slot = *pSlot; \
     if (slot != NVTX_EXTENSION_DISABLED) { \
         if (slot != NVTX_EXTENSION_FRESH) { \
             NVTX_EXT_FN_RETURN (*(fn_name##_impl_fntype)slot) arg_names; \
         } else { \
             NVTX_EXT_PAYLOAD_VERSIONED_ID(nvtxExtPayloadInitOnce)(); \
             /* Re-read function slot after extension initialization. */ \
-            slot = NVTX_EXT_PAYLOAD_VERSIONED_ID(nvtxExtPayloadSlots)[NVTX3EXT_CBID_##fn_name + 1]; \
+            slot = *pSlot; \
             if (slot != NVTX_EXTENSION_DISABLED && slot != NVTX_EXTENSION_FRESH) { \
                 NVTX_EXT_FN_RETURN (*(fn_name##_impl_fntype)slot) arg_names; \
             } \
