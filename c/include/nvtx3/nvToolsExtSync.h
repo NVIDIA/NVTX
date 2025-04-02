@@ -341,7 +341,8 @@ NVTX_DECLSPEC void NVTX_API nvtxDomainSyncUserAcquireStart(nvtxSyncUser_t handle
 * ::nvtxDomainSyncUserReleasing
 *
 * \version \NVTX_VERSION_2
-*/NVTX_DECLSPEC void NVTX_API nvtxDomainSyncUserAcquireFailed(nvtxSyncUser_t handle);
+*/
+NVTX_DECLSPEC void NVTX_API nvtxDomainSyncUserAcquireFailed(nvtxSyncUser_t handle);
 
 /* ------------------------------------------------------------------------- */
 /** \brief Signal to tools of success in acquiring a user defined synchronization object
@@ -358,7 +359,8 @@ NVTX_DECLSPEC void NVTX_API nvtxDomainSyncUserAcquireStart(nvtxSyncUser_t handle
 * ::nvtxDomainSyncUserReleasing
 *
 * \version \NVTX_VERSION_2
-*/NVTX_DECLSPEC void NVTX_API nvtxDomainSyncUserAcquireSuccess(nvtxSyncUser_t handle);
+*/
+NVTX_DECLSPEC void NVTX_API nvtxDomainSyncUserAcquireSuccess(nvtxSyncUser_t handle);
 
 /* ------------------------------------------------------------------------- */
 /** \brief Signal to tools of releasing a reservation on user defined synchronization object
