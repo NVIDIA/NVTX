@@ -654,31 +654,33 @@ NVTX_DECLSPEC void NVTX_API nvtxMemPermissionsUnbind(
 
 /** @} */ /*END defgroup*/
 
-typedef enum NvtxExtMemCallbackId
-{
-    /* CBID 0 is invalid */
-    NVTX3EXT_CBID_nvtxMemHeapRegister                  = 1,
-    NVTX3EXT_CBID_nvtxMemHeapUnregister                = 2,
-    NVTX3EXT_CBID_nvtxMemHeapReset                     = 3,
-    NVTX3EXT_CBID_nvtxMemRegionsRegister               = 4,
-    NVTX3EXT_CBID_nvtxMemRegionsResize                 = 5,
-    NVTX3EXT_CBID_nvtxMemRegionsUnregister             = 6,
-    NVTX3EXT_CBID_nvtxMemRegionsName                   = 7,
-    NVTX3EXT_CBID_nvtxMemPermissionsAssign             = 8,
-    NVTX3EXT_CBID_nvtxMemPermissionsCreate             = 9,
-    NVTX3EXT_CBID_nvtxMemPermissionsDestroy            = 10,
-    NVTX3EXT_CBID_nvtxMemPermissionsReset              = 11,
-    NVTX3EXT_CBID_nvtxMemPermissionsBind               = 12,
-    NVTX3EXT_CBID_nvtxMemPermissionsUnbind             = 13,
+#ifndef NVTX_MEM_CALLBACK_ID_V1
+#define NVTX_MEM_CALLBACK_ID_V1
 
-    /* 14-17 in nvtxExtImplMemCudaRt_v1.h */
-    NVTX3EXT_CBID_nvtxMemCudaGetProcessWidePermissions = 14,
-    NVTX3EXT_CBID_nvtxMemCudaGetDeviceWidePermissions  = 15,
-    NVTX3EXT_CBID_nvtxMemCudaSetPeerAccess             = 16,
-    NVTX3EXT_CBID_nvtxMemCudaMarkInitialized           = 17,
+/* CBID 0 is invalid */
+#define NVTX3EXT_CBID_nvtxMemHeapRegister                  1
+#define NVTX3EXT_CBID_nvtxMemHeapUnregister                2
+#define NVTX3EXT_CBID_nvtxMemHeapReset                     3
+#define NVTX3EXT_CBID_nvtxMemRegionsRegister               4
+#define NVTX3EXT_CBID_nvtxMemRegionsResize                 5
+#define NVTX3EXT_CBID_nvtxMemRegionsUnregister             6
+#define NVTX3EXT_CBID_nvtxMemRegionsName                   7
+#define NVTX3EXT_CBID_nvtxMemPermissionsAssign             8
+#define NVTX3EXT_CBID_nvtxMemPermissionsCreate             9
+#define NVTX3EXT_CBID_nvtxMemPermissionsDestroy            10
+#define NVTX3EXT_CBID_nvtxMemPermissionsReset              11
+#define NVTX3EXT_CBID_nvtxMemPermissionsBind               12
+#define NVTX3EXT_CBID_nvtxMemPermissionsUnbind             13
 
-    NVTX3EXT_CBID_MEM_FN_NUM                           = 18
-} NvtxExtMemCallbackId;
+/* 14-17 in nvtxExtImplMemCudaRt_v1.h */
+#define NVTX3EXT_CBID_nvtxMemCudaGetProcessWidePermissions 14
+#define NVTX3EXT_CBID_nvtxMemCudaGetDeviceWidePermissions  15
+#define NVTX3EXT_CBID_nvtxMemCudaSetPeerAccess             16
+#define NVTX3EXT_CBID_nvtxMemCudaMarkInitialized           17
+
+#define NVTX3EXT_CBID_MEM_FN_NUM                           18
+
+#endif /* NVTX_MEM_CALLBACK_ID_V1 */
 
 #ifdef __GNUC__
 #pragma GCC visibility push(internal)
