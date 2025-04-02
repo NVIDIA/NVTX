@@ -38,13 +38,13 @@ extern "C" {
 
 #include "nvtxExtHelperMacros.h"
 
-#define NVTX_EXT_MEM_IMPL_FN_V1(ret_val, fn_name, signature, arg_names) \
-ret_val fn_name signature { \
+#define NVTX_EXT_MEM_IMPL_FN_V1(ret_type, fn_name, signature, arg_names) \
+ret_type fn_name signature { \
     NVTX_EXT_HELPER_UNUSED_ARGS arg_names \
-    return ((ret_val)(intptr_t)-1); \
+    NVTX_EXT_FN_RETURN_INVALID(ret_type) \
 }
 
-#else  /* NVTX_DISABLE */
+#else /* NVTX_DISABLE */
 
 /*
  * Function slots for the memory extension. First entry is the module
@@ -103,7 +103,7 @@ typedef ret_type ( * fn_name##_impl_fntype )signature; \
     NVTX_EXT_FN_RETURN_INVALID(ret_type) \
 }
 
-#endif /*NVTX_DISABLE*/
+#endif /* NVTX_DISABLE */
 
 /* Non-void functions. */
 #define NVTX_EXT_FN_RETURN_INVALID(rtype) return (rtype)0;
