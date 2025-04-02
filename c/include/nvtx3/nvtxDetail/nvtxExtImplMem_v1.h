@@ -72,7 +72,7 @@ NVTX_LINKONCE_DEFINE_FUNCTION void NVTX_EXT_MEM_VERSIONED_ID(nvtxExtMemInitOnce)
     nvtxExtModuleInfo_t module = {
         NVTX_VERSION, sizeof(nvtxExtModuleInfo_t),
         NVTX_EXT_MODULEID_MEM, NVTX_EXT_COMPATID_MEM,
-        1, &segment,
+        1, &segment, /* number of segments, segments */
         NULL, /* no export function needed */
         NULL
     };
@@ -84,8 +84,8 @@ NVTX_LINKONCE_DEFINE_FUNCTION void NVTX_EXT_MEM_VERSIONED_ID(nvtxExtMemInitOnce)
 }
 
 #define NVTX_EXT_MEM_IMPL_FN_V1(ret_type, fn_name, signature, arg_names) \
-typedef ret_type ( * fn_name##_impl_fntype )signature; \
-    NVTX_DECLSPEC ret_type NVTX_API fn_name signature { \
+typedef ret_type (*fn_name##_impl_fntype)signature; \
+NVTX_DECLSPEC ret_type NVTX_API fn_name signature { \
     intptr_t* pSlot = &NVTX_EXT_MEM_VERSIONED_ID(nvtxExtMemSlots)[NVTX3EXT_CBID_##fn_name]; \
     intptr_t slot = *pSlot; \
     if (slot != NVTX_EXTENSION_DISABLED) { \
@@ -100,7 +100,7 @@ typedef ret_type ( * fn_name##_impl_fntype )signature; \
             } \
         } \
     } \
-    NVTX_EXT_FN_RETURN_INVALID(ret_type) \
+    NVTX_EXT_FN_RETURN_INVALID(ret_type) /* No tool attached. */ \
 }
 
 #endif /* NVTX_DISABLE */

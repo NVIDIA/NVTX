@@ -82,7 +82,6 @@ NVTX_LINKONCE_DEFINE_FUNCTION void NVTX_EXT_COUNTERS_VERSIONED_ID(nvtxExtCounter
         NVTX_EXT_COUNTERS_MODULEID, NVTX_EXT_COUNTERS_COMPATID,
         1, &segment, /* number of segments, segments */
         NULL, /* no export function needed */
-        /* bake type sizes and alignment information into program binary */
         NULL
     };
 
@@ -109,7 +108,7 @@ NVTX_DECLSPEC ret_type NVTX_API fn_name signature { \
             } \
         } \
     } \
-    NVTX_EXT_FN_RETURN_INVALID(ret_type) \
+    NVTX_EXT_FN_RETURN_INVALID(ret_type) /* No tool attached. */ \
 }
 
 #endif /* NVTX_DISABLE */

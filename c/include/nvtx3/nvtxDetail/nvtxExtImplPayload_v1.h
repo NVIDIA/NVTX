@@ -96,7 +96,7 @@ NVTX_LINKONCE_DEFINE_FUNCTION void NVTX_EXT_PAYLOAD_VERSIONED_ID(nvtxExtPayloadI
 
 #define NVTX_EXT_PAYLOAD_IMPL_FN_V1(ret_type, fn_name, signature, arg_names) \
 typedef ret_type (*fn_name##_impl_fntype)signature; \
-    NVTX_DECLSPEC ret_type NVTX_API fn_name signature { \
+NVTX_DECLSPEC ret_type NVTX_API fn_name signature { \
     intptr_t* pSlot = &NVTX_EXT_PAYLOAD_VERSIONED_ID(nvtxExtPayloadSlots)[NVTX3EXT_CBID_##fn_name + 1]; \
     intptr_t slot = *pSlot; \
     if (slot != NVTX_EXTENSION_DISABLED) { \
@@ -115,8 +115,6 @@ typedef ret_type (*fn_name##_impl_fntype)signature; \
 }
 
 #endif /* NVTX_DISABLE */
-
-
 
 /* Push/pop functions return `NVTX_NO_PUSH_POP_TRACKING` if no tool is attached. */
 #define NVTX_EXT_FN_RETURN return
