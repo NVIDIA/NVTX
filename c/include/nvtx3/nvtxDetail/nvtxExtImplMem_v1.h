@@ -26,6 +26,9 @@
 #include "nvtxExtImpl.h"
 #undef NVTX_EXT_IMPL_GUARD
 
+#ifndef NVTX_EXT_IMPL_MEM_V1
+#define NVTX_EXT_IMPL_MEM_V1
+
 #ifdef __cplusplus
 extern "C" {
 #endif /* __cplusplus */
@@ -152,3 +155,5 @@ NVTX_EXT_MEM_IMPL_FN_V1(void, nvtxMemPermissionsUnbind, (nvtxDomainHandle_t doma
 #ifdef __cplusplus
 } /* extern "C" */
 #endif /* __cplusplus */
+
+#endif /* NVTX_EXT_IMPL_MEM_V1 */

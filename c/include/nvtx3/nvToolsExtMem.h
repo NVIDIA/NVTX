@@ -27,13 +27,20 @@
 extern "C" {
 #endif /* __cplusplus */
 
+#ifndef NVTX_EXT_MODULEID_MEM
 #define NVTX_EXT_MODULEID_MEM 1
+#endif
 
 /* \cond SHOW_HIDDEN
  * \brief A compatibility ID value used in structures and initialization to
  * identify version differences.
  */
+#ifndef NVTX_EXT_COMPATID_MEM
 #define NVTX_EXT_COMPATID_MEM 0x0102
+#endif
+
+#ifndef NVTX_MEM_CONTENTS_V1
+#define NVTX_MEM_CONTENTS_V1
 
 /* \cond SHOW_HIDDEN
  * \brief This value is returned by functions that return `nvtxMemHeapHandle_t`,
@@ -653,6 +660,8 @@ NVTX_DECLSPEC void NVTX_API nvtxMemPermissionsUnbind(
     uint32_t bindScope);
 
 /** @} */ /*END defgroup*/
+
+#endif /* NVTX_MEM_CONTENTS_V1 */
 
 #ifndef NVTX_MEM_CALLBACK_ID_V1
 #define NVTX_MEM_CALLBACK_ID_V1

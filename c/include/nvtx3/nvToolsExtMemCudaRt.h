@@ -30,6 +30,9 @@
 extern "C" {
 #endif /* __cplusplus */
 
+#ifndef NVTX_MEM_CUDART_CONTENTS_V1
+#define NVTX_MEM_CUDART_CONTENTS_V1
+
 /** \defgroup MEMORY_CUDART Memory CUDA Runtime
  * See page \ref PAGE_MEMORY_CUDART.
  * @{
@@ -184,6 +187,8 @@ NVTX_DECLSPEC void NVTX_API nvtxMemCudaMarkInitialized(
     nvtxMemMarkInitializedBatch_t const* desc);
 
 /** @} */ /*END defgroup*/
+
+#endif /* NVTX_MEM_CUDART_CONTENTS_V1 */
 
 #ifdef __GNUC__
 #pragma GCC visibility push(internal)

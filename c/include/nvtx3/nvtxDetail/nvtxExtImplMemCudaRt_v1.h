@@ -22,6 +22,9 @@
 #error Never include this file directly -- it is automatically included by nvToolsExtMemCudaRt.h (except when NVTX_NO_IMPL is defined).
 #endif
 
+#ifndef NVTX_EXT_IMPL_MEM_CUDART_V1
+#define NVTX_EXT_IMPL_MEM_CUDART_V1
+
 #ifdef __cplusplus
 extern "C" {
 #endif /* __cplusplus */
@@ -55,3 +58,5 @@ NVTX_EXT_MEM_IMPL_FN_V1(void, nvtxMemCudaMarkInitialized, (nvtxDomainHandle_t do
 #ifdef __cplusplus
 } /* extern "C" */
 #endif /* __cplusplus */
+
+#endif /* NVTX_EXT_IMPL_MEM_CUDART_V1 */
