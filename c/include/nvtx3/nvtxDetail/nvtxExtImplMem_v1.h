@@ -53,9 +53,6 @@ ret_type fn_name signature { \
  */
 #define NVTX_EXT_MEM_SLOT_COUNT 63
 
-/* Avoid warnings about missing extern declaration. */
-NVTX_LINKONCE_FWDDECL_GLOBAL intptr_t
-NVTX_EXT_MEM_VERSIONED_ID(nvtxExtMemSlots)[NVTX_EXT_MEM_SLOT_COUNT + 1];
 NVTX_LINKONCE_DEFINE_GLOBAL intptr_t
 NVTX_EXT_MEM_VERSIONED_ID(nvtxExtMemSlots)[NVTX_EXT_MEM_SLOT_COUNT + 1]
     = {0};
