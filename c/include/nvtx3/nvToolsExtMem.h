@@ -20,9 +20,6 @@
 
 #include "nvToolsExt.h"
 
-#ifndef NVTOOLSEXTV3_MEM_V1
-#define NVTOOLSEXTV3_MEM_V1
-
 #ifdef __cplusplus
 extern "C" {
 #endif /* __cplusplus */
@@ -711,5 +708,3 @@ NVTX_DECLSPEC void NVTX_API nvtxMemPermissionsUnbind(
 #ifdef __cplusplus
 }
 #endif /* __cplusplus */
-
-#endif /* NVTOOLSEXTV3_MEM_V1 */

@@ -20,9 +20,6 @@
 
 #include "nvToolsExtPayload.h"
 
-#ifndef NVTOOLSEXT_COUNTERS_H
-#define NVTOOLSEXT_COUNTERS_H
-
 /**
  * \brief The compatibility ID is used for versioning of this extension.
  */
@@ -276,5 +273,3 @@ NVTX_DECLSPEC void NVTX_API nvtxCounterBatchSubmit(
 #ifdef __cplusplus
 }
 #endif /* __cplusplus */
-
-#endif /* NVTOOLSEXT_COUNTERS_H */

@@ -18,9 +18,6 @@
  * See https://nvidia.github.io/NVTX/LICENSE.txt for license information.
  */
 
-#ifndef NVTOOLSEXTV3_MEM_CUDART_V1
-#define NVTOOLSEXTV3_MEM_CUDART_V1
-
 #include "nvToolsExtMem.h"
 
 #include "cuda.h"
@@ -208,5 +205,3 @@ NVTX_DECLSPEC void NVTX_API nvtxMemCudaMarkInitialized(
 #ifdef __cplusplus
 }
 #endif /* __cplusplus */
-
-#endif /* NVTOOLSEXTV3_MEM_CUDART_V1 */
