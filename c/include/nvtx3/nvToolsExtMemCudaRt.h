@@ -30,6 +30,11 @@
 extern "C" {
 #endif /* __cplusplus */
 
+/** \defgroup MEMORY_CUDART Memory CUDA Runtime
+ * See page \ref PAGE_MEMORY_CUDART.
+ * @{
+ */
+
 /** \brief The memory is from a CUDA runtime array.
  *
  * Relevant functions: cudaMallocArray,  cudaMalloc3DArray
