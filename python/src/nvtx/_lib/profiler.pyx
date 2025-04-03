@@ -10,28 +10,28 @@ from nvtx._lib.lib cimport *
 DEFAULT_COLOR = _NVTX_COLORS[None]
 
 cdef class Profile:
+    """
+    Class for programmatically controlling NVTX automatic annotations.
 
-    def __init__(self, linenos=True, annotate_cfuncs=True):
-        """
-        Class that enables turning on and off automatic annotation.
+    Parameters
+    ----------
+    linenos
+        Include file and line number information in annotations.
+    annotate_cfuncs
+        Also annotate C-extensions and builtin functions.
 
-        Parameters
-        ----------
-        linenos: bool (default True)
-            Include file and line number information in annotations.
-        annotate_cfuncs: bool (default False)
-            Also annotate C-extensions and builtin functions.
-
-        Examples
-        --------
-        >>> import nvtx
-        >>> import time
-        >>> pr = nvtx.Profile()
-        >>> pr.enable()
-        >>> time.sleep(1) # this call to `sleep` is captured by nvtx.
-        >>> pr.disable()
-        >>> time.sleep(1) # this one is not.
-        """
+    Examples
+    --------
+    >>> import nvtx
+    >>> import time
+    >>> pr = nvtx.Profile()
+    >>> pr.enable()
+    >>> time.sleep(1) # this call to `sleep` is captured by nvtx.
+    >>> pr.disable()
+    >>> time.sleep(1) # this one is not.
+    """
+    def __init__(self, linenos: bool = True, annotate_cfuncs: bool = True):
+        
         self.linenos = linenos
         self.annotate_cfuncs = annotate_cfuncs
         self.__domain = nvtxDomainCreateA(b"nvtx.py")

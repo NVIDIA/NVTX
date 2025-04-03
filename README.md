@@ -4,7 +4,7 @@ NVTX is a cross-platform API for annotating source code to provide contextual in
 
 The NVTX API is written in C, with wrappers provided for C++ and Python.
 
-| [C Docs](https://nvidia.github.io/NVTX/doxygen/) | [C++ Docs](https://nvidia.github.io/NVTX/doxygen-cpp/) | [Python Docs](https://nvtx.readthedocs.io/en/latest/) |
+| [C Docs](https://nvidia.github.io/NVTX/doxygen/) | [C++ Docs](https://nvidia.github.io/NVTX/doxygen-cpp/) | [Python Docs](https://nvidia.github.io/NVTX/python/) |
 | --- | --- | --- |
 
 # What does NVTX do?
