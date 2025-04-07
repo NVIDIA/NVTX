@@ -20,20 +20,24 @@
 
 #include "nvToolsExt.h"
 
-#ifndef NVTOOLSEXTV3_MEM_V1
-#define NVTOOLSEXTV3_MEM_V1
-
 #ifdef __cplusplus
 extern "C" {
 #endif /* __cplusplus */
 
+#ifndef NVTX_EXT_MODULEID_MEM
 #define NVTX_EXT_MODULEID_MEM 1
+#endif
 
 /* \cond SHOW_HIDDEN
  * \brief A compatibility ID value used in structures and initialization to
  * identify version differences.
  */
+#ifndef NVTX_EXT_COMPATID_MEM
 #define NVTX_EXT_COMPATID_MEM 0x0102
+#endif
+
+#ifndef NVTX_MEM_CONTENTS_V1
+#define NVTX_MEM_CONTENTS_V1
 
 /* \cond SHOW_HIDDEN
  * \brief This value is returned by functions that return `nvtxMemHeapHandle_t`,
@@ -654,6 +658,8 @@ NVTX_DECLSPEC void NVTX_API nvtxMemPermissionsUnbind(
 
 /** @} */ /*END defgroup*/
 
+#endif /* NVTX_MEM_CONTENTS_V1 */
+
 #ifndef NVTX_MEM_CALLBACK_ID_V1
 #define NVTX_MEM_CALLBACK_ID_V1
 
@@ -679,6 +685,17 @@ NVTX_DECLSPEC void NVTX_API nvtxMemPermissionsUnbind(
 
 #endif /* NVTX_MEM_CALLBACK_ID_V1 */
 
+/* Macros to create versioned symbols. */
+#ifndef NVTX_EXT_MEM_VERSIONED_IDENTIFIERS_V1
+#define NVTX_EXT_MEM_VERSIONED_IDENTIFIERS_V1
+#define NVTX_EXT_MEM_VERSIONED_IDENTIFIER_L3(NAME, VERSION, COMPATID) \
+    NAME##_v##VERSION##_mem##COMPATID
+#define NVTX_EXT_MEM_VERSIONED_IDENTIFIER_L2(NAME, VERSION, COMPATID) \
+    NVTX_EXT_MEM_VERSIONED_IDENTIFIER_L3(NAME, VERSION, COMPATID)
+#define NVTX_EXT_MEM_VERSIONED_ID(NAME) \
+    NVTX_EXT_MEM_VERSIONED_IDENTIFIER_L2(NAME, NVTX_VERSION, NVTX_EXT_COMPATID_MEM)
+#endif /* NVTX_EXT_MEM_VERSIONED_IDENTIFIERS_V1 */
+
 #ifdef __GNUC__
 #pragma GCC visibility push(internal)
 #endif
@@ -702,5 +719,3 @@ NVTX_DECLSPEC void NVTX_API nvtxMemPermissionsUnbind(
 #ifdef __cplusplus
 }
 #endif /* __cplusplus */
-
-#endif /* NVTOOLSEXTV3_MEM_V1 */

@@ -18,9 +18,6 @@
  * See https://nvidia.github.io/NVTX/LICENSE.txt for license information.
  */
 
-#ifndef NVTOOLSEXTV3_MEM_CUDART_V1
-#define NVTOOLSEXTV3_MEM_CUDART_V1
-
 #include "nvToolsExtMem.h"
 
 #include "cuda.h"
@@ -29,6 +26,14 @@
 #ifdef __cplusplus
 extern "C" {
 #endif /* __cplusplus */
+
+#ifndef NVTX_MEM_CUDART_CONTENTS_V1
+#define NVTX_MEM_CUDART_CONTENTS_V1
+
+/** \defgroup MEMORY_CUDART Memory CUDA Runtime
+ * See page \ref PAGE_MEMORY_CUDART.
+ * @{
+ */
 
 /** \brief The memory is from a CUDA runtime array.
  *
@@ -180,6 +185,8 @@ NVTX_DECLSPEC void NVTX_API nvtxMemCudaMarkInitialized(
 
 /** @} */ /*END defgroup*/
 
+#endif /* NVTX_MEM_CUDART_CONTENTS_V1 */
+
 #ifdef __GNUC__
 #pragma GCC visibility push(internal)
 #endif
@@ -198,5 +205,3 @@ NVTX_DECLSPEC void NVTX_API nvtxMemCudaMarkInitialized(
 #ifdef __cplusplus
 }
 #endif /* __cplusplus */
-
-#endif /* NVTOOLSEXTV3_MEM_CUDART_V1 */

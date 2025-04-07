@@ -147,7 +147,6 @@
  * END: Payload schema entry flags.
  * ------------------------------------------------------------------------- */
 
-/** \todo: Keep this in the header? */
 /**
  * @note The 'array' flags assume that the array is embedded. Otherwise,
  * @ref NVTX_PAYLOAD_ENTRY_FLAG_POINTER has to be additionally specified. Some
@@ -165,8 +164,7 @@
     NVTX_PAYLOAD_ENTRY_FLAG_ARRAY_LENGTH_INDEX)
 
 #define NVTX_PAYLOAD_ENTRY_FLAG_ARRAY_TYPE(F) \
-    (F & NVTX_PAYLOAD_ENTRY_FLAG_IS_ARRAY)
-/** \todo end */
+    ((F) & NVTX_PAYLOAD_ENTRY_FLAG_IS_ARRAY)
 
 
 /** ---------------------------------------------------------------------------
@@ -296,7 +294,6 @@
  * assumed to be a fixed-size string with the given length, embedded in the payload.
  * `NVTX_PAYLOAD_ENTRY_FLAG_ARRAY_FIXED_SIZE` is redundant for fixed-size strings.
  *
- * \todo(Revise the following paragraph.)
  * Setting the flag `NVTX_PAYLOAD_ENTRY_FLAG_ARRAY_ZERO_TERMINATED` specifies a
  * zero-terminated string. If `arrayOrUnionDetail > 0`, the entry is handled as
  * a zero-terminated array of fixed-size strings.
@@ -1423,6 +1420,16 @@ do { \
 } while (0)
 #endif /* nvtxPayloadMark */
 
+/* Macros to create versioned symbols. */
+#ifndef NVTX_EXT_PAYLOAD_VERSIONED_IDENTIFIERS_V1
+#define NVTX_EXT_PAYLOAD_VERSIONED_IDENTIFIERS_V1
+#define NVTX_EXT_PAYLOAD_VERSIONED_IDENTIFIER_L3(NAME, VERSION, COMPATID) \
+    NAME##_v##VERSION##_bpl##COMPATID
+#define NVTX_EXT_PAYLOAD_VERSIONED_IDENTIFIER_L2(NAME, VERSION, COMPATID) \
+    NVTX_EXT_PAYLOAD_VERSIONED_IDENTIFIER_L3(NAME, VERSION, COMPATID)
+#define NVTX_EXT_PAYLOAD_VERSIONED_ID(NAME) \
+    NVTX_EXT_PAYLOAD_VERSIONED_IDENTIFIER_L2(NAME, NVTX_VERSION, NVTX_EXT_PAYLOAD_COMPATID)
+#endif /* NVTX_EXT_PAYLOAD_VERSIONED_IDENTIFIERS_V1 */
 
 #ifdef __GNUC__
 #pragma GCC visibility push(internal)

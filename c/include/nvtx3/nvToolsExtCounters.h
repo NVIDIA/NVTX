@@ -20,9 +20,6 @@
 
 #include "nvToolsExtPayload.h"
 
-#ifndef NVTOOLSEXT_COUNTERS_H
-#define NVTOOLSEXT_COUNTERS_H
-
 /**
  * \brief The compatibility ID is used for versioning of this extension.
  */
@@ -38,6 +35,9 @@
 #define NVTX_EXT_COUNTERS_MODULEID 4
 #endif
 
+#ifndef NVTX_COUNTER_IDS_V1
+#define NVTX_COUNTER_IDS_V1
+
 /** The counter ID is not specified. */
 #define NVTX_COUNTER_ID_NONE          0
 
@@ -47,18 +47,30 @@
 /** Dynamically (tool) generated counter (group) IDs */
 #define NVTX_COUNTER_ID_DYNAMIC_START ((uint64_t)1 << 32)
 
+#endif /* NVTX_COUNTER_IDS_V1 */
+
 /** Reasons for the missing sample value. */
+#ifndef NVTX_COUNTER_SAMPLES_V1
+#define NVTX_COUNTER_SAMPLES_V1
+
 #define NVTX_COUNTER_SAMPLE_ZERO        0
 #define NVTX_COUNTER_SAMPLE_UNCHANGED   1
 #define NVTX_COUNTER_SAMPLE_UNAVAILABLE 2 /* Failed to get a counter sample. */
+
+#endif /* NVTX_COUNTER_SAMPLES_V1 */
 
 /**
  * Counter batch timestamp array flags.
  * Values must not overlap with `NVTX_BATCH_FLAG_*`.
  * By default, one timestamp per sample is assumed.
  */
+#ifndef NVTX_COUNTER_BATCH_FLAGS_V1
+#define NVTX_COUNTER_BATCH_FLAGS_V1
+
 #define NVTX_COUNTER_BATCH_FLAG_BEGINTIME_INTERVAL_PAIR (1 << 32)
 #define NVTX_COUNTER_BATCH_FLAG_ENDTIME_INTERVAL_PAIR   (2 << 32)
+
+#endif /* NVTX_COUNTER_BATCH_FLAGS_V1 */
 
 #ifdef __cplusplus
 extern "C" {
@@ -255,6 +267,17 @@ NVTX_DECLSPEC void NVTX_API nvtxCounterBatchSubmit(
 
 #endif /* NVTX_COUNTER_CALLBACK_ID_V1 */
 
+/* Macros to create versioned symbols. */
+#ifndef NVTX_EXT_COUNTERS_VERSIONED_IDENTIFIERS_V1
+#define NVTX_EXT_COUNTERS_VERSIONED_IDENTIFIERS_V1
+#define NVTX_EXT_COUNTERS_VERSIONED_IDENTIFIER_L3(NAME, VERSION, COMPATID) \
+    NAME##_v##VERSION##_cnt##COMPATID
+#define NVTX_EXT_COUNTERS_VERSIONED_IDENTIFIER_L2(NAME, VERSION, COMPATID) \
+    NVTX_EXT_COUNTERS_VERSIONED_IDENTIFIER_L3(NAME, VERSION, COMPATID)
+#define NVTX_EXT_COUNTERS_VERSIONED_ID(NAME) \
+    NVTX_EXT_COUNTERS_VERSIONED_IDENTIFIER_L2(NAME, NVTX_VERSION, NVTX_EXT_COUNTERS_COMPATID)
+#endif /* NVTX_EXT_COUNTERS_VERSIONED_IDENTIFIERS_V1 */
+
 #ifdef __GNUC__
 #pragma GCC visibility push(internal)
 #endif
@@ -276,5 +299,3 @@ NVTX_DECLSPEC void NVTX_API nvtxCounterBatchSubmit(
 #ifdef __cplusplus
 }
 #endif /* __cplusplus */
-
-#endif /* NVTOOLSEXT_COUNTERS_H */

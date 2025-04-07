@@ -113,13 +113,13 @@
  * destroyed.
  *
  * \code{.cpp}
- * #include "nvtx3.hpp"
+ * #include "nvtx3/nvtx3.hpp"
  * void some_function() {
  *    // Begins a NVTX range with the message "some_function"
  *    // The range ends when some_function() returns and `r` is destroyed
  *    nvtx3::scoped_range r{"some_function"};
  *
- *    for(int i = 0; i < 6; ++i) {
+ *    for(int i = 0; i < 5; ++i) {
  *       nvtx3::scoped_range loop{"loop range"};
  *       std::this_thread::sleep_for(std::chrono::seconds{1});
  *    }
@@ -137,7 +137,7 @@
  * as the range's message.
  *
  * \code{.cpp}
- * #include "nvtx3.hpp"
+ * #include "nvtx3/nvtx3.hpp"
  * void some_function() {
  *    // Creates a range with a message "some_function" that ends when the
  *    // enclosing function returns
@@ -540,7 +540,7 @@
  * my_scoped_range r3{msg, cat, nvtx3::payload{42}};
  *
  * // Any number of arguments in any order
- * my_scoped_range r{nvtx3::rgb{127, 255,0}, msg};
+ * my_scoped_range r{nvtx3::rgb{127, 255, 0}, msg};
  *
  * \endcode
  * \section MACROS Convenience Macros

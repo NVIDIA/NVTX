@@ -26,13 +26,12 @@
 #include "nvtxExtImpl.h"
 #undef NVTX_EXT_IMPL_GUARD
 
+#ifndef NVTX_EXT_IMPL_MEM_V1
+#define NVTX_EXT_IMPL_MEM_V1
+
 #ifdef __cplusplus
 extern "C" {
 #endif /* __cplusplus */
-
-#define NVTXMEM_VERSIONED_IDENTIFIER_L3(NAME, VERSION, COMPATID) NAME##_v##VERSION##_mem##COMPATID
-#define NVTXMEM_VERSIONED_IDENTIFIER_L2(NAME, VERSION, COMPATID) NVTXMEM_VERSIONED_IDENTIFIER_L3(NAME, VERSION, COMPATID)
-#define NVTX_EXT_MEM_VERSIONED_ID(NAME) NVTXMEM_VERSIONED_IDENTIFIER_L2(NAME, NVTX_VERSION, NVTX_EXT_COMPATID_MEM)
 
 #ifdef NVTX_DISABLE
 
@@ -73,7 +72,7 @@ NVTX_LINKONCE_DEFINE_FUNCTION void NVTX_EXT_MEM_VERSIONED_ID(nvtxExtMemInitOnce)
         NVTX_EXT_MODULEID_MEM, NVTX_EXT_COMPATID_MEM,
         1, &segment, /* number of segments, segments */
         NULL, /* no export function needed */
-        NULL
+        NULL /* no extension private info */
     };
 
     NVTX_INFO( "%s\n", __FUNCTION__  );
@@ -152,3 +151,5 @@ NVTX_EXT_MEM_IMPL_FN_V1(void, nvtxMemPermissionsUnbind, (nvtxDomainHandle_t doma
 #ifdef __cplusplus
 } /* extern "C" */
 #endif /* __cplusplus */
+
+#endif /* NVTX_EXT_IMPL_MEM_V1 */

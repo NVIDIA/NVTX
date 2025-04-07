@@ -33,14 +33,6 @@
 extern "C" {
 #endif /* __cplusplus */
 
-/* Macros to create versioned symbols. */
-#define NVTX_EXT_COUNTERS_VERSIONED_IDENTIFIER_L3(NAME, VERSION, COMPATID) \
-    NAME##_v##VERSION##_bpl##COMPATID
-#define NVTX_EXT_COUNTERS_VERSIONED_IDENTIFIER_L2(NAME, VERSION, COMPATID) \
-    NVTX_EXT_COUNTERS_VERSIONED_IDENTIFIER_L3(NAME, VERSION, COMPATID)
-#define NVTX_EXT_COUNTERS_VERSIONED_ID(NAME) \
-    NVTX_EXT_COUNTERS_VERSIONED_IDENTIFIER_L2(NAME, NVTX_VERSION, NVTX_EXT_COUNTERS_COMPATID)
-
 #ifdef NVTX_DISABLE
 
 #include "nvtxExtHelperMacros.h"
@@ -80,7 +72,7 @@ NVTX_LINKONCE_DEFINE_FUNCTION void NVTX_EXT_COUNTERS_VERSIONED_ID(nvtxExtCounter
         NVTX_EXT_COUNTERS_MODULEID, NVTX_EXT_COUNTERS_COMPATID,
         1, &segment, /* number of segments, segments */
         NULL, /* no export function needed */
-        NULL
+        NULL /* no extension private info */
     };
 
     NVTX_INFO( "%s\n", __FUNCTION__  );
