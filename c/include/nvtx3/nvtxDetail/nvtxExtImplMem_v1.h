@@ -76,7 +76,7 @@ NVTX_LINKONCE_DEFINE_FUNCTION void NVTX_EXT_MEM_VERSIONED_ID(nvtxExtMemInitOnce)
         NVTX_EXT_MODULEID_MEM, NVTX_EXT_COMPATID_MEM,
         1, &segment, /* number of segments, segments */
         NULL, /* no export function needed */
-        NULL
+        NULL /* no extension private info */
     };
 
     NVTX_INFO( "%s\n", __FUNCTION__  );

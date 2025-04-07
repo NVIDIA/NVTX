@@ -80,7 +80,7 @@ NVTX_LINKONCE_DEFINE_FUNCTION void NVTX_EXT_COUNTERS_VERSIONED_ID(nvtxExtCounter
         NVTX_EXT_COUNTERS_MODULEID, NVTX_EXT_COUNTERS_COMPATID,
         1, &segment, /* number of segments, segments */
         NULL, /* no export function needed */
-        NULL
+        NULL /* no extension private info */
     };
 
     NVTX_INFO( "%s\n", __FUNCTION__  );
