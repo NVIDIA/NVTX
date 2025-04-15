@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.19 FATAL_ERROR)
 
-project(NVTXAddSubdirTest CUDA)
+project(NVTXAddSubdirTest CXX)
 
 # Default to building for the GPU on the current system
 if(NOT DEFINED CMAKE_CUDA_ARCHITECTURES)
@@ -33,10 +33,10 @@ if (NOT NVTX3_CPP_IMPORTED)
 endif()
 
 # Create a simple test program to check that the headers are found:
-add_executable(nvtx_smoke_c smoke.cu)
+add_executable(nvtx_smoke_c smoke.cpp)
 target_link_libraries(nvtx_smoke_c PRIVATE nvtx3-c)
 
-add_executable(nvtx_smoke_cpp smoke.cu)
+add_executable(nvtx_smoke_cpp smoke.cpp)
 target_link_libraries(nvtx_smoke_cpp PRIVATE nvtx3-cpp)
 
 include(CTest)
