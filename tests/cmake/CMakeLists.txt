@@ -4,9 +4,7 @@ set(cmake_opts
   -D "CMAKE_BUILD_TYPE=${CMAKE_BUILD_TYPE}"
   -D "CMAKE_MAKE_PROGRAM=${CMAKE_MAKE_PROGRAM}"
   -D "CMAKE_CXX_COMPILER=${CMAKE_CXX_COMPILER}"
-  -D "CMAKE_CUDA_COMPILER=${CMAKE_CUDA_COMPILER}"
   -D "CMAKE_CUDA_HOST_COMPILER=${CMAKE_CUDA_HOST_COMPILER}"
-  -D "CMAKE_CUDA_ARCHITECTURES=${arches_escaped}"
 )
 
 function(add_cmake_subdir_test test_name variant nvtx_root)
@@ -20,7 +18,6 @@ function(add_cmake_subdir_test test_name variant nvtx_root)
       --build-options
         -D "nvtx_root=${nvtx_root}"
         ${ARGN}
-      --test-command "${CMAKE_CTEST_COMMAND}" -V
   )
 endfunction()
 
