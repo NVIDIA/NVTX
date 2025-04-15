@@ -32,6 +32,9 @@ endif()
 
 project ("NvtxTests" LANGUAGES ${NVTX_LANGUAGES})
 
+string(REGEX REPLACE "/tests$" "" NVTX_PROJ_ROOT "${CMAKE_CURRENT_SOURCE_DIR}")
+set(NVTX_C_ROOT "${NVTX_PROJ_ROOT}/c")
+
 # Enforce standard C/C++ with sensible warnings and minimal compiler output on all platforms
 set(CMAKE_C_STANDARD 90)
 set(CMAKE_C_EXTENSIONS OFF)
@@ -411,3 +414,5 @@ elseif(NOT WIN32)
         PROPERTY
         ENVIRONMENT LD_PRELOAD=${CMAKE_BINARY_DIR}/libinj-cpp-preinject.so)
 endif()
+
+add_subdirectory(cmake)

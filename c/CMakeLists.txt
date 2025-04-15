@@ -36,9 +36,21 @@ cmake_minimum_required(VERSION 3.19)
 # Project declaration needs to be before the configuration
 project(nvtx3 VERSION 3.1.1)
 
-option(NVTX3_INSTALL "Install NVTX3" ON)
+# Check if standalone or part of another project:
+set(NVTX_C_ROOT "${CMAKE_CURRENT_SOURCE_DIR}")
+string(REGEX REPLACE "/c$" "" NVTX_PROJ_ROOT "${NVTX_C_ROOT}")
+set(NVTX_TESTS_ROOT "${NVTX_PROJ_ROOT}/tests")
+set(NVTX_TOPLEVEL_PROJECT OFF)
+if ("${CMAKE_SOURCE_DIR}" STREQUAL "${NVTX_PROJ_ROOT}" OR
+    "${CMAKE_SOURCE_DIR}" STREQUAL "${NVTX_C_ROOT}" OR
+    "${CMAKE_SOURCE_DIR}" STREQUAL "${NVTX_TESTS_ROOT}")
+  set(NVTX_TOPLEVEL_PROJECT ON)
+endif()
 
-set(NVTX3_TARGETS_NOT_USING_IMPORTED ON)
+option(NVTX3_TARGETS_NOT_USING_IMPORTED "Turn off to mark NVTX targets as IMPORTED." ${NVTX_TOPLEVEL_PROJECT})
+
+option(NVTX3_INSTALL "Install NVTX3" ${NVTX_TOPLEVEL_PROJECT})
+
 include(nvtxImportedTargets.cmake)
 set_target_properties(nvtx3-c PROPERTIES EXPORT_PROPERTIES VERSION)
 
