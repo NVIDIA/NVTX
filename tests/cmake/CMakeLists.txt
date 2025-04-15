@@ -1,3 +1,8 @@
+# Windows CI builds have issues finding compilers:
+if (MSVC)
+  return()
+endif()
+
 string(REPLACE ";" "\\\;" arches_escaped "${CMAKE_CUDA_ARCHITECTURES}")
 
 set(cmake_opts
