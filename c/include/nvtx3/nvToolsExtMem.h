@@ -674,7 +674,7 @@ NVTX_DECLSPEC void NVTX_API nvtxMemPermissionsUnbind(
     nvtxDomainHandle_t domain,
     uint32_t bindScope);
 
-/** @} */ /*END defgroup*/
+/** @} */
 
 #endif /* NVTX_MEM_CONTENTS_V1 */
 

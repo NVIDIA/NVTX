@@ -183,7 +183,7 @@ NVTX_DECLSPEC void NVTX_API nvtxMemCudaMarkInitialized(
     uint8_t isPerThreadStream, /* 0 for false, otherwise true */
     nvtxMemMarkInitializedBatch_t const* desc);
 
-/** @} */ /*END defgroup*/
+/** @} */
 
 #endif /* NVTX_MEM_CUDART_CONTENTS_V1 */
 
