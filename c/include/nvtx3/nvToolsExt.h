@@ -35,7 +35,7 @@
  * attached to the application.  The overhead when a tool is
  * attached is specific to the tool.
  *
- * \section INITIALIZATION_SECTION Initialization
+ * \section INITIALIZATION Initialization
  *
  * Typically the tool's library that plugs into NVTX is indirectly
  * loaded via environmental properties that are platform specific.
