@@ -456,7 +456,7 @@ typedef union nvtxMessageValue_t
 * at that point, adding a call to nvtxInitialize at the top of main() will
 * ensure the later call to nvtxDomainCreate is as fast as possible.
 *
-* \version \NVTX_VERSION_3
+* \version NVTX_VERSION_3
 *
 * \param reserved - must be zero or NULL.
 *
@@ -688,7 +688,7 @@ typedef struct nvtxEventAttributes_v2 nvtxEventAttributes_t;
 * \sa
 * ::nvtxMarkEx
 *
-* \version \NVTX_VERSION_2
+* \version NVTX_VERSION_2
 * @{ */
 NVTX_DECLSPEC void NVTX_API nvtxDomainMarkEx(nvtxDomainHandle_t domain, const nvtxEventAttributes_t* eventAttrib);
 /** @} */
@@ -724,7 +724,7 @@ NVTX_DECLSPEC void NVTX_API nvtxDomainMarkEx(nvtxDomainHandle_t domain, const nv
  * \sa
  * ::nvtxDomainMarkEx
  *
- * \version \NVTX_VERSION_1
+ * \version NVTX_VERSION_1
  * @{ */
 NVTX_DECLSPEC void NVTX_API nvtxMarkEx(const nvtxEventAttributes_t* eventAttrib);
 /** @} */
@@ -747,7 +747,7 @@ NVTX_DECLSPEC void NVTX_API nvtxMarkEx(const nvtxEventAttributes_t* eventAttrib)
  * ::nvtxDomainMarkEx
  * ::nvtxMarkEx
  *
- * \version \NVTX_VERSION_0
+ * \version NVTX_VERSION_0
  * @{ */
 NVTX_DECLSPEC void NVTX_API nvtxMarkA(const char* message);
 NVTX_DECLSPEC void NVTX_API nvtxMarkW(const wchar_t* message);
@@ -783,7 +783,7 @@ NVTX_DECLSPEC void NVTX_API nvtxMarkW(const wchar_t* message);
 * \sa
 * ::nvtxDomainRangeEnd
 *
-* \version \NVTX_VERSION_2
+* \version NVTX_VERSION_2
 * @{ */
 NVTX_DECLSPEC nvtxRangeId_t NVTX_API nvtxDomainRangeStartEx(nvtxDomainHandle_t domain, const nvtxEventAttributes_t* eventAttrib);
 /** @} */
@@ -817,7 +817,7 @@ NVTX_DECLSPEC nvtxRangeId_t NVTX_API nvtxDomainRangeStartEx(nvtxDomainHandle_t d
  * ::nvtxRangeEnd
  * ::nvtxDomainRangeStartEx
  *
- * \version \NVTX_VERSION_1
+ * \version NVTX_VERSION_1
  * @{ */
 NVTX_DECLSPEC nvtxRangeId_t NVTX_API nvtxRangeStartEx(const nvtxEventAttributes_t* eventAttrib);
 /** @} */
@@ -844,7 +844,7 @@ NVTX_DECLSPEC nvtxRangeId_t NVTX_API nvtxRangeStartEx(const nvtxEventAttributes_
  * ::nvtxRangeStartEx
  * ::nvtxDomainRangeStartEx
  *
- * \version \NVTX_VERSION_0
+ * \version NVTX_VERSION_0
  * @{ */
 NVTX_DECLSPEC nvtxRangeId_t NVTX_API nvtxRangeStartA(const char* message);
 NVTX_DECLSPEC nvtxRangeId_t NVTX_API nvtxRangeStartW(const wchar_t* message);
@@ -875,7 +875,7 @@ NVTX_DECLSPEC nvtxRangeId_t NVTX_API nvtxRangeStartW(const wchar_t* message);
 * \sa
 * ::nvtxDomainRangeStartEx
 *
-* \version \NVTX_VERSION_2
+* \version NVTX_VERSION_2
 * @{ */
 NVTX_DECLSPEC void NVTX_API nvtxDomainRangeEnd(nvtxDomainHandle_t domain, nvtxRangeId_t id);
 /** @} */
@@ -891,7 +891,7 @@ NVTX_DECLSPEC void NVTX_API nvtxDomainRangeEnd(nvtxDomainHandle_t domain, nvtxRa
  * ::nvtxRangeStartA
  * ::nvtxRangeStartW
  *
- * \version \NVTX_VERSION_0
+ * \version NVTX_VERSION_0
  * @{ */
 NVTX_DECLSPEC void NVTX_API nvtxRangeEnd(nvtxRangeId_t id);
 /** @} */
@@ -932,7 +932,7 @@ NVTX_DECLSPEC void NVTX_API nvtxRangeEnd(nvtxRangeId_t id);
 * \sa
 * ::nvtxDomainRangePop
 *
-* \version \NVTX_VERSION_2
+* \version NVTX_VERSION_2
 * @{ */
 NVTX_DECLSPEC int NVTX_API nvtxDomainRangePushEx(nvtxDomainHandle_t domain, const nvtxEventAttributes_t* eventAttrib);
 /** @} */
@@ -970,7 +970,7 @@ NVTX_DECLSPEC int NVTX_API nvtxDomainRangePushEx(nvtxDomainHandle_t domain, cons
  * ::nvtxDomainRangePushEx
  * ::nvtxRangePop
  *
- * \version \NVTX_VERSION_1
+ * \version NVTX_VERSION_1
  * @{ */
 NVTX_DECLSPEC int NVTX_API nvtxRangePushEx(const nvtxEventAttributes_t* eventAttrib);
 /** @} */
@@ -995,7 +995,7 @@ NVTX_DECLSPEC int NVTX_API nvtxRangePushEx(const nvtxEventAttributes_t* eventAtt
  * ::nvtxDomainRangePushEx
  * ::nvtxRangePop
  *
- * \version \NVTX_VERSION_0
+ * \version NVTX_VERSION_0
  * @{ */
 NVTX_DECLSPEC int NVTX_API nvtxRangePushA(const char* message);
 NVTX_DECLSPEC int NVTX_API nvtxRangePushW(const wchar_t* message);
@@ -1034,7 +1034,7 @@ NVTX_DECLSPEC int NVTX_API nvtxRangePushW(const wchar_t* message);
 * ::nvtxRangePushA
 * ::nvtxRangePushW
 *
-* \version \NVTX_VERSION_2
+* \version NVTX_VERSION_2
 * @{ */
 NVTX_DECLSPEC int NVTX_API nvtxDomainRangePop(nvtxDomainHandle_t domain);
 /** @} */
@@ -1058,7 +1058,7 @@ NVTX_DECLSPEC int NVTX_API nvtxDomainRangePop(nvtxDomainHandle_t domain);
  * ::nvtxRangePushA
  * ::nvtxRangePushW
  *
- * \version \NVTX_VERSION_0
+ * \version NVTX_VERSION_0
  * @{ */
 NVTX_DECLSPEC int NVTX_API nvtxRangePop(void);
 /** @} */
@@ -1095,7 +1095,7 @@ NVTX_DECLSPEC int NVTX_API nvtxRangePop(void);
 * \sa
 * ::nvtxDomainResourceCreate
 *
-* \version \NVTX_VERSION_2
+* \version NVTX_VERSION_2
 */
 typedef enum nvtxResourceGenericType_t
 {
@@ -1245,7 +1245,7 @@ typedef struct nvtxResourceAttributes_v0
 typedef struct nvtxResourceAttributes_v0 nvtxResourceAttributes_t;
 
 /* \cond SHOW_HIDDEN
-* \version \NVTX_VERSION_2
+* \version NVTX_VERSION_2
 */
 #define NVTX_RESOURCE_ATTRIB_STRUCT_SIZE ( (uint16_t)( sizeof(nvtxResourceAttributes_v0) ) )
 typedef struct nvtxResourceHandle* nvtxResourceHandle_t;
@@ -1281,7 +1281,7 @@ typedef struct nvtxResourceHandle* nvtxResourceHandle_t;
 * ::nvtxResourceAttributes_t
 * ::nvtxDomainResourceDestroy
 *
-* \version \NVTX_VERSION_2
+* \version NVTX_VERSION_2
 * @{ */
 NVTX_DECLSPEC nvtxResourceHandle_t NVTX_API nvtxDomainResourceCreate(nvtxDomainHandle_t domain, nvtxResourceAttributes_t* attribs);
 /** @} */
@@ -1311,7 +1311,7 @@ NVTX_DECLSPEC nvtxResourceHandle_t NVTX_API nvtxDomainResourceCreate(nvtxDomainH
 * \sa
 * ::nvtxDomainResourceCreate
 *
-* \version \NVTX_VERSION_2
+* \version NVTX_VERSION_2
 * @{ */
 NVTX_DECLSPEC void NVTX_API nvtxDomainResourceDestroy(nvtxResourceHandle_t resource);
 /** @} */
@@ -1345,7 +1345,7 @@ NVTX_DECLSPEC void NVTX_API nvtxDomainResourceDestroy(nvtxResourceHandle_t resou
 * nvtxDomainNameCategoryW(domain, 2, L"Memory Transfer");
 * \endcode
 *
-* \version \NVTX_VERSION_2
+* \version NVTX_VERSION_2
 * @{ */
 NVTX_DECLSPEC void NVTX_API nvtxDomainNameCategoryA(nvtxDomainHandle_t domain, uint32_t category, const char* name);
 NVTX_DECLSPEC void NVTX_API nvtxDomainNameCategoryW(nvtxDomainHandle_t domain, uint32_t category, const wchar_t* name);
@@ -1370,7 +1370,7 @@ NVTX_DECLSPEC void NVTX_API nvtxDomainNameCategoryW(nvtxDomainHandle_t domain, u
  * nvtxNameCategory(3, "Memory Object Lifetime");
  * \endcode
  *
- * \version \NVTX_VERSION_1
+ * \version NVTX_VERSION_1
  * @{ */
 NVTX_DECLSPEC void NVTX_API nvtxNameCategoryA(uint32_t category, const char* name);
 NVTX_DECLSPEC void NVTX_API nvtxNameCategoryW(uint32_t category, const wchar_t* name);
@@ -1437,7 +1437,7 @@ NVTX_DECLSPEC void NVTX_API nvtxNameCategoryW(uint32_t category, const wchar_t* 
  * nvtxNameOsThreadA(id, "Other thread");
  * \endcode
  *
- * \version \NVTX_VERSION_1
+ * \version NVTX_VERSION_1
  * @{ */
 NVTX_DECLSPEC void NVTX_API nvtxNameOsThreadA(uint32_t threadId, const char* name);
 NVTX_DECLSPEC void NVTX_API nvtxNameOsThreadW(uint32_t threadId, const wchar_t* name);
@@ -1486,7 +1486,7 @@ NVTX_DECLSPEC void NVTX_API nvtxNameOsThreadW(uint32_t threadId, const wchar_t* 
 * eventAttrib.message.registered = message;
 * \endcode
 *
-* \version \NVTX_VERSION_2
+* \version NVTX_VERSION_2
 * @{ */
 NVTX_DECLSPEC nvtxStringHandle_t NVTX_API nvtxDomainRegisterStringA(nvtxDomainHandle_t domain, const char* string);
 NVTX_DECLSPEC nvtxStringHandle_t NVTX_API nvtxDomainRegisterStringW(nvtxDomainHandle_t domain, const wchar_t* string);
@@ -1549,7 +1549,7 @@ NVTX_DECLSPEC nvtxStringHandle_t NVTX_API nvtxDomainRegisterStringW(nvtxDomainHa
 * \sa
 * ::nvtxDomainDestroy
 *
-* \version \NVTX_VERSION_2
+* \version NVTX_VERSION_2
 * @{ */
 NVTX_DECLSPEC nvtxDomainHandle_t NVTX_API nvtxDomainCreateA(const char* name);
 NVTX_DECLSPEC nvtxDomainHandle_t NVTX_API nvtxDomainCreateW(const wchar_t* name);
@@ -1573,7 +1573,7 @@ NVTX_DECLSPEC nvtxDomainHandle_t NVTX_API nvtxDomainCreateW(const wchar_t* name)
 * ::nvtxDomainCreateA
 * ::nvtxDomainCreateW
 *
-* \version \NVTX_VERSION_2
+* \version NVTX_VERSION_2
 * @{ */
 NVTX_DECLSPEC void NVTX_API nvtxDomainDestroy(nvtxDomainHandle_t domain);
 /** @} */

@@ -28,7 +28,7 @@ extern "C" {
 #endif /* __cplusplus */
 
 /* \cond SHOW_HIDDEN
-* \version \NVTX_VERSION_2
+* \version NVTX_VERSION_2
 */
 #define NVTX_SYNCUSER_ATTRIB_STRUCT_SIZE ( (uint16_t)( sizeof(nvtxSyncUserAttributes_v0) ) )
 /** \endcond */
@@ -89,13 +89,13 @@ extern "C" {
 * };
 * \endcode
 *
-* \version \NVTX_VERSION_2
+* \version NVTX_VERSION_2
 */
 
 /*  ------------------------------------------------------------------------- */
 /* \cond SHOW_HIDDEN
 * \brief Used to build a non-colliding value for resource types separated class
-* \version \NVTX_VERSION_2
+* \version NVTX_VERSION_2
 */
 #define NVTX_RESOURCE_CLASS_SYNC_OS 2 /**< Synchronization objects that are OS specific. */
 #define NVTX_RESOURCE_CLASS_SYNC_PTHREAD 3 /**< Synchronization objects that are from the POSIX Threads API (pthread)*/
@@ -287,7 +287,7 @@ typedef struct nvtxSyncUserAttributes_v0 nvtxSyncUserAttributes_t;
 * ::nvtxDomainSyncUserAcquireSuccess
 * ::nvtxDomainSyncUserReleasing
 *
-* \version \NVTX_VERSION_2
+* \version NVTX_VERSION_2
 */
 NVTX_DECLSPEC nvtxSyncUser_t NVTX_API nvtxDomainSyncUserCreate(nvtxDomainHandle_t domain, const nvtxSyncUserAttributes_t* attribs);
 
@@ -305,7 +305,7 @@ NVTX_DECLSPEC nvtxSyncUser_t NVTX_API nvtxDomainSyncUserCreate(nvtxDomainHandle_
 * ::nvtxDomainSyncUserAcquireSuccess
 * ::nvtxDomainSyncUserReleasing
 *
-* \version \NVTX_VERSION_2
+* \version NVTX_VERSION_2
 */
 NVTX_DECLSPEC void NVTX_API nvtxDomainSyncUserDestroy(nvtxSyncUser_t handle);
 
@@ -322,7 +322,7 @@ NVTX_DECLSPEC void NVTX_API nvtxDomainSyncUserDestroy(nvtxSyncUser_t handle);
 * ::nvtxDomainSyncUserAcquireSuccess
 * ::nvtxDomainSyncUserReleasing
 *
-* \version \NVTX_VERSION_2
+* \version NVTX_VERSION_2
 */
 NVTX_DECLSPEC void NVTX_API nvtxDomainSyncUserAcquireStart(nvtxSyncUser_t handle);
 
@@ -340,7 +340,7 @@ NVTX_DECLSPEC void NVTX_API nvtxDomainSyncUserAcquireStart(nvtxSyncUser_t handle
 * ::nvtxDomainSyncUserAcquireSuccess
 * ::nvtxDomainSyncUserReleasing
 *
-* \version \NVTX_VERSION_2
+* \version NVTX_VERSION_2
 */
 NVTX_DECLSPEC void NVTX_API nvtxDomainSyncUserAcquireFailed(nvtxSyncUser_t handle);
 
@@ -358,7 +358,7 @@ NVTX_DECLSPEC void NVTX_API nvtxDomainSyncUserAcquireFailed(nvtxSyncUser_t handl
 * ::nvtxDomainSyncUserAcquireSuccess
 * ::nvtxDomainSyncUserReleasing
 *
-* \version \NVTX_VERSION_2
+* \version NVTX_VERSION_2
 */
 NVTX_DECLSPEC void NVTX_API nvtxDomainSyncUserAcquireSuccess(nvtxSyncUser_t handle);
 
@@ -376,7 +376,7 @@ NVTX_DECLSPEC void NVTX_API nvtxDomainSyncUserAcquireSuccess(nvtxSyncUser_t hand
 * ::nvtxDomainSyncUserAcquireSuccess
 * ::nvtxDomainSyncUserReleasing
 *
-* \version \NVTX_VERSION_2
+* \version NVTX_VERSION_2
 */
 NVTX_DECLSPEC void NVTX_API nvtxDomainSyncUserReleasing(nvtxSyncUser_t handle);
 

@@ -45,7 +45,7 @@ extern "C" {
 /*  ------------------------------------------------------------------------- */
 /* \cond SHOW_HIDDEN
 * \brief Used to build a non-colliding value for resource types separated class
-* \version \NVTX_VERSION_2
+* \version NVTX_VERSION_2
 */
 #define NVTX_RESOURCE_CLASS_CUDART 5
 /** \endcond */
@@ -69,7 +69,7 @@ typedef enum nvtxResourceCUDARTType_t
  * \param device - The id of the CUDA device to name.
  * \param name   - The name of the CUDA device.
  *
- * \version \NVTX_VERSION_1
+ * \version NVTX_VERSION_1
  * @{ */
 NVTX_DECLSPEC void NVTX_API nvtxNameCudaDeviceA(int device, const char* name);
 NVTX_DECLSPEC void NVTX_API nvtxNameCudaDeviceW(int device, const wchar_t* name);
@@ -83,7 +83,7 @@ NVTX_DECLSPEC void NVTX_API nvtxNameCudaDeviceW(int device, const wchar_t* name)
  * \param stream - The handle of the CUDA stream to name.
  * \param name   - The name of the CUDA stream.
  *
- * \version \NVTX_VERSION_1
+ * \version NVTX_VERSION_1
  * @{ */
 NVTX_DECLSPEC void NVTX_API nvtxNameCudaStreamA(cudaStream_t stream, const char* name);
 NVTX_DECLSPEC void NVTX_API nvtxNameCudaStreamW(cudaStream_t stream, const wchar_t* name);
@@ -97,7 +97,7 @@ NVTX_DECLSPEC void NVTX_API nvtxNameCudaStreamW(cudaStream_t stream, const wchar
  * \param event - The handle of the CUDA event to name.
  * \param name  - The name of the CUDA event.
  *
- * \version \NVTX_VERSION_1
+ * \version NVTX_VERSION_1
  * @{ */
 NVTX_DECLSPEC void NVTX_API nvtxNameCudaEventA(cudaEvent_t event, const char* name);
 NVTX_DECLSPEC void NVTX_API nvtxNameCudaEventW(cudaEvent_t event, const wchar_t* name);

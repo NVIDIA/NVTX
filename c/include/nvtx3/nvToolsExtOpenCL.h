@@ -44,7 +44,7 @@ extern "C" {
 /*  ------------------------------------------------------------------------- */
 /* \cond SHOW_HIDDEN
 * \brief Used to build a non-colliding value for resource types separated class
-* \version \NVTX_VERSION_2
+* \version NVTX_VERSION_2
 */
 #define NVTX_RESOURCE_CLASS_OPENCL 6
 /** \endcond */
@@ -72,7 +72,7 @@ typedef enum nvtxResourceOpenCLType_t
  * \param device - The handle of the OpenCL device to name.
  * \param name   - The name of the OpenCL device.
  *
- * \version \NVTX_VERSION_1
+ * \version NVTX_VERSION_1
  * @{ */
 NVTX_DECLSPEC void NVTX_API nvtxNameClDeviceA(cl_device_id device, const char* name);
 NVTX_DECLSPEC void NVTX_API nvtxNameClDeviceW(cl_device_id device, const wchar_t* name);
@@ -86,7 +86,7 @@ NVTX_DECLSPEC void NVTX_API nvtxNameClDeviceW(cl_device_id device, const wchar_t
  * \param context - The handle of the OpenCL context to name.
  * \param name    - The name of the OpenCL context.
  *
- * \version \NVTX_VERSION_1
+ * \version NVTX_VERSION_1
  * @{ */
 NVTX_DECLSPEC void NVTX_API nvtxNameClContextA(cl_context context, const char* name);
 NVTX_DECLSPEC void NVTX_API nvtxNameClContextW(cl_context context, const wchar_t* name);
@@ -100,7 +100,7 @@ NVTX_DECLSPEC void NVTX_API nvtxNameClContextW(cl_context context, const wchar_t
  * \param command_queue - The handle of the OpenCL command queue to name.
  * \param name          - The name of the OpenCL command queue.
  *
- * \version \NVTX_VERSION_1
+ * \version NVTX_VERSION_1
  * @{ */
 NVTX_DECLSPEC void NVTX_API nvtxNameClCommandQueueA(cl_command_queue command_queue, const char* name);
 NVTX_DECLSPEC void NVTX_API nvtxNameClCommandQueueW(cl_command_queue command_queue, const wchar_t* name);
@@ -114,7 +114,7 @@ NVTX_DECLSPEC void NVTX_API nvtxNameClCommandQueueW(cl_command_queue command_que
  * \param memobj - The handle of the OpenCL memory object to name.
  * \param name   - The name of the OpenCL memory object.
  *
- * \version \NVTX_VERSION_1
+ * \version NVTX_VERSION_1
  * @{ */
 NVTX_DECLSPEC void NVTX_API nvtxNameClMemObjectA(cl_mem memobj, const char* name);
 NVTX_DECLSPEC void NVTX_API nvtxNameClMemObjectW(cl_mem memobj, const wchar_t* name);
@@ -128,7 +128,7 @@ NVTX_DECLSPEC void NVTX_API nvtxNameClMemObjectW(cl_mem memobj, const wchar_t* n
  * \param sampler - The handle of the OpenCL sampler to name.
  * \param name    - The name of the OpenCL sampler.
  *
- * \version \NVTX_VERSION_1
+ * \version NVTX_VERSION_1
  * @{ */
 NVTX_DECLSPEC void NVTX_API nvtxNameClSamplerA(cl_sampler sampler, const char* name);
 NVTX_DECLSPEC void NVTX_API nvtxNameClSamplerW(cl_sampler sampler, const wchar_t* name);
@@ -149,7 +149,7 @@ NVTX_DECLSPEC void NVTX_API nvtxNameClSamplerW(cl_sampler sampler, const wchar_t
  * nvtxNameClProgram(cpProgram, L"PROGRAM_NAME");
  * \endcode
  *
- * \version \NVTX_VERSION_1
+ * \version NVTX_VERSION_1
  * @{ */
 NVTX_DECLSPEC void NVTX_API nvtxNameClProgramA(cl_program program, const char* name);
 NVTX_DECLSPEC void NVTX_API nvtxNameClProgramW(cl_program program, const wchar_t* name);
@@ -163,7 +163,7 @@ NVTX_DECLSPEC void NVTX_API nvtxNameClProgramW(cl_program program, const wchar_t
  * \param evnt - The handle of the OpenCL event to name.
  * \param name - The name of the OpenCL event.
  *
- * \version \NVTX_VERSION_1
+ * \version NVTX_VERSION_1
  * @{ */
 NVTX_DECLSPEC void NVTX_API nvtxNameClEventA(cl_event evnt, const char* name);
 NVTX_DECLSPEC void NVTX_API nvtxNameClEventW(cl_event evnt, const wchar_t* name);
