@@ -35,6 +35,8 @@ extern "C" {
 #ifndef NVTX_EXT_COMPATID_MEM
 #define NVTX_EXT_COMPATID_MEM 0x0102
 #endif
+/* \endcond
+ */
 
 #ifndef NVTX_MEM_CONTENTS_V1
 #define NVTX_MEM_CONTENTS_V1
@@ -44,18 +46,24 @@ extern "C" {
  * if a tool is not attached.
  */
 #define NVTX_MEM_HEAP_HANDLE_NO_TOOL ((nvtxMemHeapHandle_t)(intptr_t)-1)
+/* \endcond
+ */
 
 /* \cond SHOW_HIDDEN
  * \brief This value is returned by functions that return `nvtxMemRegionHandle_t`
  * if a tool is not attached.
  */
 #define NVTX_MEM_REGION_HANDLE_NO_TOOL ((nvtxMemRegionHandle_t)(intptr_t)-1)
+/* \endcond
+ */
 
 /* \cond SHOW_HIDDEN
  * \brief This value is returned by functions that return `nvtxMemPermissionsHandle_t`
  * if a tool is not attached.
  */
 #define NVTX_MEM_PERMISSIONS_HANDLE_NO_TOOL ((nvtxMemPermissionsHandle_t)-1)
+/* \endcond
+ */
 
 
 /* \cond SHOW_HIDDEN
@@ -63,6 +71,8 @@ extern "C" {
  * detect an accidental use of zero or NULL.
  */
 #define NVTX_MEM_HEAP_USAGE_UNKNOWN 0x0
+/* \endcond
+ */
 
 
 /* \cond SHOW_HIDDEN
@@ -70,6 +80,8 @@ extern "C" {
  * detect an accidental use of zero or NULL.
  */
 #define NVTX_MEM_TYPE_UNKNOWN 0x0
+/* \endcond
+ */
 
 
 /*  ------------------------------------------------------------------------- */
@@ -144,6 +156,8 @@ extern "C" {
  */
 struct nvtxMemHeap_v1;
 typedef struct nvtxMemHeap_v1 nvtxMemHeap_t;
+/* \endcond
+ */
 
 /** \brief A handle returned by a tool to represent a memory heap. */
 typedef nvtxMemHeap_t* nvtxMemHeapHandle_t;
@@ -153,6 +167,8 @@ typedef nvtxMemHeap_t* nvtxMemHeapHandle_t;
  */
 struct nvtxMemRegion_v1;
 typedef struct nvtxMemRegion_v1 nvtxMemRegion_t;
+/* \endcond
+ */
 
 /** \brief A handle returned by a tool to represent a memory region. */
 typedef nvtxMemRegion_t* nvtxMemRegionHandle_t;
@@ -171,6 +187,8 @@ typedef union nvtxMemRegionRef_t
  */
 struct nvtxMemPermissions_v1;
 typedef struct nvtxMemPermissions_v1 nvtxMemPermissions_t;
+/* \endcond
+ */
 
 /** \brief A handle returned by a tool to represent a memory permissions mask. */
 typedef nvtxMemPermissions_t* nvtxMemPermissionsHandle_t;
