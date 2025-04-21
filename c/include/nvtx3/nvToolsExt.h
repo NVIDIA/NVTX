@@ -438,9 +438,9 @@ typedef union nvtxMessageValue_t
 } nvtxMessageValue_t;
 
 
-/** @} */ /*END defgroup*/
 /* ------------------------------------------------------------------------- */
 /** \brief Force initialization (optional)
+ * \anchor FORCE_INITIALIZATION
 *
 * Force NVTX library to initialize.  The first call to any NVTX API function
 * will automatically initialize the entire API.  This can make the first call
