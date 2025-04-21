@@ -270,14 +270,14 @@ typedef struct nvtxMemHeapDesc_v1
 
     /** \brief Message type specified in this attribute structure.
      *
-     * Defines the message format of the attribute structure's \ref MESSAGE_FIELD
+     * Defines the message format of the attribute structure's \ref MEM_MESSAGE_FIELD
      * "message" field.
      *
      * Default Value is `NVTX_MESSAGE_UNKNOWN`.
      */
     uint32_t messageType;            /* nvtxMessageType_t */
 
-    /** \brief Message assigned to this attribute structure. \anchor MESSAGE_FIELD
+    /** \brief Message assigned to this attribute structure. \anchor MEM_MESSAGE_FIELD
      *
      * The text message that is attached to an event.
      */
