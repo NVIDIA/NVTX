@@ -937,7 +937,15 @@ INPUT                  = ../../c/include/nvtx3/nvToolsExt.h \
                          ../../c/include/nvtx3/nvToolsExtCuda.h \
                          ../../c/include/nvtx3/nvToolsExtCudaRt.h \
                          ../../c/include/nvtx3/nvToolsExtOpenCL.h \
-                         ../../c/include/nvtx3/nvToolsExtSync.h
+                         ../../c/include/nvtx3/nvToolsExtSync.h \
+                         ../../c/include/nvtx3/nvToolsExtMem.h \
+                         ../../c/include/nvtx3/nvToolsExtMemCudaRt.h \
+                         ../../c/include/nvtx3/nvToolsExtPayload.h \
+                         ../../c/include/nvtx3/nvToolsExtPayloadHelper.h \
+                         ../../c/include/nvtx3/nvToolsExtCounters.h \
+                         ../../c/include/nvtx3/nvToolsExtSemanticsCounters.h \
+                         ../../c/include/nvtx3/nvToolsExtSemanticsScope.h \
+                         ../../c/include/nvtx3/nvToolsExtSemanticsTime.h
 
 # This tag can be used to specify the character encoding of the source files
 # that doxygen parses. Internally doxygen uses the UTF-8 encoding. Doxygen uses
