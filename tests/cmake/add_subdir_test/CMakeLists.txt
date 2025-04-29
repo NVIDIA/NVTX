@@ -10,18 +10,11 @@ endif()
 # Import the NVTX CMake targets using add_subdirectory:
 add_subdirectory("${nvtx_root}" "${CMAKE_CURRENT_BINARY_DIR}/nvtx")
 
-# Check that the nvtx-c(pp) targets exists and are IMPORTED targets:
+# Check that the nvtx-c(pp) targets exists
 if (NOT TARGET nvtx3-c)
   message(FATAL_ERROR "nvtx3-c target not defined by add_subdirectory(${nvtx_root}).")
 else()
   message(STATUS "nvtx3-c target found.")
-endif()
-
-get_target_property(NVTX3_C_IMPORTED nvtx3-c IMPORTED)
-if (NOT NVTX3_C_IMPORTED)
-  message(FATAL_ERROR "nvtx3-c target is not an IMPORTED target.")
-else()
-  message(STATUS "nvtx3-c target is an IMPORTED target.")
 endif()
 
 if (NOT TARGET nvtx3-cpp)
@@ -30,9 +23,17 @@ else()
   message(STATUS "nvtx3-cpp target found.")
 endif()
 
-get_target_property(NVTX3_CPP_IMPORTED nvtx3-cpp IMPORTED)
-if (NOT NVTX3_CPP_IMPORTED)
-  message(FATAL_ERROR "nvtx3-cpp target is not an IMPORTED target.")
+# The targets should not be marked as imported when using add_subdirectory:
+get_target_property(NVTX3_C_IMPORTED nvtx3-c IMPORTED)
+if (NVTX3_C_IMPORTED)
+  message(FATAL_ERROR "nvtx3-c target is an IMPORTED target.")
 else()
-  message(STATUS "nvtx3-cpp target is an IMPORTED target.")
+  message(STATUS "nvtx3-c target is not an IMPORTED target.")
+endif()
+
+get_target_property(NVTX3_CPP_IMPORTED nvtx3-cpp IMPORTED)
+if (NVTX3_CPP_IMPORTED)
+  message(FATAL_ERROR "nvtx3-cpp target is an IMPORTED target.")
+else()
+  message(STATUS "nvtx3-cpp target is not an IMPORTED target.")
 endif()
