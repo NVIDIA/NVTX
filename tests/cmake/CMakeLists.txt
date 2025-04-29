@@ -27,13 +27,13 @@ endfunction()
 add_cmake_subdir_test(
   "Test CMake add_subdirectory using project root."
   "project_root"
-  "${NVTX_PROJ_ROOT}"
+  "${NVTX3_PROJ_ROOT}"
   ${cmake_opts}
 )
 
 add_cmake_subdir_test(
   "Test CMake add_subdirectory using c/ subdirectory."
   "c_subdir"
-  "${NVTX_C_ROOT}"
+  "${NVTX3_C_ROOT}"
   ${cmake_opts}
 )
