@@ -30,5 +30,9 @@
 #include <nvtx3/nvToolsExtMem.h>
 #include <nvtx3/nvToolsExtMemCudaRt.h>
 #include <nvtx3/nvToolsExtPayload.h>
+#include <nvtx3/nvToolsExtPayloadHelper.h>
 #include <nvtx3/nvToolsExtCounters.h>
+#include <nvtx3/nvToolsExtSemanticsCounters.h>
+#include <nvtx3/nvToolsExtSemanticsScope.h>
+#include <nvtx3/nvToolsExtSemanticsTime.h>
 #endif
