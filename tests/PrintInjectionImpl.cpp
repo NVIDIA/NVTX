@@ -37,10 +37,10 @@
 
 /* Implementations of NVTX functions to attach to client */
 
-#define NVTX_TOOL_ATTACHED_UNUSED_RANGE_ID (nvtxRangeId_t)(-1LL)
-#define NVTX_TOOL_ATTACHED_UNUSED_PUSH_POP_ID (int)(-1)
-#define NVTX_TOOL_ATTACHED_UNUSED_DOMAIN_HANDLE (nvtxDomainHandle_t)(-1LL)
-#define NVTX_TOOL_ATTACHED_UNUSED_STRING_HANDLE (nvtxStringHandle_t)(-1LL)
+#define NVTX_TOOL_ATTACHED_UNUSED_RANGE_ID (static_cast<nvtxRangeId_t>(-1LL))
+#define NVTX_TOOL_ATTACHED_UNUSED_PUSH_POP_ID (static_cast<int>(-1))
+#define NVTX_TOOL_ATTACHED_UNUSED_DOMAIN_HANDLE (reinterpret_cast<nvtxDomainHandle_t>(-1LL))
+#define NVTX_TOOL_ATTACHED_UNUSED_STRING_HANDLE (reinterpret_cast<nvtxStringHandle_t>(-1LL))
 
 /* NVTX_CB_MODULE_CORE */
 
@@ -126,15 +126,15 @@ int NVTX_API InitializeInjectionNvtx2Internal(NvtxGetExportTableFunc_t getExport
     int success;
     unsigned int highestIdUsed;
 
-    pVersionInfo = (const NvtxExportTableVersionInfo*)getExportTable(NVTX_ETID_VERSIONINFO);
+    pVersionInfo = static_cast<const NvtxExportTableVersionInfo*>(getExportTable(NVTX_ETID_VERSIONINFO));
     if (pVersionInfo)
     {
         if (pVersionInfo->struct_size < sizeof(*pVersionInfo))
         {
             LOG_ERROR(
                 "(init v2) NvtxExportTableVersionInfo structure size is %d, expected %d!\n",
-                (int)pVersionInfo->struct_size,
-                (int)sizeof(*pVersionInfo));
+                static_cast<int>(pVersionInfo->struct_size),
+                static_cast<int>(sizeof(*pVersionInfo)));
             return 0;
         }
 
@@ -143,14 +143,14 @@ int NVTX_API InitializeInjectionNvtx2Internal(NvtxGetExportTableFunc_t getExport
         {
             LOG_ERROR(
                 "(init v2) client's NVTX version is %d, expected 2+\n",
-                (int)version);
+                static_cast<int>(version));
             return 0;
         }
     }
 
     LOG_INFO("---- InitializeInjectionNvtx2 called from client's NVTX v%d\n", version);
 
-    pCallbacks = (const NvtxExportTableCallbacks*)getExportTable(NVTX_ETID_CALLBACKS);
+    pCallbacks = static_cast<const NvtxExportTableCallbacks*>(getExportTable(NVTX_ETID_CALLBACKS));
     if (!pCallbacks)
     {
         LOG_ERROR("(init v2) NVTX_ETID_CALLBACKS is not supported.\n");
@@ -160,8 +160,8 @@ int NVTX_API InitializeInjectionNvtx2Internal(NvtxGetExportTableFunc_t getExport
     if (pCallbacks->struct_size < sizeof(*pCallbacks))
     {
         LOG_ERROR("(init v2) NvtxExportTableCallbacks structure size is %d, expected %d!\n",
-            (int)pCallbacks->struct_size,
-            (int)sizeof(*pCallbacks));
+            static_cast<int>(pCallbacks->struct_size),
+            static_cast<int>(sizeof(*pCallbacks)));
         return 0;
     }
 
@@ -180,14 +180,14 @@ int NVTX_API InitializeInjectionNvtx2Internal(NvtxGetExportTableFunc_t getExport
         if (size <= highestIdUsed)
         {
             LOG_ERROR("(init v2) Client's function pointer table size is %d, and we need to assign to table[%d].\n",
-                (int)size,
-                (int)highestIdUsed);
+                static_cast<int>(size),
+                static_cast<int>(highestIdUsed));
             return 0;
         }
 
-        *table[NVTX_CBID_CORE_MarkA     ] = (NvtxFunctionPointer)HandleMarkA     ;
-        *table[NVTX_CBID_CORE_RangePushA] = (NvtxFunctionPointer)HandleRangePushA;
-        *table[NVTX_CBID_CORE_RangePop  ] = (NvtxFunctionPointer)HandleRangePop  ;
+        *table[NVTX_CBID_CORE_MarkA     ] = reinterpret_cast<NvtxFunctionPointer>(HandleMarkA)     ;
+        *table[NVTX_CBID_CORE_RangePushA] = reinterpret_cast<NvtxFunctionPointer>(HandleRangePushA);
+        *table[NVTX_CBID_CORE_RangePop  ] = reinterpret_cast<NvtxFunctionPointer>(HandleRangePop)  ;
     }
 
     {
@@ -205,20 +205,20 @@ int NVTX_API InitializeInjectionNvtx2Internal(NvtxGetExportTableFunc_t getExport
         if (size <= highestIdUsed)
         {
             LOG_ERROR("(init v2) Client's function pointer table size is %d, and we need to assign to table[%d].\n",
-                (int)size,
-                (int)highestIdUsed);
+                static_cast<int>(size),
+                static_cast<int>(highestIdUsed));
             return 0;
         }
 
-        *table[NVTX_CBID_CORE2_DomainMarkEx         ] = (NvtxFunctionPointer)HandleDomainMarkEx         ;
-        *table[NVTX_CBID_CORE2_DomainRangeStartEx   ] = (NvtxFunctionPointer)HandleDomainRangeStartEx   ;
-        *table[NVTX_CBID_CORE2_DomainRangeEnd       ] = (NvtxFunctionPointer)HandleDomainRangeEnd       ;
-        *table[NVTX_CBID_CORE2_DomainRangePushEx    ] = (NvtxFunctionPointer)HandleDomainRangePushEx    ;
-        *table[NVTX_CBID_CORE2_DomainRangePop       ] = (NvtxFunctionPointer)HandleDomainRangePop       ;
-        *table[NVTX_CBID_CORE2_DomainRegisterStringA] = (NvtxFunctionPointer)HandleDomainRegisterStringA;
-        *table[NVTX_CBID_CORE2_DomainCreateA        ] = (NvtxFunctionPointer)HandleDomainCreateA        ;
-        *table[NVTX_CBID_CORE2_DomainDestroy        ] = (NvtxFunctionPointer)HandleDomainDestroy        ;
-        *table[NVTX_CBID_CORE2_Initialize           ] = (NvtxFunctionPointer)HandleInitialize           ;
+        *table[NVTX_CBID_CORE2_DomainMarkEx         ] = reinterpret_cast<NvtxFunctionPointer>(HandleDomainMarkEx)         ;
+        *table[NVTX_CBID_CORE2_DomainRangeStartEx   ] = reinterpret_cast<NvtxFunctionPointer>(HandleDomainRangeStartEx)   ;
+        *table[NVTX_CBID_CORE2_DomainRangeEnd       ] = reinterpret_cast<NvtxFunctionPointer>(HandleDomainRangeEnd)       ;
+        *table[NVTX_CBID_CORE2_DomainRangePushEx    ] = reinterpret_cast<NvtxFunctionPointer>(HandleDomainRangePushEx)    ;
+        *table[NVTX_CBID_CORE2_DomainRangePop       ] = reinterpret_cast<NvtxFunctionPointer>(HandleDomainRangePop)       ;
+        *table[NVTX_CBID_CORE2_DomainRegisterStringA] = reinterpret_cast<NvtxFunctionPointer>(HandleDomainRegisterStringA);
+        *table[NVTX_CBID_CORE2_DomainCreateA        ] = reinterpret_cast<NvtxFunctionPointer>(HandleDomainCreateA)        ;
+        *table[NVTX_CBID_CORE2_DomainDestroy        ] = reinterpret_cast<NvtxFunctionPointer>(HandleDomainDestroy)        ;
+        *table[NVTX_CBID_CORE2_Initialize           ] = reinterpret_cast<NvtxFunctionPointer>(HandleInitialize)           ;
     }
 
     return 1;

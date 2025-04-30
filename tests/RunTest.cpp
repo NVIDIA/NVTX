@@ -51,7 +51,7 @@ static int MainInternal(int argc, const char** argv)
         else break;
         ++argv;
     }
-    argc -= (int)(argv - oldArgv);
+    argc -= static_cast<int>(argv - oldArgv);
 
     if (testName.empty())
     {
@@ -86,7 +86,7 @@ static int MainInternal(int argc, const char** argv)
 
     using pfnRunTest_t = int(*)(int, const char**);
 
-    auto pfnRunTest = (pfnRunTest_t)GET_DLL_FUNC(hDll, "RunTest");
+    auto pfnRunTest = reinterpret_cast<pfnRunTest_t>(GET_DLL_FUNC(hDll, "RunTest"));
     if (!pfnRunTest) return 105;
 
     int result = pfnRunTest(argc, argv); // Forward remaining args

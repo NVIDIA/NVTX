@@ -79,9 +79,9 @@ struct CallId
 DEFINE_SAME_2(CallId, mod, cb)
 
 // Helper to write CALLID(CORE, MarkEx) as shorthand for CallId{NVTX_CB_MODULE_CORE, NVTX_CBID_CORE_MarkEx}
-#define CALLID(m,c) CallId{NVTX_CB_MODULE_##m, (int32_t)NVTX_CBID_##m##_##c}
+#define CALLID(m,c) CallId{NVTX_CB_MODULE_##m, static_cast<int32_t>(NVTX_CBID_##m##_##c)}
 
-#define CALLID_LOAD() CallId{NVTX_CB_MODULE_INVALID, (int32_t)0x7ac0be11}
+#define CALLID_LOAD() CallId{NVTX_CB_MODULE_INVALID, static_cast<int32_t>(0x7ac0be11)}
 
 inline const char* CallName(CallId const& id)
 {
@@ -586,9 +586,9 @@ inline bool Same(CallData const& lhs, CallData const& rhs, SAME_COMMON_ARGS)
 }
 DEFINE_EQ_NE_DEEP(CallData)
 
-inline nvtxDomainHandle_t   PostInc(nvtxDomainHandle_t  & h) { auto v = h; ++(intptr_t&)h; return v; }
-inline nvtxStringHandle_t   PostInc(nvtxStringHandle_t  & h) { auto v = h; ++(intptr_t&)h; return v; }
-inline nvtxResourceHandle_t PostInc(nvtxResourceHandle_t& h) { auto v = h; ++(intptr_t&)h; return v; }
+inline nvtxDomainHandle_t   PostInc(nvtxDomainHandle_t  & h) { auto v = h; h = reinterpret_cast<nvtxDomainHandle_t  >(reinterpret_cast<intptr_t>(h) + 1); return v; }
+inline nvtxStringHandle_t   PostInc(nvtxStringHandle_t  & h) { auto v = h; h = reinterpret_cast<nvtxStringHandle_t  >(reinterpret_cast<intptr_t>(h) + 1); return v; }
+inline nvtxResourceHandle_t PostInc(nvtxResourceHandle_t& h) { auto v = h; h = reinterpret_cast<nvtxResourceHandle_t>(reinterpret_cast<intptr_t>(h) + 1); return v; }
 inline nvtxRangeId_t        PostInc(nvtxRangeId_t       & h) { return h++; }
 
 struct Callbacks
@@ -634,13 +634,13 @@ struct Callbacks
     Callbacks(Callbacks&&) = default;
     Callbacks& operator=(Callbacks&&) = default;
 
-    nvtxDomainHandle_t nextDomainHandle = (nvtxDomainHandle_t)1;
+    nvtxDomainHandle_t nextDomainHandle = reinterpret_cast<nvtxDomainHandle_t>(1);
     struct DomainData
     {
         int pushPopDepth = 0;
-        nvtxRangeId_t nextRangeId = (nvtxRangeId_t)1;
-        nvtxStringHandle_t nextStringHandle = (nvtxStringHandle_t)1;
-        nvtxResourceHandle_t nextResourceHandle = (nvtxResourceHandle_t)1;
+        nvtxRangeId_t nextRangeId = static_cast<nvtxRangeId_t>(1);
+        nvtxStringHandle_t nextStringHandle = reinterpret_cast<nvtxStringHandle_t>(1);
+        nvtxResourceHandle_t nextResourceHandle = reinterpret_cast<nvtxResourceHandle_t>(1);
     };
     std::map<nvtxDomainHandle_t, DomainData> domainData;
 

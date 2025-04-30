@@ -189,7 +189,7 @@ FnPtr GetExport(
     std::vector<const char*>& found,
     std::vector<const char*>& missing)
 {
-    FnPtr pfn = (FnPtr)GET_DLL_FUNC(hDll, fnName);
+    FnPtr pfn = reinterpret_cast<FnPtr>(GET_DLL_FUNC(hDll, fnName));
     if (pfn)
     {
         found.push_back(fnName);

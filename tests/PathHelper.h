@@ -79,7 +79,7 @@ static std::string GetCurrentProcessPath()
         buf = nullptr;
         while (1)
         {
-            buf = (char*)realloc(buf, size);
+            buf = static_cast<char*>(realloc(buf, size));
             if (!buf)
             {
                 return nullptr;
@@ -96,7 +96,7 @@ static std::string GetCurrentProcessPath()
     {
         int ret;
         pid_t pid = getpid();
-        buf = (char*)malloc(PROC_PIDPATHINFO_MAXSIZE);
+        buf = static_cast<char*>(malloc(PROC_PIDPATHINFO_MAXSIZE));
         if (!buf)
         {
             return nullptr;
@@ -116,7 +116,7 @@ static std::string GetCurrentProcessPath()
             size = 4096;
         }
         ++size;
-        buf = (char*)malloc(size);
+        buf = static_cast<char*>(malloc(size));
         if (!buf)
         {
             return nullptr;
@@ -132,7 +132,7 @@ static std::string GetCurrentProcessPath()
         buf = nullptr;
         while (1)
         {
-            buf = (char*)realloc(buf, size);
+            buf = static_cast<char*>(realloc(buf, size));
             if (!buf)
             {
                 return nullptr;
@@ -143,7 +143,7 @@ static std::string GetCurrentProcessPath()
                 free(buf);
                 return nullptr;
             }
-            bytesRead = (size_t)bytesReadSigned;
+            bytesRead = static_cast<size_t>(bytesReadSigned);
             if (bytesRead < size) break;
             size *= 2;
         }
