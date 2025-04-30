@@ -46,6 +46,8 @@ struct regstr_global_domain2 { static constexpr const char*    message{"Global2"
 struct regstr_global_domain3 { static constexpr const char*    message{"Global3"}; };
 
 extern "C" NVTX_DYNAMIC_EXPORT
+int RunTest(int argc, const char** argv);
+NVTX_DYNAMIC_EXPORT
 int RunTest(int argc, const char** argv)
 {
     NVTX_EXPORT_UNMANGLED_FUNCTION_NAME

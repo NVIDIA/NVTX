@@ -69,7 +69,8 @@ constexpr char pathSep = '/';
 #endif
 
 // Adapted from C functions in NVTXW implementation
-static std::string GetCurrentProcessPath()
+static std::string GetCurrentProcessPath(void);
+static std::string GetCurrentProcessPath(void)
 {
     char* buf;
 #if defined(_WIN32)
@@ -168,7 +169,8 @@ static std::string GetCurrentProcessPath()
 //    C:\foo.exe -> C:\
 //    /path/to/foo -> /path/to/
 //    /foo -> /
-std::string GetCurrentProcessDirWithSep()
+static std::string GetCurrentProcessDirWithSep(void);
+static std::string GetCurrentProcessDirWithSep(void)
 {
     std::string exeAbsPath = GetCurrentProcessPath();
     exeAbsPath.resize(exeAbsPath.find_last_of(pathSep) + 1);
@@ -193,10 +195,14 @@ std::string GetCurrentProcessDirWithSep()
 //       -> /path/to/libexample.so
 //     AbsolutePathToLibraryInCurrentProcessPath("example", {"nested", "deeper"}, ".so.1")
 //       -> /path/to/nested/deeper/libexample.so.1
-std::string AbsolutePathToLibraryInCurrentProcessPath(
+static std::string AbsolutePathToLibraryInCurrentProcessPath(
     std::string libraryBaseName,
     std::vector<std::string> subDirs = {},
-    std::string libSuffix = DLL_SUFFIX)
+    std::string libSuffix = DLL_SUFFIX);
+static std::string AbsolutePathToLibraryInCurrentProcessPath(
+    std::string libraryBaseName,
+    std::vector<std::string> subDirs,
+    std::string libSuffix)
 {
     std::string result = GetCurrentProcessDirWithSep();
 

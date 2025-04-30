@@ -79,7 +79,9 @@ template <int N> struct reg2 { static constexpr const char* message = "Reg2"; };
 template <int N> struct reg3 { static constexpr const char* message = "Reg3"; };
 
 extern "C" NVTX_DYNAMIC_EXPORT
-int RunTest(int argc, const char** argv)
+int RunTest(int /*argc*/, const char** argv);
+NVTX_DYNAMIC_EXPORT
+int RunTest(int /*argc*/, const char** argv)
 {
     NVTX_EXPORT_UNMANGLED_FUNCTION_NAME
 

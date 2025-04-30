@@ -205,7 +205,9 @@ FnPtr GetExport(
     auto pfn_##fn = GetExport<decltype(&fn)>(hDll, #fn, foundFuncs, missingFuncs);
 
 extern "C" NVTX_DYNAMIC_EXPORT
-int RunTest(int argc, const char** argv)
+int RunTest(int /*argc*/, const char** argv);
+NVTX_DYNAMIC_EXPORT
+int RunTest(int /*argc*/, const char** argv)
 {
     NVTX_EXPORT_UNMANGLED_FUNCTION_NAME
 

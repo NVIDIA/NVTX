@@ -40,6 +40,8 @@ struct error_name_missing     { static constexpr const char*    not_name{"Test n
 struct error_name_is_bad_type { static constexpr const int      name{5}; };
 
 extern "C" NVTX_DYNAMIC_EXPORT
+int RunTest(int argc, const char** argv);
+NVTX_DYNAMIC_EXPORT
 int RunTest(int argc, const char** argv)
 {
     NVTX_EXPORT_UNMANGLED_FUNCTION_NAME

@@ -68,6 +68,8 @@ void                 NVTX_API HandleInitialize           (const void* reserved  
 }
 
 extern "C" NVTX_DYNAMIC_EXPORT
+int NVTX_API InitializeInjectionNvtx2(NvtxGetExportTableFunc_t getExportTable);
+NVTX_DYNAMIC_EXPORT
 int NVTX_API InitializeInjectionNvtx2(NvtxGetExportTableFunc_t getExportTable)
 {
     NVTX_EXPORT_UNMANGLED_FUNCTION_NAME

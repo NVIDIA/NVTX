@@ -32,6 +32,8 @@ extern "C" {
 
 #ifdef SUPPORT_DYNAMIC_INJECTION
 NVTX_DYNAMIC_EXPORT
+extern int NVTX_API InitializeInjectionNvtx2(NvtxGetExportTableFunc_t getExportTable);
+NVTX_DYNAMIC_EXPORT
 int NVTX_API InitializeInjectionNvtx2(NvtxGetExportTableFunc_t getExportTable)
 {
     NVTX_EXPORT_UNMANGLED_FUNCTION_NAME
@@ -41,6 +43,8 @@ int NVTX_API InitializeInjectionNvtx2(NvtxGetExportTableFunc_t getExportTable)
 
 #ifdef SUPPORT_PREINJECTION
 /* Note: this mode is not supported by the NVTX loader on Windows */
+NVTX_DYNAMIC_EXPORT
+extern int NVTX_API InitializeInjectionNvtx2Preinject(NvtxGetExportTableFunc_t getExportTable);
 NVTX_DYNAMIC_EXPORT
 int NVTX_API InitializeInjectionNvtx2Preinject(NvtxGetExportTableFunc_t getExportTable)
 {

@@ -52,6 +52,8 @@ struct cat_global_domain2     { static constexpr const char*    name{"Global2"};
 struct cat_global_domain3     { static constexpr const char*    name{"Global3"};      static constexpr uint32_t id{13}; };
 
 extern "C" NVTX_DYNAMIC_EXPORT
+int RunTest(int argc, const char** argv);
+NVTX_DYNAMIC_EXPORT
 int RunTest(int argc, const char** argv)
 {
     NVTX_EXPORT_UNMANGLED_FUNCTION_NAME

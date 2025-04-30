@@ -20,6 +20,7 @@
 
 #include "TestCoverage.h"
 
+extern void FileA(int argc, const char** argv);
 void FileA(int argc, const char** argv)
 {
     RunTestCommon(argc, argv);
