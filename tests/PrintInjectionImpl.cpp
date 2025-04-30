@@ -148,7 +148,7 @@ int NVTX_API InitializeInjectionNvtx2Internal(NvtxGetExportTableFunc_t getExport
         }
     }
 
-    LOG_INFO("---- InitializeInjectionNvtx2 called from client's NVTX v%d\n", version);
+    LOG_INFO("---- InitializeInjectionNvtx2 called from client's NVTX v%u\n", version);
 
     pCallbacks = static_cast<const NvtxExportTableCallbacks*>(getExportTable(NVTX_ETID_CALLBACKS));
     if (!pCallbacks)
