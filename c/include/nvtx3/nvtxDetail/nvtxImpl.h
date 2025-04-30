@@ -406,6 +406,9 @@ NVTX_LINKONCE_DEFINE_FUNCTION int NVTX_API NVTX_VERSIONED_IDENTIFIER(nvtxEtiGetM
         table = NVTX_VERSIONED_IDENTIFIER(nvtxGlobals).functionTable_SYNC;
         bytes = NVTX_STATIC_CAST(unsigned int, sizeof(NVTX_VERSIONED_IDENTIFIER(nvtxGlobals).functionTable_SYNC));
         break;
+    case NVTX_CB_MODULE_INVALID:
+    case NVTX_CB_MODULE_SIZE:
+    case NVTX_CB_MODULE_FORCE_INT:
     default: return 0;
     }
 
