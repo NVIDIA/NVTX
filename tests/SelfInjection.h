@@ -128,6 +128,17 @@ inline const char* CallName(CallId const& id)
         case NVTX_CBID_CORE2_Initialize           : return "Initialize";
         default: return "<Unknown CORE2 call>";
         }
+    case NVTX_CB_MODULE_SYNC:
+        return "<Unknown SYNC call>";
+    case NVTX_CB_MODULE_CUDA:
+        return "<Unknown CUDA call>";
+    case NVTX_CB_MODULE_CUDART:
+        return "<Unknown CUDART call>";
+    case NVTX_CB_MODULE_OPENCL:
+        return "<Unknown OPENCL call>";
+    case NVTX_CB_MODULE_INVALID:
+    case NVTX_CB_MODULE_SIZE:
+    case NVTX_CB_MODULE_FORCE_INT:
     default: return "<Unknown CB_MODULE>";
     }
 }
@@ -203,6 +214,7 @@ inline void CopyEventAttributes(const nvtxEventAttributes_t*& lhs, const nvtxEve
     {
     case NVTX_MESSAGE_TYPE_ASCII:   CopyCstring(tmp->message.ascii);   break;
     case NVTX_MESSAGE_TYPE_UNICODE: CopyCstring(tmp->message.unicode); break;
+    default: break;
     }
     lhs = tmp;
 }
@@ -213,6 +225,7 @@ inline void DestroyEventAttributes(const nvtxEventAttributes_t* a)
     {
     case NVTX_MESSAGE_TYPE_ASCII:   DestroyCstring(a->message.ascii);   break;
     case NVTX_MESSAGE_TYPE_UNICODE: DestroyCstring(a->message.unicode); break;
+    default: break;
     }
     delete a;
 }
@@ -225,6 +238,7 @@ inline void CopyResourceAttributes(nvtxResourceAttributes_t*& lhs, const nvtxRes
     {
     case NVTX_MESSAGE_TYPE_ASCII:   CopyCstring(tmp->message.ascii);   break;
     case NVTX_MESSAGE_TYPE_UNICODE: CopyCstring(tmp->message.unicode); break;
+    default: break;
     }
     lhs = tmp;
 }
@@ -235,6 +249,7 @@ inline void DestroyResourceAttributes(nvtxResourceAttributes_t* a)
     {
     case NVTX_MESSAGE_TYPE_ASCII:   DestroyCstring(a->message.ascii);   break;
     case NVTX_MESSAGE_TYPE_UNICODE: DestroyCstring(a->message.unicode); break;
+    default: break;
     }
     delete a;
 }
@@ -358,6 +373,13 @@ struct CallData
             default: break;
             }
             break;
+        case NVTX_CB_MODULE_SYNC:
+        case NVTX_CB_MODULE_CUDA:
+        case NVTX_CB_MODULE_CUDART:
+        case NVTX_CB_MODULE_OPENCL:
+        case NVTX_CB_MODULE_INVALID:
+        case NVTX_CB_MODULE_SIZE:
+        case NVTX_CB_MODULE_FORCE_INT:
         default: break;
         }
     }
@@ -416,6 +438,13 @@ inline std::ostream& operator<<(std::ostream& os, CallData const& data)
         default: break;
         }
         break;
+    case NVTX_CB_MODULE_SYNC:
+    case NVTX_CB_MODULE_CUDA:
+    case NVTX_CB_MODULE_CUDART:
+    case NVTX_CB_MODULE_OPENCL:
+    case NVTX_CB_MODULE_INVALID:
+    case NVTX_CB_MODULE_SIZE:
+    case NVTX_CB_MODULE_FORCE_INT:
     default: break;
     }
     os << ')';
