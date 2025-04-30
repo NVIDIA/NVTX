@@ -73,7 +73,7 @@ NVTX_LINKONCE_DEFINE_FUNCTION void NVTX_EXT_PAYLOAD_VERSIONED_ID(nvtxExtPayloadI
         NVTX_VERSION, sizeof(nvtxExtModuleInfo_t),
         NVTX_EXT_PAYLOAD_MODULEID, NVTX_EXT_PAYLOAD_COMPATID,
         1, &segment, /* number of segments, segments */
-        NULL, /* no export function needed */
+        NVTX_NULLPTR, /* no export function needed */
         /* bake type sizes and alignment information into program binary */
         &(NVTX_EXT_PAYLOAD_VERSIONED_ID(nvtxExtPayloadTypeInfo))
     };

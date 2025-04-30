@@ -21,6 +21,14 @@
 #ifndef NVTX_EXT_HELPER_MACROS_H
 #define NVTX_EXT_HELPER_MACROS_H
 
+#if !defined(NVTX_NULLPTR)
+#if defined(__cplusplus) && __cplusplus >= 201103L
+#define NVTX_NULLPTR nullptr
+#else
+#define NVTX_NULLPTR NULL
+#endif
+#endif
+
 /* Combine tokens */
 #define _NVTX_EXT_CONCAT(a, b) a##b
 #define NVTX_EXT_CONCAT(a, b) _NVTX_EXT_CONCAT(a, b)

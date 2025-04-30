@@ -71,8 +71,8 @@ NVTX_LINKONCE_DEFINE_FUNCTION void NVTX_EXT_MEM_VERSIONED_ID(nvtxExtMemInitOnce)
         NVTX_VERSION, sizeof(nvtxExtModuleInfo_t),
         NVTX_EXT_MODULEID_MEM, NVTX_EXT_COMPATID_MEM,
         1, &segment, /* number of segments, segments */
-        NULL, /* no export function needed */
-        NULL /* no extension private info */
+        NVTX_NULLPTR, /* no export function needed */
+        NVTX_NULLPTR /* no extension private info */
     };
 
     NVTX_INFO( "%s\n", __FUNCTION__  );
@@ -106,7 +106,7 @@ NVTX_DECLSPEC ret_type NVTX_API fn_name signature { \
 
 /* Non-void functions. */
 #define NVTX_EXT_FN_RETURN return
-#define NVTX_EXT_FN_RETURN_INVALID(rtype) return (rtype)0;
+#define NVTX_EXT_FN_RETURN_INVALID(rtype) return NVTX_NULLPTR;
 
 NVTX_EXT_MEM_IMPL_FN_V1(nvtxMemHeapHandle_t, nvtxMemHeapRegister, (nvtxDomainHandle_t domain, nvtxMemHeapDesc_t const* desc), (domain, desc))
 

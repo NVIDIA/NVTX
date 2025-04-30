@@ -94,7 +94,7 @@ typedef struct nvtxExtGlobals1_t
 
 NVTX_LINKONCE_DEFINE_GLOBAL nvtxExtGlobals1_t NVTX_VERSIONED_IDENTIFIER(nvtxExtGlobals1) =
 {
-    (NvtxExtInitializeInjectionFunc_t)0
+    NVTX_NULLPTR
 };
 
 #define NVTX_EXT_INIT_GUARD

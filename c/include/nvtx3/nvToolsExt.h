@@ -229,6 +229,14 @@
 
 #endif /* Compiler-dependent defines */
 
+#if !defined(NVTX_NULLPTR)
+#if defined(__cplusplus) && __cplusplus >= 201103L
+#define NVTX_NULLPTR nullptr
+#else
+#define NVTX_NULLPTR NULL
+#endif
+#endif
+
 
 /* API linkage/export options:
  *

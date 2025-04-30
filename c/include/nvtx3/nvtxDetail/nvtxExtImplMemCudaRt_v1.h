@@ -33,7 +33,7 @@ extern "C" {
 
 /* Non-void functions. */
 #define NVTX_EXT_FN_RETURN return
-#define NVTX_EXT_FN_RETURN_INVALID(rtype) return (rtype)0;
+#define NVTX_EXT_FN_RETURN_INVALID(rtype) return NVTX_NULLPTR;
 
 NVTX_EXT_MEM_IMPL_FN_V1(nvtxMemPermissionsHandle_t, nvtxMemCudaGetProcessWidePermissions, (nvtxDomainHandle_t domain), (domain))
 

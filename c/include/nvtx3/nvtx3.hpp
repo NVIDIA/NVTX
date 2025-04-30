@@ -1957,7 +1957,7 @@ class event_attributes {
         0,                              // reserved 4B
         {0},                            // payload value (union)
         NVTX_MESSAGE_UNKNOWN,           // message type
-        {0}                             // message value (union)
+        {nullptr}                       // message value (union)
       }
   {
   }

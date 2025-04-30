@@ -23,7 +23,7 @@ NVTX_DECLSPEC void NVTX_API nvtxMarkEx(const nvtxEventAttributes_t* eventAttrib)
     NVTX_SET_NAME_MANGLING_OPTIONS
 #ifndef NVTX_DISABLE
     nvtxMarkEx_impl_fntype local = NVTX_VERSIONED_IDENTIFIER(nvtxGlobals).nvtxMarkEx_impl_fnptr;
-    if(local!=0)
+    if (local != NVTX_NULLPTR)
         (*local)(eventAttrib);
 #endif /*NVTX_DISABLE*/
 }
@@ -33,7 +33,7 @@ NVTX_DECLSPEC void NVTX_API nvtxMarkA(const char* message)
     NVTX_SET_NAME_MANGLING_OPTIONS
 #ifndef NVTX_DISABLE
     nvtxMarkA_impl_fntype local = NVTX_VERSIONED_IDENTIFIER(nvtxGlobals).nvtxMarkA_impl_fnptr;
-    if(local!=0)
+    if (local != NVTX_NULLPTR)
         (*local)(message);
 #endif /*NVTX_DISABLE*/
 }
@@ -43,7 +43,7 @@ NVTX_DECLSPEC void NVTX_API nvtxMarkW(const wchar_t* message)
     NVTX_SET_NAME_MANGLING_OPTIONS
 #ifndef NVTX_DISABLE
     nvtxMarkW_impl_fntype local = NVTX_VERSIONED_IDENTIFIER(nvtxGlobals).nvtxMarkW_impl_fnptr;
-    if(local!=0)
+    if (local != NVTX_NULLPTR)
         (*local)(message);
 #endif /*NVTX_DISABLE*/
 }
@@ -53,7 +53,7 @@ NVTX_DECLSPEC nvtxRangeId_t NVTX_API nvtxRangeStartEx(const nvtxEventAttributes_
     NVTX_SET_NAME_MANGLING_OPTIONS
 #ifndef NVTX_DISABLE
     nvtxRangeStartEx_impl_fntype local = NVTX_VERSIONED_IDENTIFIER(nvtxGlobals).nvtxRangeStartEx_impl_fnptr;
-    if(local!=0)
+    if (local != NVTX_NULLPTR)
         return (*local)(eventAttrib);
     else
 #endif  /*NVTX_DISABLE*/
@@ -65,7 +65,7 @@ NVTX_DECLSPEC nvtxRangeId_t NVTX_API nvtxRangeStartA(const char* message)
     NVTX_SET_NAME_MANGLING_OPTIONS
 #ifndef NVTX_DISABLE
     nvtxRangeStartA_impl_fntype local = NVTX_VERSIONED_IDENTIFIER(nvtxGlobals).nvtxRangeStartA_impl_fnptr;
-    if(local!=0)
+    if (local != NVTX_NULLPTR)
         return (*local)(message);
     else
 #endif  /*NVTX_DISABLE*/
@@ -77,7 +77,7 @@ NVTX_DECLSPEC nvtxRangeId_t NVTX_API nvtxRangeStartW(const wchar_t* message)
     NVTX_SET_NAME_MANGLING_OPTIONS
 #ifndef NVTX_DISABLE
     nvtxRangeStartW_impl_fntype local = NVTX_VERSIONED_IDENTIFIER(nvtxGlobals).nvtxRangeStartW_impl_fnptr;
-    if(local!=0)
+    if (local != NVTX_NULLPTR)
         return (*local)(message);
     else
 #endif  /*NVTX_DISABLE*/
@@ -89,7 +89,7 @@ NVTX_DECLSPEC void NVTX_API nvtxRangeEnd(nvtxRangeId_t id)
     NVTX_SET_NAME_MANGLING_OPTIONS
 #ifndef NVTX_DISABLE
     nvtxRangeEnd_impl_fntype local = NVTX_VERSIONED_IDENTIFIER(nvtxGlobals).nvtxRangeEnd_impl_fnptr;
-    if(local!=0)
+    if (local != NVTX_NULLPTR)
         (*local)(id);
 #endif /*NVTX_DISABLE*/
 }
@@ -99,7 +99,7 @@ NVTX_DECLSPEC int NVTX_API nvtxRangePushEx(const nvtxEventAttributes_t* eventAtt
     NVTX_SET_NAME_MANGLING_OPTIONS
 #ifndef NVTX_DISABLE
     nvtxRangePushEx_impl_fntype local = NVTX_VERSIONED_IDENTIFIER(nvtxGlobals).nvtxRangePushEx_impl_fnptr;
-    if(local!=0)
+    if (local != NVTX_NULLPTR)
         return (*local)(eventAttrib);
     else
 #endif  /*NVTX_DISABLE*/
@@ -111,7 +111,7 @@ NVTX_DECLSPEC int NVTX_API nvtxRangePushA(const char* message)
     NVTX_SET_NAME_MANGLING_OPTIONS
 #ifndef NVTX_DISABLE
     nvtxRangePushA_impl_fntype local = NVTX_VERSIONED_IDENTIFIER(nvtxGlobals).nvtxRangePushA_impl_fnptr;
-    if(local!=0)
+    if (local != NVTX_NULLPTR)
         return (*local)(message);
     else
 #endif  /*NVTX_DISABLE*/
@@ -123,7 +123,7 @@ NVTX_DECLSPEC int NVTX_API nvtxRangePushW(const wchar_t* message)
     NVTX_SET_NAME_MANGLING_OPTIONS
 #ifndef NVTX_DISABLE
     nvtxRangePushW_impl_fntype local = NVTX_VERSIONED_IDENTIFIER(nvtxGlobals).nvtxRangePushW_impl_fnptr;
-    if(local!=0)
+    if (local != NVTX_NULLPTR)
         return (*local)(message);
     else
 #endif  /*NVTX_DISABLE*/
@@ -135,7 +135,7 @@ NVTX_DECLSPEC int NVTX_API nvtxRangePop(void)
     NVTX_SET_NAME_MANGLING_OPTIONS
 #ifndef NVTX_DISABLE
     nvtxRangePop_impl_fntype local = NVTX_VERSIONED_IDENTIFIER(nvtxGlobals).nvtxRangePop_impl_fnptr;
-    if(local!=0)
+    if (local != NVTX_NULLPTR)
         return (*local)();
     else
 #endif  /*NVTX_DISABLE*/
@@ -147,7 +147,7 @@ NVTX_DECLSPEC void NVTX_API nvtxNameCategoryA(uint32_t category, const char* nam
     NVTX_SET_NAME_MANGLING_OPTIONS
 #ifndef NVTX_DISABLE
     nvtxNameCategoryA_impl_fntype local = NVTX_VERSIONED_IDENTIFIER(nvtxGlobals).nvtxNameCategoryA_impl_fnptr;
-    if(local!=0)
+    if (local != NVTX_NULLPTR)
         (*local)(category, name);
 #endif /*NVTX_DISABLE*/
 }
@@ -157,7 +157,7 @@ NVTX_DECLSPEC void NVTX_API nvtxNameCategoryW(uint32_t category, const wchar_t* 
     NVTX_SET_NAME_MANGLING_OPTIONS
 #ifndef NVTX_DISABLE
     nvtxNameCategoryW_impl_fntype local = NVTX_VERSIONED_IDENTIFIER(nvtxGlobals).nvtxNameCategoryW_impl_fnptr;
-    if(local!=0)
+    if (local != NVTX_NULLPTR)
         (*local)(category, name);
 #endif /*NVTX_DISABLE*/
 }
@@ -167,7 +167,7 @@ NVTX_DECLSPEC void NVTX_API nvtxNameOsThreadA(uint32_t threadId, const char* nam
     NVTX_SET_NAME_MANGLING_OPTIONS
 #ifndef NVTX_DISABLE
     nvtxNameOsThreadA_impl_fntype local = NVTX_VERSIONED_IDENTIFIER(nvtxGlobals).nvtxNameOsThreadA_impl_fnptr;
-    if(local!=0)
+    if (local != NVTX_NULLPTR)
         (*local)(threadId, name);
 #endif /*NVTX_DISABLE*/
 }
@@ -177,7 +177,7 @@ NVTX_DECLSPEC void NVTX_API nvtxNameOsThreadW(uint32_t threadId, const wchar_t* 
     NVTX_SET_NAME_MANGLING_OPTIONS
 #ifndef NVTX_DISABLE
     nvtxNameOsThreadW_impl_fntype local = NVTX_VERSIONED_IDENTIFIER(nvtxGlobals).nvtxNameOsThreadW_impl_fnptr;
-    if(local!=0)
+    if (local != NVTX_NULLPTR)
         (*local)(threadId, name);
 #endif /*NVTX_DISABLE*/
 }
@@ -187,7 +187,7 @@ NVTX_DECLSPEC void NVTX_API nvtxDomainMarkEx(nvtxDomainHandle_t domain, const nv
     NVTX_SET_NAME_MANGLING_OPTIONS
 #ifndef NVTX_DISABLE
     nvtxDomainMarkEx_impl_fntype local = NVTX_VERSIONED_IDENTIFIER(nvtxGlobals).nvtxDomainMarkEx_impl_fnptr;
-    if(local!=0)
+    if (local != NVTX_NULLPTR)
         (*local)(domain, eventAttrib);
 #endif /*NVTX_DISABLE*/
 }
@@ -197,7 +197,7 @@ NVTX_DECLSPEC nvtxRangeId_t NVTX_API nvtxDomainRangeStartEx(nvtxDomainHandle_t d
     NVTX_SET_NAME_MANGLING_OPTIONS
 #ifndef NVTX_DISABLE
     nvtxDomainRangeStartEx_impl_fntype local = NVTX_VERSIONED_IDENTIFIER(nvtxGlobals).nvtxDomainRangeStartEx_impl_fnptr;
-    if(local!=0)
+    if (local != NVTX_NULLPTR)
         return (*local)(domain, eventAttrib);
     else
 #endif  /*NVTX_DISABLE*/
@@ -209,7 +209,7 @@ NVTX_DECLSPEC void NVTX_API nvtxDomainRangeEnd(nvtxDomainHandle_t domain, nvtxRa
     NVTX_SET_NAME_MANGLING_OPTIONS
 #ifndef NVTX_DISABLE
     nvtxDomainRangeEnd_impl_fntype local = NVTX_VERSIONED_IDENTIFIER(nvtxGlobals).nvtxDomainRangeEnd_impl_fnptr;
-    if(local!=0)
+    if (local != NVTX_NULLPTR)
         (*local)(domain, id);
 #endif /*NVTX_DISABLE*/
 }
@@ -219,7 +219,7 @@ NVTX_DECLSPEC int NVTX_API nvtxDomainRangePushEx(nvtxDomainHandle_t domain, cons
     NVTX_SET_NAME_MANGLING_OPTIONS
 #ifndef NVTX_DISABLE
     nvtxDomainRangePushEx_impl_fntype local = NVTX_VERSIONED_IDENTIFIER(nvtxGlobals).nvtxDomainRangePushEx_impl_fnptr;
-    if(local!=0)
+    if (local != NVTX_NULLPTR)
         return (*local)(domain, eventAttrib);
     else
 #endif  /*NVTX_DISABLE*/
@@ -231,7 +231,7 @@ NVTX_DECLSPEC int NVTX_API nvtxDomainRangePop(nvtxDomainHandle_t domain)
     NVTX_SET_NAME_MANGLING_OPTIONS
 #ifndef NVTX_DISABLE
     nvtxDomainRangePop_impl_fntype local = NVTX_VERSIONED_IDENTIFIER(nvtxGlobals).nvtxDomainRangePop_impl_fnptr;
-    if(local!=0)
+    if (local != NVTX_NULLPTR)
         return (*local)(domain);
     else
 #endif  /*NVTX_DISABLE*/
@@ -243,11 +243,11 @@ NVTX_DECLSPEC nvtxResourceHandle_t NVTX_API nvtxDomainResourceCreate(nvtxDomainH
     NVTX_SET_NAME_MANGLING_OPTIONS
 #ifndef NVTX_DISABLE
     nvtxDomainResourceCreate_impl_fntype local = NVTX_VERSIONED_IDENTIFIER(nvtxGlobals).nvtxDomainResourceCreate_impl_fnptr;
-    if(local!=0)
+    if (local != NVTX_NULLPTR)
         return (*local)(domain, attribs);
     else
 #endif  /*NVTX_DISABLE*/
-        return (nvtxResourceHandle_t)0;
+        return NVTX_NULLPTR;
 }
 
 NVTX_DECLSPEC void NVTX_API nvtxDomainResourceDestroy(nvtxResourceHandle_t resource)
@@ -255,7 +255,7 @@ NVTX_DECLSPEC void NVTX_API nvtxDomainResourceDestroy(nvtxResourceHandle_t resou
     NVTX_SET_NAME_MANGLING_OPTIONS
 #ifndef NVTX_DISABLE
     nvtxDomainResourceDestroy_impl_fntype local = NVTX_VERSIONED_IDENTIFIER(nvtxGlobals).nvtxDomainResourceDestroy_impl_fnptr;
-    if(local!=0)
+    if (local != NVTX_NULLPTR)
         (*local)(resource);
 #endif /*NVTX_DISABLE*/
 }
@@ -265,7 +265,7 @@ NVTX_DECLSPEC void NVTX_API nvtxDomainNameCategoryA(nvtxDomainHandle_t domain, u
     NVTX_SET_NAME_MANGLING_OPTIONS
 #ifndef NVTX_DISABLE
     nvtxDomainNameCategoryA_impl_fntype local = NVTX_VERSIONED_IDENTIFIER(nvtxGlobals).nvtxDomainNameCategoryA_impl_fnptr;
-    if(local!=0)
+    if (local != NVTX_NULLPTR)
         (*local)(domain, category, name);
 #endif /*NVTX_DISABLE*/
 }
@@ -275,7 +275,7 @@ NVTX_DECLSPEC void NVTX_API nvtxDomainNameCategoryW(nvtxDomainHandle_t domain, u
     NVTX_SET_NAME_MANGLING_OPTIONS
 #ifndef NVTX_DISABLE
     nvtxDomainNameCategoryW_impl_fntype local = NVTX_VERSIONED_IDENTIFIER(nvtxGlobals).nvtxDomainNameCategoryW_impl_fnptr;
-    if(local!=0)
+    if (local != NVTX_NULLPTR)
         (*local)(domain, category, name);
 #endif /*NVTX_DISABLE*/
 }
@@ -285,11 +285,11 @@ NVTX_DECLSPEC nvtxStringHandle_t NVTX_API nvtxDomainRegisterStringA(nvtxDomainHa
     NVTX_SET_NAME_MANGLING_OPTIONS
 #ifndef NVTX_DISABLE
     nvtxDomainRegisterStringA_impl_fntype local = NVTX_VERSIONED_IDENTIFIER(nvtxGlobals).nvtxDomainRegisterStringA_impl_fnptr;
-    if(local!=0)
+    if (local != NVTX_NULLPTR)
         return (*local)(domain, string);
     else
 #endif  /*NVTX_DISABLE*/
-        return (nvtxStringHandle_t)0;
+        return NVTX_NULLPTR;
 }
 
 NVTX_DECLSPEC nvtxStringHandle_t NVTX_API nvtxDomainRegisterStringW(nvtxDomainHandle_t domain, const wchar_t* string)
@@ -297,11 +297,11 @@ NVTX_DECLSPEC nvtxStringHandle_t NVTX_API nvtxDomainRegisterStringW(nvtxDomainHa
     NVTX_SET_NAME_MANGLING_OPTIONS
 #ifndef NVTX_DISABLE
     nvtxDomainRegisterStringW_impl_fntype local = NVTX_VERSIONED_IDENTIFIER(nvtxGlobals).nvtxDomainRegisterStringW_impl_fnptr;
-    if(local!=0)
+    if (local != NVTX_NULLPTR)
         return (*local)(domain, string);
     else
 #endif  /*NVTX_DISABLE*/
-        return (nvtxStringHandle_t)0;
+        return NVTX_NULLPTR;
 }
 
 NVTX_DECLSPEC nvtxDomainHandle_t NVTX_API nvtxDomainCreateA(const char* message)
@@ -309,11 +309,11 @@ NVTX_DECLSPEC nvtxDomainHandle_t NVTX_API nvtxDomainCreateA(const char* message)
     NVTX_SET_NAME_MANGLING_OPTIONS
 #ifndef NVTX_DISABLE
     nvtxDomainCreateA_impl_fntype local = NVTX_VERSIONED_IDENTIFIER(nvtxGlobals).nvtxDomainCreateA_impl_fnptr;
-    if(local!=0)
+    if (local != NVTX_NULLPTR)
         return (*local)(message);
     else
 #endif  /*NVTX_DISABLE*/
-        return (nvtxDomainHandle_t)0;
+        return NVTX_NULLPTR;
 }
 
 NVTX_DECLSPEC nvtxDomainHandle_t NVTX_API nvtxDomainCreateW(const wchar_t* message)
@@ -321,11 +321,11 @@ NVTX_DECLSPEC nvtxDomainHandle_t NVTX_API nvtxDomainCreateW(const wchar_t* messa
     NVTX_SET_NAME_MANGLING_OPTIONS
 #ifndef NVTX_DISABLE
     nvtxDomainCreateW_impl_fntype local = NVTX_VERSIONED_IDENTIFIER(nvtxGlobals).nvtxDomainCreateW_impl_fnptr;
-    if(local!=0)
+    if (local != NVTX_NULLPTR)
         return (*local)(message);
     else
 #endif  /*NVTX_DISABLE*/
-        return (nvtxDomainHandle_t)0;
+        return NVTX_NULLPTR;
 }
 
 NVTX_DECLSPEC void NVTX_API nvtxDomainDestroy(nvtxDomainHandle_t domain)
@@ -333,7 +333,7 @@ NVTX_DECLSPEC void NVTX_API nvtxDomainDestroy(nvtxDomainHandle_t domain)
     NVTX_SET_NAME_MANGLING_OPTIONS
 #ifndef NVTX_DISABLE
     nvtxDomainDestroy_impl_fntype local = NVTX_VERSIONED_IDENTIFIER(nvtxGlobals).nvtxDomainDestroy_impl_fnptr;
-    if(local!=0)
+    if (local != NVTX_NULLPTR)
         (*local)(domain);
 #endif /*NVTX_DISABLE*/
 }
@@ -343,7 +343,7 @@ NVTX_DECLSPEC void NVTX_API nvtxInitialize(const void* reserved)
     NVTX_SET_NAME_MANGLING_OPTIONS
 #ifndef NVTX_DISABLE
     nvtxInitialize_impl_fntype local = NVTX_VERSIONED_IDENTIFIER(nvtxGlobals).nvtxInitialize_impl_fnptr;
-    if(local!=0)
+    if (local != NVTX_NULLPTR)
         (*local)(reserved);
 #endif /*NVTX_DISABLE*/
 }

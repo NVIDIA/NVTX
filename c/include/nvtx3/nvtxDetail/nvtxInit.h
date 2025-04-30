@@ -35,7 +35,7 @@
 #define NVTX_DLLOPEN(x) LoadLibraryW(x)
 #define NVTX_DLLFUNC    GetProcAddress
 #define NVTX_DLLCLOSE   FreeLibrary
-#define NVTX_DLLDEFAULT (NVTX_DLLHANDLE)0
+#define NVTX_DLLDEFAULT NVTX_NULLPTR
 #define NVTX_YIELD()    SwitchToThread()
 #define NVTX_MEMBAR()   MemoryBarrier()
 #define NVTX_ATOMIC_WRITE_32(address, value)                        InterlockedExchange((volatile LONG*)address, value)
@@ -50,7 +50,7 @@
 #define NVTX_DLLFUNC    dlsym
 #define NVTX_DLLCLOSE   dlclose
 #if !defined(__APPLE__)
-#define NVTX_DLLDEFAULT (NVTX_DLLHANDLE)0
+#define NVTX_DLLDEFAULT NVTX_NULLPTR
 #else
 #define NVTX_DLLDEFAULT RTLD_DEFAULT
 #endif
@@ -235,7 +235,7 @@ NVTX_LINKONCE_DEFINE_FUNCTION int NVTX_VERSIONED_IDENTIFIER(nvtxInitializeInject
 #if NVTX_SUPPORT_ALREADY_INJECTED_LIBRARY
     static const char initFuncPreinjectName[] = "InitializeInjectionNvtx2Preinject";
 #endif
-    NvtxInitializeInjectionNvtxFunc_t init_fnptr = (NvtxInitializeInjectionNvtxFunc_t)0;
+    NvtxInitializeInjectionNvtxFunc_t init_fnptr = NVTX_NULLPTR;
     NVTX_DLLHANDLE injectionLibraryHandle = NVTX_DLLDEFAULT;
     int entryPointStatus = 0;
 
@@ -250,7 +250,7 @@ NVTX_LINKONCE_DEFINE_FUNCTION int NVTX_VERSIONED_IDENTIFIER(nvtxInitializeInject
             : NVTX_STR("NVTX_INJECTION64_PATH");
 #endif /* NVTX_SUPPORT_ENV_VARS */
         NVTX_PATHCHAR injectionLibraryPathBuf[NVTX_BUFSIZE];
-        const NVTX_PATHCHAR* injectionLibraryPath = (const NVTX_PATHCHAR*)0;
+        const NVTX_PATHCHAR* injectionLibraryPath = NVTX_NULLPTR;
 
         /* Refer to this variable explicitly in case all references to it are #if'ed out */
         (void)injectionLibraryPathBuf;
