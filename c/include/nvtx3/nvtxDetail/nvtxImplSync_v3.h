@@ -38,7 +38,7 @@ NVTX_DECLSPEC nvtxSyncUser_t NVTX_API nvtxDomainSyncUserCreate(nvtxDomainHandle_
 {
     NVTX_SET_NAME_MANGLING_OPTIONS
 #ifndef NVTX_DISABLE
-    nvtxDomainSyncUserCreate_impl_fntype local = (nvtxDomainSyncUserCreate_impl_fntype)NVTX_VERSIONED_IDENTIFIER(nvtxGlobals).nvtxDomainSyncUserCreate_impl_fnptr;
+    nvtxDomainSyncUserCreate_impl_fntype local = NVTX_REINTERPRET_CAST(nvtxDomainSyncUserCreate_impl_fntype, NVTX_VERSIONED_IDENTIFIER(nvtxGlobals).nvtxDomainSyncUserCreate_impl_fnptr);
     if (local != NVTX_NULLPTR)
         return (*local)(domain, attribs);
     else
@@ -50,7 +50,7 @@ NVTX_DECLSPEC void NVTX_API nvtxDomainSyncUserDestroy(nvtxSyncUser_t handle)
 {
     NVTX_SET_NAME_MANGLING_OPTIONS
 #ifndef NVTX_DISABLE
-    nvtxDomainSyncUserDestroy_impl_fntype local = (nvtxDomainSyncUserDestroy_impl_fntype)NVTX_VERSIONED_IDENTIFIER(nvtxGlobals).nvtxDomainSyncUserDestroy_impl_fnptr;
+    nvtxDomainSyncUserDestroy_impl_fntype local = NVTX_REINTERPRET_CAST(nvtxDomainSyncUserDestroy_impl_fntype, NVTX_VERSIONED_IDENTIFIER(nvtxGlobals).nvtxDomainSyncUserDestroy_impl_fnptr);
     if (local != NVTX_NULLPTR)
         (*local)(handle);
 #endif /*NVTX_DISABLE*/
@@ -60,7 +60,7 @@ NVTX_DECLSPEC void NVTX_API nvtxDomainSyncUserAcquireStart(nvtxSyncUser_t handle
 {
     NVTX_SET_NAME_MANGLING_OPTIONS
 #ifndef NVTX_DISABLE
-    nvtxDomainSyncUserAcquireStart_impl_fntype local = (nvtxDomainSyncUserAcquireStart_impl_fntype)NVTX_VERSIONED_IDENTIFIER(nvtxGlobals).nvtxDomainSyncUserAcquireStart_impl_fnptr;
+    nvtxDomainSyncUserAcquireStart_impl_fntype local = NVTX_REINTERPRET_CAST(nvtxDomainSyncUserAcquireStart_impl_fntype, NVTX_VERSIONED_IDENTIFIER(nvtxGlobals).nvtxDomainSyncUserAcquireStart_impl_fnptr);
     if (local != NVTX_NULLPTR)
         (*local)(handle);
 #endif /*NVTX_DISABLE*/
@@ -70,7 +70,7 @@ NVTX_DECLSPEC void NVTX_API nvtxDomainSyncUserAcquireFailed(nvtxSyncUser_t handl
 {
     NVTX_SET_NAME_MANGLING_OPTIONS
 #ifndef NVTX_DISABLE
-    nvtxDomainSyncUserAcquireFailed_impl_fntype local = (nvtxDomainSyncUserAcquireFailed_impl_fntype)NVTX_VERSIONED_IDENTIFIER(nvtxGlobals).nvtxDomainSyncUserAcquireFailed_impl_fnptr;
+    nvtxDomainSyncUserAcquireFailed_impl_fntype local = NVTX_REINTERPRET_CAST(nvtxDomainSyncUserAcquireFailed_impl_fntype, NVTX_VERSIONED_IDENTIFIER(nvtxGlobals).nvtxDomainSyncUserAcquireFailed_impl_fnptr);
     if (local != NVTX_NULLPTR)
         (*local)(handle);
 #endif /*NVTX_DISABLE*/
@@ -80,7 +80,7 @@ NVTX_DECLSPEC void NVTX_API nvtxDomainSyncUserAcquireSuccess(nvtxSyncUser_t hand
 {
     NVTX_SET_NAME_MANGLING_OPTIONS
 #ifndef NVTX_DISABLE
-    nvtxDomainSyncUserAcquireSuccess_impl_fntype local = (nvtxDomainSyncUserAcquireSuccess_impl_fntype)NVTX_VERSIONED_IDENTIFIER(nvtxGlobals).nvtxDomainSyncUserAcquireSuccess_impl_fnptr;
+    nvtxDomainSyncUserAcquireSuccess_impl_fntype local = NVTX_REINTERPRET_CAST(nvtxDomainSyncUserAcquireSuccess_impl_fntype, NVTX_VERSIONED_IDENTIFIER(nvtxGlobals).nvtxDomainSyncUserAcquireSuccess_impl_fnptr);
     if (local != NVTX_NULLPTR)
         (*local)(handle);
 #endif /*NVTX_DISABLE*/
@@ -90,7 +90,7 @@ NVTX_DECLSPEC void NVTX_API nvtxDomainSyncUserReleasing(nvtxSyncUser_t handle)
 {
     NVTX_SET_NAME_MANGLING_OPTIONS
 #ifndef NVTX_DISABLE
-    nvtxDomainSyncUserReleasing_impl_fntype local = (nvtxDomainSyncUserReleasing_impl_fntype)NVTX_VERSIONED_IDENTIFIER(nvtxGlobals).nvtxDomainSyncUserReleasing_impl_fnptr;
+    nvtxDomainSyncUserReleasing_impl_fntype local = NVTX_REINTERPRET_CAST(nvtxDomainSyncUserReleasing_impl_fntype, NVTX_VERSIONED_IDENTIFIER(nvtxGlobals).nvtxDomainSyncUserReleasing_impl_fnptr);
     if (local != NVTX_NULLPTR)
         (*local)(handle);
 #endif /*NVTX_DISABLE*/

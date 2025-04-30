@@ -45,7 +45,7 @@
 #define NVTX_COUNTER_ID_STATIC_START  (1 << 24)
 
 /** Dynamically (tool) generated counter (group) IDs */
-#define NVTX_COUNTER_ID_DYNAMIC_START ((uint64_t)1 << 32)
+#define NVTX_COUNTER_ID_DYNAMIC_START (NVTX_STATIC_CAST(uint64_t, 1) << 32)
 
 #endif /* NVTX_COUNTER_IDS_V1 */
 

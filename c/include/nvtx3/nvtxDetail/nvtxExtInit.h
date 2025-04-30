@@ -32,10 +32,13 @@ extern "C" {
 
 #if defined(_WIN32)
 #define NVTX_ATOMIC_WRITE_PTR(address, value) \
-    InterlockedExchangePointer((volatile PVOID*)address, (PVOID)value)
+    InterlockedExchangePointer(NVTX_REINTERPRET_CAST(volatile PVOID*, (address)), \
+        NVTX_REINTERPRET_CAST(PVOID, (value)))
 #define NVTX_ATOMIC_CAS_PTR(old, address, exchange, comparand) \
-    old = (intptr_t)InterlockedCompareExchangePointer( \
-        (volatile PVOID*)address, (PVOID)exchange, (PVOID)comparand)
+    (old) = NVTX_REINTERPRET_CAST(intptr_t, InterlockedCompareExchangePointer( \
+        NVTX_REINTERPRET_CAST(volatile PVOID*, (address)), \
+        NVTX_REINTERPRET_CAST(PVOID, (exchange)), \
+        NVTX_REINTERPRET_CAST(PVOID, (comparand))))
 #elif defined(__GNUC__)
 /* Ensure full memory barrier for atomics, to match Windows functions */
 #define NVTX_ATOMIC_WRITE_PTR(address, value) \
@@ -192,9 +195,9 @@ NVTX_LINKONCE_DEFINE_FUNCTION int NVTX_VERSIONED_IDENTIFIER(nvtxExtLoadInjection
             size_t bytesRead;
             size_t pos;
 
-            pid = (int)getpid();
+            pid = NVTX_STATIC_CAST(int, getpid());
             count = snprintf(cmdlineBuf, sizeof(cmdlineBuf), "/proc/%d/cmdline", pid);
-            if (count <= 0 || count >= (int)sizeof(cmdlineBuf))
+            if (count <= 0 || count >= NVTX_STATIC_CAST(int, sizeof(cmdlineBuf)))
             {
                 NVTX_ERR("Path buffer too small for: /proc/%d/cmdline\n", pid);
                 return NVTX_ERR_INIT_ACCESS_LIBRARY;
@@ -267,7 +270,7 @@ NVTX_LINKONCE_DEFINE_FUNCTION int NVTX_VERSIONED_IDENTIFIER(nvtxExtLoadInjection
             else
             {
                 /* Attempt to get the injection library's entry-point. */
-                init_fnptr = (NvtxExtInitializeInjectionFunc_t)NVTX_DLLFUNC(injectionLibraryHandle, initFuncName);
+                init_fnptr = NVTX_REINTERPRET_CAST(NvtxExtInitializeInjectionFunc_t, NVTX_DLLFUNC(injectionLibraryHandle, initFuncName));
                 if (!init_fnptr)
                 {
                     NVTX_DLLCLOSE(injectionLibraryHandle);
@@ -283,7 +286,7 @@ NVTX_LINKONCE_DEFINE_FUNCTION int NVTX_VERSIONED_IDENTIFIER(nvtxExtLoadInjection
     if (!init_fnptr)
     {
         /* Use POSIX global symbol chain to query for init function from any module */
-        init_fnptr = (NvtxExtInitializeInjectionFunc_t)NVTX_DLLFUNC(NVTX_DLLDEFAULT, initFuncPreinjectName);
+        init_fnptr = NVTX_REINTERPRET_CAST(NvtxExtInitializeInjectionFunc_t, NVTX_DLLFUNC(NVTX_DLLDEFAULT, initFuncPreinjectName));
     }
 #endif
 

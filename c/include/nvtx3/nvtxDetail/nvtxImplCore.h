@@ -57,7 +57,7 @@ NVTX_DECLSPEC nvtxRangeId_t NVTX_API nvtxRangeStartEx(const nvtxEventAttributes_
         return (*local)(eventAttrib);
     else
 #endif  /*NVTX_DISABLE*/
-        return (nvtxRangeId_t)0;
+        return NVTX_STATIC_CAST(nvtxRangeId_t, 0);
 }
 
 NVTX_DECLSPEC nvtxRangeId_t NVTX_API nvtxRangeStartA(const char* message)
@@ -69,7 +69,7 @@ NVTX_DECLSPEC nvtxRangeId_t NVTX_API nvtxRangeStartA(const char* message)
         return (*local)(message);
     else
 #endif  /*NVTX_DISABLE*/
-        return (nvtxRangeId_t)0;
+        return NVTX_STATIC_CAST(nvtxRangeId_t, 0);
 }
 
 NVTX_DECLSPEC nvtxRangeId_t NVTX_API nvtxRangeStartW(const wchar_t* message)
@@ -81,7 +81,7 @@ NVTX_DECLSPEC nvtxRangeId_t NVTX_API nvtxRangeStartW(const wchar_t* message)
         return (*local)(message);
     else
 #endif  /*NVTX_DISABLE*/
-        return (nvtxRangeId_t)0;
+        return NVTX_STATIC_CAST(nvtxRangeId_t, 0);
 }
 
 NVTX_DECLSPEC void NVTX_API nvtxRangeEnd(nvtxRangeId_t id)
@@ -103,7 +103,7 @@ NVTX_DECLSPEC int NVTX_API nvtxRangePushEx(const nvtxEventAttributes_t* eventAtt
         return (*local)(eventAttrib);
     else
 #endif  /*NVTX_DISABLE*/
-        return (int)NVTX_NO_PUSH_POP_TRACKING;
+        return NVTX_STATIC_CAST(int, NVTX_NO_PUSH_POP_TRACKING);
 }
 
 NVTX_DECLSPEC int NVTX_API nvtxRangePushA(const char* message)
@@ -115,7 +115,7 @@ NVTX_DECLSPEC int NVTX_API nvtxRangePushA(const char* message)
         return (*local)(message);
     else
 #endif  /*NVTX_DISABLE*/
-        return (int)NVTX_NO_PUSH_POP_TRACKING;
+        return NVTX_STATIC_CAST(int, NVTX_NO_PUSH_POP_TRACKING);
 }
 
 NVTX_DECLSPEC int NVTX_API nvtxRangePushW(const wchar_t* message)
@@ -127,7 +127,7 @@ NVTX_DECLSPEC int NVTX_API nvtxRangePushW(const wchar_t* message)
         return (*local)(message);
     else
 #endif  /*NVTX_DISABLE*/
-        return (int)NVTX_NO_PUSH_POP_TRACKING;
+        return NVTX_STATIC_CAST(int, NVTX_NO_PUSH_POP_TRACKING);
 }
 
 NVTX_DECLSPEC int NVTX_API nvtxRangePop(void)
@@ -139,7 +139,7 @@ NVTX_DECLSPEC int NVTX_API nvtxRangePop(void)
         return (*local)();
     else
 #endif  /*NVTX_DISABLE*/
-        return (int)NVTX_NO_PUSH_POP_TRACKING;
+        return NVTX_STATIC_CAST(int, NVTX_NO_PUSH_POP_TRACKING);
 }
 
 NVTX_DECLSPEC void NVTX_API nvtxNameCategoryA(uint32_t category, const char* name)
@@ -201,7 +201,7 @@ NVTX_DECLSPEC nvtxRangeId_t NVTX_API nvtxDomainRangeStartEx(nvtxDomainHandle_t d
         return (*local)(domain, eventAttrib);
     else
 #endif  /*NVTX_DISABLE*/
-        return (nvtxRangeId_t)0;
+        return NVTX_STATIC_CAST(nvtxRangeId_t, 0);
 }
 
 NVTX_DECLSPEC void NVTX_API nvtxDomainRangeEnd(nvtxDomainHandle_t domain, nvtxRangeId_t id)
@@ -223,7 +223,7 @@ NVTX_DECLSPEC int NVTX_API nvtxDomainRangePushEx(nvtxDomainHandle_t domain, cons
         return (*local)(domain, eventAttrib);
     else
 #endif  /*NVTX_DISABLE*/
-        return (int)NVTX_NO_PUSH_POP_TRACKING;
+        return NVTX_STATIC_CAST(int, NVTX_NO_PUSH_POP_TRACKING);
 }
 
 NVTX_DECLSPEC int NVTX_API nvtxDomainRangePop(nvtxDomainHandle_t domain)
@@ -235,7 +235,7 @@ NVTX_DECLSPEC int NVTX_API nvtxDomainRangePop(nvtxDomainHandle_t domain)
         return (*local)(domain);
     else
 #endif  /*NVTX_DISABLE*/
-        return (int)NVTX_NO_PUSH_POP_TRACKING;
+        return NVTX_STATIC_CAST(int, NVTX_NO_PUSH_POP_TRACKING);
 }
 
 NVTX_DECLSPEC nvtxResourceHandle_t NVTX_API nvtxDomainResourceCreate(nvtxDomainHandle_t domain, nvtxResourceAttributes_t* attribs)

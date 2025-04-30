@@ -89,13 +89,13 @@ NVTX_DECLSPEC ret_type NVTX_API fn_name signature { \
     intptr_t slot = *pSlot; \
     if (slot != NVTX_EXTENSION_DISABLED) { \
         if (slot != NVTX_EXTENSION_FRESH) { \
-            NVTX_EXT_FN_RETURN (*(fn_name##_impl_fntype)slot) arg_names; \
+            NVTX_EXT_FN_RETURN (*NVTX_REINTERPRET_CAST(fn_name##_impl_fntype, slot)) arg_names; \
         } else { \
             NVTX_EXT_MEM_VERSIONED_ID(nvtxExtMemInitOnce)(); \
             /* Re-read function slot after extension initialization. */ \
             slot = *pSlot; \
             if (slot != NVTX_EXTENSION_DISABLED && slot != NVTX_EXTENSION_FRESH) { \
-                NVTX_EXT_FN_RETURN (*(fn_name##_impl_fntype)slot) arg_names; \
+                NVTX_EXT_FN_RETURN (*NVTX_REINTERPRET_CAST(fn_name##_impl_fntype, slot)) arg_names; \
             } \
         } \
     } \

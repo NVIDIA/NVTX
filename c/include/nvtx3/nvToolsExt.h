@@ -237,6 +237,14 @@
 #endif
 #endif
 
+#if defined(__cplusplus)
+#define NVTX_STATIC_CAST(type, value)      (static_cast<type>(value))
+#define NVTX_REINTERPRET_CAST(type, value) (reinterpret_cast<type>(value))
+#else
+#define NVTX_STATIC_CAST(type, value)      ((type)(value))
+#define NVTX_REINTERPRET_CAST(type, value) ((type)(value))
+#endif
+
 
 /* API linkage/export options:
  *
@@ -375,9 +383,9 @@ extern "C" {
 /**
  * Size of the nvtxEventAttributes_t structure.
  */
-#define NVTX_EVENT_ATTRIB_STRUCT_SIZE ( (uint16_t)( sizeof(nvtxEventAttributes_t) ) )
+#define NVTX_EVENT_ATTRIB_STRUCT_SIZE (NVTX_STATIC_CAST(uint16_t, sizeof(nvtxEventAttributes_t)))
 
-#define NVTX_NO_PUSH_POP_TRACKING ((int)-2)
+#define NVTX_NO_PUSH_POP_TRACKING (NVTX_STATIC_CAST(int, -2))
 
 typedef uint64_t nvtxRangeId_t;
 
@@ -1093,7 +1101,7 @@ NVTX_DECLSPEC int NVTX_API nvtxRangePop(void);
 * Classes are used to make it easy to create a series of resource types
 * per API without collisions
 */
-#define NVTX_RESOURCE_MAKE_TYPE(CLASS, INDEX) ((((uint32_t)(NVTX_RESOURCE_CLASS_ ## CLASS))<<16)|((uint32_t)(INDEX)))
+#define NVTX_RESOURCE_MAKE_TYPE(CLASS, INDEX) (((NVTX_STATIC_CAST(uint32_t, NVTX_RESOURCE_CLASS_ ## CLASS))<<16)|(NVTX_STATIC_CAST(uint32_t, INDEX)))
 #define NVTX_RESOURCE_CLASS_GENERIC 1
 /** \endcond */
 
@@ -1255,7 +1263,7 @@ typedef struct nvtxResourceAttributes_v0 nvtxResourceAttributes_t;
 /* \cond SHOW_HIDDEN
 * \version NVTX_VERSION_2
 */
-#define NVTX_RESOURCE_ATTRIB_STRUCT_SIZE ( (uint16_t)( sizeof(nvtxResourceAttributes_v0) ) )
+#define NVTX_RESOURCE_ATTRIB_STRUCT_SIZE (NVTX_STATIC_CAST(uint16_t, sizeof(nvtxResourceAttributes_v0)))
 typedef struct nvtxResourceHandle* nvtxResourceHandle_t;
 /** \endcond */
 

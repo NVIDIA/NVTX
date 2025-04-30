@@ -30,7 +30,7 @@ extern "C" {
 /* \cond SHOW_HIDDEN
 * \version NVTX_VERSION_2
 */
-#define NVTX_SYNCUSER_ATTRIB_STRUCT_SIZE ( (uint16_t)( sizeof(nvtxSyncUserAttributes_v0) ) )
+#define NVTX_SYNCUSER_ATTRIB_STRUCT_SIZE (NVTX_STATIC_CAST(uint16_t, sizeof(nvtxSyncUserAttributes_v0)))
 /** \endcond */
 
 

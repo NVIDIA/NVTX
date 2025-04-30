@@ -37,7 +37,7 @@ NVTX_DECLSPEC void NVTX_API nvtxNameCudaDeviceA(int device, const char* name)
 {
     NVTX_SET_NAME_MANGLING_OPTIONS
 #ifndef NVTX_DISABLE
-    nvtxNameCudaDeviceA_impl_fntype local = (nvtxNameCudaDeviceA_impl_fntype)NVTX_VERSIONED_IDENTIFIER(nvtxGlobals).nvtxNameCudaDeviceA_impl_fnptr;
+    nvtxNameCudaDeviceA_impl_fntype local = NVTX_VERSIONED_IDENTIFIER(nvtxGlobals).nvtxNameCudaDeviceA_impl_fnptr;
     if (local != NVTX_NULLPTR)
         (*local)(device, name);
 #endif /*NVTX_DISABLE*/
@@ -47,7 +47,7 @@ NVTX_DECLSPEC void NVTX_API nvtxNameCudaDeviceW(int device, const wchar_t* name)
 {
     NVTX_SET_NAME_MANGLING_OPTIONS
 #ifndef NVTX_DISABLE
-    nvtxNameCudaDeviceW_impl_fntype local = (nvtxNameCudaDeviceW_impl_fntype)NVTX_VERSIONED_IDENTIFIER(nvtxGlobals).nvtxNameCudaDeviceW_impl_fnptr;
+    nvtxNameCudaDeviceW_impl_fntype local = NVTX_VERSIONED_IDENTIFIER(nvtxGlobals).nvtxNameCudaDeviceW_impl_fnptr;
     if (local != NVTX_NULLPTR)
         (*local)(device, name);
 #endif /*NVTX_DISABLE*/
@@ -57,7 +57,7 @@ NVTX_DECLSPEC void NVTX_API nvtxNameCudaStreamA(cudaStream_t stream, const char*
 {
     NVTX_SET_NAME_MANGLING_OPTIONS
 #ifndef NVTX_DISABLE
-    nvtxNameCudaStreamA_impl_fntype local = (nvtxNameCudaStreamA_impl_fntype)NVTX_VERSIONED_IDENTIFIER(nvtxGlobals).nvtxNameCudaStreamA_impl_fnptr;
+    nvtxNameCudaStreamA_impl_fntype local = NVTX_REINTERPRET_CAST(nvtxNameCudaStreamA_impl_fntype, NVTX_VERSIONED_IDENTIFIER(nvtxGlobals).nvtxNameCudaStreamA_impl_fnptr);
     if (local != NVTX_NULLPTR)
         (*local)(stream, name);
 #endif /*NVTX_DISABLE*/
@@ -67,7 +67,7 @@ NVTX_DECLSPEC void NVTX_API nvtxNameCudaStreamW(cudaStream_t stream, const wchar
 {
     NVTX_SET_NAME_MANGLING_OPTIONS
 #ifndef NVTX_DISABLE
-    nvtxNameCudaStreamW_impl_fntype local = (nvtxNameCudaStreamW_impl_fntype)NVTX_VERSIONED_IDENTIFIER(nvtxGlobals).nvtxNameCudaStreamW_impl_fnptr;
+    nvtxNameCudaStreamW_impl_fntype local = NVTX_REINTERPRET_CAST(nvtxNameCudaStreamW_impl_fntype, NVTX_VERSIONED_IDENTIFIER(nvtxGlobals).nvtxNameCudaStreamW_impl_fnptr);
     if (local != NVTX_NULLPTR)
         (*local)(stream, name);
 #endif /*NVTX_DISABLE*/
@@ -77,7 +77,7 @@ NVTX_DECLSPEC void NVTX_API nvtxNameCudaEventA(cudaEvent_t event, const char* na
 {
     NVTX_SET_NAME_MANGLING_OPTIONS
 #ifndef NVTX_DISABLE
-    nvtxNameCudaEventA_impl_fntype local = (nvtxNameCudaEventA_impl_fntype)NVTX_VERSIONED_IDENTIFIER(nvtxGlobals).nvtxNameCudaEventA_impl_fnptr;
+    nvtxNameCudaEventA_impl_fntype local = NVTX_REINTERPRET_CAST(nvtxNameCudaEventA_impl_fntype, NVTX_VERSIONED_IDENTIFIER(nvtxGlobals).nvtxNameCudaEventA_impl_fnptr);
     if (local != NVTX_NULLPTR)
         (*local)(event, name);
 #endif /*NVTX_DISABLE*/
@@ -87,7 +87,7 @@ NVTX_DECLSPEC void NVTX_API nvtxNameCudaEventW(cudaEvent_t event, const wchar_t*
 {
     NVTX_SET_NAME_MANGLING_OPTIONS
 #ifndef NVTX_DISABLE
-    nvtxNameCudaEventW_impl_fntype local = (nvtxNameCudaEventW_impl_fntype)NVTX_VERSIONED_IDENTIFIER(nvtxGlobals).nvtxNameCudaEventW_impl_fnptr;
+    nvtxNameCudaEventW_impl_fntype local = NVTX_REINTERPRET_CAST(nvtxNameCudaEventW_impl_fntype, NVTX_VERSIONED_IDENTIFIER(nvtxGlobals).nvtxNameCudaEventW_impl_fnptr);
     if (local != NVTX_NULLPTR)
         (*local)(event, name);
 #endif /*NVTX_DISABLE*/

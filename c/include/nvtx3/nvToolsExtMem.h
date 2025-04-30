@@ -45,7 +45,7 @@ extern "C" {
  * \brief This value is returned by functions that return `nvtxMemHeapHandle_t`,
  * if a tool is not attached.
  */
-#define NVTX_MEM_HEAP_HANDLE_NO_TOOL ((nvtxMemHeapHandle_t)(intptr_t)-1)
+#define NVTX_MEM_HEAP_HANDLE_NO_TOOL (NVTX_STATIC_CAST(nvtxMemHeapHandle_t, NVTX_STATIC_CAST(intptr_t, -1)))
 /* \endcond
  */
 
@@ -53,7 +53,7 @@ extern "C" {
  * \brief This value is returned by functions that return `nvtxMemRegionHandle_t`
  * if a tool is not attached.
  */
-#define NVTX_MEM_REGION_HANDLE_NO_TOOL ((nvtxMemRegionHandle_t)(intptr_t)-1)
+#define NVTX_MEM_REGION_HANDLE_NO_TOOL (NVTX_STATIC_CAST(nvtxMemRegionHandle_t, NVTX_STATIC_CAST(intptr_t, -1)))
 /* \endcond
  */
 
@@ -61,7 +61,7 @@ extern "C" {
  * \brief This value is returned by functions that return `nvtxMemPermissionsHandle_t`
  * if a tool is not attached.
  */
-#define NVTX_MEM_PERMISSIONS_HANDLE_NO_TOOL ((nvtxMemPermissionsHandle_t)-1)
+#define NVTX_MEM_PERMISSIONS_HANDLE_NO_TOOL (NVTX_STATIC_CAST(nvtxMemPermissionsHandle_t, -1))
 /* \endcond
  */
 
@@ -97,7 +97,7 @@ extern "C" {
  * The heap by default is always read-write-execute permissions without creating regions.
  * Regions created in this heap have read-write access by default but not execute.
  */
-#define NVTX_MEM_HEAP_HANDLE_PROCESS_WIDE ((nvtxMemHeapHandle_t)0)
+#define NVTX_MEM_HEAP_HANDLE_PROCESS_WIDE (NVTX_STATIC_CAST(nvtxMemHeapHandle_t, 0))
 
 /** \brief This heap is a sub-allocator.
  *
@@ -143,7 +143,7 @@ extern "C" {
  *
  * This is a companion object to `NVTX_MEM_HEAP_HANDLE_PROCESS_WIDE`.
  */
-#define NVTX_MEM_PERMISSIONS_HANDLE_PROCESS_WIDE ((nvtxMemPermissionsHandle_t)0)
+#define NVTX_MEM_PERMISSIONS_HANDLE_PROCESS_WIDE (NVTX_STATIC_CAST(nvtxMemPermissionsHandle_t, 0))
 
 #define NVTX_MEM_PERMISSIONS_CREATE_FLAGS_NONE 0x0
 #define NVTX_MEM_PERMISSIONS_CREATE_FLAGS_EXCLUDE_GLOBAL_READ 0x1
