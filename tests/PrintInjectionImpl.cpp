@@ -121,7 +121,7 @@ int NVTX_API InitializeInjectionNvtx2Internal(NvtxGetExportTableFunc_t getExport
     uint32_t version = 0;
     const NvtxExportTableVersionInfo* pVersionInfo;
     const NvtxExportTableCallbacks* pCallbacks;
-    NvtxFunctionTable table = 0;
+    NvtxFunctionTable table = nullptr;
     unsigned int size = 0;
     int success;
     unsigned int highestIdUsed;
@@ -166,7 +166,7 @@ int NVTX_API InitializeInjectionNvtx2Internal(NvtxGetExportTableFunc_t getExport
     }
 
     {
-        table = 0;
+        table = nullptr;
         size = 0;
         success = pCallbacks->GetModuleFunctionTable(NVTX_CB_MODULE_CORE, &table, &size);
         if (!success || !table)
@@ -191,7 +191,7 @@ int NVTX_API InitializeInjectionNvtx2Internal(NvtxGetExportTableFunc_t getExport
     }
 
     {
-        table = 0;
+        table = nullptr;
         size = 0;
         success = pCallbacks->GetModuleFunctionTable(NVTX_CB_MODULE_CORE2, &table, &size);
         if (!success || !table)

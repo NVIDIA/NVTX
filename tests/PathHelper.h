@@ -76,15 +76,15 @@ static std::string GetCurrentProcessPath()
     {
         DWORD size = MAX_PATH;
         DWORD newSize;
-        buf = NULL;
+        buf = nullptr;
         while (1)
         {
             buf = (char*)realloc(buf, size);
             if (!buf)
             {
-                return NULL;
+                return nullptr;
             }
-            newSize = GetModuleFileNameA(NULL, buf, size);
+            newSize = GetModuleFileNameA(nullptr, buf, size);
             if (newSize < size)
             {
                 break;
@@ -99,13 +99,13 @@ static std::string GetCurrentProcessPath()
         buf = (char*)malloc(PROC_PIDPATHINFO_MAXSIZE);
         if (!buf)
         {
-            return NULL;
+            return nullptr;
         }
         ret = proc_pidpath(pid, buf, PROC_PIDPATHINFO_MAXSIZE);
         if (ret == 0)
         {
             free(buf);
-            return NULL;
+            return nullptr;
         }
     }
 #elif defined(__QNX__)
@@ -119,7 +119,7 @@ static std::string GetCurrentProcessPath()
         buf = (char*)malloc(size);
         if (!buf)
         {
-            return NULL;
+            return nullptr;
         }
         _cmdname(buf);
     }
@@ -129,19 +129,19 @@ static std::string GetCurrentProcessPath()
         ssize_t bytesReadSigned;
         size_t bytesRead;
         static const char linkName[] = "/proc/self/exe";
-        buf = NULL;
+        buf = nullptr;
         while (1)
         {
             buf = (char*)realloc(buf, size);
             if (!buf)
             {
-                return NULL;
+                return nullptr;
             }
             bytesReadSigned = readlink(linkName, buf, size);
             if (bytesReadSigned < 0)
             {
                 free(buf);
-                return NULL;
+                return nullptr;
             }
             bytesRead = (size_t)bytesReadSigned;
             if (bytesRead < size) break;

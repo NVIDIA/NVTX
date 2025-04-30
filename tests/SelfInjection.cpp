@@ -117,7 +117,7 @@ int NVTX_API InitializeInjectionNvtx2(NvtxGetExportTableFunc_t getExportTable)
     }
 
     {
-        NvtxFunctionTable table = 0;
+        NvtxFunctionTable table = nullptr;
         unsigned int size = 0;
         int success = pCallbacks->GetModuleFunctionTable(NVTX_CB_MODULE_CORE, &table, &size);
         if (!success || !table)
@@ -156,7 +156,7 @@ int NVTX_API InitializeInjectionNvtx2(NvtxGetExportTableFunc_t getExportTable)
     }
 
     {
-        NvtxFunctionTable table = 0;
+        NvtxFunctionTable table = nullptr;
         unsigned int size = 0;
         int success = pCallbacks->GetModuleFunctionTable(NVTX_CB_MODULE_CORE2, &table, &size);
         if (!success || !table)
