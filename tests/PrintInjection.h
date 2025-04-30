@@ -60,5 +60,6 @@ int NVTX_API InitializeInjectionNvtx2Preinject(NvtxGetExportTableFunc_t getExpor
 #ifdef SUPPORT_STATIC_INJECTION
 /* Redefine the symbol without using attribute weak. */
 /* Note: this mode is not supported by the NVTX loader on Windows */
+extern NvtxInitializeInjectionNvtxFunc_t InitializeInjectionNvtx2_fnptr;
 NvtxInitializeInjectionNvtxFunc_t InitializeInjectionNvtx2_fnptr = InitializeInjectionNvtx2Internal;
 #endif
