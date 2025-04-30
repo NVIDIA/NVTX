@@ -18,4 +18,19 @@
  * See https://nvidia.github.io/NVTX/LICENSE.txt for license information.
  */
 
-#include "PrintInjection.h"
+#define NVTX_NO_IMPL
+#ifdef SUPPORT_STATIC_INJECTION
+/* Ensure the static injection's init function pointer isn't defined as weak */
+#define NVTX_STATIC_INJECTION_IMPL
+#endif
+#include "nvtx3/nvToolsExt.h"
+
+#ifdef __cplusplus
+extern "C" {
+#endif
+
+extern int NVTX_API InitializeInjectionNvtx2Internal(NvtxGetExportTableFunc_t getExportTable);
+
+#ifdef __cplusplus
+}
+#endif

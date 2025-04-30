@@ -18,4 +18,4 @@
  * See https://nvidia.github.io/NVTX/LICENSE.txt for license information.
  */
 
-#include "PrintInjectionC.c"
+#include "PrintInjection.h"
