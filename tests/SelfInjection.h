@@ -379,15 +379,15 @@ inline std::ostream& operator<<(std::ostream& os, CallData const& data)
         {
         case NVTX_CBID_CORE_MarkEx       : {auto& a = data.args.MarkEx       ; os << *a.eventAttrib;                 } break;
         case NVTX_CBID_CORE_MarkA        : {auto& a = data.args.MarkA        ; os << '"' << a.str << '"';            } break;
-        case NVTX_CBID_CORE_MarkW        : {auto& a = data.args.MarkW        ; os << "WIDE";                         } break;
+        case NVTX_CBID_CORE_MarkW        : {/*auto& a = data.args.MarkW      ;*/ os << "WIDE";                       } break;
         case NVTX_CBID_CORE_RangeStartEx : {auto& a = data.args.RangeStartEx ; os << *a.eventAttrib;                 } break;
         case NVTX_CBID_CORE_RangeStartA  : {auto& a = data.args.RangeStartA  ; os << '"' << a.str << '"';            } break;
-        case NVTX_CBID_CORE_RangeStartW  : {auto& a = data.args.RangeStartW  ; os << "WIDE";                         } break;
+        case NVTX_CBID_CORE_RangeStartW  : {/*auto& a = data.args.RangeStartW;*/ os << "WIDE";                       } break;
         case NVTX_CBID_CORE_RangeEnd     : {auto& a = data.args.RangeEnd     ; os << a.id;                           } break;
         case NVTX_CBID_CORE_RangePushEx  : {auto& a = data.args.RangePushEx  ; os << *a.eventAttrib;                 } break;
         case NVTX_CBID_CORE_RangePushA   : {auto& a = data.args.RangePushA   ; os << '"' << a.str << '"';            } break;
-        case NVTX_CBID_CORE_RangePushW   : {auto& a = data.args.RangePushW   ; os << "WIDE";                         } break;
-        case NVTX_CBID_CORE_RangePop     : {auto& a = data.args.RangePop     ;                                       } break;
+        case NVTX_CBID_CORE_RangePushW   : {/*auto& a = data.args.RangePushW ;*/ os << "WIDE";                       } break;
+        case NVTX_CBID_CORE_RangePop     : {/*auto& a = data.args.RangePop   ;*/                                     } break;
         case NVTX_CBID_CORE_NameCategoryA: {auto& a = data.args.NameCategoryA; os << a.id << ", \"" << a.str << '"'; } break;
         case NVTX_CBID_CORE_NameCategoryW: {auto& a = data.args.NameCategoryW; os << a.id << ", " << "WIDE";         } break;
         case NVTX_CBID_CORE_NameOsThreadA: {auto& a = data.args.NameOsThreadA; os << a.id << ", \"" << a.str << '"'; } break;
@@ -410,7 +410,7 @@ inline std::ostream& operator<<(std::ostream& os, CallData const& data)
         case NVTX_CBID_CORE2_DomainRegisterStringA: {auto& a = data.args.DomainRegisterStringA; os << a.domain << ", \"" << a.str << '"';                } break;
         case NVTX_CBID_CORE2_DomainRegisterStringW: {auto& a = data.args.DomainRegisterStringW; os << a.domain << ", " << "WIDE";                        } break;
         case NVTX_CBID_CORE2_DomainCreateA        : {auto& a = data.args.DomainCreateA        ; os << '"' << a.name << '"';                              } break;
-        case NVTX_CBID_CORE2_DomainCreateW        : {auto& a = data.args.DomainCreateW        ; os << "WIDE";                                            } break;
+        case NVTX_CBID_CORE2_DomainCreateW        : {/*auto& a = data.args.DomainCreateW      ;*/ os << "WIDE";                                          } break;
         case NVTX_CBID_CORE2_DomainDestroy        : {auto& a = data.args.DomainDestroy        ; os << a.domain;                                          } break;
         case NVTX_CBID_CORE2_Initialize           : {auto& a = data.args.Initialize           ; os << a.reserved;                                        } break;
         default: break;

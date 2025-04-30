@@ -20,7 +20,7 @@
 
 #include <nvtx3/nvToolsExtMem.h>
 
-static void TestMem(void)
+static nvtxMemHeapHandle_t TestMem(void)
 {
     nvtxDomainHandle_t domain;
     nvtxMemHeapHandle_t heap;
@@ -30,6 +30,8 @@ static void TestMem(void)
 
     heap = nvtxMemHeapRegister(domain, &heapDesc);
     nvtxMemPermissionsUnbind(domain, 0);
+
+    return heap;
 }
 
 NVTX_DYNAMIC_EXPORT

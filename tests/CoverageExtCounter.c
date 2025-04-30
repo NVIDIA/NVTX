@@ -20,7 +20,7 @@
 
 #include <nvtx3/nvToolsExtCounters.h>
 
-static void TestMem(void)
+static void TestCounter(void)
 {
     nvtxDomainHandle_t domain;
     uint64_t counter;
@@ -46,7 +46,7 @@ int RunTest(int argc, const char** argv)
     (void)argc;
     (void)argv;
 
-    TestMem();
+    TestCounter();
 
     return 0;
 }

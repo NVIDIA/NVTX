@@ -20,16 +20,16 @@
 
 #include <nvtx3/nvToolsExtPayload.h>
 
-static void TestMem(void)
+static uint64_t TestPayload(void)
 {
     nvtxDomainHandle_t domain;
-    uint8_t enabled;
     uint64_t handle;
     nvtxPayloadSchemaAttr_t attr;
 
     domain = nvtxDomainCreateA("Domain");
-    enabled = nvtxDomainIsEnabled(domain);
+    /*enabled =*/ nvtxDomainIsEnabled(domain);
     handle = nvtxPayloadSchemaRegister(domain, &attr);
+    return handle;
 }
 
 NVTX_DYNAMIC_EXPORT
@@ -42,7 +42,7 @@ int RunTest(int argc, const char** argv)
     (void)argc;
     (void)argv;
 
-    TestMem();
+    TestPayload();
 
     return 0;
 }
