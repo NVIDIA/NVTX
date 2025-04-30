@@ -49,7 +49,7 @@ struct ArgsRangeEnd      { nvtxRangeId_t id                        ; };
 struct ArgsRangePushEx   { const nvtxEventAttributes_t* eventAttrib; };
 struct ArgsRangePushA    { const char* str                         ; };
 struct ArgsRangePushW    { const wchar_t* str                      ; };
-struct ArgsRangePop      {                                         ; };
+struct ArgsRangePop      {                                           };
 struct ArgsNameCategoryA { uint32_t id; const char* str            ; };
 struct ArgsNameCategoryW { uint32_t id; const wchar_t* str         ; };
 struct ArgsNameOsThreadA { uint32_t id; const char* str            ; };
@@ -135,7 +135,7 @@ inline const char* CallName(CallId const& id)
 inline std::ostream& operator<<(std::ostream& os, CallId const& id)
 {
     return os << CallName(id);
-};
+}
 
 union Args
 {
@@ -420,7 +420,7 @@ inline std::ostream& operator<<(std::ostream& os, CallData const& data)
     }
     os << ')';
     return os;
-};
+}
 
 using Call = std::shared_ptr<CallData>;
 
