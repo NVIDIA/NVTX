@@ -454,6 +454,7 @@ inline std::ostream& operator<<(std::ostream& os, CallData const& data)
 using Call = std::shared_ptr<CallData>;
 
 // Helper to write CALL(CORE, NameCategoryA, id, str) to construct a Call with arg values
+#define CALL0(m,c) [=]{ Call v(new CallData); v->id = CALLID(m,c); DeepCopyAssign(v->args.c, Args##c{}); return v; }()
 #define CALL(m,c,...) [=]{ Call v(new CallData); v->id = CALLID(m,c); DeepCopyAssign(v->args.c, Args##c{__VA_ARGS__}); return v; }()
 
 #define CALL_LOAD(s) [=]{ Call v(new CallData); v->id = CALLID_LOAD(); v->args.Load = ArgsLoad{s}; return v; }()
@@ -687,7 +688,7 @@ struct Callbacks
     , RangePushEx  ([&](const nvtxEventAttributes_t* a) { Default(CALL(CORE, RangePushEx  , a   )); return ++domainData[nullptr].pushPopDepth; })
     , RangePushA   ([&](const char*                  a) { Default(CALL(CORE, RangePushA   , a   )); return ++domainData[nullptr].pushPopDepth; })
     , RangePushW   ([&](const wchar_t*               a) { Default(CALL(CORE, RangePushW   , a   )); return ++domainData[nullptr].pushPopDepth; })
-    , RangePop     ([&](                              ) { Default(CALL(CORE, RangePop           )); return domainData[nullptr].pushPopDepth--; })
+    , RangePop     ([&](                              ) { Default(CALL0(CORE, RangePop          )); return domainData[nullptr].pushPopDepth--; })
     , NameCategoryA([&](uint32_t a, const char*      b) { Default(CALL(CORE, NameCategoryA, a, b)); })
     , NameCategoryW([&](uint32_t a, const wchar_t*   b) { Default(CALL(CORE, NameCategoryW, a, b)); })
     , NameOsThreadA([&](uint32_t a, const char*      b) { Default(CALL(CORE, NameOsThreadA, a, b)); })
