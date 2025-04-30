@@ -440,7 +440,7 @@ typedef enum nvtxMessageType_t
     NVTX_MESSAGE_TYPE_ASCII       = 1,    /**< A character sequence is used as payload. */
     NVTX_MESSAGE_TYPE_UNICODE     = 2,     /**< A wide character sequence is used as payload. */
     /* NVTX_VERSION_2 */
-    NVTX_MESSAGE_TYPE_REGISTERED  = 3,    /**< A unique string handle that was registered
+    NVTX_MESSAGE_TYPE_REGISTERED  = 3     /**< A unique string handle that was registered
                                                 with \ref nvtxDomainRegisterStringA() or
                                                 \ref nvtxDomainRegisterStringW(). */
 } nvtxMessageType_t;
