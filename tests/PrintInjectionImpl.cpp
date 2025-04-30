@@ -44,12 +44,12 @@
 
 /* NVTX_CB_MODULE_CORE */
 
-static void NVTX_API HandleMarkA(const char* str)
+static void NVTX_API HandleMarkA(const char* /*str*/)
 {
     LOG_INFO("%s\n", "nvtxMarkA");
 }
 
-static int NVTX_API HandleRangePushA(const char* str)
+static int NVTX_API HandleRangePushA(const char* /*str*/)
 {
     LOG_INFO("%s\n", "nvtxRangePushA");
     return NVTX_TOOL_ATTACHED_UNUSED_PUSH_POP_ID;
@@ -63,52 +63,52 @@ static int NVTX_API HandleRangePop()
 
 /* NVTX_CB_MODULE_CORE2 */
 
-static void NVTX_API HandleDomainMarkEx(nvtxDomainHandle_t domain, const nvtxEventAttributes_t* eventAttrib)
+static void NVTX_API HandleDomainMarkEx(nvtxDomainHandle_t /*domain*/, const nvtxEventAttributes_t* /*eventAttrib*/)
 {
     LOG_INFO("%s\n", "nvtxDomainMarkEx");
 }
 
-static nvtxRangeId_t NVTX_API HandleDomainRangeStartEx(nvtxDomainHandle_t domain, const nvtxEventAttributes_t* eventAttrib)
+static nvtxRangeId_t NVTX_API HandleDomainRangeStartEx(nvtxDomainHandle_t /*domain*/, const nvtxEventAttributes_t* /*eventAttrib*/)
 {
     LOG_INFO("%s\n", "nvtxDomainRangeStartEx");
     return NVTX_TOOL_ATTACHED_UNUSED_RANGE_ID;
 }
 
-static void NVTX_API HandleDomainRangeEnd(nvtxDomainHandle_t domain, nvtxRangeId_t id)
+static void NVTX_API HandleDomainRangeEnd(nvtxDomainHandle_t /*domain*/, nvtxRangeId_t /*id*/)
 {
     LOG_INFO("%s\n", "nvtxDomainRangeEnd");
 }
 
-static int NVTX_API HandleDomainRangePushEx(nvtxDomainHandle_t domain, const nvtxEventAttributes_t* eventAttrib)
+static int NVTX_API HandleDomainRangePushEx(nvtxDomainHandle_t /*domain*/, const nvtxEventAttributes_t* /*eventAttrib*/)
 {
     LOG_INFO("%s\n", "nvtxDomainRangePushEx");
     return NVTX_TOOL_ATTACHED_UNUSED_PUSH_POP_ID;
 }
 
-static int NVTX_API HandleDomainRangePop(nvtxDomainHandle_t domain)
+static int NVTX_API HandleDomainRangePop(nvtxDomainHandle_t /*domain*/)
 {
     LOG_INFO("%s\n", "nvtxDomainRangePop");
     return NVTX_TOOL_ATTACHED_UNUSED_PUSH_POP_ID;
 }
 
-static nvtxStringHandle_t NVTX_API HandleDomainRegisterStringA(nvtxDomainHandle_t domain, const char* string)
+static nvtxStringHandle_t NVTX_API HandleDomainRegisterStringA(nvtxDomainHandle_t /*domain*/, const char* /*string*/)
 {
     LOG_INFO("%s\n", "nvtxDomainRegisterStringA");
     return NVTX_TOOL_ATTACHED_UNUSED_STRING_HANDLE;
 }
 
-static nvtxDomainHandle_t NVTX_API HandleDomainCreateA(const char* name)
+static nvtxDomainHandle_t NVTX_API HandleDomainCreateA(const char* /*name*/)
 {
     LOG_INFO("%s\n", "nvtxDomainCreateA");
     return NVTX_TOOL_ATTACHED_UNUSED_DOMAIN_HANDLE;
 }
 
-static void NVTX_API HandleDomainDestroy(nvtxDomainHandle_t domain)
+static void NVTX_API HandleDomainDestroy(nvtxDomainHandle_t /*domain*/)
 {
     LOG_INFO("%s\n", "nvtxDomainDestroy");
 }
 
-static void NVTX_API HandleInitialize(const void* reserved)
+static void NVTX_API HandleInitialize(const void* /*reserved*/)
 {
     LOG_INFO("%s\n", "nvtxInitialize");
 }

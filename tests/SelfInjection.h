@@ -281,11 +281,11 @@ template <> inline void DeepCopyDestroy(ArgsMarkW        & args) { DestroyCstrin
 template <> inline void DeepCopyDestroy(ArgsRangeStartEx & args) { DestroyEventAttributes(args.eventAttrib); }
 template <> inline void DeepCopyDestroy(ArgsRangeStartA  & args) { DestroyCstring(args.str); }
 template <> inline void DeepCopyDestroy(ArgsRangeStartW  & args) { DestroyCstring(args.str); }
-template <> inline void DeepCopyDestroy(ArgsRangeEnd     & args) { }
+template <> inline void DeepCopyDestroy(ArgsRangeEnd     & /*args*/) { }
 template <> inline void DeepCopyDestroy(ArgsRangePushEx  & args) { DestroyEventAttributes(args.eventAttrib); }
 template <> inline void DeepCopyDestroy(ArgsRangePushA   & args) { DestroyCstring(args.str); }
 template <> inline void DeepCopyDestroy(ArgsRangePushW   & args) { DestroyCstring(args.str); }
-template <> inline void DeepCopyDestroy(ArgsRangePop     & args) { }
+template <> inline void DeepCopyDestroy(ArgsRangePop     & /*args*/) { }
 template <> inline void DeepCopyDestroy(ArgsNameCategoryA& args) { DestroyCstring(args.str); }
 template <> inline void DeepCopyDestroy(ArgsNameCategoryW& args) { DestroyCstring(args.str); }
 template <> inline void DeepCopyDestroy(ArgsNameOsThreadA& args) { DestroyCstring(args.str); }
@@ -293,19 +293,19 @@ template <> inline void DeepCopyDestroy(ArgsNameOsThreadW& args) { DestroyCstrin
 
 template <> inline void DeepCopyDestroy(ArgsDomainMarkEx         & args) { DestroyEventAttributes(args.eventAttrib); }
 template <> inline void DeepCopyDestroy(ArgsDomainRangeStartEx   & args) { DestroyEventAttributes(args.eventAttrib); }
-template <> inline void DeepCopyDestroy(ArgsDomainRangeEnd       & args) { }
+template <> inline void DeepCopyDestroy(ArgsDomainRangeEnd       & /*args*/) { }
 template <> inline void DeepCopyDestroy(ArgsDomainRangePushEx    & args) { DestroyEventAttributes(args.eventAttrib); }
-template <> inline void DeepCopyDestroy(ArgsDomainRangePop       & args) { }
+template <> inline void DeepCopyDestroy(ArgsDomainRangePop       & /*args*/) { }
 template <> inline void DeepCopyDestroy(ArgsDomainResourceCreate & args) { DestroyResourceAttributes(args.attr); }
-template <> inline void DeepCopyDestroy(ArgsDomainResourceDestroy& args) { }
+template <> inline void DeepCopyDestroy(ArgsDomainResourceDestroy& /*args*/) { }
 template <> inline void DeepCopyDestroy(ArgsDomainNameCategoryA  & args) { DestroyCstring(args.str); }
 template <> inline void DeepCopyDestroy(ArgsDomainNameCategoryW  & args) { DestroyCstring(args.str); }
 template <> inline void DeepCopyDestroy(ArgsDomainRegisterStringA& args) { DestroyCstring(args.str); }
 template <> inline void DeepCopyDestroy(ArgsDomainRegisterStringW& args) { DestroyCstring(args.str); }
 template <> inline void DeepCopyDestroy(ArgsDomainCreateA        & args) { DestroyCstring(args.name); }
 template <> inline void DeepCopyDestroy(ArgsDomainCreateW        & args) { DestroyCstring(args.name); }
-template <> inline void DeepCopyDestroy(ArgsDomainDestroy        & args) { }
-template <> inline void DeepCopyDestroy(ArgsInitialize           & args) { }
+template <> inline void DeepCopyDestroy(ArgsDomainDestroy        & /*args*/) { }
+template <> inline void DeepCopyDestroy(ArgsInitialize           & /*args*/) { }
 
 struct CallData
 {

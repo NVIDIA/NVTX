@@ -52,6 +52,7 @@ template <typename T>
 inline auto Same(T const& lhs, T const& rhs, SAME_COMMON_ARGS)
     -> decltype(lhs == rhs, oss << lhs, bool())
 {
+    (void)!deep; /* unused */
     bool objSame = lhs == rhs;
     if (verbose && !objSame)
     {
@@ -87,6 +88,7 @@ inline bool Same(T* lhs, T* rhs, SAME_COMMON_ARGS)
 template <typename T, enable_if<!is_complete<T>::value> = 0>
 inline bool Same(T* lhs, T* rhs, SAME_COMMON_ARGS)
 {
+    (void)!deep; /* unused */
     // Don't know how to deep-copy incomplete types, so always compare pointers
     bool ptrSame = lhs == rhs;
     if (verbose && !ptrSame)
@@ -180,7 +182,7 @@ inline bool Same(wchar_t const* lhs, wchar_t const* rhs, SAME_COMMON_ARGS)
 
 #define SAME_SIG(T) inline bool Same(T const& lhs, T const& rhs, SAME_COMMON_ARGS)
 
-#define DEFINE_SAME_0(T)          SAME_SIG(T) {                                                             return true; } DEFINE_EQ_NE_DEEP(T)
+#define DEFINE_SAME_0(T)          template <typename... A> inline bool Same(T const&, T const&, A&&...) {   return true; } DEFINE_EQ_NE_DEEP(T)
 #define DEFINE_SAME_1(T, a)       SAME_SIG(T) { bool same = DEFINE_MEMBER_SAME_1(a);       VERBOSE_PRINT(); return same; } DEFINE_EQ_NE_DEEP(T)
 #define DEFINE_SAME_2(T, a, b)    SAME_SIG(T) { bool same = DEFINE_MEMBER_SAME_2(a, b);    VERBOSE_PRINT(); return same; } DEFINE_EQ_NE_DEEP(T)
 #define DEFINE_SAME_3(T, a, b, c) SAME_SIG(T) { bool same = DEFINE_MEMBER_SAME_3(a, b, c); VERBOSE_PRINT(); return same; } DEFINE_EQ_NE_DEEP(T)
