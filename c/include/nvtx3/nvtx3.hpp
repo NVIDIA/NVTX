@@ -2782,7 +2782,7 @@ inline void mark(Args const&... args) noexcept
 #define NVTX3_V1_FUNC_RANGE_IN(D)                                                  \
   static ::nvtx3::v1::registered_string_in<D> const nvtx3_func_name__{__func__};   \
   static ::nvtx3::v1::event_attributes const nvtx3_func_attr__{nvtx3_func_name__}; \
-  ::nvtx3::v1::scoped_range_in<D> const nvtx3_range__{nvtx3_func_attr__};
+  ::nvtx3::v1::scoped_range_in<D> const nvtx3_range__{nvtx3_func_attr__}
 
 /**
  * @brief Convenience macro for generating a range in the specified `domain`
@@ -2806,10 +2806,10 @@ inline void mark(Args const&... args) noexcept
     static ::nvtx3::v1::registered_string_in<D> const nvtx3_func_name__{__func__};   \
     static ::nvtx3::v1::event_attributes const nvtx3_func_attr__{nvtx3_func_name__}; \
     optional_nvtx3_range__.begin(nvtx3_func_attr__);                                 \
-  }
+  } (void)0
 #else
-#define NVTX3_V1_FUNC_RANGE_IN(D)
-#define NVTX3_V1_FUNC_RANGE_IF_IN(D, C)
+#define NVTX3_V1_FUNC_RANGE_IN(D) (void)0
+#define NVTX3_V1_FUNC_RANGE_IF_IN(D, C) (void)0
 #endif  // NVTX_DISABLE
 
 /**
