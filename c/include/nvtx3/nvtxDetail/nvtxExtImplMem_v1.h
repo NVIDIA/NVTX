@@ -64,16 +64,19 @@ NVTX_LINKONCE_DEFINE_FUNCTION void NVTX_EXT_MEM_VERSIONED_ID(nvtxExtMemInitOnce)
     nvtxExtModuleSegment_t segment = {
         1, /* only one segment, hard-code ID */
         NVTX_EXT_MEM_SLOT_COUNT,
-        fnSlots
+        NVTX_NULLPTR /* function slots */
     };
 
     nvtxExtModuleInfo_t module = {
         NVTX_VERSION, sizeof(nvtxExtModuleInfo_t),
         NVTX_EXT_MODULEID_MEM, NVTX_EXT_COMPATID_MEM,
-        1, &segment, /* number of segments, segments */
+        1, NVTX_NULLPTR, /* number of segments, segments */
         NVTX_NULLPTR, /* no export function needed */
         NVTX_NULLPTR /* no extension private info */
     };
+
+    segment.functionSlots = fnSlots;
+    module.segments = &segment;
 
     NVTX_INFO( "%s\n", __FUNCTION__  );
 
