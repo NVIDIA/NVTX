@@ -57,42 +57,51 @@ int RunTest(int argc, const char** argv)
 
     using namespace nvtx3;
 
+    std::cout << "- Domain: ";
     auto& d1 = domain::get<d>();
+    std::cout << d1 << "\n";
 
 #if 1
-    std::cout << "- Registered string (char):\n";
+    std::cout << "- Registered string (char): ";
     auto& r1 = registered_string_in<d>::get<regstr_char_test>();
+    std::cout << r1.get_handle() << "\n";
     mark_in<d>("Mark in regstr_char_test category", registered_string_in<d>::get<regstr_char_test>());
 
-    std::cout << "- Registered string (wchar_t):\n";
+    std::cout << "- Registered string (wchar_t): ";
     auto& r2 = registered_string_in<d>::get<regstr_wchar_test>();
+    std::cout << r2.get_handle() << "\n";
     mark_in<d>("Mark in regstr_wchar_test category", registered_string_in<d>::get<regstr_wchar_test>());
 #endif
 
 #if 1
-    std::cout << "- Registered string in global domain (alias):\n";
+    std::cout << "- Registered string in global domain (alias): ";
     auto& rd1 = registered_string::get<regstr_global_domain1>();
+    std::cout << rd1.get_handle() << "\n";
 
-    std::cout << "- Registered string in global domain (implicit):\n";
+    std::cout << "- Registered string in global domain (implicit): ";
     auto& rd2 = registered_string_in<>::get<regstr_global_domain2>();
+    std::cout << rd2.get_handle() << "\n";
 
-    std::cout << "- Registered string in global domain (explicit):\n";
+    std::cout << "- Registered string in global domain (explicit): ";
     auto& rd3 = registered_string_in<domain::global>::get<regstr_global_domain3>();
+    std::cout << rd3.get_handle() << "\n";
 #endif
 
 #if STATIC_ASSERT_TESTING
 
 #if 1 // defined(ERROR_TEST_MSG_IS_MISSING)
     {
-        std::cout << "- Error test - registered string is missing name member:\n";
+        std::cout << "- Error test - registered string is missing name member: ";
         auto& r3 = registered_string_in<d>::get<error_msg_missing>();
+        std::cout << r3.get_handle() << "\n";
     }
 #endif
 
 #if 1 // defined(ERROR_TEST_MSG_IS_BAD_TYPE)
     {
-        std::cout << "- Error test - registered string message member isn't narrow or wide char array:\n";
+        std::cout << "- Error test - registered string message member isn't narrow or wide char array: ";
         auto& r4 = registered_string_in<d>::get<error_msg_is_bad_type>();
+        std::cout << r4.get_handle() << "\n";
     }
 #endif
 

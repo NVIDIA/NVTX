@@ -77,28 +77,33 @@ int RunTest(int argc, const char** argv)
     std::cout << "- Global domain (mark alias):\n";
     mark("Mark in global domain (implicit)");
 
-    std::cout << "- Global domain implicit:\n";
+    std::cout << "- Global domain implicit: ";
     auto& gi = domain::get<>();
+    std::cout << gi << "\n";
     mark_in<>("Mark in global domain (implicit)");
 
-    std::cout << "- Global domain explicit:\n";
+    std::cout << "- Global domain explicit:";
     auto& ge = domain::get<domain::global>();
+    std::cout << ge << "\n";
     mark_in<domain::global>("Mark in global domain (explicit)");
 
-    std::cout << "- Test domain (char):\n";
+    std::cout << "- Test domain (char):";
     auto& d1 = domain::get<char_test>();
+    std::cout << d1 << "\n";
     mark_in<char_test>("Mark in char_test domain");
 
-    std::cout << "- Test domain (wchar_t):\n";
+    std::cout << "- Test domain (wchar_t):";
     auto& d2 = domain::get<wchar_test>();
+    std::cout << d2 << "\n";
     mark_in<wchar_test>("Mark in wchar_test domain");
 
 #if STATIC_ASSERT_TESTING
 
 #if 1 // defined(ERROR_TEST_NAME_IS_MISSING)
     {
-        std::cout << "- Error test - domain is missing name member:\n";
+        std::cout << "- Error test - domain is missing name member:";
         auto& d3 = domain::get<error_name_missing>();
+        std::cout << d3 << "\n";
         mark_in<error_name_missing>("Mark in error_name_missing domain");
         scoped_range_in<error_name_missing> r3("Mark in error_name_missing domain");
     }
@@ -106,8 +111,9 @@ int RunTest(int argc, const char** argv)
 
 #if 1 // defined(ERROR_TEST_NAME_IS_BAD_TYPE)
     {
-        std::cout << "- Error test - domain name member isn't narrow or wide char array:\n";
+        std::cout << "- Error test - domain name member isn't narrow or wide char array:";
         auto& d4 = domain::get<error_name_is_bad_type>();
+        std::cout << d4 << "\n";
         mark_in<error_name_is_bad_type>("Mark in error_name_is_bad_type domain");
         scoped_range_in<error_name_is_bad_type> r4("Mark in error_name_is_bad_type domain");
     }
