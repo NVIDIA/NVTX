@@ -47,7 +47,7 @@
 #define DLL_HANDLE     HMODULE
 #define DLL_OPEN(x)    LoadLibraryA(x)
 #define DLL_CLOSE(x)   FreeLibraryA(x)
-#define GET_DLL_FUNC   GetProcAddress
+#define GET_DLL_FUNC(h, x) reinterpret_cast<void(*)(void)>(GetProcAddress((h), (x)))
 #if defined(_MSC_VER)
 #define DLL_PREFIX     ""
 #else
@@ -62,7 +62,7 @@
 #define DLL_HANDLE     void*
 #define DLL_OPEN(lib)  dlopen(lib, RTLD_LAZY)
 #define DLL_CLOSE(h)   dlclose(h)
-#define GET_DLL_FUNC   dlsym
+#define GET_DLL_FUNC(h, x) dlsym((h), (x))
 #define DLL_PREFIX     "lib"
 #if defined(__APPLE__)
 #define DLL_SUFFIX     ".dylib"

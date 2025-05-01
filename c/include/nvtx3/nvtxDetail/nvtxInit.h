@@ -33,7 +33,7 @@
 #define NVTX_BUFSIZE    16384
 #define NVTX_DLLHANDLE  HMODULE
 #define NVTX_DLLOPEN(x) LoadLibraryW(x)
-#define NVTX_DLLFUNC    GetProcAddress
+#define NVTX_DLLFUNC(h, x) NVTX_REINTERPRET_CAST(void(*)(void), GetProcAddress((h), (x)))
 #define NVTX_DLLCLOSE   FreeLibrary
 #define NVTX_DLLDEFAULT NVTX_NULLPTR
 #define NVTX_YIELD()    SwitchToThread()
@@ -49,7 +49,7 @@
 #define NVTX_BUFSIZE    16384
 #define NVTX_DLLHANDLE  void*
 #define NVTX_DLLOPEN(x) dlopen(x, RTLD_LAZY)
-#define NVTX_DLLFUNC    dlsym
+#define NVTX_DLLFUNC(h, x) dlsym((h), (x))
 #define NVTX_DLLCLOSE   dlclose
 #if !defined(__APPLE__)
 #define NVTX_DLLDEFAULT NVTX_NULLPTR
