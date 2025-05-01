@@ -161,14 +161,16 @@ static std::string GetCurrentProcessPath(void)
     return result;
 }
 
-// We know the absolute path must have at least one slash in it,
-// right before the exe filename.  So we can truncate the string
-// to end just after the last slash, and append other file or
-// directory names.  Examples:
-//    C:\path\to\foo.exe -> C:\path\to\
-//    C:\foo.exe -> C:\
-//    /path/to/foo -> /path/to/
-//    /foo -> /
+/*
+ * We know the absolute path must have at least one slash in it,
+ * right before the exe filename.  So we can truncate the string
+ * to end just after the last slash, and append other file or
+ * directory names.  Examples:
+ *    C:\path\to\foo.exe -> C:\path\to\
+ *    C:\foo.exe -> C:\
+ *    /path/to/foo -> /path/to/
+ *    /foo -> /
+ */
 static std::string GetCurrentProcessDirWithSep(void);
 static std::string GetCurrentProcessDirWithSep(void)
 {
@@ -177,24 +179,26 @@ static std::string GetCurrentProcessDirWithSep(void)
     return exeAbsPath;
 }
 
-// Take the absolute path to the current process's executable,
-// remove the executable's name, and then append the library
-// filename.  Applies the standard dynamic library prefix and
-// suffix to the library's base name, but the suffix may be
-// overridden if it isn't the standard one (e.g. ".so.1.1").
-// If subDirs has any entries, they are added between the
-// directory and the library name, with path separators added
-// between each.  Examples:
-//   (Assuming process is C:\path\to\foo.exe on Windows)
-//     AbsolutePathToLibraryInCurrentProcessPath("example")
-//       -> C:\path\to\example.dll
-//     AbsolutePathToLibraryInCurrentProcessPath("example", {"nested", "deeper"})
-//       -> C:\path\to\nested\deeper\example.dll
-//   (Assuming process is /path/to/foo on Linux)
-//     AbsolutePathToLibraryInCurrentProcessPath("example")
-//       -> /path/to/libexample.so
-//     AbsolutePathToLibraryInCurrentProcessPath("example", {"nested", "deeper"}, ".so.1")
-//       -> /path/to/nested/deeper/libexample.so.1
+/*
+ * Take the absolute path to the current process's executable,
+ * remove the executable's name, and then append the library
+ * filename.  Applies the standard dynamic library prefix and
+ * suffix to the library's base name, but the suffix may be
+ * overridden if it isn't the standard one (e.g. ".so.1.1").
+ * If subDirs has any entries, they are added between the
+ * directory and the library name, with path separators added
+ * between each.  Examples:
+ *   (Assuming process is C:\path\to\foo.exe on Windows)
+ *     AbsolutePathToLibraryInCurrentProcessPath("example")
+ *       -> C:\path\to\example.dll
+ *     AbsolutePathToLibraryInCurrentProcessPath("example", {"nested", "deeper"})
+ *       -> C:\path\to\nested\deeper\example.dll
+ *   (Assuming process is /path/to/foo on Linux)
+ *     AbsolutePathToLibraryInCurrentProcessPath("example")
+ *       -> /path/to/libexample.so
+ *     AbsolutePathToLibraryInCurrentProcessPath("example", {"nested", "deeper"}, ".so.1")
+ *       -> /path/to/nested/deeper/libexample.so.1
+ */
 static std::string AbsolutePathToLibraryInCurrentProcessPath(
     std::string libraryBaseName,
     std::vector<std::string> subDirs = {},
