@@ -36,6 +36,14 @@
 #include <unistd.h>
 
 #define EXPORT_SYMBOL   __attribute__((visibility("default")))
+#ifdef __APPLE__
+static inline int gettid(void)
+{
+    uint64_t tid;
+    pthread_threadid_np(nullptr, &tid);
+    return static_cast<int>(tid);
+}
+#endif
 #endif
 
 // The `nvtxDomainRegistration_st`s content is implementation-defined. For NVTX, it is just a forward
@@ -51,7 +59,7 @@ struct nvtxDomainRegistration_st {
 namespace {
 
 std::mutex g_mutex;
-std::atomic_bool g_isTornDown{false};
+std::atomic<bool> g_isTornDown{false};
 struct TearDownDetector
 {
     ~TearDownDetector() {
@@ -81,7 +89,7 @@ NvtxFunctionTable GetFunctionTable(NvtxGetExportTableFunc_t getExportTable, Nvtx
     return table;
 }
 
-int GetCurrentTimeMs() {
+static long long GetCurrentTimeMs() {
     auto nowSinceEpoch = std::chrono::steady_clock::now().time_since_epoch();
     return std::chrono::duration_cast<std::chrono::milliseconds>(nowSinceEpoch).count();
 }
@@ -101,7 +109,7 @@ int RangePushA(const char* message)
     // a simple solution, lock-free data structures should be considered if performance is a concern.
     std::lock_guard<std::mutex> guard(g_mutex);
 
-    printf("[NVTX][%d][%d] PUSH %s\n", gettid(), GetCurrentTimeMs(), message);
+    printf("[NVTX][%d][%lld] PUSH %s\n", gettid(), GetCurrentTimeMs(), message);
     return NVTX_NO_PUSH_POP_TRACKING;
 }
 int RangePop()
@@ -109,7 +117,7 @@ int RangePop()
     if (g_isTornDown) return NVTX_FAIL;
     std::lock_guard<std::mutex> guard(g_mutex);
 
-    printf("[NVTX][%d][%d] POP\n", gettid(), GetCurrentTimeMs());
+    printf("[NVTX][%d][%lld] POP\n", gettid(), GetCurrentTimeMs());
     return NVTX_NO_PUSH_POP_TRACKING;
 }
 nvtxDomainHandle_t DomainCreateA(const char* name)
@@ -117,7 +125,7 @@ nvtxDomainHandle_t DomainCreateA(const char* name)
     if (g_isTornDown) return nullptr;
     std::lock_guard<std::mutex> guard(g_mutex);
 
-    printf("[NVTX][%d][%d] DOMAIN CREATE %s \n", gettid(), GetCurrentTimeMs(), name);
+    printf("[NVTX][%d][%lld] DOMAIN CREATE %s \n", gettid(), GetCurrentTimeMs(), name);
     return new nvtxDomainRegistration_st({name});
 }
 void DomainDestroy(nvtxDomainHandle_t domain)
@@ -131,7 +139,7 @@ void DomainDestroy(nvtxDomainHandle_t domain)
     if (!domain) {
         return;
     }
-    printf("[NVTX][%d][%d] DOMAIN DESTROY %s\n", gettid(), GetCurrentTimeMs(), domain->name);
+    printf("[NVTX][%d][%lld] DOMAIN DESTROY %s\n", gettid(), GetCurrentTimeMs(), domain->name);
     delete domain;
 }
 void MarkA(const char* message)
@@ -139,7 +147,7 @@ void MarkA(const char* message)
     if (g_isTornDown) return;
     std::lock_guard<std::mutex> guard(g_mutex);
 
-    printf("[NVTX][%d][%d] MARK %s\n", gettid(), GetCurrentTimeMs(), message);
+    printf("[NVTX][%d][%lld] MARK %s\n", gettid(), GetCurrentTimeMs(), message);
 }
 void DomainMarkEx(nvtxDomainHandle_t domain, const nvtxEventAttributes_t* eventAttrib)
 {
@@ -148,7 +156,7 @@ void DomainMarkEx(nvtxDomainHandle_t domain, const nvtxEventAttributes_t* eventA
 
     const char* markName = eventAttrib ? eventAttrib->message.ascii : "No name";
     const char* domainName = domain ? domain->name : "Default domain";
-    printf("[NVTX][%d][%d] MARK %s@%s\n", gettid(), GetCurrentTimeMs(), markName, domainName);
+    printf("[NVTX][%d][%lld] MARK %s@%s\n", gettid(), GetCurrentTimeMs(), markName, domainName);
 }
 void DomainRangePushEx(nvtxDomainHandle_t domain, const nvtxEventAttributes_t* eventAttrib)
 {
@@ -157,7 +165,7 @@ void DomainRangePushEx(nvtxDomainHandle_t domain, const nvtxEventAttributes_t* e
 
     const char* markName = eventAttrib ? eventAttrib->message.ascii : "No name";
     const char* domainName = domain ? domain->name : "Default domain";
-    printf("[NVTX][%d][%d] PUSH %s@%s\n", gettid(), GetCurrentTimeMs(), markName, domainName);
+    printf("[NVTX][%d][%lld] PUSH %s@%s\n", gettid(), GetCurrentTimeMs(), markName, domainName);
 }
 void DomainRangePop(nvtxDomainHandle_t domain)
 {
@@ -165,7 +173,7 @@ void DomainRangePop(nvtxDomainHandle_t domain)
     std::lock_guard<std::mutex> guard(g_mutex);
 
     const char* domainName = domain ? domain->name : "Default domain";
-    printf("[NVTX][%d][%d] POP @%s\n", gettid(), GetCurrentTimeMs(), domainName);
+    printf("[NVTX][%d][%lld] POP @%s\n", gettid(), GetCurrentTimeMs(), domainName);
 }
 }  // namespace impl
 
@@ -179,7 +187,7 @@ EXPORT_SYMBOL int InitializeInjectionNvtx2(NvtxGetExportTableFunc_t getExportTab
     if (g_isTornDown) return 0;
     std::lock_guard<std::mutex> guard(g_mutex);
 
-    printf("[NVTX][%d][%d] InitializeInjectionNvtx2()\n", getpid(), GetCurrentTimeMs());
+    printf("[NVTX][%d][%lld] InitializeInjectionNvtx2()\n", getpid(), GetCurrentTimeMs());
 
     // Setting callbacks, use appropriate `NVTX_CBID_*` index constants:
     //     NVTX_CB_MODULE_CORE: NVTX_CBID_CORE_* (enum NvtxCallbackIdCore, [1])

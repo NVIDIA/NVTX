@@ -28,12 +28,20 @@ set(NVTX_INCLUDE_PATH ${CMAKE_SOURCE_DIR}/Import/NVTX/include)
 add_library(nvtx_sample_injection SHARED
     Source/NvtxSampleInjection.cpp
 )
-include_directories(nvtx_sample_injection PRIVATE ${NVTX_INCLUDE_PATH})
-set_target_properties(nvtx_sample_injection PROPERTIES C_VISIBILITY_PRESET hidden CXX_VISIBILITY_PRESET hidden)
+target_include_directories(nvtx_sample_injection PRIVATE ${NVTX_INCLUDE_PATH})
+set_target_properties(nvtx_sample_injection PROPERTIES
+    C_VISIBILITY_PRESET hidden
+    CXX_VISIBILITY_PRESET hidden
+    CXX_STANDARD 11
+)
 
 # Test
 add_executable(test
     Test/NvtxTest.cpp
 )
-include_directories(test PRIVATE ${NVTX_INCLUDE_PATH})
-set_target_properties(test PROPERTIES C_VISIBILITY_PRESET hidden CXX_VISIBILITY_PRESET hidden)
+target_include_directories(test PRIVATE ${NVTX_INCLUDE_PATH})
+set_target_properties(test PROPERTIES
+    C_VISIBILITY_PRESET hidden
+    CXX_VISIBILITY_PRESET hidden
+    CXX_STANDARD 11
+)
