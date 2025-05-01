@@ -151,7 +151,8 @@ int RunTest(int /*argc*/, const char** argv)
     {
         CallbackTester t;
 
-        nvtxEventAttributes_t attr{NVTX_VERSION, sizeof(nvtxEventAttributes_t)};
+        nvtxEventAttributes_t attr{NVTX_VERSION, sizeof(nvtxEventAttributes_t),
+            0, 0, 0, 0, 0, {0}, 0, {nullptr}};
         attr.category = 123;
         attr.colorType = NVTX_COLOR_ARGB;
         attr.color = 0xFF4466BB;
