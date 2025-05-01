@@ -51,7 +51,6 @@ int RunTest(int argc, const char** argv)
 
     using namespace nvtx3;
 
-    if (0)
     {
         std::cout << std::boolalpha;
         std::cout << "is_c_string<const char *>     = " << detail::is_c_string<const char*>::value << '\n';
