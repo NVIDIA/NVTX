@@ -131,6 +131,8 @@
 
 // ^ Above line must be left blank, since last line of macro ends with a backslash
 
+#ifdef SUPPORT_EXTENSIONS
+
 #define FOR_EACH_EXPORT_EXTENSIONS(func) \
     func(nvtxCounterBatchSubmit) \
     func(nvtxCounterRegister) \
@@ -176,7 +178,6 @@
 
 // ^ Above line must be left blank, since last line of macro ends with a backslash
 
-#ifdef SUPPORT_EXTENSIONS
 #define FOR_EACH_EXPORT(func) FOR_EACH_EXPORT_CORE(func) FOR_EACH_EXPORT_EXTENSIONS(func)
 #else
 #define FOR_EACH_EXPORT(func) FOR_EACH_EXPORT_CORE(func)
@@ -201,8 +202,11 @@ FnPtr GetExport(
     return pfn;
 }
 
-#define DEFINE_AND_GET_FN_PTR_FOR_EXPORT(fn) \
-    auto pfn_##fn = GetExport<decltype(&fn)>(hDll, #fn, foundFuncs, missingFuncs);
+#define DECLARE_FN_PTR(fn) \
+    decltype(&fn) pfn_##fn;
+
+#define GET_FN_PTR_FOR_EXPORT(fn) \
+    pfns.pfn_##fn = GetExport<decltype(&fn)>(hDll, #fn, foundFuncs, missingFuncs);
 
 extern "C" NVTX_DYNAMIC_EXPORT
 int RunTest(int /*argc*/, const char** argv);
@@ -238,10 +242,16 @@ int RunTest(int /*argc*/, const char** argv)
     // For each export, try to GET_DLL_FUNC for it
     //     - Don't early-out, print list of all failed exports
 
+    struct FunctionPointers {
+        FOR_EACH_EXPORT(DECLARE_FN_PTR)
+    };
+
+    FunctionPointers pfns;
+
     //auto pfn_nvtxMarkA = GetExport<decltype(&nvtxMarkA)>(hDll, "nvtxMarkA", foundFuncs, missingFuncs);
     //auto pfn_nvtxDomainCreateA = GetExport<decltype(&nvtxDomainCreateA)>(hDll, "nvtxDomainCreateA", foundFuncs, missingFuncs);
     // ...
-    FOR_EACH_EXPORT(DEFINE_AND_GET_FN_PTR_FOR_EXPORT)
+    FOR_EACH_EXPORT(GET_FN_PTR_FOR_EXPORT)
 
     if (verbose) std::cout << " - Got non-zero pointers for " << foundFuncs.size() << " NVTX functions.\n";
 
@@ -250,14 +260,14 @@ int RunTest(int /*argc*/, const char** argv)
     // For a few simple functions, try calling them through function pointers with
     // harmless args.  If the calling conventions are wrong, these calls will crash.
     // If they are working, the NVTX injection should load and print something.
-    if (pfn_nvtxMarkA)
+    if (pfns.pfn_nvtxMarkA)
     {
-        pfn_nvtxMarkA("Testing nvtxMarkA");
+        pfns.pfn_nvtxMarkA("Testing nvtxMarkA");
     }
 
-    if (pfn_nvtxDomainCreateA)
+    if (pfns.pfn_nvtxDomainCreateA)
     {
-        auto hDomain = pfn_nvtxDomainCreateA("Testing nvtxDomainCreateA");
+        auto hDomain = pfns.pfn_nvtxDomainCreateA("Testing nvtxDomainCreateA");
         (void)hDomain;
     }
 
