@@ -24,9 +24,9 @@ jobs:
     - name: Install Toolchain
       run: |
         sudo apt-get update
-        sudo apt-get -y install {gcc,g++}-{9,10,11,12,13,14,mingw-w64-x86-64} clang-{14,15,16,17,18} ninja-build
+        sudo apt-get -y install {gcc,g++}-{9,10,11,12,13,14,mingw-w64-x86-64} {clang,lld}-{14,15,16,17,18,19} ninja-build
         conda create -y --name cuda-env
-        conda install -y --name cuda-env cuda-minimal-build
+        conda install -y --name cuda-env conda-forge::cuda-minimal-build
         rm -f "$CONDA/envs/cuda-env/bin/ld"
 
     - name: Build (GCC 9)
@@ -34,35 +34,48 @@ jobs:
         cd tests
         mkdir build-gcc-9
         cd build-gcc-9
-        cmake -G Ninja -DCMAKE_C_COMPILER=gcc-9 -DCMAKE_CXX_COMPILER=g++-9 -DCMAKE_CUDA_COMPILER="$CONDA/envs/cuda-env/bin/nvcc" ..
+        FLAGS="-O3 -Wall -Wextra -Wmissing-braces -Wattributes -Wunused-result -Wlogical-op -Wcast-qual -Wduplicated-cond -Wnull-dereference -Wduplicated-branches -Warray-bounds=2 -Wpointer-arith -Wwrite-strings"
+        cmake .. -G Ninja -DCMAKE_BUILD_TYPE=Release -DCMAKE_C_COMPILER=gcc-9 -DCMAKE_CXX_COMPILER=g++-9 -DCMAKE_CUDA_COMPILER="$CONDA/envs/cuda-env/bin/nvcc" -DCMAKE_C_FLAGS="$FLAGS -Wmissing-prototypes -Wstrict-prototypes -Werror" -DCMAKE_CXX_FLAGS="$FLAGS -Wextra-semi -Werror" -DCMAKE_CUDA_FLAGS="$FLAGS --Wno-deprecated-gpu-targets --Werror all-warnings"
         ninja
     - name: Build (GCC 10)
       run: |
         cd tests
         mkdir build-gcc-10
         cd build-gcc-10
-        cmake -G Ninja -DCMAKE_C_COMPILER=gcc-10 -DCMAKE_CXX_COMPILER=g++-10 -DCMAKE_CUDA_COMPILER="$CONDA/envs/cuda-env/bin/nvcc" ..
+        FLAGS="-O3 -Wall -Wextra -Wmissing-braces -Wattributes -Wunused-result -Wlogical-op -Wcast-qual -Wduplicated-cond -Wnull-dereference -Wduplicated-branches -Warray-bounds=2 -Wpointer-arith -Wwrite-strings"
+        cmake .. -G Ninja -DCMAKE_BUILD_TYPE=Release -DCMAKE_C_COMPILER=gcc-10 -DCMAKE_CXX_COMPILER=g++-10 -DCMAKE_CUDA_COMPILER="$CONDA/envs/cuda-env/bin/nvcc" -DCMAKE_C_FLAGS="$FLAGS -Wmissing-prototypes -Wstrict-prototypes -Werror" -DCMAKE_CXX_FLAGS="$FLAGS -Wextra-semi -Werror" -DCMAKE_CUDA_FLAGS="$FLAGS --Wno-deprecated-gpu-targets --Werror all-warnings"
         ninja
     - name: Build (GCC 11)
       run: |
         cd tests
         mkdir build-gcc-11
         cd build-gcc-11
-        cmake -G Ninja -DCMAKE_C_COMPILER=gcc-11 -DCMAKE_CXX_COMPILER=g++-11 -DCMAKE_CUDA_COMPILER="$CONDA/envs/cuda-env/bin/nvcc" ..
+        FLAGS="-O3 -Wall -Wextra -Wmissing-braces -Wattributes -Wunused-result -Wlogical-op -Wcast-qual -Wduplicated-cond -Wnull-dereference -Wduplicated-branches -Warray-bounds=2 -Wpointer-arith -Wwrite-strings"
+        cmake .. -G Ninja -DCMAKE_BUILD_TYPE=Release -DCMAKE_C_COMPILER=gcc-11 -DCMAKE_CXX_COMPILER=g++-11 -DCMAKE_CUDA_COMPILER="$CONDA/envs/cuda-env/bin/nvcc" -DCMAKE_C_FLAGS="$FLAGS -Wmissing-prototypes -Wstrict-prototypes -Werror" -DCMAKE_CXX_FLAGS="$FLAGS -Wextra-semi -Werror" -DCMAKE_CUDA_FLAGS="$FLAGS --Wno-deprecated-gpu-targets --Werror all-warnings"
         ninja
     - name: Build (GCC 12)
       run: |
         cd tests
         mkdir build-gcc-12
         cd build-gcc-12
-        cmake -G Ninja -DCMAKE_C_COMPILER=gcc-12 -DCMAKE_CXX_COMPILER=g++-12 -DCMAKE_CUDA_COMPILER="$CONDA/envs/cuda-env/bin/nvcc" ..
+        FLAGS="-O3 -Wall -Wextra -Wmissing-braces -Wattributes -Wunused-result -Wlogical-op -Wcast-qual -Wduplicated-cond -Wnull-dereference -Wduplicated-branches -Warray-bounds=2 -Wpointer-arith -Wwrite-strings"
+        cmake .. -G Ninja -DCMAKE_BUILD_TYPE=Release -DCMAKE_C_COMPILER=gcc-12 -DCMAKE_CXX_COMPILER=g++-12 -DCMAKE_CUDA_COMPILER="$CONDA/envs/cuda-env/bin/nvcc" -DCMAKE_C_FLAGS="$FLAGS -Wmissing-prototypes -Wstrict-prototypes -Werror" -DCMAKE_CXX_FLAGS="$FLAGS -Wextra-semi -Werror" -DCMAKE_CUDA_FLAGS="$FLAGS --Wno-deprecated-gpu-targets --Werror all-warnings"
         ninja
     - name: Build (GCC 13)
       run: |
         cd tests
         mkdir build-gcc-13
         cd build-gcc-13
-        cmake -G Ninja -DCMAKE_C_COMPILER=gcc-13 -DCMAKE_CXX_COMPILER=g++-13 -DCMAKE_CUDA_COMPILER="$CONDA/envs/cuda-env/bin/nvcc" ..
+        FLAGS="-O3 -Wall -Wextra -Wmissing-braces -Wattributes -Wunused-result -Wlogical-op -Wcast-qual -Wduplicated-cond -Wnull-dereference -Wduplicated-branches -Warray-bounds=2 -Wpointer-arith -Wwrite-strings"
+        cmake .. -G Ninja -DCMAKE_BUILD_TYPE=Release -DCMAKE_C_COMPILER=gcc-13 -DCMAKE_CXX_COMPILER=g++-13 -DCMAKE_CUDA_COMPILER="$CONDA/envs/cuda-env/bin/nvcc" -DCMAKE_C_FLAGS="$FLAGS -Wmissing-prototypes -Wstrict-prototypes -Werror" -DCMAKE_CXX_FLAGS="$FLAGS -Wextra-semi -Werror" -DCMAKE_CUDA_FLAGS="$FLAGS --Wno-deprecated-gpu-targets --Werror all-warnings"
+        ninja
+    - name: Build (GCC 14)
+      run: |
+        cd tests
+        mkdir build-gcc-14
+        cd build-gcc-14
+        FLAGS="-O3 -Wall -Wextra -Wmissing-braces -Wattributes -Wunused-result -Wlogical-op -Wcast-qual -Wduplicated-cond -Wnull-dereference -Wduplicated-branches -Warray-bounds=2 -Wpointer-arith -Wwrite-strings"
+        cmake .. -G Ninja -DCMAKE_BUILD_TYPE=Release -DCMAKE_C_COMPILER=gcc-14 -DCMAKE_CXX_COMPILER=g++-14 -DCMAKE_CUDA_COMPILER="$CONDA/envs/cuda-env/bin/nvcc" -DCMAKE_C_FLAGS="$FLAGS -Wmissing-prototypes -Wstrict-prototypes -Werror" -DCMAKE_CXX_FLAGS="$FLAGS -Wextra-semi -Werror" -DCMAKE_CUDA_FLAGS="$FLAGS --Wno-deprecated-gpu-targets --Werror all-warnings"
         ninja
 
     - name: Build (Clang 14)
@@ -70,28 +83,48 @@ jobs:
         cd tests
         mkdir build-clang-14
         cd build-clang-14
-        cmake -G Ninja -DCMAKE_C_COMPILER=clang-14 -DCMAKE_CXX_COMPILER=clang++-14 -DCMAKE_CUDA_COMPILER="$CONDA/envs/cuda-env/bin/nvcc" ..
+        FLAGS="-O3 -Weverything -Wno-c++98-compat -Wno-c++98-compat-pedantic -Wno-c++17-attribute-extensions -Wno-variadic-macros -Wno-long-long -Wno-reserved-identifier -Wno-sign-conversion -Wno-float-equal -Wno-padded -Wno-covered-switch-default -Wno-atomic-implicit-seq-cst -Wno-exit-time-destructors -Wno-global-constructors -Wno-missing-variable-declarations"
+        cmake .. -G Ninja -DCMAKE_BUILD_TYPE=Release -DCMAKE_C_COMPILER=clang-14 -DCMAKE_CXX_COMPILER=clang++-14 -DCMAKE_LINKER=ld.lld-14 -DCMAKE_CUDA_COMPILER="$CONDA/envs/cuda-env/bin/nvcc" -DCMAKE_C_FLAGS="$FLAGS -Werror" -DCMAKE_CXX_FLAGS="$FLAGS -Werror" -DCMAKE_CUDA_FLAGS="$FLAGS -Wno-undef -Wno-newline-eof -Wno-old-style-cast -Wno-missing-noreturn -Wno-deprecated-dynamic-exception-spec -Wno-unused-template -Wno-zero-as-null-pointer-constant -Wno-used-but-marked-unused -Wno-extra-semi-stmt --Wno-deprecated-gpu-targets -Wno-disabled-macro-expansion -Wno-duplicate-enum -Wno-unused-function --Werror all-warnings"
         ninja
     - name: Build (Clang 15)
       run: |
         cd tests
         mkdir build-clang-15
         cd build-clang-15
-        cmake -G Ninja -DCMAKE_C_COMPILER=clang-15 -DCMAKE_CXX_COMPILER=clang++-15 -DCMAKE_CUDA_COMPILER="$CONDA/envs/cuda-env/bin/nvcc" ..
+        FLAGS="-O3 -Weverything -Wno-c++98-compat -Wno-c++98-compat-pedantic -Wno-c++17-attribute-extensions -Wno-variadic-macros -Wno-long-long -Wno-reserved-identifier -Wno-sign-conversion -Wno-float-equal -Wno-padded -Wno-covered-switch-default -Wno-atomic-implicit-seq-cst -Wno-exit-time-destructors -Wno-global-constructors -Wno-missing-variable-declarations"
+        cmake .. -G Ninja -DCMAKE_BUILD_TYPE=Release -DCMAKE_C_COMPILER=clang-15 -DCMAKE_CXX_COMPILER=clang++-15 -DCMAKE_LINKER=ld.lld-15 -DCMAKE_CUDA_COMPILER="$CONDA/envs/cuda-env/bin/nvcc" -DCMAKE_C_FLAGS="$FLAGS -Werror" -DCMAKE_CXX_FLAGS="$FLAGS -Werror" -DCMAKE_CUDA_FLAGS="$FLAGS -Wno-undef -Wno-newline-eof -Wno-old-style-cast -Wno-missing-noreturn -Wno-deprecated-dynamic-exception-spec -Wno-unused-template -Wno-gnu-line-marker -Wno-zero-as-null-pointer-constant -Wno-used-but-marked-unused -Wno-extra-semi-stmt --Wno-deprecated-gpu-targets -Wno-disabled-macro-expansion -Wno-duplicate-enum -Wno-unused-function --Werror all-warnings"
         ninja
     - name: Build (Clang 16)
       run: |
         cd tests
         mkdir build-clang-16
         cd build-clang-16
-        cmake -G Ninja -DCMAKE_C_COMPILER=clang-16 -DCMAKE_CXX_COMPILER=clang++-16 -DCMAKE_CUDA_COMPILER="$CONDA/envs/cuda-env/bin/nvcc" ..
+        FLAGS="-O3 -Weverything -Wno-c++98-compat -Wno-c++98-compat-pedantic -Wno-c++17-attribute-extensions -Wno-variadic-macros -Wno-long-long -Wno-reserved-identifier -Wno-unsafe-buffer-usage -Wno-sign-conversion -Wno-float-equal -Wno-padded -Wno-cast-function-type-strict -Wno-covered-switch-default -Wno-atomic-implicit-seq-cst -Wno-exit-time-destructors -Wno-global-constructors -Wno-missing-variable-declarations"
+        cmake .. -G Ninja -DCMAKE_BUILD_TYPE=Release -DCMAKE_C_COMPILER=clang-16 -DCMAKE_CXX_COMPILER=clang++-16 -DCMAKE_LINKER=ld.lld-16 -DCMAKE_CUDA_COMPILER="$CONDA/envs/cuda-env/bin/nvcc" -DCMAKE_C_FLAGS="$FLAGS -Werror" -DCMAKE_CXX_FLAGS="$FLAGS -Werror" -DCMAKE_CUDA_FLAGS="$FLAGS -Wno-undef -Wno-newline-eof -Wno-old-style-cast -Wno-missing-noreturn -Wno-deprecated-dynamic-exception-spec -Wno-unused-template -Wno-gnu-line-marker -Wno-zero-as-null-pointer-constant -Wno-used-but-marked-unused -Wno-extra-semi-stmt --Wno-deprecated-gpu-targets -Wno-disabled-macro-expansion -Wno-duplicate-enum -Wno-unused-function --Werror all-warnings"
         ninja
     - name: Build (Clang 17)
       run: |
         cd tests
         mkdir build-clang-17
         cd build-clang-17
-        cmake -G Ninja -DCMAKE_C_COMPILER=clang-17 -DCMAKE_CXX_COMPILER=clang++-17 -DCMAKE_CUDA_COMPILER="$CONDA/envs/cuda-env/bin/nvcc" ..
+        FLAGS="-O3 -Weverything -Wno-c++98-compat -Wno-c++98-compat-pedantic -Wno-c++17-attribute-extensions -Wno-variadic-macros -Wno-long-long -Wno-reserved-identifier -Wno-unsafe-buffer-usage -Wno-sign-conversion -Wno-float-equal -Wno-padded -Wno-cast-function-type-strict -Wno-covered-switch-default -Wno-atomic-implicit-seq-cst -Wno-exit-time-destructors -Wno-global-constructors -Wno-missing-variable-declarations"
+        cmake .. -G Ninja -DCMAKE_BUILD_TYPE=Release -DCMAKE_C_COMPILER=clang-17 -DCMAKE_CXX_COMPILER=clang++-17 -DCMAKE_LINKER=ld.lld-17 -DCMAKE_CUDA_COMPILER="$CONDA/envs/cuda-env/bin/nvcc" -DCMAKE_C_FLAGS="$FLAGS -Werror" -DCMAKE_CXX_FLAGS="$FLAGS -Werror" -DCMAKE_CUDA_FLAGS="$FLAGS -Wno-undef -Wno-newline-eof -Wno-old-style-cast -Wno-missing-noreturn -Wno-deprecated-dynamic-exception-spec -Wno-unused-template -Wno-gnu-line-marker -Wno-zero-as-null-pointer-constant -Wno-used-but-marked-unused -Wno-extra-semi-stmt --Wno-deprecated-gpu-targets -Wno-disabled-macro-expansion -Wno-duplicate-enum -Wno-unused-function --Werror all-warnings"
+        ninja
+    - name: Build (Clang 18)
+      run: |
+        cd tests
+        mkdir build-clang-18
+        cd build-clang-18
+        FLAGS="-O3 -Weverything -Wno-c++98-compat -Wno-c++98-compat-pedantic -Wno-c++17-attribute-extensions -Wno-variadic-macros -Wno-long-long -Wno-reserved-identifier -Wno-unsafe-buffer-usage -Wno-sign-conversion -Wno-float-equal -Wno-padded -Wno-cast-function-type-strict -Wno-covered-switch-default -Wno-atomic-implicit-seq-cst -Wno-exit-time-destructors -Wno-global-constructors -Wno-missing-variable-declarations"
+        cmake .. -G Ninja -DCMAKE_BUILD_TYPE=Release -DCMAKE_C_COMPILER=clang-18 -DCMAKE_CXX_COMPILER=clang++-18 -DCMAKE_LINKER=ld.lld-18 -DCMAKE_CUDA_COMPILER="$CONDA/envs/cuda-env/bin/nvcc" -DCMAKE_C_FLAGS="$FLAGS -Werror" -DCMAKE_CXX_FLAGS="$FLAGS -Werror" -DCMAKE_CUDA_FLAGS="$FLAGS -Wno-undef -Wno-newline-eof -Wno-old-style-cast -Wno-missing-noreturn -Wno-deprecated-dynamic-exception-spec -Wno-unused-template -Wno-gnu-line-marker -Wno-zero-as-null-pointer-constant -Wno-used-but-marked-unused -Wno-extra-semi-stmt --Wno-deprecated-gpu-targets -Wno-disabled-macro-expansion -Wno-duplicate-enum -Wno-unused-function --Werror all-warnings"
+        ninja
+    - name: Build (Clang 19)
+      run: |
+        cd tests
+        mkdir build-clang-19
+        cd build-clang-19
+        FLAGS="-O3 -Weverything -Wno-c++98-compat -Wno-c++98-compat-pedantic -Wno-c++17-attribute-extensions -Wno-variadic-macros -Wno-long-long -Wno-reserved-identifier -Wno-unsafe-buffer-usage -Wno-sign-conversion -Wno-float-equal -Wno-padded -Wno-cast-function-type-strict -Wno-covered-switch-default -Wno-atomic-implicit-seq-cst -Wno-exit-time-destructors -Wno-global-constructors -Wno-missing-variable-declarations"
+        cmake .. -G Ninja -DCMAKE_BUILD_TYPE=Release -DCMAKE_C_COMPILER=clang-19 -DCMAKE_CXX_COMPILER=clang++-19 -DCMAKE_LINKER=ld.lld-19 -DCMAKE_CUDA_COMPILER="$CONDA/envs/cuda-env/bin/nvcc" -DCMAKE_C_FLAGS="$FLAGS -Werror" -DCMAKE_CXX_FLAGS="$FLAGS -Werror" -DCMAKE_CUDA_FLAGS="$FLAGS -Wno-undef -Wno-newline-eof -Wno-old-style-cast -Wno-missing-noreturn -Wno-deprecated-dynamic-exception-spec -Wno-unused-template -Wno-gnu-line-marker -Wno-zero-as-null-pointer-constant -Wno-used-but-marked-unused -Wno-extra-semi-stmt --Wno-deprecated-gpu-targets -Wno-disabled-macro-expansion -Wno-duplicate-enum -Wno-unused-function --Werror all-warnings"
         ninja
 
     - name: Build (MinGW-w64 GCC)
@@ -99,7 +132,8 @@ jobs:
         cd tests
         mkdir build-mingw
         cd build-mingw
-        cmake -G Ninja -DCMAKE_TOOLCHAIN_FILE=../mingw-w64-x86_64.cmake -DENABLE_CUDA=False ..
+        FLAGS="-O3 -Wall -Wextra -Wmissing-braces -Wattributes -Wunused-result -Wlogical-op -Wcast-qual -Wduplicated-cond -Wnull-dereference -Wduplicated-branches -Warray-bounds=2 -Wpointer-arith -Wwrite-strings"
+        cmake .. -G Ninja -DCMAKE_BUILD_TYPE=Release -DCMAKE_TOOLCHAIN_FILE=../mingw-w64-x86_64.cmake -DENABLE_CUDA=False -DCMAKE_C_FLAGS="$FLAGS -Wmissing-prototypes -Wstrict-prototypes -Werror" -DCMAKE_CXX_FLAGS="$FLAGS -Wextra-semi -Werror"
         ninja
 
     - name: Run (GCC 9)
@@ -122,6 +156,10 @@ jobs:
       run: |
         cd tests/build-gcc-13
         ctest --output-on-failure
+    - name: Run (GCC 14)
+      run: |
+        cd tests/build-gcc-14
+        ctest --output-on-failure
 
     - name: Run (Clang 14)
       run: |
@@ -139,6 +177,14 @@ jobs:
       run: |
         cd tests/build-clang-17
         ctest --output-on-failure
+    - name: Run (Clang 18)
+      run: |
+        cd tests/build-clang-18
+        ctest --output-on-failure
+    - name: Run (Clang 19)
+      run: |
+        cd tests/build-clang-19
+        ctest --output-on-failure
 
   test-ubuntu-22-04:
     name: Ubuntu 22.04
@@ -154,7 +200,7 @@ jobs:
     - name: Install Toolchain
       run: |
         sudo apt-get update
-        sudo apt-get -y install {gcc,g++}-{9,10,11,12,mingw-w64-x86-64} clang-{11,12,13,14,15} ninja-build
+        sudo apt-get -y install {gcc,g++}-{9,10,11,12,mingw-w64-x86-64} {clang,lld}-{11,12,13,14,15} ninja-build
         conda create -y --name cuda-env
         conda install -y --name cuda-env cuda-minimal-build
         rm -f "$CONDA/envs/cuda-env/bin/ld"
@@ -164,28 +210,32 @@ jobs:
         cd tests
         mkdir build-gcc-9
         cd build-gcc-9
-        cmake -G Ninja -DCMAKE_C_COMPILER=gcc-9 -DCMAKE_CXX_COMPILER=g++-9 -DCMAKE_CUDA_COMPILER="$CONDA/envs/cuda-env/bin/nvcc" ..
+        FLAGS="-O3 -Wall -Wextra -Wmissing-braces -Wattributes -Wunused-result -Wlogical-op -Wcast-qual -Wduplicated-cond -Wnull-dereference -Wduplicated-branches -Warray-bounds=2 -Wpointer-arith -Wwrite-strings"
+        cmake .. -G Ninja -DCMAKE_BUILD_TYPE=Release -DCMAKE_C_COMPILER=gcc-9 -DCMAKE_CXX_COMPILER=g++-9 -DCMAKE_CUDA_COMPILER="$CONDA/envs/cuda-env/bin/nvcc" -DCMAKE_C_FLAGS="$FLAGS -Wmissing-prototypes -Wstrict-prototypes -Werror" -DCMAKE_CXX_FLAGS="$FLAGS -Wextra-semi -Werror" -DCMAKE_CUDA_FLAGS="$FLAGS --Wno-deprecated-gpu-targets --Werror all-warnings"
         ninja
     - name: Build (GCC 10)
       run: |
         cd tests
         mkdir build-gcc-10
         cd build-gcc-10
-        cmake -G Ninja -DCMAKE_C_COMPILER=gcc-10 -DCMAKE_CXX_COMPILER=g++-10 -DCMAKE_CUDA_COMPILER="$CONDA/envs/cuda-env/bin/nvcc" ..
+        FLAGS="-O3 -Wall -Wextra -Wmissing-braces -Wattributes -Wunused-result -Wlogical-op -Wcast-qual -Wduplicated-cond -Wnull-dereference -Wduplicated-branches -Warray-bounds=2 -Wpointer-arith -Wwrite-strings"
+        cmake .. -G Ninja -DCMAKE_BUILD_TYPE=Release -DCMAKE_C_COMPILER=gcc-10 -DCMAKE_CXX_COMPILER=g++-10 -DCMAKE_CUDA_COMPILER="$CONDA/envs/cuda-env/bin/nvcc" -DCMAKE_C_FLAGS="$FLAGS -Wmissing-prototypes -Wstrict-prototypes -Werror" -DCMAKE_CXX_FLAGS="$FLAGS -Wextra-semi -Werror" -DCMAKE_CUDA_FLAGS="$FLAGS --Wno-deprecated-gpu-targets --Werror all-warnings"
         ninja
     - name: Build (GCC 11)
       run: |
         cd tests
         mkdir build-gcc-11
         cd build-gcc-11
-        cmake -G Ninja -DCMAKE_C_COMPILER=gcc-11 -DCMAKE_CXX_COMPILER=g++-11 -DCMAKE_CUDA_COMPILER="$CONDA/envs/cuda-env/bin/nvcc" ..
+        FLAGS="-O3 -Wall -Wextra -Wmissing-braces -Wattributes -Wunused-result -Wlogical-op -Wcast-qual -Wduplicated-cond -Wnull-dereference -Wduplicated-branches -Warray-bounds=2 -Wpointer-arith -Wwrite-strings"
+        cmake .. -G Ninja -DCMAKE_BUILD_TYPE=Release -DCMAKE_C_COMPILER=gcc-11 -DCMAKE_CXX_COMPILER=g++-11 -DCMAKE_CUDA_COMPILER="$CONDA/envs/cuda-env/bin/nvcc" -DCMAKE_C_FLAGS="$FLAGS -Wmissing-prototypes -Wstrict-prototypes -Werror" -DCMAKE_CXX_FLAGS="$FLAGS -Wextra-semi -Werror" -DCMAKE_CUDA_FLAGS="$FLAGS --Wno-deprecated-gpu-targets --Werror all-warnings"
         ninja
     - name: Build (GCC 12)
       run: |
         cd tests
         mkdir build-gcc-12
         cd build-gcc-12
-        cmake -G Ninja -DCMAKE_C_COMPILER=gcc-12 -DCMAKE_CXX_COMPILER=g++-12 -DCMAKE_CUDA_COMPILER="$CONDA/envs/cuda-env/bin/nvcc" ..
+        FLAGS="-O3 -Wall -Wextra -Wmissing-braces -Wattributes -Wunused-result -Wlogical-op -Wcast-qual -Wduplicated-cond -Wnull-dereference -Wduplicated-branches -Warray-bounds=2 -Wpointer-arith -Wwrite-strings"
+        cmake .. -G Ninja -DCMAKE_BUILD_TYPE=Release -DCMAKE_C_COMPILER=gcc-12 -DCMAKE_CXX_COMPILER=g++-12 -DCMAKE_CUDA_COMPILER="$CONDA/envs/cuda-env/bin/nvcc" -DCMAKE_C_FLAGS="$FLAGS -Wmissing-prototypes -Wstrict-prototypes -Werror" -DCMAKE_CXX_FLAGS="$FLAGS -Wextra-semi -Werror" -DCMAKE_CUDA_FLAGS="$FLAGS --Wno-deprecated-gpu-targets --Werror all-warnings"
         ninja
 
     - name: Build (Clang 11)
@@ -193,35 +243,40 @@ jobs:
         cd tests
         mkdir build-clang-11
         cd build-clang-11
-        cmake -G Ninja -DCMAKE_C_COMPILER=clang-11 -DCMAKE_CXX_COMPILER=clang++-11 -DCMAKE_CUDA_COMPILER="$CONDA/envs/cuda-env/bin/nvcc" ..
+        FLAGS="-O3 -Weverything -Wno-c++98-compat -Wno-c++98-compat-pedantic -Wno-c++17-extensions -Wno-variadic-macros -Wno-long-long -Wno-reserved-id-macro -Wno-sign-conversion -Wno-float-equal -Wno-padded -Wno-covered-switch-default -Wno-atomic-implicit-seq-cst -Wno-exit-time-destructors -Wno-global-constructors -Wno-missing-variable-declarations -Wno-documentation-unknown-command"
+        cmake .. -G Ninja -DCMAKE_BUILD_TYPE=Release -DCMAKE_C_COMPILER=clang-11 -DCMAKE_CXX_COMPILER=clang++-11 -DCMAKE_LINKER=ld.lld-11 -DCMAKE_CUDA_COMPILER="$CONDA/envs/cuda-env/bin/nvcc" -DCMAKE_C_FLAGS="$FLAGS -Werror" -DCMAKE_CXX_FLAGS="$FLAGS -Werror" -DCMAKE_CUDA_FLAGS="$FLAGS -Wno-undef -Wno-newline-eof -Wno-old-style-cast -Wno-missing-noreturn -Wno-deprecated-dynamic-exception-spec -Wno-unused-template -Wno-zero-as-null-pointer-constant -Wno-used-but-marked-unused -Wno-extra-semi-stmt --Wno-deprecated-gpu-targets -Wno-disabled-macro-expansion -Wno-duplicate-enum -Wno-unused-function --Werror all-warnings"
         ninja
     - name: Build (Clang 12)
       run: |
         cd tests
         mkdir build-clang-12
         cd build-clang-12
-        cmake -G Ninja -DCMAKE_C_COMPILER=clang-12 -DCMAKE_CXX_COMPILER=clang++-12 -DCMAKE_CUDA_COMPILER="$CONDA/envs/cuda-env/bin/nvcc" ..
+        FLAGS="-O3 -Weverything -Wno-c++98-compat -Wno-c++98-compat-pedantic -Wno-c++17-extensions -Wno-variadic-macros -Wno-long-long -Wno-reserved-id-macro -Wno-sign-conversion -Wno-float-equal -Wno-padded -Wno-covered-switch-default -Wno-atomic-implicit-seq-cst -Wno-exit-time-destructors -Wno-global-constructors -Wno-missing-variable-declarations -Wno-documentation-unknown-command"
+        cmake .. -G Ninja -DCMAKE_BUILD_TYPE=Release -DCMAKE_C_COMPILER=clang-12 -DCMAKE_CXX_COMPILER=clang++-12 -DCMAKE_LINKER=ld.lld-12 -DCMAKE_CUDA_COMPILER="$CONDA/envs/cuda-env/bin/nvcc" -DCMAKE_C_FLAGS="$FLAGS -Werror" -DCMAKE_CXX_FLAGS="$FLAGS -Werror" -DCMAKE_CUDA_FLAGS="$FLAGS -Wno-undef -Wno-newline-eof -Wno-old-style-cast -Wno-missing-noreturn -Wno-deprecated-dynamic-exception-spec -Wno-unused-template -Wno-zero-as-null-pointer-constant -Wno-used-but-marked-unused -Wno-extra-semi-stmt --Wno-deprecated-gpu-targets -Wno-disabled-macro-expansion -Wno-duplicate-enum -Wno-unused-function --Werror all-warnings"
         ninja
     - name: Build (Clang 13)
       run: |
         cd tests
         mkdir build-clang-13
         cd build-clang-13
-        cmake -G Ninja -DCMAKE_C_COMPILER=clang-13 -DCMAKE_CXX_COMPILER=clang++-13 -DCMAKE_CUDA_COMPILER="$CONDA/envs/cuda-env/bin/nvcc" ..
+        FLAGS="-O3 -Weverything -Wno-c++98-compat -Wno-c++98-compat-pedantic -Wno-c++17-extensions -Wno-variadic-macros -Wno-long-long -Wno-reserved-identifier -Wno-sign-conversion -Wno-float-equal -Wno-padded -Wno-covered-switch-default -Wno-atomic-implicit-seq-cst -Wno-exit-time-destructors -Wno-global-constructors -Wno-missing-variable-declarations -Wno-documentation-unknown-command"
+        cmake .. -G Ninja -DCMAKE_BUILD_TYPE=Release -DCMAKE_C_COMPILER=clang-13 -DCMAKE_CXX_COMPILER=clang++-13 -DCMAKE_LINKER=ld.lld-13 -DCMAKE_CUDA_COMPILER="$CONDA/envs/cuda-env/bin/nvcc" -DCMAKE_C_FLAGS="$FLAGS -Werror" -DCMAKE_CXX_FLAGS="$FLAGS -Werror" -DCMAKE_CUDA_FLAGS="$FLAGS -Wno-undef -Wno-newline-eof -Wno-old-style-cast -Wno-missing-noreturn -Wno-deprecated-dynamic-exception-spec -Wno-unused-template -Wno-zero-as-null-pointer-constant -Wno-used-but-marked-unused -Wno-extra-semi-stmt --Wno-deprecated-gpu-targets -Wno-disabled-macro-expansion -Wno-duplicate-enum -Wno-unused-function --Werror all-warnings"
         ninja
     - name: Build (Clang 14)
       run: |
         cd tests
         mkdir build-clang-14
         cd build-clang-14
-        cmake -G Ninja -DCMAKE_C_COMPILER=clang-14 -DCMAKE_CXX_COMPILER=clang++-14 -DCMAKE_CUDA_COMPILER="$CONDA/envs/cuda-env/bin/nvcc" ..
+        FLAGS="-O3 -Weverything -Wno-c++98-compat -Wno-c++98-compat-pedantic -Wno-c++17-attribute-extensions -Wno-variadic-macros -Wno-long-long -Wno-reserved-identifier -Wno-sign-conversion -Wno-float-equal -Wno-padded -Wno-covered-switch-default -Wno-atomic-implicit-seq-cst -Wno-exit-time-destructors -Wno-global-constructors -Wno-missing-variable-declarations"
+        cmake .. -G Ninja -DCMAKE_BUILD_TYPE=Release -DCMAKE_C_COMPILER=clang-14 -DCMAKE_CXX_COMPILER=clang++-14 -DCMAKE_LINKER=ld.lld-14 -DCMAKE_CUDA_COMPILER="$CONDA/envs/cuda-env/bin/nvcc" -DCMAKE_C_FLAGS="$FLAGS -Werror" -DCMAKE_CXX_FLAGS="$FLAGS -Werror" -DCMAKE_CUDA_FLAGS="$FLAGS -Wno-undef -Wno-newline-eof -Wno-old-style-cast -Wno-missing-noreturn -Wno-deprecated-dynamic-exception-spec -Wno-unused-template -Wno-zero-as-null-pointer-constant -Wno-used-but-marked-unused -Wno-extra-semi-stmt --Wno-deprecated-gpu-targets -Wno-disabled-macro-expansion -Wno-duplicate-enum -Wno-unused-function --Werror all-warnings"
         ninja
     - name: Build (Clang 15)
       run: |
         cd tests
         mkdir build-clang-15
         cd build-clang-15
-        cmake -G Ninja -DCMAKE_C_COMPILER=clang-15 -DCMAKE_CXX_COMPILER=clang++-15 -DCMAKE_CUDA_COMPILER="$CONDA/envs/cuda-env/bin/nvcc" ..
+        FLAGS="-O3 -Weverything -Wno-c++98-compat -Wno-c++98-compat-pedantic -Wno-c++17-attribute-extensions -Wno-variadic-macros -Wno-long-long -Wno-reserved-identifier -Wno-sign-conversion -Wno-float-equal -Wno-padded -Wno-covered-switch-default -Wno-atomic-implicit-seq-cst -Wno-exit-time-destructors -Wno-global-constructors -Wno-missing-variable-declarations"
+        cmake .. -G Ninja -DCMAKE_BUILD_TYPE=Release -DCMAKE_C_COMPILER=clang-15 -DCMAKE_CXX_COMPILER=clang++-15 -DCMAKE_LINKER=ld.lld-15 -DCMAKE_CUDA_COMPILER="$CONDA/envs/cuda-env/bin/nvcc" -DCMAKE_C_FLAGS="$FLAGS -Werror" -DCMAKE_CXX_FLAGS="$FLAGS -Werror" -DCMAKE_CUDA_FLAGS="$FLAGS -Wno-undef -Wno-newline-eof -Wno-old-style-cast -Wno-missing-noreturn -Wno-deprecated-dynamic-exception-spec -Wno-unused-template -Wno-gnu-line-marker -Wno-zero-as-null-pointer-constant -Wno-used-but-marked-unused -Wno-extra-semi-stmt --Wno-deprecated-gpu-targets -Wno-disabled-macro-expansion -Wno-duplicate-enum -Wno-unused-function --Werror all-warnings"
         ninja
 
     - name: Build (MinGW-w64 GCC)
@@ -229,7 +284,8 @@ jobs:
         cd tests
         mkdir build-mingw
         cd build-mingw
-        cmake -G Ninja -DCMAKE_TOOLCHAIN_FILE=../mingw-w64-x86_64.cmake -DENABLE_CUDA=False ..
+        FLAGS="-O3 -Wall -Wextra -Wmissing-braces -Wattributes -Wunused-result -Wlogical-op -Wcast-qual -Wduplicated-cond -Wnull-dereference -Wduplicated-branches -Warray-bounds=2 -Wpointer-arith -Wwrite-strings"
+        cmake .. -G Ninja -DCMAKE_BUILD_TYPE=Release -DCMAKE_TOOLCHAIN_FILE=../mingw-w64-x86_64.cmake -DENABLE_CUDA=False -DCMAKE_C_FLAGS="$FLAGS -Wmissing-prototypes -Wstrict-prototypes -Werror" -DCMAKE_CXX_FLAGS="$FLAGS -Wextra-semi -Werror"
         ninja
 
     - name: Run (GCC 9)
@@ -289,7 +345,7 @@ jobs:
     - name: Conda - Install CUDA Toolchain
       shell: cmd
       run: |
-        conda install -y --name cuda-env cuda-minimal-build
+        conda install -y --name cuda-env conda-forge::cuda-minimal-build
 
     - name: Build (VS 2022)
       shell: cmd
@@ -297,7 +353,8 @@ jobs:
         cd tests
         mkdir build-vs
         cd build-vs
-        "%ProgramFiles%\Microsoft Visual Studio\2022\Enterprise\VC\Auxiliary\Build\vcvars64.bat" && "%ProgramFiles%\Microsoft Visual Studio\2022\Enterprise\Common7\IDE\CommonExtensions\Microsoft\CMake\CMake\bin\cmake.exe" -G Ninja -DCMAKE_CUDA_COMPILER="%CONDA:\=/%/envs/cuda-env/Library/bin/nvcc.exe" .. && ninja
+        set FLAGS=-Wall -wd4191 -wd4255 -wd4355 -wd4365 -wd4514 -wd4668 -wd4710 -wd4711 -wd4820 -wd5039 -wd5045 -wd5220 -WX
+        "%ProgramFiles%\Microsoft Visual Studio\2022\Enterprise\VC\Auxiliary\Build\vcvars64.bat" && "%ProgramFiles%\Microsoft Visual Studio\2022\Enterprise\Common7\IDE\CommonExtensions\Microsoft\CMake\CMake\bin\cmake.exe" .. -G Ninja -DCMAKE_BUILD_TYPE=Release -DCMAKE_CUDA_COMPILER="%CONDA:\=/%/envs/cuda-env/Library/bin/nvcc.exe" -DCMAKE_C_FLAGS="-O2 %FLAGS%" -DCMAKE_CXX_FLAGS="-O2 %FLAGS%" -DCMAKE_CUDA_FLAGS="%FLAGS% -wd4555 --Wno-deprecated-gpu-targets --Werror all-warnings" && ninja
 
     - name: Run (VS 2022)
       shell: cmd
@@ -317,7 +374,8 @@ jobs:
         cd tests
         mkdir build-vs-x86
         cd build-vs-x86
-        "%ProgramFiles%\Microsoft Visual Studio\2022\Enterprise\VC\Auxiliary\Build\vcvarsamd64_x86.bat" && "%ProgramFiles%\Microsoft Visual Studio\2022\Enterprise\Common7\IDE\CommonExtensions\Microsoft\CMake\CMake\bin\cmake.exe" -G Ninja -DENABLE_CUDA=False .. && ninja
+        set FLAGS=-Wall -wd4191 -wd4255 -wd4355 -wd4365 -wd4514 -wd4668 -wd4710 -wd4711 -wd4820 -wd5039 -wd5045 -wd5220 -WX
+        "%ProgramFiles%\Microsoft Visual Studio\2022\Enterprise\VC\Auxiliary\Build\vcvarsamd64_x86.bat" && "%ProgramFiles%\Microsoft Visual Studio\2022\Enterprise\Common7\IDE\CommonExtensions\Microsoft\CMake\CMake\bin\cmake.exe" .. -G Ninja -DCMAKE_BUILD_TYPE=Release -DENABLE_CUDA=False -DCMAKE_C_FLAGS="-O2 %FLAGS%" -DCMAKE_CXX_FLAGS="-O2 %FLAGS%" && ninja
 
     - name: Build (VS 2022 Arm64)
       shell: cmd
@@ -325,7 +383,8 @@ jobs:
         cd tests
         mkdir build-vs-arm64
         cd build-vs-arm64
-        "%ProgramFiles%\Microsoft Visual Studio\2022\Enterprise\VC\Auxiliary\Build\vcvarsamd64_arm64.bat" && "%ProgramFiles%\Microsoft Visual Studio\2022\Enterprise\Common7\IDE\CommonExtensions\Microsoft\CMake\CMake\bin\cmake.exe" -G Ninja -DENABLE_CUDA=False .. && ninja
+        set FLAGS=-Wall -wd4191 -wd4255 -wd4355 -wd4365 -wd4514 -wd4668 -wd4710 -wd4711 -wd4746 -wd4820 -wd5039 -wd5045 -wd5220 -WX
+        "%ProgramFiles%\Microsoft Visual Studio\2022\Enterprise\VC\Auxiliary\Build\vcvarsamd64_arm64.bat" && "%ProgramFiles%\Microsoft Visual Studio\2022\Enterprise\Common7\IDE\CommonExtensions\Microsoft\CMake\CMake\bin\cmake.exe" .. -G Ninja -DCMAKE_BUILD_TYPE=Release -DENABLE_CUDA=False -DCMAKE_C_FLAGS="-O2 %FLAGS%" -DCMAKE_CXX_FLAGS="-O2 %FLAGS%" && ninja
 
     - name: Build (Clang-CL)
       shell: cmd
@@ -333,7 +392,7 @@ jobs:
         cd tests
         mkdir build-clang-cl
         cd build-clang-cl
-        "%ProgramFiles%\Microsoft Visual Studio\2022\Enterprise\VC\Auxiliary\Build\vcvars64.bat" && "%ProgramFiles%\Microsoft Visual Studio\2022\Enterprise\Common7\IDE\CommonExtensions\Microsoft\CMake\CMake\bin\cmake.exe" -G Ninja -DCMAKE_C_COMPILER="%ProgramFiles:\=/%/Microsoft Visual Studio/2022/Enterprise/VC/Tools/Llvm/x64/bin/clang-cl.exe" -DCMAKE_CXX_COMPILER="%ProgramFiles:\=/%/Microsoft Visual Studio/2022/Enterprise/VC/Tools/Llvm/x64/bin/clang-cl.exe" -DCMAKE_LINKER="%ProgramFiles:\=/%/Microsoft Visual Studio/2022/Enterprise/VC/Tools/Llvm/x64/bin/lld-link.exe" -DENABLE_CUDA=False .. && ninja
+        "%ProgramFiles%\Microsoft Visual Studio\2022\Enterprise\VC\Auxiliary\Build\vcvars64.bat" && "%ProgramFiles%\Microsoft Visual Studio\2022\Enterprise\Common7\IDE\CommonExtensions\Microsoft\CMake\CMake\bin\cmake.exe" .. -G Ninja -DCMAKE_BUILD_TYPE=Release -DCMAKE_C_COMPILER="%ProgramFiles:\=/%/Microsoft Visual Studio/2022/Enterprise/VC/Tools/Llvm/x64/bin/clang-cl.exe" -DCMAKE_CXX_COMPILER="%ProgramFiles:\=/%/Microsoft Visual Studio/2022/Enterprise/VC/Tools/Llvm/x64/bin/clang-cl.exe" -DCMAKE_LINKER="%ProgramFiles:\=/%/Microsoft Visual Studio/2022/Enterprise/VC/Tools/Llvm/x64/bin/lld-link.exe" -DENABLE_CUDA=False && ninja
 
     - name: Run (VS 2022 x86)
       shell: cmd
@@ -374,7 +433,8 @@ jobs:
         cd tests
         mkdir build-vs
         cd build-vs
-        "%ProgramFiles(x86)%\Microsoft Visual Studio\2019\Enterprise\VC\Auxiliary\Build\vcvars64.bat" && "%ProgramFiles(x86)%\Microsoft Visual Studio\2019\Enterprise\Common7\IDE\CommonExtensions\Microsoft\CMake\CMake\bin\cmake.exe" -G Ninja -DCMAKE_CUDA_COMPILER="%CONDA:\=/%/envs/cuda-env/Library/bin/nvcc.exe" .. && ninja
+        set FLAGS=-Wall -wd4191 -wd4355 -wd4365 -wd4514 -wd4668 -wd4710 -wd4711 -wd4820 -wd5039 -wd5045 -wd5220 -WX
+        "%ProgramFiles(x86)%\Microsoft Visual Studio\2019\Enterprise\VC\Auxiliary\Build\vcvars64.bat" && "%ProgramFiles(x86)%\Microsoft Visual Studio\2019\Enterprise\Common7\IDE\CommonExtensions\Microsoft\CMake\CMake\bin\cmake.exe" .. -G Ninja -DCMAKE_BUILD_TYPE=Release -DCMAKE_CUDA_COMPILER="%CONDA:\=/%/envs/cuda-env/Library/bin/nvcc.exe" -DCMAKE_C_FLAGS="-O2 %FLAGS%" -DCMAKE_CXX_FLAGS="-O2 %FLAGS%" -DCMAKE_CUDA_FLAGS="%FLAGS% -wd4555 -wd5031 --Wno-deprecated-gpu-targets --Werror all-warnings" && ninja
 
     - name: Run (VS 2019)
       shell: cmd
@@ -394,7 +454,8 @@ jobs:
         cd tests
         mkdir build-vs-x86
         cd build-vs-x86
-        "%ProgramFiles(x86)%\Microsoft Visual Studio\2019\Enterprise\VC\Auxiliary\Build\vcvarsamd64_x86.bat" && "%ProgramFiles(x86)%\Microsoft Visual Studio\2019\Enterprise\Common7\IDE\CommonExtensions\Microsoft\CMake\CMake\bin\cmake.exe" -G Ninja -DENABLE_CUDA=False .. && ninja
+        set FLAGS=-Wall -wd4191 -wd4355 -wd4365 -wd4514 -wd4668 -wd4710 -wd4711 -wd4820 -wd5039 -wd5045 -wd5220 -WX
+        "%ProgramFiles(x86)%\Microsoft Visual Studio\2019\Enterprise\VC\Auxiliary\Build\vcvarsamd64_x86.bat" && "%ProgramFiles(x86)%\Microsoft Visual Studio\2019\Enterprise\Common7\IDE\CommonExtensions\Microsoft\CMake\CMake\bin\cmake.exe" .. -G Ninja -DCMAKE_BUILD_TYPE=Release -DENABLE_CUDA=False && ninja
 
     - name: Build (VS 2019 Arm64)
       shell: cmd
@@ -402,7 +463,8 @@ jobs:
         cd tests
         mkdir build-vs-arm64
         cd build-vs-arm64
-        "%ProgramFiles(x86)%\Microsoft Visual Studio\2019\Enterprise\VC\Auxiliary\Build\vcvarsamd64_arm64.bat" && "%ProgramFiles(x86)%\Microsoft Visual Studio\2019\Enterprise\Common7\IDE\CommonExtensions\Microsoft\CMake\CMake\bin\cmake.exe" -G Ninja -DENABLE_CUDA=False .. && ninja
+        set FLAGS=-Wall -wd4191 -wd4355 -wd4365 -wd4514 -wd4668 -wd4710 -wd4711 -wd4820 -wd5039 -wd5045 -wd5220 -WX
+        "%ProgramFiles(x86)%\Microsoft Visual Studio\2019\Enterprise\VC\Auxiliary\Build\vcvarsamd64_arm64.bat" && "%ProgramFiles(x86)%\Microsoft Visual Studio\2019\Enterprise\Common7\IDE\CommonExtensions\Microsoft\CMake\CMake\bin\cmake.exe" .. -G Ninja -DCMAKE_BUILD_TYPE=Release -DENABLE_CUDA=False && ninja
 
     - name: Build (Clang-CL)
       shell: cmd
@@ -410,7 +472,7 @@ jobs:
         cd tests
         mkdir build-clang-cl
         cd build-clang-cl
-        "%ProgramFiles(x86)%\Microsoft Visual Studio\2019\Enterprise\VC\Auxiliary\Build\vcvars64.bat" && "%ProgramFiles(x86)%\Microsoft Visual Studio\2019\Enterprise\Common7\IDE\CommonExtensions\Microsoft\CMake\CMake\bin\cmake.exe" -G Ninja -DCMAKE_C_COMPILER="%ProgramFiles(x86):\=/%/Microsoft Visual Studio/2019/Enterprise/VC/Tools/Llvm/x64/bin/clang-cl.exe" -DCMAKE_CXX_COMPILER="%ProgramFiles(x86):\=/%/Microsoft Visual Studio/2019/Enterprise/VC/Tools/Llvm/x64/bin/clang-cl.exe" -DCMAKE_LINKER="%ProgramFiles(x86):\=/%/Microsoft Visual Studio/2019/Enterprise/VC/Tools/Llvm/x64/bin/lld-link.exe" -DENABLE_CUDA=False .. && ninja
+        "%ProgramFiles(x86)%\Microsoft Visual Studio\2019\Enterprise\VC\Auxiliary\Build\vcvars64.bat" && "%ProgramFiles(x86)%\Microsoft Visual Studio\2019\Enterprise\Common7\IDE\CommonExtensions\Microsoft\CMake\CMake\bin\cmake.exe" .. -G Ninja -DCMAKE_BUILD_TYPE=Release -DCMAKE_C_COMPILER="%ProgramFiles(x86):\=/%/Microsoft Visual Studio/2019/Enterprise/VC/Tools/Llvm/x64/bin/clang-cl.exe" -DCMAKE_CXX_COMPILER="%ProgramFiles(x86):\=/%/Microsoft Visual Studio/2019/Enterprise/VC/Tools/Llvm/x64/bin/clang-cl.exe" -DCMAKE_LINKER="%ProgramFiles(x86):\=/%/Microsoft Visual Studio/2019/Enterprise/VC/Tools/Llvm/x64/bin/lld-link.exe" -DENABLE_CUDA=False && ninja
 
     - name: Run (VS 2019 x86)
       shell: cmd
@@ -432,14 +494,15 @@ jobs:
 
     - name: Install Toolchain
       run: |
-        brew install --force-bottle ninja llvm lld mingw-w64
+        brew install --force-bottle llvm lld mingw-w64
 
     - name: Build (Apple Clang)
       run: |
         cd tests
         mkdir build-appleclang
         cd build-appleclang
-        cmake -G Ninja ..
+        FLAGS="-O3 -Weverything -Wno-c++98-compat -Wno-c++98-compat-pedantic -Wno-c++17-attribute-extensions -Wno-variadic-macros -Wno-long-long -Wno-reserved-identifier -Wno-unsafe-buffer-usage -Wno-sign-conversion -Wno-float-equal -Wno-padded -Wno-cast-function-type-strict -Wno-covered-switch-default -Wno-atomic-implicit-seq-cst -Wno-exit-time-destructors -Wno-global-constructors -Wno-missing-variable-declarations"
+        cmake .. -G Ninja -DCMAKE_BUILD_TYPE=Release -DCMAKE_C_FLAGS="$FLAGS -Werror" -DCMAKE_CXX_FLAGS="$FLAGS -Werror"
         ninja
 
     - name: Build (GCC)
@@ -448,7 +511,8 @@ jobs:
         mkdir build-gcc
         cd build-gcc
         GCC_VERSION="$(brew list --versions gcc | cut '-d ' -f2 | cut '-d.' -f1)"
-        cmake -G Ninja -DCMAKE_C_COMPILER="gcc-$GCC_VERSION" -DCMAKE_CXX_COMPILER="g++-$GCC_VERSION" ..
+        FLAGS="-O3 -Wall -Wextra -Wmissing-braces -Wattributes -Wunused-result -Wlogical-op -Wcast-qual -Wduplicated-cond -Wnull-dereference -Wduplicated-branches -Warray-bounds=2 -Wpointer-arith -Wwrite-strings"
+        cmake .. -G Ninja -DCMAKE_BUILD_TYPE=Release -DCMAKE_C_COMPILER="gcc-$GCC_VERSION" -DCMAKE_CXX_COMPILER="g++-$GCC_VERSION" -DCMAKE_C_FLAGS="$FLAGS -Wmissing-prototypes -Wstrict-prototypes -Werror" -DCMAKE_CXX_FLAGS="$FLAGS -Wextra-semi -Werror"
         ninja
 
     - name: Build (Clang)
@@ -459,7 +523,8 @@ jobs:
         export PATH="/opt/homebrew/opt/llvm/bin:$PATH"
         export LDFLAGS="-L/opt/homebrew/opt/llvm/lib"
         export CPPFLAGS="-I/opt/homebrew/opt/llvm/include"
-        cmake -G Ninja -DCMAKE_C_COMPILER="/opt/homebrew/opt/llvm/bin/clang" -DCMAKE_CXX_COMPILER="/opt/homebrew/opt/llvm/bin/clang++" -DCMAKE_LINKER="ld64.lld" ..
+        FLAGS="-O3 -Weverything -Wno-c++98-compat -Wno-c++98-compat-pedantic -Wno-c++17-attribute-extensions -Wno-variadic-macros -Wno-long-long -Wno-reserved-identifier -Wno-unsafe-buffer-usage -Wno-sign-conversion -Wno-float-equal -Wno-padded -Wno-cast-function-type-strict -Wno-covered-switch-default -Wno-atomic-implicit-seq-cst -Wno-exit-time-destructors -Wno-global-constructors -Wno-missing-variable-declarations"
+        cmake .. -G Ninja -DCMAKE_BUILD_TYPE=Release -DCMAKE_C_COMPILER="/opt/homebrew/opt/llvm/bin/clang" -DCMAKE_CXX_COMPILER="/opt/homebrew/opt/llvm/bin/clang++" -DCMAKE_LINKER="ld64.lld" -DCMAKE_C_FLAGS="$FLAGS -Werror" -DCMAKE_CXX_FLAGS="$FLAGS -Werror"
         ninja
 
     - name: Build (MinGW-w64 GCC)
@@ -467,7 +532,8 @@ jobs:
         cd tests
         mkdir build-mingw
         cd build-mingw
-        cmake -G Ninja -DCMAKE_TOOLCHAIN_FILE=../mingw-w64-x86_64.cmake -DENABLE_CUDA=False ..
+        FLAGS="-O3 -Wall -Wextra -Wmissing-braces -Wattributes -Wunused-result -Wlogical-op -Wcast-qual -Wduplicated-cond -Wnull-dereference -Wduplicated-branches -Warray-bounds=2 -Wpointer-arith -Wwrite-strings"
+        cmake .. -G Ninja -DCMAKE_BUILD_TYPE=Release -DCMAKE_TOOLCHAIN_FILE=../mingw-w64-x86_64.cmake -DENABLE_CUDA=False -DCMAKE_C_FLAGS="$FLAGS -Wmissing-prototypes -Wstrict-prototypes -Werror" -DCMAKE_CXX_FLAGS="$FLAGS -Wextra-semi -Werror"
         ninja
 
     - name: Run (Apple Clang)
@@ -493,14 +559,15 @@ jobs:
 
     - name: Install Toolchain
       run: |
-        brew install --force-bottle ninja llvm lld mingw-w64
+        brew install --force-bottle llvm lld mingw-w64
 
     - name: Build (Apple Clang)
       run: |
         cd tests
         mkdir build-appleclang
         cd build-appleclang
-        cmake -G Ninja ..
+        FLAGS="-O3 -Weverything -Wno-c++98-compat -Wno-c++98-compat-pedantic -Wno-c++17-attribute-extensions -Wno-variadic-macros -Wno-long-long -Wno-reserved-identifier -Wno-unsafe-buffer-usage -Wno-sign-conversion -Wno-float-equal -Wno-padded -Wno-covered-switch-default -Wno-atomic-implicit-seq-cst -Wno-exit-time-destructors -Wno-global-constructors -Wno-missing-variable-declarations"
+        cmake .. -G Ninja -DCMAKE_BUILD_TYPE=Release -DCMAKE_C_FLAGS="$FLAGS -Werror" -DCMAKE_CXX_FLAGS="$FLAGS -Werror"
         ninja
 
     - name: Build (GCC)
@@ -509,7 +576,8 @@ jobs:
         mkdir build-gcc
         cd build-gcc
         GCC_VERSION="$(brew list --versions gcc | cut '-d ' -f2 | cut '-d.' -f1)"
-        cmake -G Ninja -DCMAKE_C_COMPILER="gcc-$GCC_VERSION" -DCMAKE_CXX_COMPILER="g++-$GCC_VERSION" ..
+        FLAGS="-O3 -Wall -Wextra -Wmissing-braces -Wattributes -Wunused-result -Wlogical-op -Wcast-qual -Wduplicated-cond -Wnull-dereference -Wduplicated-branches -Warray-bounds=2 -Wpointer-arith -Wwrite-strings"
+        cmake .. -G Ninja -DCMAKE_BUILD_TYPE=Release -DCMAKE_C_COMPILER="gcc-$GCC_VERSION" -DCMAKE_CXX_COMPILER="g++-$GCC_VERSION" -DCMAKE_C_FLAGS="$FLAGS -Wmissing-prototypes -Wstrict-prototypes -Werror" -DCMAKE_CXX_FLAGS="$FLAGS -Wextra-semi -Werror"
         ninja
 
     - name: Build (Clang)
@@ -520,7 +588,8 @@ jobs:
         export PATH="/opt/homebrew/opt/llvm/bin:$PATH"
         export LDFLAGS="-L/opt/homebrew/opt/llvm/lib"
         export CPPFLAGS="-I/opt/homebrew/opt/llvm/include"
-        cmake -G Ninja -DCMAKE_C_COMPILER="/opt/homebrew/opt/llvm/bin/clang" -DCMAKE_CXX_COMPILER="/opt/homebrew/opt/llvm/bin/clang++" -DCMAKE_LINKER="ld64.lld" ..
+        FLAGS="-O3 -Weverything -Wno-c++98-compat -Wno-c++98-compat-pedantic -Wno-c++17-attribute-extensions -Wno-variadic-macros -Wno-long-long -Wno-reserved-identifier -Wno-unsafe-buffer-usage -Wno-sign-conversion -Wno-float-equal -Wno-padded -Wno-cast-function-type-strict -Wno-covered-switch-default -Wno-atomic-implicit-seq-cst -Wno-exit-time-destructors -Wno-global-constructors -Wno-missing-variable-declarations"
+        cmake .. -G Ninja -DCMAKE_BUILD_TYPE=Release -DCMAKE_C_COMPILER="/opt/homebrew/opt/llvm/bin/clang" -DCMAKE_CXX_COMPILER="/opt/homebrew/opt/llvm/bin/clang++" -DCMAKE_LINKER="ld64.lld" -DCMAKE_C_FLAGS="$FLAGS -Werror" -DCMAKE_CXX_FLAGS="$FLAGS -Werror"
         ninja
 
     - name: Build (MinGW-w64 GCC)
@@ -528,7 +597,8 @@ jobs:
         cd tests
         mkdir build-mingw
         cd build-mingw
-        cmake -G Ninja -DCMAKE_TOOLCHAIN_FILE=../mingw-w64-x86_64.cmake -DENABLE_CUDA=False ..
+        FLAGS="-O3 -Wall -Wextra -Wmissing-braces -Wattributes -Wunused-result -Wlogical-op -Wcast-qual -Wduplicated-cond -Wnull-dereference -Wduplicated-branches -Warray-bounds=2 -Wpointer-arith -Wwrite-strings"
+        cmake .. -G Ninja -DCMAKE_BUILD_TYPE=Release -DCMAKE_TOOLCHAIN_FILE=../mingw-w64-x86_64.cmake -DENABLE_CUDA=False -DCMAKE_C_FLAGS="$FLAGS -Wmissing-prototypes -Wstrict-prototypes -Werror" -DCMAKE_CXX_FLAGS="$FLAGS -Wextra-semi -Werror"
         ninja
 
     - name: Run (Apple Clang)
@@ -554,14 +624,15 @@ jobs:
 
     - name: Install Toolchain
       run: |
-        brew install --force-bottle ninja llvm lld mingw-w64
+        brew install --force-bottle llvm lld mingw-w64
 
     - name: Build (Apple Clang)
       run: |
         cd tests
         mkdir build-appleclang
         cd build-appleclang
-        cmake -G Ninja ..
+        FLAGS="-O3 -Weverything -Wno-c++98-compat -Wno-c++98-compat-pedantic -Wno-c++17-attribute-extensions -Wno-variadic-macros -Wno-long-long -Wno-reserved-identifier -Wno-unsafe-buffer-usage -Wno-sign-conversion -Wno-float-equal -Wno-padded -Wno-covered-switch-default -Wno-atomic-implicit-seq-cst -Wno-exit-time-destructors -Wno-global-constructors -Wno-missing-variable-declarations"
+        cmake .. -G Ninja -DCMAKE_BUILD_TYPE=Release -DCMAKE_C_FLAGS="$FLAGS -Werror" -DCMAKE_CXX_FLAGS="$FLAGS -Werror"
         ninja
 
     - name: Build (GCC)
@@ -570,7 +641,8 @@ jobs:
         mkdir build-gcc
         cd build-gcc
         GCC_VERSION="$(brew list --versions gcc | cut '-d ' -f2 | cut '-d.' -f1)"
-        cmake -G Ninja -DCMAKE_C_COMPILER="gcc-$GCC_VERSION" -DCMAKE_CXX_COMPILER="g++-$GCC_VERSION" ..
+        FLAGS="-O3 -Wall -Wextra -Wmissing-braces -Wattributes -Wunused-result -Wlogical-op -Wcast-qual -Wduplicated-cond -Wnull-dereference -Wduplicated-branches -Warray-bounds=2 -Wpointer-arith -Wwrite-strings"
+        cmake .. -G Ninja -DCMAKE_BUILD_TYPE=Release -DCMAKE_C_COMPILER="gcc-$GCC_VERSION" -DCMAKE_CXX_COMPILER="g++-$GCC_VERSION" -DCMAKE_C_FLAGS="$FLAGS -Wmissing-prototypes -Wstrict-prototypes -Werror" -DCMAKE_CXX_FLAGS="$FLAGS -Wextra-semi -Werror"
         ninja
 
     - name: Build (Clang)
@@ -581,7 +653,8 @@ jobs:
         export PATH="/usr/local/opt/llvm/bin:$PATH"
         export LDFLAGS="-L/usr/local/opt/llvm/lib"
         export CPPFLAGS="-I/usr/local/opt/llvm/include"
-        cmake -G Ninja -DCMAKE_C_COMPILER="/usr/local/opt/llvm/bin/clang" -DCMAKE_CXX_COMPILER="/usr/local/opt/llvm/bin/clang++" -DCMAKE_LINKER="ld64.lld" ..
+        FLAGS="-O3 -Weverything -Wno-c++98-compat -Wno-c++98-compat-pedantic -Wno-c++17-attribute-extensions -Wno-variadic-macros -Wno-long-long -Wno-reserved-identifier -Wno-unsafe-buffer-usage -Wno-sign-conversion -Wno-float-equal -Wno-padded -Wno-cast-function-type-strict -Wno-covered-switch-default -Wno-atomic-implicit-seq-cst -Wno-exit-time-destructors -Wno-global-constructors -Wno-missing-variable-declarations"
+        cmake .. -G Ninja -DCMAKE_BUILD_TYPE=Release -DCMAKE_C_COMPILER="/usr/local/opt/llvm/bin/clang" -DCMAKE_CXX_COMPILER="/usr/local/opt/llvm/bin/clang++" -DCMAKE_LINKER="ld64.lld" -DCMAKE_C_FLAGS="$FLAGS -Werror" -DCMAKE_CXX_FLAGS="$FLAGS -Werror"
         ninja
 
     - name: Build (MinGW-w64 GCC)
@@ -589,7 +662,8 @@ jobs:
         cd tests
         mkdir build-mingw
         cd build-mingw
-        cmake -G Ninja -DCMAKE_TOOLCHAIN_FILE=../mingw-w64-x86_64.cmake -DENABLE_CUDA=False ..
+        FLAGS="-O3 -Wall -Wextra -Wmissing-braces -Wattributes -Wunused-result -Wlogical-op -Wcast-qual -Wduplicated-cond -Wnull-dereference -Wduplicated-branches -Warray-bounds=2 -Wpointer-arith -Wwrite-strings"
+        cmake .. -G Ninja -DCMAKE_BUILD_TYPE=Release -DCMAKE_TOOLCHAIN_FILE=../mingw-w64-x86_64.cmake -DENABLE_CUDA=False -DCMAKE_C_FLAGS="$FLAGS -Wmissing-prototypes -Wstrict-prototypes -Werror" -DCMAKE_CXX_FLAGS="$FLAGS -Wextra-semi -Werror"
         ninja
 
     - name: Run (Apple Clang)
