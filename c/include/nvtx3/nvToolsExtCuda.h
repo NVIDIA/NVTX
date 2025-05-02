@@ -83,7 +83,8 @@ NVTX_DECLSPEC void NVTX_API nvtxNameCuDeviceW(CUdevice device, const wchar_t* na
  * \param context - The handle of the CUDA context to name.
  * \param name    - The name of the CUDA context.
  *
- * \par Example:
+ * \par Example
+ * Name a CUDA context:
  * \code
  * CUresult status = cuCtxCreate( &cuContext, 0, cuDevice );
  * if ( CUDA_SUCCESS != status )

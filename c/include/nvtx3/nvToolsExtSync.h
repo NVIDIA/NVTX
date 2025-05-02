@@ -47,14 +47,15 @@ extern "C" {
 *
 * See module \ref SYNCHRONIZATION for details.
 *
-* \par Example:
+* \par Example
+* Instrument a mutex class:
 * \code
 * class MyMutex
 * {
 *     volatile long bLocked;
 *     nvtxSyncUser_t hSync;
 * public:
-*     MyMutex(const char* name, nvtxDomainHandle_t d){
+*     MyMutex(const char* name, nvtxDomainHandle_t d) {
 *          bLocked = 0;
 *
 *          nvtxSyncUserAttributes_t attribs = { 0 };
@@ -71,8 +72,8 @@ extern "C" {
 *
 *     bool Lock() {
 *          nvtxDomainSyncUserAcquireStart(hSync);
-*          bool acquired = __sync_bool_compare_and_swap(&bLocked, 0, 1);//atomic compiler intrinsic
-
+*          bool acquired = __sync_bool_compare_and_swap(&bLocked, 0, 1); // atomic compiler intrinsic
+*
 *          if (acquired) {
 *              nvtxDomainSyncUserAcquireSuccess(hSync);
 *          }
@@ -81,7 +82,7 @@ extern "C" {
 *          }
 *          return acquired;
 *     }
-
+*
 *     void Unlock() {
 *          nvtxDomainSyncUserReleasing(hSync);
 *          bLocked = false;
@@ -171,8 +172,7 @@ typedef struct nvtxSyncUser* nvtxSyncUser_t;
 * extension library and can change between different versions of the Tools Extension
 * library.
 *
-* \par Initializing the Attributes
-*
+* \par Guidelines
 * The caller should always perform the following three tasks when using
 * attributes:
 * <ul>
@@ -190,14 +190,16 @@ typedef struct nvtxSyncUser* nvtxSyncUser_t;
 * It is recommended that the caller use one of the following to methods
 * to initialize the event attributes structure:
 *
-* \par Method 1: Initializing nvtxEventAttributes for future compatibility
+* \par Method 1
+* Initializing nvtxEventAttributes for future compatibility:
 * \code
 * nvtxSyncUserAttributes_t attribs = {0};
 * attribs.version = NVTX_VERSION;
 * attribs.size = NVTX_SYNCUSER_ATTRIB_STRUCT_SIZE;
 * \endcode
 *
-* \par Method 2: Initializing nvtxSyncUserAttributes_t for a specific version
+* \par Method 2
+* Initializing nvtxSyncUserAttributes_t for a specific version:
 * \code
 * nvtxSyncUserAttributes_t attribs = {0};
 * attribs.version = 1;
@@ -214,10 +216,8 @@ typedef struct nvtxSyncUser* nvtxSyncUser_t;
 * will likely cause either source level incompatibility or binary
 * incompatibility in the future.
 *
-* \par Settings Attribute Types and Values
-*
-*
-* \par Example:
+* \par Example
+* Populate a sync attributes structure:
 * \code
 * // Initialize
 * nvtxSyncUserAttributes_t attribs = {0};
