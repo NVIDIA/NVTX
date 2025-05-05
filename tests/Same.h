@@ -166,6 +166,7 @@ inline bool Same(wchar_t const* lhs, wchar_t const* rhs, SAME_COMMON_ARGS)
 // Helper macros to define Same() overloads (and operators == and !=) for struct and tagged union types
 
 #define MEMBER_SAME(member) Same(lhs.member, rhs.member, deep, verbose, #member, oss, depth + 1)
+#define PVOID_MEMBER_SAME(member) Same(NVTX_REINTERPRET_CAST(intptr_t, lhs.member), NVTX_REINTERPRET_CAST(intptr_t, rhs.member), deep, verbose, #member, oss, depth + 1)
 #define UNION_MEMBER_SAME(tagField, tagValue, member) (lhs.tagField == tagValue && MEMBER_SAME(member))
 
 #define VERBOSE_PRINT() if (verbose && !same) oss << std::string(depth, ' ') << "'" << name << "' members different\n"
@@ -186,3 +187,5 @@ inline bool Same(wchar_t const* lhs, wchar_t const* rhs, SAME_COMMON_ARGS)
 #define DEFINE_SAME_1(T, a)       SAME_SIG(T) { bool same = DEFINE_MEMBER_SAME_1(a);       VERBOSE_PRINT(); return same; } DEFINE_EQ_NE_DEEP(T)
 #define DEFINE_SAME_2(T, a, b)    SAME_SIG(T) { bool same = DEFINE_MEMBER_SAME_2(a, b);    VERBOSE_PRINT(); return same; } DEFINE_EQ_NE_DEEP(T)
 #define DEFINE_SAME_3(T, a, b, c) SAME_SIG(T) { bool same = DEFINE_MEMBER_SAME_3(a, b, c); VERBOSE_PRINT(); return same; } DEFINE_EQ_NE_DEEP(T)
+
+#define DEFINE_PVOID_SAME_1(T, a) SAME_SIG(T) { bool same = PVOID_MEMBER_SAME(a);          VERBOSE_PRINT(); return same; } DEFINE_EQ_NE_DEEP(T)

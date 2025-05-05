@@ -513,7 +513,7 @@ inline bool Same(nvtxResourceAttributes_t const& lhs, nvtxResourceAttributes_t c
         && MEMBER_SAME(identifierType)
         && (false
             || lhs.identifierType == NVTX_RESOURCE_TYPE_UNKNOWN
-            || (lhs.identifierType == NVTX_RESOURCE_TYPE_GENERIC_POINTER       && MEMBER_SAME(identifier.pValue))
+            || (lhs.identifierType == NVTX_RESOURCE_TYPE_GENERIC_POINTER       && PVOID_MEMBER_SAME(identifier.pValue))
             || (lhs.identifierType == NVTX_RESOURCE_TYPE_GENERIC_HANDLE        && MEMBER_SAME(identifier.ullValue))
             || (lhs.identifierType == NVTX_RESOURCE_TYPE_GENERIC_THREAD_NATIVE && MEMBER_SAME(identifier.ullValue))
             || (lhs.identifierType == NVTX_RESOURCE_TYPE_GENERIC_THREAD_POSIX  && MEMBER_SAME(identifier.ullValue))
@@ -537,6 +537,8 @@ DEFINE_EQ_NE_DEEP(nvtxResourceAttributes_t)
 #define DEFINE_ARGS_SAME_1(cb, a)       DEFINE_SAME_1(Args##cb, a)
 #define DEFINE_ARGS_SAME_2(cb, a, b)    DEFINE_SAME_2(Args##cb, a, b)
 #define DEFINE_ARGS_SAME_3(cb, a, b, c) DEFINE_SAME_3(Args##cb, a, b, c)
+
+#define DEFINE_ARGS_PVOID_SAME_1(cb, a) DEFINE_PVOID_SAME_1(Args##cb, a)
 
 DEFINE_ARGS_SAME_1(Load, success)
 // CORE
@@ -570,7 +572,7 @@ DEFINE_ARGS_SAME_2(DomainRegisterStringW, domain, str)
 DEFINE_ARGS_SAME_1(DomainCreateA, name)
 DEFINE_ARGS_SAME_1(DomainCreateW, name)
 DEFINE_ARGS_SAME_1(DomainDestroy, domain)
-DEFINE_ARGS_SAME_1(Initialize, reserved)
+DEFINE_ARGS_PVOID_SAME_1(Initialize, reserved)
 
 inline bool Same(CallData const& lhs, CallData const& rhs, SAME_COMMON_ARGS)
 {
