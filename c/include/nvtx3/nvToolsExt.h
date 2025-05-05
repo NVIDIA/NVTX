@@ -193,7 +193,7 @@
 #define NVTX_DYNAMIC_EXPORT __attribute__((visibility("default"))) __declspec(dllexport)
 #endif
 
-#if defined(_M_IX86) || defined(_M_ARM64EC)
+#if defined(_MSC_VER) && (defined(_M_IX86) || defined(_M_ARM64EC))
 #define NVTX_EXPORT_UNMANGLED_FUNCTION_NAME _Pragma("comment(linker, \"/EXPORT:\" __FUNCTION__ \"=\" __FUNCDNAME__)")
 #else
 #define NVTX_EXPORT_UNMANGLED_FUNCTION_NAME
