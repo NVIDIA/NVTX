@@ -96,11 +96,6 @@ if(MSVC)
         #set(CMAKE_VS_JUST_MY_CODE_DEBUGGING ON)
         add_compile_options(-JMC)
     endif()
-else()
-    # Stop compiling immediately after first error
-    add_compile_options(-Wfatal-errors)
-    # Check for initializing unions without required braces
-    add_compile_options(-Wmissing-braces)
 endif()
 
 
