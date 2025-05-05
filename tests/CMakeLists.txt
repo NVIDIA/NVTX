@@ -25,8 +25,15 @@ if(APPLE)
     set(ENABLE_CUDA False)
 endif()
 
+# Enforce standard C/C++ with sensible warnings and minimal compiler output on all platforms
+set(CMAKE_C_STANDARD 90)
+set(CMAKE_C_EXTENSIONS OFF)
+set(CMAKE_CXX_STANDARD 11)
+set(CMAKE_CXX_EXTENSIONS OFF)
+
 set(NVTX_LANGUAGES C CXX)
 if(ENABLE_CUDA)
+    set(CMAKE_CUDA_HOST_COMPILER "${CMAKE_CXX_COMPILER}")
     set(NVTX_LANGUAGES ${NVTX_LANGUAGES} CUDA)
 endif()
 
@@ -35,13 +42,6 @@ project ("NvtxTests" LANGUAGES ${NVTX_LANGUAGES})
 string(REGEX REPLACE "/tests$" "" NVTX3_PROJ_ROOT "${CMAKE_CURRENT_SOURCE_DIR}")
 set(NVTX3_C_ROOT "${NVTX3_PROJ_ROOT}/c")
 
-# Enforce standard C/C++ with sensible warnings and minimal compiler output on all platforms
-set(CMAKE_C_STANDARD 90)
-set(CMAKE_C_EXTENSIONS OFF)
-set(CMAKE_CXX_STANDARD 11)
-set(CMAKE_CXX_EXTENSIONS OFF)
-set(CMAKE_CUDA_HOST_COMPILER "${CMAKE_CXX_COMPILER}")
-set(CMAKE_CUDA_FLAGS "${CMAKE_CUDA_FLAGS} -ccbin \"${CMAKE_CXX_COMPILER}\"")
 if(MSVC)
     # Must use - instead of / for option prefix when using NVCC, because it forwards args
     # it doesn't know to the host compiler, but being a UNIX-heritage program, it thinks
