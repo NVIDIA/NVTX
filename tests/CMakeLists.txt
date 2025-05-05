@@ -400,6 +400,19 @@ if(APPLE)
     set_property(TEST "CoverageCpp with PrintInjectionCpp as Preinjection"
         PROPERTY
         ENVIRONMENT DYLD_INSERT_LIBRARIES=${CMAKE_BINARY_DIR}/libinj-cpp-preinject.dylib)
+elseif(CYGWIN)
+    set_property(TEST "CoverageC with PrintInjectionC as Preinjection"
+        PROPERTY
+        ENVIRONMENT LD_PRELOAD=${CMAKE_BINARY_DIR}/cyginj-c-preinject.dll)
+    set_property(TEST "CoverageC with PrintInjectionCpp as Preinjection"
+        PROPERTY
+        ENVIRONMENT LD_PRELOAD=${CMAKE_BINARY_DIR}/cyginj-cpp-preinject.dll)
+    set_property(TEST "CoverageCpp with PrintInjectionC as Preinjection"
+        PROPERTY
+        ENVIRONMENT LD_PRELOAD=${CMAKE_BINARY_DIR}/cyginj-c-preinject.dll)
+    set_property(TEST "CoverageCpp with PrintInjectionCpp as Preinjection"
+        PROPERTY
+        ENVIRONMENT LD_PRELOAD=${CMAKE_BINARY_DIR}/cyginj-cpp-preinject.dll)
 elseif(NOT WIN32)
     set_property(TEST "CoverageC with PrintInjectionC as Preinjection"
         PROPERTY
