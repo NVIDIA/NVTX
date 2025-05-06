@@ -22,6 +22,17 @@
 #error Never include this file directly -- it is automatically included by nvToolsExtCudaRt.h (except when NVTX_NO_IMPL is defined).
 #endif
 
+#if defined(NVTX_AS_SYSTEM_HEADER)
+#if defined(__clang__)
+#pragma clang system_header
+#elif defined(__GNUC__) || defined(__NVCOMPILER)
+#pragma GCC system_header
+#elif defined(_MSC_VER)
+#pragma system_header
+#endif
+#endif
+
+
 #ifdef __cplusplus
 extern "C" {
 #endif /* __cplusplus */

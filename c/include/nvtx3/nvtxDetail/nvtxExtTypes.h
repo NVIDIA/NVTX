@@ -18,6 +18,20 @@
  * See https://nvidia.github.io/NVTX/LICENSE.txt for license information.
  */
 
+#ifndef NVTX_EXT_TYPES_GUARD
+#error Never include this file directly -- it is automatically included by nvToolsExt[EXTENSION].h.
+#endif
+
+#if defined(NVTX_AS_SYSTEM_HEADER)
+#if defined(__clang__)
+#pragma clang system_header
+#elif defined(__GNUC__) || defined(__NVCOMPILER)
+#pragma GCC system_header
+#elif defined(_MSC_VER)
+#pragma system_header
+#endif
+#endif
+
 /* This header defines types which are used by the internal implementation
 *  of NVTX and callback subscribers.  API clients do not use these types,
 *  so they are defined here instead of in nvToolsExt.h to clarify they are
@@ -25,10 +39,6 @@
 
 #ifndef NVTXEXTTYPES_H
 #define NVTXEXTTYPES_H
-
-#ifndef NVTX_EXT_TYPES_GUARD
-#error Never include this file directly -- it is automatically included by nvToolsExt[EXTENSION].h.
-#endif
 
 typedef intptr_t (NVTX_API * NvtxExtGetExportFunction_t)(uint32_t exportFunctionId);
 

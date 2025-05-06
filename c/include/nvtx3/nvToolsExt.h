@@ -162,6 +162,16 @@
 #error "Trying to #include NVTX version 3 in a source file where an older NVTX version has already been included.  If you are not directly using NVTX (the NVIDIA Tools Extension library), you are getting this error because libraries you are using have included different versions of NVTX.  Suggested solutions are: (1) reorder #includes so the newest NVTX version is included first, (2) avoid using the conflicting libraries in the same .c/.cpp file, or (3) update the library using the older NVTX version to use the newer version instead."
 #endif
 
+#if defined(NVTX_AS_SYSTEM_HEADER)
+#if defined(__clang__)
+#pragma clang system_header
+#elif defined(__GNUC__) || defined(__NVCOMPILER)
+#pragma GCC system_header
+#elif defined(_MSC_VER)
+#pragma system_header
+#endif
+#endif
+
 /* Header guard */
 #if !defined(NVTX_VERSION)
 #define NVTX_VERSION 3

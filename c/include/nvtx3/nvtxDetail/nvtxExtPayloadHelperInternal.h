@@ -18,6 +18,16 @@
  * See https://nvidia.github.io/NVTX/LICENSE.txt for license information.
  */
 
+#if defined(NVTX_AS_SYSTEM_HEADER)
+#if defined(__clang__)
+#pragma clang system_header
+#elif defined(__GNUC__) || defined(__NVCOMPILER)
+#pragma GCC system_header
+#elif defined(_MSC_VER)
+#pragma system_header
+#endif
+#endif
+
 #ifndef NVTX_EXT_PAYLOAD_HELPER_INTERNAL_H
 #define NVTX_EXT_PAYLOAD_HELPER_INTERNAL_H
 
