@@ -48,9 +48,15 @@ extern "C" {
 #include "nvtxExtHelperMacros.h"
 
 #define NVTX_EXT_PAYLOAD_IMPL_FN_V1(ret_type, fn_name, signature, arg_names) \
-ret_type fn_name signature { \
+NVTX_DECLSPEC ret_type NVTX_API fn_name signature { \
     NVTX_SET_NAME_MANGLING_OPTIONS \
     NVTX_EXT_HELPER_UNUSED_ARGS arg_names \
+    NVTX_EXT_FN_RETURN_INVALID(ret_type) \
+}
+
+#define NVTX_EXT_PAYLOAD_IMPL_FN_NOARGS_V1(ret_type, fn_name) \
+NVTX_DECLSPEC ret_type NVTX_API fn_name (void) { \
+    NVTX_SET_NAME_MANGLING_OPTIONS \
     NVTX_EXT_FN_RETURN_INVALID(ret_type) \
 }
 
@@ -118,6 +124,9 @@ NVTX_DECLSPEC ret_type NVTX_API fn_name signature { \
     NVTX_EXT_FN_RETURN_INVALID(ret_type) /* No tool attached. */ \
 }
 
+#define NVTX_EXT_PAYLOAD_IMPL_FN_NOARGS_V1(ret_type, fn_name) \
+    NVTX_EXT_PAYLOAD_IMPL_FN_V1(ret_type, fn_name, (void), ())
+
 #endif /* NVTX_DISABLE */
 
 /* Push/pop functions return `NVTX_NO_PUSH_POP_TRACKING` if no tool is attached. */
@@ -156,7 +165,7 @@ NVTX_EXT_PAYLOAD_IMPL_FN_V1(uint8_t, nvtxDomainIsEnabled, (nvtxDomainHandle_t do
 NVTX_EXT_PAYLOAD_IMPL_FN_V1(uint64_t, nvtxScopeRegister, (nvtxDomainHandle_t domain,
     const nvtxScopeAttr_t* attr), (domain, attr))
 
-NVTX_EXT_PAYLOAD_IMPL_FN_V1(int64_t, nvtxTimestampGet, (void), ())
+NVTX_EXT_PAYLOAD_IMPL_FN_NOARGS_V1(int64_t, nvtxTimestampGet)
 
 NVTX_EXT_PAYLOAD_IMPL_FN_V1(uint64_t, nvtxTimeDomainRegister,
     (nvtxDomainHandle_t domain, const nvtxTimeDomainAttr_t* attr),

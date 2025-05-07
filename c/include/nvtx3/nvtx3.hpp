@@ -708,6 +708,9 @@ struct is_c_string<T, typename std::enable_if<
 template <typename T>
 using is_uint32 = std::is_same<typename std::decay<T>::type, uint32_t>;
 
+template <typename... Args>
+static inline void silence_unused(Args const&...) noexcept {}
+
 }  // namespace detail
 
 /**
@@ -2203,6 +2206,8 @@ public:
 
     nvtxDomainRangePushEx(domain::get<D>(), attr.get());
     initialized = true;
+#else
+    (void)attr;
 #endif
   }
 
@@ -2384,6 +2389,7 @@ NVTX3_NO_DISCARD inline range_handle start_range_in(Args const&... args) noexcep
 #ifndef NVTX_DISABLE
   return start_range_in<D>(event_attributes{args...});
 #else
+  detail::silence_unused(args...);
   return {};
 #endif
 }
@@ -2457,6 +2463,7 @@ NVTX3_NO_DISCARD inline range_handle start_range(Args const&... args) noexcept
 #ifndef NVTX_DISABLE
   return start_range_in<domain::global>(args...);
 #else
+  detail::silence_unused(args...);
   return {};
 #endif
 }
@@ -2694,6 +2701,8 @@ inline void mark_in(Args const&... args) noexcept
 {
 #ifndef NVTX_DISABLE
   mark_in<D>(event_attributes{args...});
+#else
+  detail::silence_unused(args...);
 #endif
 }
 
@@ -2721,6 +2730,8 @@ inline void mark(event_attributes const& attr) noexcept
 {
 #ifndef NVTX_DISABLE
   mark_in<domain::global>(attr);
+#else
+  (void)attr;
 #endif
 }
 
@@ -2753,6 +2764,8 @@ inline void mark(Args const&... args) noexcept
 {
 #ifndef NVTX_DISABLE
   mark_in<domain::global>(args...);
+#else
+  detail::silence_unused(args...);
 #endif
 }
 
@@ -2817,10 +2830,10 @@ inline void mark(Args const&... args) noexcept
     static ::nvtx3::v1::event_attributes const nvtx3_func_attr__{nvtx3_func_name__}; \
     optional_nvtx3_range__.begin(nvtx3_func_attr__);                                 \
   } (void)0
-#else
+#else /* NVTX_DISABLE */
 #define NVTX3_V1_FUNC_RANGE_IN(D) (void)0
-#define NVTX3_V1_FUNC_RANGE_IF_IN(D, C) (void)0
-#endif  // NVTX_DISABLE
+#define NVTX3_V1_FUNC_RANGE_IF_IN(D, C) (void)(C)
+#endif /* NVTX_DISABLE */
 
 /**
  * @brief Convenience macro for generating a range in the global domain from the

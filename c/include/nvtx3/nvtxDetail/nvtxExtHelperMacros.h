@@ -49,10 +49,13 @@
 #define NVTX_EXT_SELECTA16(a1, a2, a3, a4, a5, a6, a7, a8, a9, a10, a11, a12, a13, a14, a15, a16, ...) a16
 
 /* Cast argument(s) to void to prevent unused variable warnings. */
+#define _NVTX_EXT_VOIDIFY0()
 #define _NVTX_EXT_VOIDIFY1(a1) (void)a1;
 #define _NVTX_EXT_VOIDIFY2(a1, a2) (void)a1; (void)a2;
 #define _NVTX_EXT_VOIDIFY3(a1, a2, a3) (void)a1; (void)a2; (void)a3;
 #define _NVTX_EXT_VOIDIFY4(a1, a2, a3, a4) (void)a1; (void)a2; (void)a3; (void)a4;
+#define _NVTX_EXT_VOIDIFY5(a1, a2, a3, a4, a5) (void)a1; (void)a2; (void)a3; (void)a4; (void)a5;
+#define _NVTX_EXT_VOIDIFY6(a1, a2, a3, a4, a5, a6) (void)a1; (void)a2; (void)a3; (void)a4; (void)a5; (void)a6;
 
 /* Mark function arguments as unused. */
 #define NVTX_EXT_HELPER_UNUSED_ARGS(...) \

@@ -48,7 +48,7 @@ extern "C" {
 #include "nvtxExtHelperMacros.h"
 
 #define NVTX_EXT_MEM_IMPL_FN_V1(ret_type, fn_name, signature, arg_names) \
-ret_type fn_name signature { \
+NVTX_DECLSPEC ret_type NVTX_API fn_name signature { \
     NVTX_SET_NAME_MANGLING_OPTIONS \
     NVTX_EXT_HELPER_UNUSED_ARGS arg_names \
     NVTX_EXT_FN_RETURN_INVALID(ret_type) \
