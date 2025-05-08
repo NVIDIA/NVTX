@@ -926,7 +926,7 @@ typedef struct nvtxScopeAttr_v1
     /**
      * Static scope ID. Must be unique within the domain,
      * >= NVTX_SCOPE_ID_STATIC_START, and < NVTX_SCOPE_ID_DYNAMIC_START.
-     * Use NVTX_SCOPE_INVALID to let the tool create a (dynamic) scope ID.
+     * Use NVTX_SCOPE_NONE to let the tool create a (dynamic) scope ID.
      */
     uint64_t    scopeId;
 } nvtxScopeAttr_t;
