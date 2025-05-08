@@ -18,9 +18,7 @@
  * See https://nvidia.github.io/NVTX/LICENSE.txt for license information.
  */
 
-/**
- * NVTX semantic headers require nvToolsExtPayload.h to be included beforehand.
- */
+#include "nvToolsExtPayload.h"
 
 /** Identifier of the semantic extension for timestamps. */
 #ifndef NVTX_SEMANTIC_ID_TIME_V1
