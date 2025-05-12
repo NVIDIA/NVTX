@@ -99,13 +99,13 @@ $(function() {
 <div class="textblock"><h1><a class="anchor" id="QUICK_START"></a>
 Quick Start</h1>
 <p>To add NVTX ranges to your code, use the <code>nvtx3::scoped_range</code> RAII object. A range begins when the object is created, and ends when the object is destroyed.</p>
-<div class="fragment"><div class="line"><span class="preprocessor">#include &quot;<a class="code" href="nvtx3_8hpp.html">nvtx3.hpp</a>&quot;</span></div>
+<div class="fragment"><div class="line"><span class="preprocessor">#include &quot;<a class="code" href="nvtx3_8hpp.html">nvtx3/nvtx3.hpp</a>&quot;</span></div>
 <div class="line"><span class="keywordtype">void</span> some_function() {</div>
 <div class="line">   <span class="comment">// Begins a NVTX range with the message &quot;some_function&quot;</span></div>
 <div class="line">   <span class="comment">// The range ends when some_function() returns and `r` is destroyed</span></div>
 <div class="line">   nvtx3::scoped_range r{<span class="stringliteral">&quot;some_function&quot;</span>};</div>
 <div class="line"> </div>
-<div class="line">   <span class="keywordflow">for</span>(<span class="keywordtype">int</span> i = 0; i &lt; 6; ++i) {</div>
+<div class="line">   <span class="keywordflow">for</span>(<span class="keywordtype">int</span> i = 0; i &lt; 5; ++i) {</div>
 <div class="line">      nvtx3::scoped_range loop{<span class="stringliteral">&quot;loop range&quot;</span>};</div>
 <div class="line">      std::this_thread::sleep_for(std::chrono::seconds{1});</div>
 <div class="line">   }</div>
@@ -116,7 +116,7 @@ Quick Start</h1>
 <img src="https://raw.githubusercontent.com/NVIDIA/NVTX/release-v3/docs/images/example_range.png" alt=""/>
 </div>
 <p>Alternatively, use the <a class="el" href="index.html#MACROS">Convenience Macros</a> like <code>NVTX3_FUNC_RANGE()</code> to add ranges to your code that automatically use the name of the enclosing function as the range's message.</p>
-<div class="fragment"><div class="line"><span class="preprocessor">#include &quot;<a class="code" href="nvtx3_8hpp.html">nvtx3.hpp</a>&quot;</span></div>
+<div class="fragment"><div class="line"><span class="preprocessor">#include &quot;<a class="code" href="nvtx3_8hpp.html">nvtx3/nvtx3.hpp</a>&quot;</span></div>
 <div class="line"><span class="keywordtype">void</span> some_function() {</div>
 <div class="line">   <span class="comment">// Creates a range with a message &quot;some_function&quot; that ends when the</span></div>
 <div class="line">   <span class="comment">// enclosing function returns</span></div>
@@ -150,7 +150,7 @@ Overview</h1>
 <div class="line"><span class="comment">// construct a `nvtx3::domain` object and return a reference to it. Future</span></div>
 <div class="line"><span class="comment">// invocations simply return a reference.</span></div>
 <div class="line"><a class="code hl_class" href="classnvtx3_1_1v1_1_1domain.html">nvtx3::domain</a> <span class="keyword">const</span>&amp; D = nvtx3::domain::get&lt;my_domain&gt;();</div>
-<div class="ttc" id="aclassnvtx3_1_1v1_1_1domain_html"><div class="ttname"><a href="classnvtx3_1_1v1_1_1domain.html">nvtx3::domain</a></div><div class="ttdoc">domains allow for grouping NVTX events into a single scope to differentiate them from events in other...</div><div class="ttdef"><b>Definition</b> <a href="nvtx3_8hpp_source.html#l00756">nvtx3.hpp:756</a></div></div>
+<div class="ttc" id="aclassnvtx3_1_1v1_1_1domain_html"><div class="ttname"><a href="classnvtx3_1_1v1_1_1domain.html">nvtx3::domain</a></div><div class="ttdoc">domains allow for grouping NVTX events into a single scope to differentiate them from events in other...</div><div class="ttdef"><b>Definition</b> <a href="nvtx3_8hpp_source.html#l00769">nvtx3.hpp:769</a></div></div>
 </div><!-- fragment --><p> For more information about NVTX and how it can be used, see <a href="https://docs.nvidia.com/cuda/profiler-users-guide/index.html#nvtx">https://docs.nvidia.com/cuda/profiler-users-guide/index.html#nvtx</a> and <a href="https://devblogs.nvidia.com/cuda-pro-tip-generate-custom-application-profile-timelines-nvtx/">https://devblogs.nvidia.com/cuda-pro-tip-generate-custom-application-profile-timelines-nvtx/</a> for more information.</p>
 <h1><a class="anchor" id="RANGES"></a>
 Ranges</h1>
@@ -205,12 +205,12 @@ Domains</h1>
 <div class="line"> </div>
 <div class="line"><span class="comment">// `r` belongs to the custom domain</span></div>
 <div class="line"><a class="code hl_class" href="classnvtx3_1_1v1_1_1scoped__range__in.html">nvtx3::scoped_range_in&lt;my_domain&gt;</a> r{};</div>
-<div class="ttc" id="aclassnvtx3_1_1v1_1_1scoped__range__in_html"><div class="ttname"><a href="classnvtx3_1_1v1_1_1scoped__range__in.html">nvtx3::scoped_range_in</a></div><div class="ttdoc">A RAII object for creating a NVTX range local to a thread within a domain.</div><div class="ttdef"><b>Definition</b> <a href="nvtx3_8hpp_source.html#l02088">nvtx3.hpp:2088</a></div></div>
+<div class="ttc" id="aclassnvtx3_1_1v1_1_1scoped__range__in_html"><div class="ttname"><a href="classnvtx3_1_1v1_1_1scoped__range__in.html">nvtx3::scoped_range_in</a></div><div class="ttdoc">A RAII object for creating a NVTX range local to a thread within a domain.</div><div class="ttdef"><b>Definition</b> <a href="nvtx3_8hpp_source.html#l02101">nvtx3.hpp:2101</a></div></div>
 </div><!-- fragment --><p>When using a custom domain, it is recommended to define type aliases for NVTX constructs in the custom domain. </p><div class="fragment"><div class="line"><span class="keyword">using </span>my_scoped_range = <a class="code hl_class" href="classnvtx3_1_1v1_1_1scoped__range__in.html">nvtx3::scoped_range_in&lt;my_domain&gt;</a>;</div>
 <div class="line"><span class="keyword">using </span>my_registered_string = <a class="code hl_class" href="classnvtx3_1_1v1_1_1registered__string__in.html">nvtx3::registered_string_in&lt;my_domain&gt;</a>;</div>
 <div class="line"><span class="keyword">using </span>my_named_category = <a class="code hl_class" href="classnvtx3_1_1v1_1_1named__category__in.html">nvtx3::named_category_in&lt;my_domain&gt;</a>;</div>
-<div class="ttc" id="aclassnvtx3_1_1v1_1_1named__category__in_html"><div class="ttname"><a href="classnvtx3_1_1v1_1_1named__category__in.html">nvtx3::named_category_in</a></div><div class="ttdoc">A category with an associated name string.</div><div class="ttdef"><b>Definition</b> <a href="nvtx3_8hpp_source.html#l01236">nvtx3.hpp:1236</a></div></div>
-<div class="ttc" id="aclassnvtx3_1_1v1_1_1registered__string__in_html"><div class="ttname"><a href="classnvtx3_1_1v1_1_1registered__string__in.html">nvtx3::registered_string_in</a></div><div class="ttdoc">A message registered with NVTX.</div><div class="ttdef"><b>Definition</b> <a href="nvtx3_8hpp_source.html#l01436">nvtx3.hpp:1436</a></div></div>
+<div class="ttc" id="aclassnvtx3_1_1v1_1_1named__category__in_html"><div class="ttname"><a href="classnvtx3_1_1v1_1_1named__category__in.html">nvtx3::named_category_in</a></div><div class="ttdoc">A category with an associated name string.</div><div class="ttdef"><b>Definition</b> <a href="nvtx3_8hpp_source.html#l01249">nvtx3.hpp:1249</a></div></div>
+<div class="ttc" id="aclassnvtx3_1_1v1_1_1registered__string__in_html"><div class="ttname"><a href="classnvtx3_1_1v1_1_1registered__string__in.html">nvtx3::registered_string_in</a></div><div class="ttdoc">A message registered with NVTX.</div><div class="ttdef"><b>Definition</b> <a href="nvtx3_8hpp_source.html#l01449">nvtx3.hpp:1449</a></div></div>
 </div><!-- fragment --><p>See <code><a class="el" href="classnvtx3_1_1v1_1_1domain.html" title="domains allow for grouping NVTX events into a single scope to differentiate them from events in other...">nvtx3::domain</a></code> for more information.</p>
 <h1><a class="anchor" id="ATTRIBUTES"></a>
 Event Attributes</h1>
@@ -247,10 +247,10 @@ Event Attributes</h1>
 <div class="line"><span class="comment">// Using the nvtx3 namespace in a local scope makes the syntax more succinct:</span></div>
 <div class="line"><span class="keyword">using namespace </span>nvtx3;</div>
 <div class="line"><a class="code hl_class" href="classnvtx3_1_1v1_1_1event__attributes.html">event_attributes</a> attr{<span class="stringliteral">&quot;message&quot;</span>, <a class="code hl_struct" href="structnvtx3_1_1v1_1_1rgb.html">rgb</a>{127, 255, 0}, <a class="code hl_class" href="classnvtx3_1_1v1_1_1payload.html">payload</a>{42}, <a class="code hl_class" href="classnvtx3_1_1v1_1_1category.html">category</a>{1}};</div>
-<div class="ttc" id="aclassnvtx3_1_1v1_1_1category_html"><div class="ttname"><a href="classnvtx3_1_1v1_1_1category.html">nvtx3::category</a></div><div class="ttdoc">Object for intra-domain grouping of NVTX events.</div><div class="ttdef"><b>Definition</b> <a href="nvtx3_8hpp_source.html#l01153">nvtx3.hpp:1153</a></div></div>
-<div class="ttc" id="aclassnvtx3_1_1v1_1_1event__attributes_html"><div class="ttname"><a href="classnvtx3_1_1v1_1_1event__attributes.html">nvtx3::event_attributes</a></div><div class="ttdoc">Describes the attributes of a NVTX event.</div><div class="ttdef"><b>Definition</b> <a href="nvtx3_8hpp_source.html#l01941">nvtx3.hpp:1941</a></div></div>
-<div class="ttc" id="aclassnvtx3_1_1v1_1_1payload_html"><div class="ttname"><a href="classnvtx3_1_1v1_1_1payload.html">nvtx3::payload</a></div><div class="ttdoc">A numerical value that can be associated with an NVTX event via its event_attributes.</div><div class="ttdef"><b>Definition</b> <a href="nvtx3_8hpp_source.html#l01781">nvtx3.hpp:1781</a></div></div>
-<div class="ttc" id="astructnvtx3_1_1v1_1_1rgb_html"><div class="ttname"><a href="structnvtx3_1_1v1_1_1rgb.html">nvtx3::rgb</a></div><div class="ttdoc">Indicates the values of the red, green, and blue color channels for an RGB color to use as an event a...</div><div class="ttdef"><b>Definition</b> <a href="nvtx3_8hpp_source.html#l00980">nvtx3.hpp:980</a></div></div>
+<div class="ttc" id="aclassnvtx3_1_1v1_1_1category_html"><div class="ttname"><a href="classnvtx3_1_1v1_1_1category.html">nvtx3::category</a></div><div class="ttdoc">Object for intra-domain grouping of NVTX events.</div><div class="ttdef"><b>Definition</b> <a href="nvtx3_8hpp_source.html#l01166">nvtx3.hpp:1166</a></div></div>
+<div class="ttc" id="aclassnvtx3_1_1v1_1_1event__attributes_html"><div class="ttname"><a href="classnvtx3_1_1v1_1_1event__attributes.html">nvtx3::event_attributes</a></div><div class="ttdoc">Describes the attributes of a NVTX event.</div><div class="ttdef"><b>Definition</b> <a href="nvtx3_8hpp_source.html#l01954">nvtx3.hpp:1954</a></div></div>
+<div class="ttc" id="aclassnvtx3_1_1v1_1_1payload_html"><div class="ttname"><a href="classnvtx3_1_1v1_1_1payload.html">nvtx3::payload</a></div><div class="ttdoc">A numerical value that can be associated with an NVTX event via its event_attributes.</div><div class="ttdef"><b>Definition</b> <a href="nvtx3_8hpp_source.html#l01794">nvtx3.hpp:1794</a></div></div>
+<div class="ttc" id="astructnvtx3_1_1v1_1_1rgb_html"><div class="ttname"><a href="structnvtx3_1_1v1_1_1rgb.html">nvtx3::rgb</a></div><div class="ttdoc">Indicates the values of the red, green, and blue color channels for an RGB color to use as an event a...</div><div class="ttdef"><b>Definition</b> <a href="nvtx3_8hpp_source.html#l00993">nvtx3.hpp:993</a></div></div>
 </div><!-- fragment --><h2><a class="anchor" id="MESSAGES"></a>
 message</h2>
 <p><code><a class="el" href="classnvtx3_1_1v1_1_1message.html" title="Allows associating a message string with an NVTX event via its EventAttributes.">nvtx3::message</a></code> sets the message string for an NVTX event.</p>
@@ -259,7 +259,7 @@ message</h2>
 <div class="line"> </div>
 <div class="line"><span class="comment">// strings and string literals implicitly assumed to be a `nvtx3::message`</span></div>
 <div class="line"><a class="code hl_class" href="classnvtx3_1_1v1_1_1event__attributes.html">nvtx3::event_attributes</a> attr{<span class="stringliteral">&quot;my message&quot;</span>};</div>
-<div class="ttc" id="aclassnvtx3_1_1v1_1_1message_html"><div class="ttname"><a href="classnvtx3_1_1v1_1_1message.html">nvtx3::message</a></div><div class="ttdoc">Allows associating a message string with an NVTX event via its EventAttributes.</div><div class="ttdef"><b>Definition</b> <a href="nvtx3_8hpp_source.html#l01651">nvtx3.hpp:1651</a></div></div>
+<div class="ttc" id="aclassnvtx3_1_1v1_1_1message_html"><div class="ttname"><a href="classnvtx3_1_1v1_1_1message.html">nvtx3::message</a></div><div class="ttdoc">Allows associating a message string with an NVTX event via its EventAttributes.</div><div class="ttdef"><b>Definition</b> <a href="nvtx3_8hpp_source.html#l01664">nvtx3.hpp:1664</a></div></div>
 </div><!-- fragment --><h3><a class="anchor" id="REGISTERED_MESSAGE"></a>
 Registered Messages</h3>
 <p>Associating a <code><a class="el" href="classnvtx3_1_1v1_1_1message.html" title="Allows associating a message string with an NVTX event via its EventAttributes.">nvtx3::message</a></code> with an event requires copying the contents of the message every time the message is used, i.e., copying the entire message string. This may cause non-trivial overhead in performance sensitive code.</p>
@@ -285,7 +285,7 @@ color</h2>
 <div class="line"> </div>
 <div class="line"><span class="comment">// rgb color values can be passed directly to an `event_attributes`</span></div>
 <div class="line"><a class="code hl_class" href="classnvtx3_1_1v1_1_1event__attributes.html">nvtx3::event_attributes</a> attr1{<a class="code hl_struct" href="structnvtx3_1_1v1_1_1rgb.html">nvtx3::rgb</a>{127,255,0}};</div>
-<div class="ttc" id="aclassnvtx3_1_1v1_1_1color_html"><div class="ttname"><a href="classnvtx3_1_1v1_1_1color.html">nvtx3::color</a></div><div class="ttdoc">Represents a custom color that can be associated with an NVTX event via its event_attributes.</div><div class="ttdef"><b>Definition</b> <a href="nvtx3_8hpp_source.html#l01046">nvtx3.hpp:1046</a></div></div>
+<div class="ttc" id="aclassnvtx3_1_1v1_1_1color_html"><div class="ttname"><a href="classnvtx3_1_1v1_1_1color.html">nvtx3::color</a></div><div class="ttdoc">Represents a custom color that can be associated with an NVTX event via its event_attributes.</div><div class="ttdef"><b>Definition</b> <a href="nvtx3_8hpp_source.html#l01059">nvtx3.hpp:1059</a></div></div>
 </div><!-- fragment --><h2><a class="anchor" id="CATEGORY"></a>
 category</h2>
 <p>A <code><a class="el" href="classnvtx3_1_1v1_1_1category.html" title="Object for intra-domain grouping of NVTX events.">nvtx3::category</a></code> is simply an integer id that allows for fine-grain grouping of NVTX events. For example, one might use separate categories for IO, memory allocation, compute, etc.</p>
@@ -357,7 +357,7 @@ Example</h1>
 <div class="line">my_scoped_range r3{msg, cat, <a class="code hl_class" href="classnvtx3_1_1v1_1_1payload.html">nvtx3::payload</a>{42}};</div>
 <div class="line"> </div>
 <div class="line"><span class="comment">// Any number of arguments in any order</span></div>
-<div class="line">my_scoped_range r{<a class="code hl_struct" href="structnvtx3_1_1v1_1_1rgb.html">nvtx3::rgb</a>{127, 255,0}, msg};</div>
+<div class="line">my_scoped_range r{<a class="code hl_struct" href="structnvtx3_1_1v1_1_1rgb.html">nvtx3::rgb</a>{127, 255, 0}, msg};</div>
 </div><!-- fragment --> <h1><a class="anchor" id="MACROS"></a>
 Convenience Macros</h1>
 <p>Oftentimes users want to quickly and easily add NVTX ranges to their library or application to aid in profiling and optimization.</p>

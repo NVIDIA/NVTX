@@ -184,10 +184,10 @@ class nvtx3::v1::named_category_in&lt; D &gt;</div><p>A <code>category</code> wi
 <div class="line"> </div>
 <div class="line"><span class="comment">// Range `r` associated with category id `42`</span></div>
 <div class="line"><a class="code hl_typedef" href="nvtx3_8hpp.html#a8e124f3d438e512b586415f1ac2b9677">nvtx3::scoped_range</a> <a class="code hl_function" href="classnvtx3_1_1v1_1_1named__category__in.html#a3bc82f4cd71482347796787bc4436e30">r</a>{<a class="code hl_function" href="classnvtx3_1_1v1_1_1named__category__in.html#a3bc82f4cd71482347796787bc4436e30">cat</a>};</div>
-<div class="ttc" id="aclassnvtx3_1_1v1_1_1domain_html_a0d83a594238449a3da85e337409fc3db"><div class="ttname"><a href="classnvtx3_1_1v1_1_1domain.html#a0d83a594238449a3da85e337409fc3db">nvtx3::v1::domain::get</a></div><div class="ttdeci">static domain const &amp; get() noexcept</div><div class="ttdoc">Returns reference to an instance of a function local static domain object.</div><div class="ttdef"><b>Definition</b> <a href="nvtx3_8hpp_source.html#l00826">nvtx3.hpp:826</a></div></div>
-<div class="ttc" id="aclassnvtx3_1_1v1_1_1named__category__in_html_a3bc82f4cd71482347796787bc4436e30"><div class="ttname"><a href="classnvtx3_1_1v1_1_1named__category__in.html#a3bc82f4cd71482347796787bc4436e30">nvtx3::v1::named_category_in::get</a></div><div class="ttdeci">static named_category_in const &amp; get() noexcept</div><div class="ttdoc">Returns a global instance of a named_category_in as a function-local static.</div><div class="ttdef"><b>Definition</b> <a href="nvtx3_8hpp_source.html#l01278">nvtx3.hpp:1278</a></div></div>
-<div class="ttc" id="anvtx3_8hpp_html_a5ffa040266b85b6fb131dcb9ade33a0a"><div class="ttname"><a href="nvtx3_8hpp.html#a5ffa040266b85b6fb131dcb9ade33a0a">nvtx3::v1::named_category</a></div><div class="ttdeci">named_category_in&lt; domain::global &gt; named_category</div><div class="ttdoc">Alias for a named_category_in in the global NVTX domain.</div><div class="ttdef"><b>Definition</b> <a href="nvtx3_8hpp_source.html#l01387">nvtx3.hpp:1387</a></div></div>
-<div class="ttc" id="anvtx3_8hpp_html_a8e124f3d438e512b586415f1ac2b9677"><div class="ttname"><a href="nvtx3_8hpp.html#a8e124f3d438e512b586415f1ac2b9677">nvtx3::v1::scoped_range</a></div><div class="ttdeci">scoped_range_in&lt; domain::global &gt; scoped_range</div><div class="ttdoc">Alias for a scoped_range_in in the global NVTX domain.</div><div class="ttdef"><b>Definition</b> <a href="nvtx3_8hpp_source.html#l02174">nvtx3.hpp:2174</a></div></div>
+<div class="ttc" id="aclassnvtx3_1_1v1_1_1domain_html_a0d83a594238449a3da85e337409fc3db"><div class="ttname"><a href="classnvtx3_1_1v1_1_1domain.html#a0d83a594238449a3da85e337409fc3db">nvtx3::v1::domain::get</a></div><div class="ttdeci">static domain const &amp; get() noexcept</div><div class="ttdoc">Returns reference to an instance of a function local static domain object.</div><div class="ttdef"><b>Definition</b> <a href="nvtx3_8hpp_source.html#l00839">nvtx3.hpp:839</a></div></div>
+<div class="ttc" id="aclassnvtx3_1_1v1_1_1named__category__in_html_a3bc82f4cd71482347796787bc4436e30"><div class="ttname"><a href="classnvtx3_1_1v1_1_1named__category__in.html#a3bc82f4cd71482347796787bc4436e30">nvtx3::v1::named_category_in::get</a></div><div class="ttdeci">static named_category_in const &amp; get() noexcept</div><div class="ttdoc">Returns a global instance of a named_category_in as a function-local static.</div><div class="ttdef"><b>Definition</b> <a href="nvtx3_8hpp_source.html#l01291">nvtx3.hpp:1291</a></div></div>
+<div class="ttc" id="anvtx3_8hpp_html_a5ffa040266b85b6fb131dcb9ade33a0a"><div class="ttname"><a href="nvtx3_8hpp.html#a5ffa040266b85b6fb131dcb9ade33a0a">nvtx3::v1::named_category</a></div><div class="ttdeci">named_category_in&lt; domain::global &gt; named_category</div><div class="ttdoc">Alias for a named_category_in in the global NVTX domain.</div><div class="ttdef"><b>Definition</b> <a href="nvtx3_8hpp_source.html#l01400">nvtx3.hpp:1400</a></div></div>
+<div class="ttc" id="anvtx3_8hpp_html_a8e124f3d438e512b586415f1ac2b9677"><div class="ttname"><a href="nvtx3_8hpp.html#a8e124f3d438e512b586415f1ac2b9677">nvtx3::v1::scoped_range</a></div><div class="ttdeci">scoped_range_in&lt; domain::global &gt; scoped_range</div><div class="ttdoc">Alias for a scoped_range_in in the global NVTX domain.</div><div class="ttdef"><b>Definition</b> <a href="nvtx3_8hpp_source.html#l02187">nvtx3.hpp:2187</a></div></div>
 </div><!-- fragment --><p><code><a class="el" href="classnvtx3_1_1v1_1_1named__category__in.html" title="A category with an associated name string.">named_category_in</a>&lt;D&gt;</code>'s association of a name to a category id is local to the domain specified by the type <code>D</code>. An id may have a different name in another domain.</p>
 <dl class="tparams"><dt>Template Parameters</dt><dd>
   <table class="tparams">
@@ -196,7 +196,7 @@ class nvtx3::v1::named_category_in&lt; D &gt;</div><p>A <code>category</code> wi
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="nvtx3_8hpp_source.html#l01236">1236</a> of file <a class="el" href="nvtx3_8hpp_source.html">nvtx3.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="nvtx3_8hpp_source.html#l01249">1249</a> of file <a class="el" href="nvtx3_8hpp_source.html">nvtx3.hpp</a>.</p>
 </div><h2 class="groupheader">Constructor &amp; Destructor Documentation</h2>
 <a id="a7fe4261f6a0b9d1cfb6e566d8ff2135f" name="a7fe4261f6a0b9d1cfb6e566d8ff2135f"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a7fe4261f6a0b9d1cfb6e566d8ff2135f">&#9670;&#160;</a></span>named_category_in() <span class="overload">[1/2]</span></h2>
@@ -245,7 +245,7 @@ template&lt;<a class="el" href="classnvtx3_1_1v1_1_1named__category__in.html#a3b
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="nvtx3_8hpp_source.html#l01352">1352</a> of file <a class="el" href="nvtx3_8hpp_source.html">nvtx3.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="nvtx3_8hpp_source.html#l01365">1365</a> of file <a class="el" href="nvtx3_8hpp_source.html">nvtx3.hpp</a>.</p>
 
 </div>
 </div>
@@ -296,7 +296,7 @@ template&lt;<a class="el" href="classnvtx3_1_1v1_1_1named__category__in.html#a3b
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="nvtx3_8hpp_source.html#l01372">1372</a> of file <a class="el" href="nvtx3_8hpp_source.html">nvtx3.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="nvtx3_8hpp_source.html#l01385">1385</a> of file <a class="el" href="nvtx3_8hpp_source.html">nvtx3.hpp</a>.</p>
 
 </div>
 </div>
@@ -351,7 +351,7 @@ template&lt;typename C , typename std::enable_if&lt; detail::is_c_string&lt; dec
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="nvtx3_8hpp_source.html#l01278">1278</a> of file <a class="el" href="nvtx3_8hpp_source.html">nvtx3.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="nvtx3_8hpp_source.html#l01291">1291</a> of file <a class="el" href="nvtx3_8hpp_source.html">nvtx3.hpp</a>.</p>
 
 </div>
 </div>
@@ -384,7 +384,7 @@ template&lt;typename C , typename std::enable_if&lt; !detail::is_c_string&lt; de
 
 <p>Overload of <code><a class="el" href="classnvtx3_1_1v1_1_1named__category__in.html#a3bc82f4cd71482347796787bc4436e30" title="Returns a global instance of a named_category_in as a function-local static.">named_category_in::get</a></code> to provide a clear compile error when <code>C</code> has the required <code>name</code> and <code>id</code> members, but they are not the required types. <code>name</code> must be directly convertible to <code>char const*</code> or <code>wchar_t const*</code>, and <code>id</code> must be <code>uint32_t</code>. </p>
 
-<p class="definition">Definition at line <a class="el" href="nvtx3_8hpp_source.html#l01295">1295</a> of file <a class="el" href="nvtx3_8hpp_source.html">nvtx3.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="nvtx3_8hpp_source.html#l01308">1308</a> of file <a class="el" href="nvtx3_8hpp_source.html">nvtx3.hpp</a>.</p>
 
 </div>
 </div>
@@ -417,7 +417,7 @@ template&lt;typename C , typename std::enable_if&lt; !detail::has_name&lt; C &gt
 
 <p>Overload of <code><a class="el" href="classnvtx3_1_1v1_1_1named__category__in.html#a3bc82f4cd71482347796787bc4436e30" title="Returns a global instance of a named_category_in as a function-local static.">named_category_in::get</a></code> to provide a clear compile error when <code>C</code> does not have the required <code>name</code> and <code>id</code> members. </p>
 
-<p class="definition">Definition at line <a class="el" href="nvtx3_8hpp_source.html#l01317">1317</a> of file <a class="el" href="nvtx3_8hpp_source.html">nvtx3.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="nvtx3_8hpp_source.html#l01330">1330</a> of file <a class="el" href="nvtx3_8hpp_source.html">nvtx3.hpp</a>.</p>
 
 </div>
 </div>
