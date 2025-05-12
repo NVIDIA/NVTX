@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['domains_0',['Domains',['../group___d_o_m_a_i_n_s.html',1,'']]]
+  ['cuda_20runtime_0',['Memory CUDA Runtime',['../group___m_e_m_o_r_y___c_u_d_a_r_t.html',1,'']]]
 ];

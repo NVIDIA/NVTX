@@ -49,7 +49,7 @@ struct ArgsRangeEnd      { nvtxRangeId_t id                        ; };
 struct ArgsRangePushEx   { const nvtxEventAttributes_t* eventAttrib; };
 struct ArgsRangePushA    { const char* str                         ; };
 struct ArgsRangePushW    { const wchar_t* str                      ; };
-struct ArgsRangePop      {                                         ; };
+struct ArgsRangePop      {                                           };
 struct ArgsNameCategoryA { uint32_t id; const char* str            ; };
 struct ArgsNameCategoryW { uint32_t id; const wchar_t* str         ; };
 struct ArgsNameOsThreadA { uint32_t id; const char* str            ; };
@@ -79,9 +79,9 @@ struct CallId
 DEFINE_SAME_2(CallId, mod, cb)
 
 // Helper to write CALLID(CORE, MarkEx) as shorthand for CallId{NVTX_CB_MODULE_CORE, NVTX_CBID_CORE_MarkEx}
-#define CALLID(m,c) CallId{NVTX_CB_MODULE_##m, (int32_t)NVTX_CBID_##m##_##c}
+#define CALLID(m,c) CallId{NVTX_CB_MODULE_##m, static_cast<int32_t>(NVTX_CBID_##m##_##c)}
 
-#define CALLID_LOAD() CallId{NVTX_CB_MODULE_INVALID, (int32_t)0x7ac0be11}
+#define CALLID_LOAD() CallId{NVTX_CB_MODULE_INVALID, static_cast<int32_t>(0x7ac0be11)}
 
 inline const char* CallName(CallId const& id)
 {
@@ -128,6 +128,17 @@ inline const char* CallName(CallId const& id)
         case NVTX_CBID_CORE2_Initialize           : return "Initialize";
         default: return "<Unknown CORE2 call>";
         }
+    case NVTX_CB_MODULE_SYNC:
+        return "<Unknown SYNC call>";
+    case NVTX_CB_MODULE_CUDA:
+        return "<Unknown CUDA call>";
+    case NVTX_CB_MODULE_CUDART:
+        return "<Unknown CUDART call>";
+    case NVTX_CB_MODULE_OPENCL:
+        return "<Unknown OPENCL call>";
+    case NVTX_CB_MODULE_INVALID:
+    case NVTX_CB_MODULE_SIZE:
+    case NVTX_CB_MODULE_FORCE_INT:
     default: return "<Unknown CB_MODULE>";
     }
 }
@@ -135,7 +146,7 @@ inline const char* CallName(CallId const& id)
 inline std::ostream& operator<<(std::ostream& os, CallId const& id)
 {
     return os << CallName(id);
-};
+}
 
 union Args
 {
@@ -203,6 +214,7 @@ inline void CopyEventAttributes(const nvtxEventAttributes_t*& lhs, const nvtxEve
     {
     case NVTX_MESSAGE_TYPE_ASCII:   CopyCstring(tmp->message.ascii);   break;
     case NVTX_MESSAGE_TYPE_UNICODE: CopyCstring(tmp->message.unicode); break;
+    default: break;
     }
     lhs = tmp;
 }
@@ -213,6 +225,7 @@ inline void DestroyEventAttributes(const nvtxEventAttributes_t* a)
     {
     case NVTX_MESSAGE_TYPE_ASCII:   DestroyCstring(a->message.ascii);   break;
     case NVTX_MESSAGE_TYPE_UNICODE: DestroyCstring(a->message.unicode); break;
+    default: break;
     }
     delete a;
 }
@@ -225,6 +238,7 @@ inline void CopyResourceAttributes(nvtxResourceAttributes_t*& lhs, const nvtxRes
     {
     case NVTX_MESSAGE_TYPE_ASCII:   CopyCstring(tmp->message.ascii);   break;
     case NVTX_MESSAGE_TYPE_UNICODE: CopyCstring(tmp->message.unicode); break;
+    default: break;
     }
     lhs = tmp;
 }
@@ -235,6 +249,7 @@ inline void DestroyResourceAttributes(nvtxResourceAttributes_t* a)
     {
     case NVTX_MESSAGE_TYPE_ASCII:   DestroyCstring(a->message.ascii);   break;
     case NVTX_MESSAGE_TYPE_UNICODE: DestroyCstring(a->message.unicode); break;
+    default: break;
     }
     delete a;
 }
@@ -281,11 +296,11 @@ template <> inline void DeepCopyDestroy(ArgsMarkW        & args) { DestroyCstrin
 template <> inline void DeepCopyDestroy(ArgsRangeStartEx & args) { DestroyEventAttributes(args.eventAttrib); }
 template <> inline void DeepCopyDestroy(ArgsRangeStartA  & args) { DestroyCstring(args.str); }
 template <> inline void DeepCopyDestroy(ArgsRangeStartW  & args) { DestroyCstring(args.str); }
-template <> inline void DeepCopyDestroy(ArgsRangeEnd     & args) { }
+template <> inline void DeepCopyDestroy(ArgsRangeEnd     & /*args*/) { }
 template <> inline void DeepCopyDestroy(ArgsRangePushEx  & args) { DestroyEventAttributes(args.eventAttrib); }
 template <> inline void DeepCopyDestroy(ArgsRangePushA   & args) { DestroyCstring(args.str); }
 template <> inline void DeepCopyDestroy(ArgsRangePushW   & args) { DestroyCstring(args.str); }
-template <> inline void DeepCopyDestroy(ArgsRangePop     & args) { }
+template <> inline void DeepCopyDestroy(ArgsRangePop     & /*args*/) { }
 template <> inline void DeepCopyDestroy(ArgsNameCategoryA& args) { DestroyCstring(args.str); }
 template <> inline void DeepCopyDestroy(ArgsNameCategoryW& args) { DestroyCstring(args.str); }
 template <> inline void DeepCopyDestroy(ArgsNameOsThreadA& args) { DestroyCstring(args.str); }
@@ -293,19 +308,19 @@ template <> inline void DeepCopyDestroy(ArgsNameOsThreadW& args) { DestroyCstrin
 
 template <> inline void DeepCopyDestroy(ArgsDomainMarkEx         & args) { DestroyEventAttributes(args.eventAttrib); }
 template <> inline void DeepCopyDestroy(ArgsDomainRangeStartEx   & args) { DestroyEventAttributes(args.eventAttrib); }
-template <> inline void DeepCopyDestroy(ArgsDomainRangeEnd       & args) { }
+template <> inline void DeepCopyDestroy(ArgsDomainRangeEnd       & /*args*/) { }
 template <> inline void DeepCopyDestroy(ArgsDomainRangePushEx    & args) { DestroyEventAttributes(args.eventAttrib); }
-template <> inline void DeepCopyDestroy(ArgsDomainRangePop       & args) { }
+template <> inline void DeepCopyDestroy(ArgsDomainRangePop       & /*args*/) { }
 template <> inline void DeepCopyDestroy(ArgsDomainResourceCreate & args) { DestroyResourceAttributes(args.attr); }
-template <> inline void DeepCopyDestroy(ArgsDomainResourceDestroy& args) { }
+template <> inline void DeepCopyDestroy(ArgsDomainResourceDestroy& /*args*/) { }
 template <> inline void DeepCopyDestroy(ArgsDomainNameCategoryA  & args) { DestroyCstring(args.str); }
 template <> inline void DeepCopyDestroy(ArgsDomainNameCategoryW  & args) { DestroyCstring(args.str); }
 template <> inline void DeepCopyDestroy(ArgsDomainRegisterStringA& args) { DestroyCstring(args.str); }
 template <> inline void DeepCopyDestroy(ArgsDomainRegisterStringW& args) { DestroyCstring(args.str); }
 template <> inline void DeepCopyDestroy(ArgsDomainCreateA        & args) { DestroyCstring(args.name); }
 template <> inline void DeepCopyDestroy(ArgsDomainCreateW        & args) { DestroyCstring(args.name); }
-template <> inline void DeepCopyDestroy(ArgsDomainDestroy        & args) { }
-template <> inline void DeepCopyDestroy(ArgsInitialize           & args) { }
+template <> inline void DeepCopyDestroy(ArgsDomainDestroy        & /*args*/) { }
+template <> inline void DeepCopyDestroy(ArgsInitialize           & /*args*/) { }
 
 struct CallData
 {
@@ -358,6 +373,13 @@ struct CallData
             default: break;
             }
             break;
+        case NVTX_CB_MODULE_SYNC:
+        case NVTX_CB_MODULE_CUDA:
+        case NVTX_CB_MODULE_CUDART:
+        case NVTX_CB_MODULE_OPENCL:
+        case NVTX_CB_MODULE_INVALID:
+        case NVTX_CB_MODULE_SIZE:
+        case NVTX_CB_MODULE_FORCE_INT:
         default: break;
         }
     }
@@ -379,15 +401,15 @@ inline std::ostream& operator<<(std::ostream& os, CallData const& data)
         {
         case NVTX_CBID_CORE_MarkEx       : {auto& a = data.args.MarkEx       ; os << *a.eventAttrib;                 } break;
         case NVTX_CBID_CORE_MarkA        : {auto& a = data.args.MarkA        ; os << '"' << a.str << '"';            } break;
-        case NVTX_CBID_CORE_MarkW        : {auto& a = data.args.MarkW        ; os << "WIDE";                         } break;
+        case NVTX_CBID_CORE_MarkW        : {/*auto& a = data.args.MarkW      ;*/ os << "WIDE";                       } break;
         case NVTX_CBID_CORE_RangeStartEx : {auto& a = data.args.RangeStartEx ; os << *a.eventAttrib;                 } break;
         case NVTX_CBID_CORE_RangeStartA  : {auto& a = data.args.RangeStartA  ; os << '"' << a.str << '"';            } break;
-        case NVTX_CBID_CORE_RangeStartW  : {auto& a = data.args.RangeStartW  ; os << "WIDE";                         } break;
+        case NVTX_CBID_CORE_RangeStartW  : {/*auto& a = data.args.RangeStartW;*/ os << "WIDE";                       } break;
         case NVTX_CBID_CORE_RangeEnd     : {auto& a = data.args.RangeEnd     ; os << a.id;                           } break;
         case NVTX_CBID_CORE_RangePushEx  : {auto& a = data.args.RangePushEx  ; os << *a.eventAttrib;                 } break;
         case NVTX_CBID_CORE_RangePushA   : {auto& a = data.args.RangePushA   ; os << '"' << a.str << '"';            } break;
-        case NVTX_CBID_CORE_RangePushW   : {auto& a = data.args.RangePushW   ; os << "WIDE";                         } break;
-        case NVTX_CBID_CORE_RangePop     : {auto& a = data.args.RangePop     ;                                       } break;
+        case NVTX_CBID_CORE_RangePushW   : {/*auto& a = data.args.RangePushW ;*/ os << "WIDE";                       } break;
+        case NVTX_CBID_CORE_RangePop     : {/*auto& a = data.args.RangePop   ;*/                                     } break;
         case NVTX_CBID_CORE_NameCategoryA: {auto& a = data.args.NameCategoryA; os << a.id << ", \"" << a.str << '"'; } break;
         case NVTX_CBID_CORE_NameCategoryW: {auto& a = data.args.NameCategoryW; os << a.id << ", " << "WIDE";         } break;
         case NVTX_CBID_CORE_NameOsThreadA: {auto& a = data.args.NameOsThreadA; os << a.id << ", \"" << a.str << '"'; } break;
@@ -410,21 +432,29 @@ inline std::ostream& operator<<(std::ostream& os, CallData const& data)
         case NVTX_CBID_CORE2_DomainRegisterStringA: {auto& a = data.args.DomainRegisterStringA; os << a.domain << ", \"" << a.str << '"';                } break;
         case NVTX_CBID_CORE2_DomainRegisterStringW: {auto& a = data.args.DomainRegisterStringW; os << a.domain << ", " << "WIDE";                        } break;
         case NVTX_CBID_CORE2_DomainCreateA        : {auto& a = data.args.DomainCreateA        ; os << '"' << a.name << '"';                              } break;
-        case NVTX_CBID_CORE2_DomainCreateW        : {auto& a = data.args.DomainCreateW        ; os << "WIDE";                                            } break;
+        case NVTX_CBID_CORE2_DomainCreateW        : {/*auto& a = data.args.DomainCreateW      ;*/ os << "WIDE";                                          } break;
         case NVTX_CBID_CORE2_DomainDestroy        : {auto& a = data.args.DomainDestroy        ; os << a.domain;                                          } break;
         case NVTX_CBID_CORE2_Initialize           : {auto& a = data.args.Initialize           ; os << a.reserved;                                        } break;
         default: break;
         }
         break;
+    case NVTX_CB_MODULE_SYNC:
+    case NVTX_CB_MODULE_CUDA:
+    case NVTX_CB_MODULE_CUDART:
+    case NVTX_CB_MODULE_OPENCL:
+    case NVTX_CB_MODULE_INVALID:
+    case NVTX_CB_MODULE_SIZE:
+    case NVTX_CB_MODULE_FORCE_INT:
     default: break;
     }
     os << ')';
     return os;
-};
+}
 
 using Call = std::shared_ptr<CallData>;
 
 // Helper to write CALL(CORE, NameCategoryA, id, str) to construct a Call with arg values
+#define CALL0(m,c) [=]{ Call v(new CallData); v->id = CALLID(m,c); DeepCopyAssign(v->args.c, Args##c{}); return v; }()
 #define CALL(m,c,...) [=]{ Call v(new CallData); v->id = CALLID(m,c); DeepCopyAssign(v->args.c, Args##c{__VA_ARGS__}); return v; }()
 
 #define CALL_LOAD(s) [=]{ Call v(new CallData); v->id = CALLID_LOAD(); v->args.Load = ArgsLoad{s}; return v; }()
@@ -483,7 +513,7 @@ inline bool Same(nvtxResourceAttributes_t const& lhs, nvtxResourceAttributes_t c
         && MEMBER_SAME(identifierType)
         && (false
             || lhs.identifierType == NVTX_RESOURCE_TYPE_UNKNOWN
-            || (lhs.identifierType == NVTX_RESOURCE_TYPE_GENERIC_POINTER       && MEMBER_SAME(identifier.pValue))
+            || (lhs.identifierType == NVTX_RESOURCE_TYPE_GENERIC_POINTER       && PVOID_MEMBER_SAME(identifier.pValue))
             || (lhs.identifierType == NVTX_RESOURCE_TYPE_GENERIC_HANDLE        && MEMBER_SAME(identifier.ullValue))
             || (lhs.identifierType == NVTX_RESOURCE_TYPE_GENERIC_THREAD_NATIVE && MEMBER_SAME(identifier.ullValue))
             || (lhs.identifierType == NVTX_RESOURCE_TYPE_GENERIC_THREAD_POSIX  && MEMBER_SAME(identifier.ullValue))
@@ -507,6 +537,8 @@ DEFINE_EQ_NE_DEEP(nvtxResourceAttributes_t)
 #define DEFINE_ARGS_SAME_1(cb, a)       DEFINE_SAME_1(Args##cb, a)
 #define DEFINE_ARGS_SAME_2(cb, a, b)    DEFINE_SAME_2(Args##cb, a, b)
 #define DEFINE_ARGS_SAME_3(cb, a, b, c) DEFINE_SAME_3(Args##cb, a, b, c)
+
+#define DEFINE_ARGS_PVOID_SAME_1(cb, a) DEFINE_PVOID_SAME_1(Args##cb, a)
 
 DEFINE_ARGS_SAME_1(Load, success)
 // CORE
@@ -540,7 +572,7 @@ DEFINE_ARGS_SAME_2(DomainRegisterStringW, domain, str)
 DEFINE_ARGS_SAME_1(DomainCreateA, name)
 DEFINE_ARGS_SAME_1(DomainCreateW, name)
 DEFINE_ARGS_SAME_1(DomainDestroy, domain)
-DEFINE_ARGS_SAME_1(Initialize, reserved)
+DEFINE_ARGS_PVOID_SAME_1(Initialize, reserved)
 
 inline bool Same(CallData const& lhs, CallData const& rhs, SAME_COMMON_ARGS)
 {
@@ -586,9 +618,9 @@ inline bool Same(CallData const& lhs, CallData const& rhs, SAME_COMMON_ARGS)
 }
 DEFINE_EQ_NE_DEEP(CallData)
 
-inline nvtxDomainHandle_t   PostInc(nvtxDomainHandle_t  & h) { auto v = h; ++(intptr_t&)h; return v; }
-inline nvtxStringHandle_t   PostInc(nvtxStringHandle_t  & h) { auto v = h; ++(intptr_t&)h; return v; }
-inline nvtxResourceHandle_t PostInc(nvtxResourceHandle_t& h) { auto v = h; ++(intptr_t&)h; return v; }
+inline nvtxDomainHandle_t   PostInc(nvtxDomainHandle_t  & h) { auto v = h; h = reinterpret_cast<nvtxDomainHandle_t  >(reinterpret_cast<intptr_t>(h) + 1); return v; }
+inline nvtxStringHandle_t   PostInc(nvtxStringHandle_t  & h) { auto v = h; h = reinterpret_cast<nvtxStringHandle_t  >(reinterpret_cast<intptr_t>(h) + 1); return v; }
+inline nvtxResourceHandle_t PostInc(nvtxResourceHandle_t& h) { auto v = h; h = reinterpret_cast<nvtxResourceHandle_t>(reinterpret_cast<intptr_t>(h) + 1); return v; }
 inline nvtxRangeId_t        PostInc(nvtxRangeId_t       & h) { return h++; }
 
 struct Callbacks
@@ -634,13 +666,13 @@ struct Callbacks
     Callbacks(Callbacks&&) = default;
     Callbacks& operator=(Callbacks&&) = default;
 
-    nvtxDomainHandle_t nextDomainHandle = (nvtxDomainHandle_t)1;
+    nvtxDomainHandle_t nextDomainHandle = reinterpret_cast<nvtxDomainHandle_t>(1);
     struct DomainData
     {
         int pushPopDepth = 0;
-        nvtxRangeId_t nextRangeId = (nvtxRangeId_t)1;
-        nvtxStringHandle_t nextStringHandle = (nvtxStringHandle_t)1;
-        nvtxResourceHandle_t nextResourceHandle = (nvtxResourceHandle_t)1;
+        nvtxRangeId_t nextRangeId = static_cast<nvtxRangeId_t>(1);
+        nvtxStringHandle_t nextStringHandle = reinterpret_cast<nvtxStringHandle_t>(1);
+        nvtxResourceHandle_t nextResourceHandle = reinterpret_cast<nvtxResourceHandle_t>(1);
     };
     std::map<nvtxDomainHandle_t, DomainData> domainData;
 
@@ -658,7 +690,7 @@ struct Callbacks
     , RangePushEx  ([&](const nvtxEventAttributes_t* a) { Default(CALL(CORE, RangePushEx  , a   )); return ++domainData[nullptr].pushPopDepth; })
     , RangePushA   ([&](const char*                  a) { Default(CALL(CORE, RangePushA   , a   )); return ++domainData[nullptr].pushPopDepth; })
     , RangePushW   ([&](const wchar_t*               a) { Default(CALL(CORE, RangePushW   , a   )); return ++domainData[nullptr].pushPopDepth; })
-    , RangePop     ([&](                              ) { Default(CALL(CORE, RangePop           )); return domainData[nullptr].pushPopDepth--; })
+    , RangePop     ([&](                              ) { Default(CALL0(CORE, RangePop          )); return domainData[nullptr].pushPopDepth--; })
     , NameCategoryA([&](uint32_t a, const char*      b) { Default(CALL(CORE, NameCategoryA, a, b)); })
     , NameCategoryW([&](uint32_t a, const wchar_t*   b) { Default(CALL(CORE, NameCategoryW, a, b)); })
     , NameOsThreadA([&](uint32_t a, const char*      b) { Default(CALL(CORE, NameOsThreadA, a, b)); })

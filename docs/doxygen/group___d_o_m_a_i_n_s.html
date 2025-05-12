@@ -115,7 +115,7 @@ NVTX_DECLSPEC nvtxDomainHandle_t NVTX_API&#160;</td><td class="memItemRight" val
   </dd>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>A handle representing the domain.</dd></dl>
-<dl class="section user"><dt>Example:</dt><dd><div class="fragment"><div class="line">nvtxDomainHandle_t domain = <a class="code hl_function" href="group___d_o_m_a_i_n_s.html#ga2bbf44a48a4a46bf8900bd886524d87d">nvtxDomainCreateA</a>(<span class="stringliteral">&quot;com.nvidia.nvtx.example&quot;</span>);</div>
+<dl class="section user"><dt>Example</dt><dd>Create a domain: <div class="fragment"><div class="line">nvtxDomainHandle_t domain = <a class="code hl_function" href="group___d_o_m_a_i_n_s.html#ga2bbf44a48a4a46bf8900bd886524d87d">nvtxDomainCreateA</a>(<span class="stringliteral">&quot;com.nvidia.nvtx.example&quot;</span>);</div>
 <div class="line"> </div>
 <div class="line"><a class="code hl_function" href="group___m_a_r_k_e_r_s___a_n_d___r_a_n_g_e_s.html#gaa8b4b68acc37bdaf14349b25752b26f9">nvtxMarkA</a>(<span class="stringliteral">&quot;nvtxMarkA to global domain&quot;</span>);</div>
 <div class="line"> </div>
@@ -136,11 +136,11 @@ NVTX_DECLSPEC nvtxDomainHandle_t NVTX_API&#160;</td><td class="memItemRight" val
 <div class="ttc" id="agroup___d_o_m_a_i_n_s_html_ga58b2508b5bbdfdd3cf30e4eaeb15a885"><div class="ttname"><a href="group___d_o_m_a_i_n_s.html#ga58b2508b5bbdfdd3cf30e4eaeb15a885">nvtxDomainDestroy</a></div><div class="ttdeci">NVTX_DECLSPEC void NVTX_API nvtxDomainDestroy(nvtxDomainHandle_t domain)</div><div class="ttdoc">Unregister a NVTX domain.</div></div>
 <div class="ttc" id="agroup___m_a_r_k_e_r_s___a_n_d___r_a_n_g_e_s_html_ga9e31d7977bcd3b4e64da577908f20e70"><div class="ttname"><a href="group___m_a_r_k_e_r_s___a_n_d___r_a_n_g_e_s.html#ga9e31d7977bcd3b4e64da577908f20e70">nvtxDomainMarkEx</a></div><div class="ttdeci">NVTX_DECLSPEC void NVTX_API nvtxDomainMarkEx(nvtxDomainHandle_t domain, const nvtxEventAttributes_t *eventAttrib)</div><div class="ttdoc">Marks an instantaneous event in the application.</div></div>
 <div class="ttc" id="agroup___m_a_r_k_e_r_s___a_n_d___r_a_n_g_e_s_html_gaa8b4b68acc37bdaf14349b25752b26f9"><div class="ttname"><a href="group___m_a_r_k_e_r_s___a_n_d___r_a_n_g_e_s.html#gaa8b4b68acc37bdaf14349b25752b26f9">nvtxMarkA</a></div><div class="ttdeci">NVTX_DECLSPEC void NVTX_API nvtxMarkA(const char *message)</div><div class="ttdoc">Marks an instantaneous event in the application.</div></div>
-<div class="ttc" id="anv_tools_ext_8h_html_a270c1573fb02bc9f15825438913a255c"><div class="ttname"><a href="nv_tools_ext_8h.html#a270c1573fb02bc9f15825438913a255c">NVTX_VERSION</a></div><div class="ttdeci">#define NVTX_VERSION</div><div class="ttdef"><b>Definition</b> <a href="nv_tools_ext_8h_source.html#l00167">nvToolsExt.h:167</a></div></div>
-<div class="ttc" id="anv_tools_ext_8h_html_a5d1913ca9009ed5aad3208c3fb7a5a0e"><div class="ttname"><a href="nv_tools_ext_8h.html#a5d1913ca9009ed5aad3208c3fb7a5a0e">NVTX_EVENT_ATTRIB_STRUCT_SIZE</a></div><div class="ttdeci">#define NVTX_EVENT_ATTRIB_STRUCT_SIZE</div><div class="ttdef"><b>Definition</b> <a href="nv_tools_ext_8h_source.html#l00370">nvToolsExt.h:370</a></div></div>
+<div class="ttc" id="anv_tools_ext_8h_html_a270c1573fb02bc9f15825438913a255c"><div class="ttname"><a href="nv_tools_ext_8h.html#a270c1573fb02bc9f15825438913a255c">NVTX_VERSION</a></div><div class="ttdeci">#define NVTX_VERSION</div><div class="ttdef"><b>Definition</b> <a href="nv_tools_ext_8h_source.html#l00177">nvToolsExt.h:177</a></div></div>
+<div class="ttc" id="anv_tools_ext_8h_html_a5d1913ca9009ed5aad3208c3fb7a5a0e"><div class="ttname"><a href="nv_tools_ext_8h.html#a5d1913ca9009ed5aad3208c3fb7a5a0e">NVTX_EVENT_ATTRIB_STRUCT_SIZE</a></div><div class="ttdeci">#define NVTX_EVENT_ATTRIB_STRUCT_SIZE</div><div class="ttdef"><b>Definition</b> <a href="nv_tools_ext_8h_source.html#l00396">nvToolsExt.h:396</a></div></div>
 </div><!-- fragment --></dd></dl>
 <dl class="section see"><dt>See also</dt><dd><a class="el" href="group___d_o_m_a_i_n_s.html#ga58b2508b5bbdfdd3cf30e4eaeb15a885" title="Unregister a NVTX domain.">nvtxDomainDestroy</a></dd></dl>
-<dl class="section version"><dt>Version</dt><dd>\NVTX_VERSION_2 </dd></dl>
+<dl class="section version"><dt>Version</dt><dd>NVTX_VERSION_2 </dd></dl>
 
 </div>
 </div>
@@ -168,12 +168,12 @@ NVTX_DECLSPEC nvtxDomainHandle_t NVTX_API&#160;</td><td class="memItemRight" val
   </table>
   </dd>
 </dl>
-<dl class="section user"><dt>Example:</dt><dd><div class="fragment"><div class="line">nvtxDomainHandle_t domain = <a class="code hl_function" href="group___d_o_m_a_i_n_s.html#ga2bbf44a48a4a46bf8900bd886524d87d">nvtxDomainCreateA</a>(<span class="stringliteral">&quot;com.nvidia.nvtx.example&quot;</span>);</div>
+<dl class="section user"><dt>Example</dt><dd>Destroy a domain: <div class="fragment"><div class="line">nvtxDomainHandle_t domain = <a class="code hl_function" href="group___d_o_m_a_i_n_s.html#ga2bbf44a48a4a46bf8900bd886524d87d">nvtxDomainCreateA</a>(<span class="stringliteral">&quot;com.nvidia.nvtx.example&quot;</span>);</div>
 <div class="line"><span class="comment">// ...</span></div>
 <div class="line"><a class="code hl_function" href="group___d_o_m_a_i_n_s.html#ga58b2508b5bbdfdd3cf30e4eaeb15a885">nvtxDomainDestroy</a>(domain);</div>
 </div><!-- fragment --></dd></dl>
 <dl class="section see"><dt>See also</dt><dd><a class="el" href="group___d_o_m_a_i_n_s.html#ga2bbf44a48a4a46bf8900bd886524d87d" title="Register a NVTX domain.">nvtxDomainCreateA</a> nvtxDomainCreateW</dd></dl>
-<dl class="section version"><dt>Version</dt><dd>\NVTX_VERSION_2 </dd></dl>
+<dl class="section version"><dt>Version</dt><dd>NVTX_VERSION_2 </dd></dl>
 
 </div>
 </div>

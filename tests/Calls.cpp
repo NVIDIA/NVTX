@@ -79,7 +79,9 @@ template <int N> struct reg2 { static constexpr const char* message = "Reg2"; };
 template <int N> struct reg3 { static constexpr const char* message = "Reg3"; };
 
 extern "C" NVTX_DYNAMIC_EXPORT
-int RunTest(int argc, const char** argv)
+int RunTest(int /*argc*/, const char** argv);
+NVTX_DYNAMIC_EXPORT
+int RunTest(int /*argc*/, const char** argv)
 {
     NVTX_EXPORT_UNMANGLED_FUNCTION_NAME
 
@@ -149,7 +151,8 @@ int RunTest(int argc, const char** argv)
     {
         CallbackTester t;
 
-        nvtxEventAttributes_t attr{NVTX_VERSION, sizeof(nvtxEventAttributes_t)};
+        nvtxEventAttributes_t attr{NVTX_VERSION, sizeof(nvtxEventAttributes_t),
+            0, 0, 0, 0, 0, {0}, 0, {nullptr}};
         attr.category = 123;
         attr.colorType = NVTX_COLOR_ARGB;
         attr.color = 0xFF4466BB;
@@ -214,7 +217,7 @@ int RunTest(int argc, const char** argv)
     {
         CallbackTester t;
         constexpr int N = 1;
-        auto hA = (nvtxDomainHandle_t)1;
+        auto hA = reinterpret_cast<nvtxDomainHandle_t>(1);
 
         mark_in<a_lib<N>>("First call");
         mark_in<a_lib<N>>("Second call");
@@ -231,8 +234,8 @@ int RunTest(int argc, const char** argv)
     {
         CallbackTester t;
         constexpr int N = 2;
-        auto hA = (nvtxDomainHandle_t)1;
-        auto hB = (nvtxDomainHandle_t)2;
+        auto hA = reinterpret_cast<nvtxDomainHandle_t>(1);
+        auto hB = reinterpret_cast<nvtxDomainHandle_t>(2);
 
         mark_in<a_lib<N>>("First call");
         mark_in<a_lib<N>>("Second call");
@@ -252,8 +255,8 @@ int RunTest(int argc, const char** argv)
     {
         CallbackTester t;
         constexpr int N = 3;
-        auto hA = (nvtxDomainHandle_t)1;
-        auto hB = (nvtxDomainHandle_t)2;
+        auto hA = reinterpret_cast<nvtxDomainHandle_t>(1);
+        auto hB = reinterpret_cast<nvtxDomainHandle_t>(2);
 
         mark_in<a_lib<N>>("DA, Cat 1, call 1", named_category_in<a_lib<N>>::get<cat1<N>>());
         mark_in<a_lib<N>>("DA, Cat 1, call 2", named_category_in<a_lib<N>>::get<cat1<N>>());
@@ -285,10 +288,10 @@ int RunTest(int argc, const char** argv)
     {
         CallbackTester t;
         constexpr int N = 4;
-        auto hA = (nvtxDomainHandle_t)1;
-        auto hB = (nvtxDomainHandle_t)2;
-        auto hReg1 = (nvtxStringHandle_t)1;
-        auto hReg2 = (nvtxStringHandle_t)2;
+        auto hA = reinterpret_cast<nvtxDomainHandle_t>(1);
+        auto hB = reinterpret_cast<nvtxDomainHandle_t>(2);
+        auto hReg1 = reinterpret_cast<nvtxStringHandle_t>(1);
+        auto hReg2 = reinterpret_cast<nvtxStringHandle_t>(2);
 
         mark_in<a_lib<N>>(registered_string_in<a_lib<N>>::get<reg1<N>>());
         mark_in<a_lib<N>>(registered_string_in<a_lib<N>>::get<reg1<N>>());
@@ -320,10 +323,10 @@ int RunTest(int argc, const char** argv)
     {
         CallbackTester t;
         constexpr int N = 5;
-        auto hA = (nvtxDomainHandle_t)1;
-        auto hB = (nvtxDomainHandle_t)2;
-        auto hReg1 = (nvtxStringHandle_t)1;
-        auto hReg2 = (nvtxStringHandle_t)2;
+        auto hA = reinterpret_cast<nvtxDomainHandle_t>(1);
+        auto hB = reinterpret_cast<nvtxDomainHandle_t>(2);
+        auto hReg1 = reinterpret_cast<nvtxStringHandle_t>(1);
+        auto hReg2 = reinterpret_cast<nvtxStringHandle_t>(2);
 
         auto& a_regstr1 = registered_string_in<a_lib<N>>::get<reg1<N>>();
         auto& a_regstr2 = registered_string_in<a_lib<N>>::get<reg2<N>>();
@@ -369,8 +372,8 @@ int RunTest(int argc, const char** argv)
     {
         CallbackTester t;
         constexpr int N = 6;
-        auto hA = (nvtxDomainHandle_t)1;
-        auto hB = (nvtxDomainHandle_t)2;
+        auto hA = reinterpret_cast<nvtxDomainHandle_t>(1);
+        auto hB = reinterpret_cast<nvtxDomainHandle_t>(2);
 
         {
             scoped_range_in<a_lib<N>> r1("Sequential range 1");

@@ -76,8 +76,16 @@ static void TestCore2(void)
     nvtxDomainRangeEnd(domain, rangeId);
     nvtxDomainRangePushEx(domain, &attributes);
     nvtxDomainRangePop(domain);
+
+    nvtxDomainMarkEx(domainW, &attributes);
+    rangeId = nvtxDomainRangeStartEx(domainW, &attributes);
+    nvtxDomainRangeEnd(domainW, rangeId);
+    nvtxDomainRangePushEx(domainW, &attributes);
+    nvtxDomainRangePop(domainW);
 }
 
+NVTX_DYNAMIC_EXPORT
+extern int RunTest(int argc, const char** argv);
 NVTX_DYNAMIC_EXPORT
 int RunTest(int argc, const char** argv)
 {

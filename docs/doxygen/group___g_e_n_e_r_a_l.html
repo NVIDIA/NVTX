@@ -94,6 +94,9 @@ Enumerations</h2></td></tr>
 , <a class="el" href="group___g_e_n_e_r_a_l.html#ggaf74d5ab5269ee3c1de7aa0059ca31c46a4dfd8514ece4f6d1b0aa350b882950ea">NVTX_MESSAGE_TYPE_REGISTERED</a> = 3
  }</td></tr>
 <tr class="separator:gaf74d5ab5269ee3c1de7aa0059ca31c46"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:gab89b5c89bfdf240e0ea83b6ab2f89fdf" id="r_gab89b5c89bfdf240e0ea83b6ab2f89fdf"><td class="memItemLeft" align="right" valign="top">NVTX_DECLSPEC void NVTX_API&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___g_e_n_e_r_a_l.html#gab89b5c89bfdf240e0ea83b6ab2f89fdf">nvtxInitialize</a> (const void *reserved)</td></tr>
+<tr class="memdesc:gab89b5c89bfdf240e0ea83b6ab2f89fdf"><td class="mdescLeft">&#160;</td><td class="mdescRight">Force initialization (optional) <a class="anchor" id="FORCE_INITIALIZATION"></a>.  <br /></td></tr>
+<tr class="separator:gab89b5c89bfdf240e0ea83b6ab2f89fdf"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <h2 class="groupheader">Enumeration Type Documentation</h2>
@@ -118,7 +121,7 @@ Color Types</h2>
 </td></tr>
 </table>
 
-<p class="definition">Definition at line <a class="el" href="nv_tools_ext_8h_source.html#l00412">412</a> of file <a class="el" href="nv_tools_ext_8h_source.html">nvToolsExt.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="nv_tools_ext_8h_source.html#l00438">438</a> of file <a class="el" href="nv_tools_ext_8h_source.html">nvToolsExt.h</a>.</p>
 
 </div>
 </div>
@@ -147,7 +150,36 @@ Message Types</h2>
 </td></tr>
 </table>
 
-<p class="definition">Definition at line <a class="el" href="nv_tools_ext_8h_source.html#l00421">421</a> of file <a class="el" href="nv_tools_ext_8h_source.html">nvToolsExt.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="nv_tools_ext_8h_source.html#l00447">447</a> of file <a class="el" href="nv_tools_ext_8h_source.html">nvToolsExt.h</a>.</p>
+
+</div>
+</div>
+<h2 class="groupheader">Function Documentation</h2>
+<a id="gab89b5c89bfdf240e0ea83b6ab2f89fdf" name="gab89b5c89bfdf240e0ea83b6ab2f89fdf"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#gab89b5c89bfdf240e0ea83b6ab2f89fdf">&#9670;&#160;</a></span>nvtxInitialize()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">NVTX_DECLSPEC void NVTX_API nvtxInitialize </td>
+          <td>(</td>
+          <td class="paramtype">const void *&#160;</td>
+          <td class="paramname"><em>reserved</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Force initialization (optional) <a class="anchor" id="FORCE_INITIALIZATION"></a>. </p>
+<p>Force NVTX library to initialize. The first call to any NVTX API function will automatically initialize the entire API. This can make the first call much slower than subsequent calls. In applications where the first call to NVTX may be in a performance-critical section, calling nvtxInitialize before any performance-critical sections will ensure NVTX initialization occurs at an acceptable time. Since nvtxInitialize takes no parameters and has no expected behavior besides initialization, it is convenient to add a call to nvtxInitialize in NVTX-instrumented applications that need to force earlier initialization without changing any other code. For example, if an app's first NVTX call is nvtxDomainCreate, and it is difficult to move that call earlier because the domain handle must be stored in an object only created at that point, adding a call to nvtxInitialize at the top of main() will ensure the later call to nvtxDomainCreate is as fast as possible.</p>
+<dl class="section version"><dt>Version</dt><dd>NVTX_VERSION_3</dd></dl>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">reserved</td><td>- must be zero or NULL. </td></tr>
+  </table>
+  </dd>
+</dl>
 
 </div>
 </div>

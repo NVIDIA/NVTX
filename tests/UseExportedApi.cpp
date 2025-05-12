@@ -26,6 +26,19 @@
 #include <nvtx3/nvToolsExtOpenCL.h>
 #include <nvtx3/nvToolsExtSync.h>
 
+#ifdef SUPPORT_EXTENSIONS
+#include <nvtx3/nvToolsExtMem.h>
+#include <nvtx3/nvToolsExtMemCudaRt.h>
+#include <nvtx3/nvToolsExtPayload.h>
+#include <nvtx3/nvToolsExtPayloadHelper.h>
+#include <nvtx3/nvToolsExtCounters.h>
+#include <nvtx3/nvToolsExtSemanticsCounters.h>
+#include <nvtx3/nvToolsExtSemanticsScope.h>
+#include <nvtx3/nvToolsExtSemanticsTime.h>
+#endif
+
+#include <nvtx3/nvtx3.hpp>
+
 #include <iostream>
 #include <string>
 
@@ -50,7 +63,7 @@
 // as part of the build, then failure to export some symbols would result in failure to include
 // them in this list of symbols to test!
 //
-#define FOR_EACH_EXPORT(func) \
+#define FOR_EACH_EXPORT_CORE(func) \
     func(nvtxDomainCreateA) \
     func(nvtxDomainCreateW) \
     func(nvtxDomainDestroy) \
@@ -118,6 +131,58 @@
 
 // ^ Above line must be left blank, since last line of macro ends with a backslash
 
+#ifdef SUPPORT_EXTENSIONS
+
+#define FOR_EACH_EXPORT_EXTENSIONS(func) \
+    func(nvtxCounterBatchSubmit) \
+    func(nvtxCounterRegister) \
+    func(nvtxCounterSample) \
+    func(nvtxCounterSampleFloat64) \
+    func(nvtxCounterSampleInt64) \
+    func(nvtxCounterSampleNoValue) \
+    func(nvtxDomainIsEnabled) \
+    func(nvtxEventBatchSubmit) \
+    func(nvtxEventSubmit) \
+    func(nvtxMarkPayload) \
+    func(nvtxMemCudaGetDeviceWidePermissions) \
+    func(nvtxMemCudaGetProcessWidePermissions) \
+    func(nvtxMemCudaMarkInitialized) \
+    func(nvtxMemCudaSetPeerAccess) \
+    func(nvtxMemHeapRegister) \
+    func(nvtxMemHeapReset) \
+    func(nvtxMemHeapUnregister) \
+    func(nvtxMemPermissionsAssign) \
+    func(nvtxMemPermissionsBind) \
+    func(nvtxMemPermissionsCreate) \
+    func(nvtxMemPermissionsDestroy) \
+    func(nvtxMemPermissionsReset) \
+    func(nvtxMemPermissionsUnbind) \
+    func(nvtxMemRegionsName) \
+    func(nvtxMemRegionsRegister) \
+    func(nvtxMemRegionsResize) \
+    func(nvtxMemRegionsUnregister) \
+    func(nvtxPayloadEnumRegister) \
+    func(nvtxPayloadSchemaRegister) \
+    func(nvtxRangeEndPayload) \
+    func(nvtxRangePopPayload) \
+    func(nvtxRangePushPayload) \
+    func(nvtxRangeStartPayload) \
+    func(nvtxScopeRegister) \
+    func(nvtxTimeDomainRegister) \
+    func(nvtxTimerSource) \
+    func(nvtxTimerSourceWithData) \
+    func(nvtxTimestampConversionFactor) \
+    func(nvtxTimestampGet) \
+    func(nvtxTimeSyncPoint) \
+    func(nvtxTimeSyncPointTable) \
+
+// ^ Above line must be left blank, since last line of macro ends with a backslash
+
+#define FOR_EACH_EXPORT(func) FOR_EACH_EXPORT_CORE(func) FOR_EACH_EXPORT_EXTENSIONS(func)
+#else
+#define FOR_EACH_EXPORT(func) FOR_EACH_EXPORT_CORE(func)
+#endif
+
 template <typename FnPtr>
 FnPtr GetExport(
     DLL_HANDLE hDll,
@@ -125,7 +190,7 @@ FnPtr GetExport(
     std::vector<const char*>& found,
     std::vector<const char*>& missing)
 {
-    FnPtr pfn = (FnPtr)GET_DLL_FUNC(hDll, fnName);
+    FnPtr pfn = reinterpret_cast<FnPtr>(GET_DLL_FUNC(hDll, fnName));
     if (pfn)
     {
         found.push_back(fnName);
@@ -137,11 +202,16 @@ FnPtr GetExport(
     return pfn;
 }
 
-#define DEFINE_AND_GET_FN_PTR_FOR_EXPORT(fn) \
-    auto pfn_##fn = GetExport<decltype(&fn)>(hDll, #fn, foundFuncs, missingFuncs);
+#define DECLARE_FN_PTR(fn) \
+    decltype(&fn) pfn_##fn;
+
+#define GET_FN_PTR_FOR_EXPORT(fn) \
+    pfns.pfn_##fn = GetExport<decltype(&fn)>(hDll, #fn, foundFuncs, missingFuncs);
 
 extern "C" NVTX_DYNAMIC_EXPORT
-int RunTest(int argc, const char** argv)
+int RunTest(int /*argc*/, const char** argv);
+NVTX_DYNAMIC_EXPORT
+int RunTest(int /*argc*/, const char** argv)
 {
     NVTX_EXPORT_UNMANGLED_FUNCTION_NAME
 
@@ -155,7 +225,13 @@ int RunTest(int argc, const char** argv)
     if (verbose) std::cout << "-------------------------------------\n";
 
     // Construct abs path to export-api library
-    std::string exportApiLib = AbsolutePathToLibraryInCurrentProcessPath("export-api");
+    std::string exportApiLib = AbsolutePathToLibraryInCurrentProcessPath(
+#ifdef SUPPORT_EXTENSIONS
+        "export-api-ext"
+#else
+        "export-api"
+#endif
+    );
 
     // Load export-api library
     DLL_HANDLE hDll = DLL_OPEN(exportApiLib.c_str());
@@ -166,10 +242,16 @@ int RunTest(int argc, const char** argv)
     // For each export, try to GET_DLL_FUNC for it
     //     - Don't early-out, print list of all failed exports
 
+    struct FunctionPointers {
+        FOR_EACH_EXPORT(DECLARE_FN_PTR)
+    };
+
+    FunctionPointers pfns;
+
     //auto pfn_nvtxMarkA = GetExport<decltype(&nvtxMarkA)>(hDll, "nvtxMarkA", foundFuncs, missingFuncs);
     //auto pfn_nvtxDomainCreateA = GetExport<decltype(&nvtxDomainCreateA)>(hDll, "nvtxDomainCreateA", foundFuncs, missingFuncs);
     // ...
-    FOR_EACH_EXPORT(DEFINE_AND_GET_FN_PTR_FOR_EXPORT)
+    FOR_EACH_EXPORT(GET_FN_PTR_FOR_EXPORT)
 
     if (verbose) std::cout << " - Got non-zero pointers for " << foundFuncs.size() << " NVTX functions.\n";
 
@@ -178,14 +260,14 @@ int RunTest(int argc, const char** argv)
     // For a few simple functions, try calling them through function pointers with
     // harmless args.  If the calling conventions are wrong, these calls will crash.
     // If they are working, the NVTX injection should load and print something.
-    if (pfn_nvtxMarkA)
+    if (pfns.pfn_nvtxMarkA)
     {
-        pfn_nvtxMarkA("Testing nvtxMarkA");
+        pfns.pfn_nvtxMarkA("Testing nvtxMarkA");
     }
 
-    if (pfn_nvtxDomainCreateA)
+    if (pfns.pfn_nvtxDomainCreateA)
     {
-        auto hDomain = pfn_nvtxDomainCreateA("Testing nvtxDomainCreateA");
+        auto hDomain = pfns.pfn_nvtxDomainCreateA("Testing nvtxDomainCreateA");
         (void)hDomain;
     }
 

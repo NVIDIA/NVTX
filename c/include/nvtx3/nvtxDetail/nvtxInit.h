@@ -22,6 +22,16 @@
 #error Never include this file directly -- it is automatically included by nvToolsExt.h (except when NVTX_NO_IMPL is defined).
 #endif
 
+#if defined(NVTX_AS_SYSTEM_HEADER)
+#if defined(__clang__)
+#pragma clang system_header
+#elif defined(__GNUC__) || defined(__NVCOMPILER)
+#pragma GCC system_header
+#elif defined(_MSC_VER)
+#pragma system_header
+#endif
+#endif
+
 /* ---- Platform-independent helper definitions and functions ---- */
 
 /* Prefer macros over inline functions to reduce symbol resolution at link time */
@@ -33,13 +43,15 @@
 #define NVTX_BUFSIZE    16384
 #define NVTX_DLLHANDLE  HMODULE
 #define NVTX_DLLOPEN(x) LoadLibraryW(x)
-#define NVTX_DLLFUNC    GetProcAddress
+#define NVTX_DLLFUNC(h, x) NVTX_REINTERPRET_CAST(void(*)(void), GetProcAddress((h), (x)))
 #define NVTX_DLLCLOSE   FreeLibrary
-#define NVTX_DLLDEFAULT (NVTX_DLLHANDLE)0
+#define NVTX_DLLDEFAULT NVTX_NULLPTR
 #define NVTX_YIELD()    SwitchToThread()
 #define NVTX_MEMBAR()   MemoryBarrier()
-#define NVTX_ATOMIC_WRITE_32(address, value)                        InterlockedExchange((volatile LONG*)address, value)
-#define NVTX_ATOMIC_CAS_32(old, address, exchange, comparand) old = InterlockedCompareExchange((volatile LONG*)address, exchange, comparand)
+#define NVTX_ATOMIC_WRITE_32(address, value) \
+    InterlockedExchange(NVTX_REINTERPRET_CAST(volatile LONG*, (address)), (value))
+#define NVTX_ATOMIC_CAS_32(old, address, exchange, comparand) \
+    (old) = InterlockedCompareExchange(NVTX_REINTERPRET_CAST(volatile LONG*, (address)), (exchange), (comparand))
 #elif defined(__GNUC__)
 #define NVTX_PATHCHAR   char
 #define NVTX_STR(x)     x
@@ -47,18 +59,20 @@
 #define NVTX_BUFSIZE    16384
 #define NVTX_DLLHANDLE  void*
 #define NVTX_DLLOPEN(x) dlopen(x, RTLD_LAZY)
-#define NVTX_DLLFUNC    dlsym
+#define NVTX_DLLFUNC(h, x) dlsym((h), (x))
 #define NVTX_DLLCLOSE   dlclose
 #if !defined(__APPLE__)
-#define NVTX_DLLDEFAULT (NVTX_DLLHANDLE)0
+#define NVTX_DLLDEFAULT NVTX_NULLPTR
 #else
 #define NVTX_DLLDEFAULT RTLD_DEFAULT
 #endif
 #define NVTX_YIELD()    sched_yield()
 #define NVTX_MEMBAR()   __sync_synchronize()
 /* Ensure full memory barrier for atomics, to match Windows functions */
-#define NVTX_ATOMIC_WRITE_32(address, value)                  __sync_synchronize(); *address = value; __sync_synchronize()
-#define NVTX_ATOMIC_CAS_32(old, address, exchange, comparand) old = __sync_val_compare_and_swap(address, comparand, exchange)
+#define NVTX_ATOMIC_WRITE_32(address, value) \
+    __sync_synchronize(); *(address) = (value); __sync_synchronize()
+#define NVTX_ATOMIC_CAS_32(old, address, exchange, comparand) \
+    (old) = __sync_val_compare_and_swap((address), (comparand), (exchange))
 #else
 #error The library does not support your configuration!
 #endif
@@ -235,7 +249,7 @@ NVTX_LINKONCE_DEFINE_FUNCTION int NVTX_VERSIONED_IDENTIFIER(nvtxInitializeInject
 #if NVTX_SUPPORT_ALREADY_INJECTED_LIBRARY
     static const char initFuncPreinjectName[] = "InitializeInjectionNvtx2Preinject";
 #endif
-    NvtxInitializeInjectionNvtxFunc_t init_fnptr = (NvtxInitializeInjectionNvtxFunc_t)0;
+    NvtxInitializeInjectionNvtxFunc_t init_fnptr = NVTX_NULLPTR;
     NVTX_DLLHANDLE injectionLibraryHandle = NVTX_DLLDEFAULT;
     int entryPointStatus = 0;
 
@@ -250,7 +264,7 @@ NVTX_LINKONCE_DEFINE_FUNCTION int NVTX_VERSIONED_IDENTIFIER(nvtxInitializeInject
             : NVTX_STR("NVTX_INJECTION64_PATH");
 #endif /* NVTX_SUPPORT_ENV_VARS */
         NVTX_PATHCHAR injectionLibraryPathBuf[NVTX_BUFSIZE];
-        const NVTX_PATHCHAR* injectionLibraryPath = (const NVTX_PATHCHAR*)0;
+        const NVTX_PATHCHAR* injectionLibraryPath = NVTX_NULLPTR;
 
         /* Refer to this variable explicitly in case all references to it are #if'ed out */
         (void)injectionLibraryPathBuf;
@@ -280,9 +294,9 @@ NVTX_LINKONCE_DEFINE_FUNCTION int NVTX_VERSIONED_IDENTIFIER(nvtxInitializeInject
             size_t bytesRead;
             size_t pos;
 
-            pid = (int)getpid();
+            pid = NVTX_STATIC_CAST(int, getpid());
             count = snprintf(cmdlineBuf, sizeof(cmdlineBuf), "/proc/%d/cmdline", pid);
-            if (count <= 0 || count >= (int)sizeof(cmdlineBuf))
+            if (count <= 0 || count >= NVTX_STATIC_CAST(int, sizeof(cmdlineBuf)))
             {
                 NVTX_ERR("Path buffer too small for: /proc/%d/cmdline\n", pid);
                 return NVTX_ERR_INIT_ACCESS_LIBRARY;
@@ -354,7 +368,7 @@ NVTX_LINKONCE_DEFINE_FUNCTION int NVTX_VERSIONED_IDENTIFIER(nvtxInitializeInject
             else
             {
                 /* Attempt to get the injection library's entry-point */
-                init_fnptr = (NvtxInitializeInjectionNvtxFunc_t)NVTX_DLLFUNC(injectionLibraryHandle, initFuncName);
+                init_fnptr = NVTX_REINTERPRET_CAST(NvtxInitializeInjectionNvtxFunc_t, NVTX_DLLFUNC(injectionLibraryHandle, initFuncName));
                 if (!init_fnptr)
                 {
                     NVTX_DLLCLOSE(injectionLibraryHandle);
@@ -370,7 +384,7 @@ NVTX_LINKONCE_DEFINE_FUNCTION int NVTX_VERSIONED_IDENTIFIER(nvtxInitializeInject
     if (!init_fnptr)
     {
         /* Use POSIX global symbol chain to query for init function from any module */
-        init_fnptr = (NvtxInitializeInjectionNvtxFunc_t)NVTX_DLLFUNC(NVTX_DLLDEFAULT, initFuncPreinjectName);
+        init_fnptr = NVTX_REINTERPRET_CAST(NvtxInitializeInjectionNvtxFunc_t, NVTX_DLLFUNC(NVTX_DLLDEFAULT, initFuncPreinjectName));
     }
 #endif
 

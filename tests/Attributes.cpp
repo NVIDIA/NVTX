@@ -33,6 +33,8 @@ struct a_lib
 };
 
 extern "C" NVTX_DYNAMIC_EXPORT
+int RunTest(int argc, const char** argv);
+NVTX_DYNAMIC_EXPORT
 int RunTest(int argc, const char** argv)
 {
     NVTX_EXPORT_UNMANGLED_FUNCTION_NAME

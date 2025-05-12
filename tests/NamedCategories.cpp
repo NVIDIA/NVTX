@@ -52,6 +52,8 @@ struct cat_global_domain2     { static constexpr const char*    name{"Global2"};
 struct cat_global_domain3     { static constexpr const char*    name{"Global3"};      static constexpr uint32_t id{13}; };
 
 extern "C" NVTX_DYNAMIC_EXPORT
+int RunTest(int argc, const char** argv);
+NVTX_DYNAMIC_EXPORT
 int RunTest(int argc, const char** argv)
 {
     NVTX_EXPORT_UNMANGLED_FUNCTION_NAME
@@ -61,27 +63,34 @@ int RunTest(int argc, const char** argv)
 
     using namespace nvtx3;
 
+    std::cout << "- Domain: ";
     auto& d1 = domain::get<d>();
+    std::cout << d1 << "\n";
 
 #if 1
-    std::cout << "- Named category (char):\n";
+    std::cout << "- Named category (char): ";
     auto& c1 = named_category_in<d>::get<cat_char_test>();
+    std::cout << c1.get_id() << "\n";
     mark_in<d>("Mark in cat_char_test category", named_category_in<d>::get<cat_char_test>());
 
-    std::cout << "- Named category (wchar_t):\n";
+    std::cout << "- Named category (wchar_t): ";
     auto& c2 = named_category_in<d>::get<cat_wchar_test>();
+    std::cout << c2.get_id() << "\n";
     mark_in<d>("Mark in cat_wchar_test category", named_category_in<d>::get<cat_wchar_test>());
 #endif
 
 #if 1
-    std::cout << "- Named category in global domain (alias):\n";
+    std::cout << "- Named category in global domain (alias): ";
     auto& cd1 = named_category::get<cat_global_domain1>();
+    std::cout << cd1.get_id() << "\n";
 
-    std::cout << "- Named category in global domain (implicit):\n";
+    std::cout << "- Named category in global domain (implicit): ";
     auto& cd2 = named_category_in<>::get<cat_global_domain2>();
+    std::cout << cd2.get_id() << "\n";
 
-    std::cout << "- Named category in global domain (explicit):\n";
+    std::cout << "- Named category in global domain (explicit): ";
     auto& cd3 = named_category_in<domain::global>::get<cat_global_domain3>();
+    std::cout << cd3.get_id() << "\n";
 #endif
 
 #if STATIC_ASSERT_TESTING
@@ -89,56 +98,62 @@ int RunTest(int argc, const char** argv)
 #if 1 // defined(ERROR_TEST_NAME_IS_MISSING)
     {
         std::cout << "- Error test - category is missing name member:\n";
-        auto& c3 = named_category_in<d>::get<error_name_missing>();
     }
 #endif
 
 #if 1 // defined(ERROR_TEST_NAME_IS_BAD_TYPE)
     {
-        std::cout << "- Error test - category name member isn't narrow or wide char array:\n";
+        std::cout << "- Error test - category name member isn't narrow or wide char array: ";
         auto& c4 = named_category_in<d>::get<error_name_is_bad_type>();
+        std::cout << c4.get_id() << "\n";
     }
 #endif
 
 #if 1 // defined(ERROR_TEST_ID_IS_MISSING)
     {
-        std::cout << "- Error test - category is missing id member:\n";
+        std::cout << "- Error test - category is missing id member: ";
         auto& c5 = named_category_in<d>::get<error_id_missing>();
+        std::cout << c5.get_id() << "\n";
     }
 #endif
 
 #if 1 // defined(ERROR_TEST_ID_IS_BAD_TYPE)
     {
-        std::cout << "- Error test - category id member isn't uint32_t:\n";
+        std::cout << "- Error test - category id member isn't uint32_t: ";
         auto& c6 = named_category_in<d>::get<error_id_is_bad_type>();
+        std::cout << c6.get_id() << "\n";
     }
 #endif
 
 #if 1 // defined(ERROR_TEST_BOTH_MISSING)
     {
-        std::cout << "- Error test - category is missing both members:\n";
+        std::cout << "- Error test - category is missing both members: ";
         auto& c7 = named_category_in<d>::get<error_both_missing>();
+        std::cout << c7.get_id() << "\n";
     }
 #endif
 
 #if 1 // defined(ERROR_TEST_BOTH_BAD_TYPE)
     {
-        std::cout << "- Error test - category members are both bad types:\n";
+        std::cout << "- Error test - category members are both bad types: ";
         auto& c8 = named_category_in<d>::get<error_both_bad_type>();
+        std::cout << c8.get_id() << "\n";
     }
 #endif
 
 #if 1 // defined(ERROR_TEST_NO_NAME_BAD_ID)
     {
-        std::cout << "- Error test - category has no name and bad id type:\n";
+        std::cout << "- Error test - category has no name and bad id type: ";
         auto& c9 = named_category_in<d>::get<error_no_name_bad_id>();
+        std::cout << c9.get_id() << "\n";
     }
 #endif
 
 #if 1 // defined(ERROR_TEST_BAD_NAME_NO_ID)
     {
-        std::cout << "- Error test - category has bad name type and no id:\n";
+        std::cout << "- Error test - category has bad name type and no id: ";
         auto& c10 = named_category_in<d>::get<error_bad_name_no_id>();
+        std::cout << c10.get_id() << "\n";
     }
 #endif
 

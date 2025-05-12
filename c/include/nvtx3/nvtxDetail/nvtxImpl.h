@@ -22,6 +22,16 @@
 #error Never include this file directly -- it is automatically included by nvToolsExt.h (except when NVTX_NO_IMPL is defined).
 #endif
 
+#if defined(NVTX_AS_SYSTEM_HEADER)
+#if defined(__clang__)
+#pragma clang system_header
+#elif defined(__GNUC__) || defined(__NVCOMPILER)
+#pragma GCC system_header
+#elif defined(_MSC_VER)
+#pragma system_header
+#endif
+#endif
+
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
@@ -185,6 +195,8 @@ typedef struct nvtxGlobals_t
     NvtxFunctionPointer* functionTable_SYNC  [NVTX_CBID_SYNC_SIZE   + 1];
 } nvtxGlobals_t;
 
+#define NVTX_GLOBAL_TABLE_ENTRY(name) ( NVTX_REINTERPRET_CAST(NvtxFunctionPointer*, &NVTX_VERSIONED_IDENTIFIER(nvtxGlobals).name ## _impl_fnptr ) )
+
 NVTX_LINKONCE_DEFINE_GLOBAL nvtxGlobals_t NVTX_VERSIONED_IDENTIFIER(nvtxGlobals) =
 {
     NVTX_INIT_STATE_FRESH,
@@ -273,94 +285,96 @@ NVTX_LINKONCE_DEFINE_GLOBAL nvtxGlobals_t NVTX_VERSIONED_IDENTIFIER(nvtxGlobals)
 
     /* Tables of function pointers */
     {
-        0,
-        (NvtxFunctionPointer*)&NVTX_VERSIONED_IDENTIFIER(nvtxGlobals).nvtxMarkEx_impl_fnptr,
-        (NvtxFunctionPointer*)&NVTX_VERSIONED_IDENTIFIER(nvtxGlobals).nvtxMarkA_impl_fnptr,
-        (NvtxFunctionPointer*)&NVTX_VERSIONED_IDENTIFIER(nvtxGlobals).nvtxMarkW_impl_fnptr,
-        (NvtxFunctionPointer*)&NVTX_VERSIONED_IDENTIFIER(nvtxGlobals).nvtxRangeStartEx_impl_fnptr,
-        (NvtxFunctionPointer*)&NVTX_VERSIONED_IDENTIFIER(nvtxGlobals).nvtxRangeStartA_impl_fnptr,
-        (NvtxFunctionPointer*)&NVTX_VERSIONED_IDENTIFIER(nvtxGlobals).nvtxRangeStartW_impl_fnptr,
-        (NvtxFunctionPointer*)&NVTX_VERSIONED_IDENTIFIER(nvtxGlobals).nvtxRangeEnd_impl_fnptr,
-        (NvtxFunctionPointer*)&NVTX_VERSIONED_IDENTIFIER(nvtxGlobals).nvtxRangePushEx_impl_fnptr,
-        (NvtxFunctionPointer*)&NVTX_VERSIONED_IDENTIFIER(nvtxGlobals).nvtxRangePushA_impl_fnptr,
-        (NvtxFunctionPointer*)&NVTX_VERSIONED_IDENTIFIER(nvtxGlobals).nvtxRangePushW_impl_fnptr,
-        (NvtxFunctionPointer*)&NVTX_VERSIONED_IDENTIFIER(nvtxGlobals).nvtxRangePop_impl_fnptr,
-        (NvtxFunctionPointer*)&NVTX_VERSIONED_IDENTIFIER(nvtxGlobals).nvtxNameCategoryA_impl_fnptr,
-        (NvtxFunctionPointer*)&NVTX_VERSIONED_IDENTIFIER(nvtxGlobals).nvtxNameCategoryW_impl_fnptr,
-        (NvtxFunctionPointer*)&NVTX_VERSIONED_IDENTIFIER(nvtxGlobals).nvtxNameOsThreadA_impl_fnptr,
-        (NvtxFunctionPointer*)&NVTX_VERSIONED_IDENTIFIER(nvtxGlobals).nvtxNameOsThreadW_impl_fnptr,
-        0
+        NVTX_NULLPTR,
+        NVTX_GLOBAL_TABLE_ENTRY(nvtxMarkEx),
+        NVTX_GLOBAL_TABLE_ENTRY(nvtxMarkA),
+        NVTX_GLOBAL_TABLE_ENTRY(nvtxMarkW),
+        NVTX_GLOBAL_TABLE_ENTRY(nvtxRangeStartEx),
+        NVTX_GLOBAL_TABLE_ENTRY(nvtxRangeStartA),
+        NVTX_GLOBAL_TABLE_ENTRY(nvtxRangeStartW),
+        NVTX_GLOBAL_TABLE_ENTRY(nvtxRangeEnd),
+        NVTX_GLOBAL_TABLE_ENTRY(nvtxRangePushEx),
+        NVTX_GLOBAL_TABLE_ENTRY(nvtxRangePushA),
+        NVTX_GLOBAL_TABLE_ENTRY(nvtxRangePushW),
+        NVTX_GLOBAL_TABLE_ENTRY(nvtxRangePop),
+        NVTX_GLOBAL_TABLE_ENTRY(nvtxNameCategoryA),
+        NVTX_GLOBAL_TABLE_ENTRY(nvtxNameCategoryW),
+        NVTX_GLOBAL_TABLE_ENTRY(nvtxNameOsThreadA),
+        NVTX_GLOBAL_TABLE_ENTRY(nvtxNameOsThreadW),
+        NVTX_NULLPTR
     },
     {
-        0,
-        (NvtxFunctionPointer*)&NVTX_VERSIONED_IDENTIFIER(nvtxGlobals).nvtxNameCuDeviceA_impl_fnptr,
-        (NvtxFunctionPointer*)&NVTX_VERSIONED_IDENTIFIER(nvtxGlobals).nvtxNameCuDeviceW_impl_fnptr,
-        (NvtxFunctionPointer*)&NVTX_VERSIONED_IDENTIFIER(nvtxGlobals).nvtxNameCuContextA_impl_fnptr,
-        (NvtxFunctionPointer*)&NVTX_VERSIONED_IDENTIFIER(nvtxGlobals).nvtxNameCuContextW_impl_fnptr,
-        (NvtxFunctionPointer*)&NVTX_VERSIONED_IDENTIFIER(nvtxGlobals).nvtxNameCuStreamA_impl_fnptr,
-        (NvtxFunctionPointer*)&NVTX_VERSIONED_IDENTIFIER(nvtxGlobals).nvtxNameCuStreamW_impl_fnptr,
-        (NvtxFunctionPointer*)&NVTX_VERSIONED_IDENTIFIER(nvtxGlobals).nvtxNameCuEventA_impl_fnptr,
-        (NvtxFunctionPointer*)&NVTX_VERSIONED_IDENTIFIER(nvtxGlobals).nvtxNameCuEventW_impl_fnptr,
-        0
+        NVTX_NULLPTR,
+        NVTX_GLOBAL_TABLE_ENTRY(nvtxNameCuDeviceA),
+        NVTX_GLOBAL_TABLE_ENTRY(nvtxNameCuDeviceW),
+        NVTX_GLOBAL_TABLE_ENTRY(nvtxNameCuContextA),
+        NVTX_GLOBAL_TABLE_ENTRY(nvtxNameCuContextW),
+        NVTX_GLOBAL_TABLE_ENTRY(nvtxNameCuStreamA),
+        NVTX_GLOBAL_TABLE_ENTRY(nvtxNameCuStreamW),
+        NVTX_GLOBAL_TABLE_ENTRY(nvtxNameCuEventA),
+        NVTX_GLOBAL_TABLE_ENTRY(nvtxNameCuEventW),
+        NVTX_NULLPTR
     },
     {
-        0,
-        (NvtxFunctionPointer*)&NVTX_VERSIONED_IDENTIFIER(nvtxGlobals).nvtxNameClDeviceA_impl_fnptr,
-        (NvtxFunctionPointer*)&NVTX_VERSIONED_IDENTIFIER(nvtxGlobals).nvtxNameClDeviceW_impl_fnptr,
-        (NvtxFunctionPointer*)&NVTX_VERSIONED_IDENTIFIER(nvtxGlobals).nvtxNameClContextA_impl_fnptr,
-        (NvtxFunctionPointer*)&NVTX_VERSIONED_IDENTIFIER(nvtxGlobals).nvtxNameClContextW_impl_fnptr,
-        (NvtxFunctionPointer*)&NVTX_VERSIONED_IDENTIFIER(nvtxGlobals).nvtxNameClCommandQueueA_impl_fnptr,
-        (NvtxFunctionPointer*)&NVTX_VERSIONED_IDENTIFIER(nvtxGlobals).nvtxNameClCommandQueueW_impl_fnptr,
-        (NvtxFunctionPointer*)&NVTX_VERSIONED_IDENTIFIER(nvtxGlobals).nvtxNameClMemObjectA_impl_fnptr,
-        (NvtxFunctionPointer*)&NVTX_VERSIONED_IDENTIFIER(nvtxGlobals).nvtxNameClMemObjectW_impl_fnptr,
-        (NvtxFunctionPointer*)&NVTX_VERSIONED_IDENTIFIER(nvtxGlobals).nvtxNameClSamplerA_impl_fnptr,
-        (NvtxFunctionPointer*)&NVTX_VERSIONED_IDENTIFIER(nvtxGlobals).nvtxNameClSamplerW_impl_fnptr,
-        (NvtxFunctionPointer*)&NVTX_VERSIONED_IDENTIFIER(nvtxGlobals).nvtxNameClProgramA_impl_fnptr,
-        (NvtxFunctionPointer*)&NVTX_VERSIONED_IDENTIFIER(nvtxGlobals).nvtxNameClProgramW_impl_fnptr,
-        (NvtxFunctionPointer*)&NVTX_VERSIONED_IDENTIFIER(nvtxGlobals).nvtxNameClEventA_impl_fnptr,
-        (NvtxFunctionPointer*)&NVTX_VERSIONED_IDENTIFIER(nvtxGlobals).nvtxNameClEventW_impl_fnptr,
-        0
+        NVTX_NULLPTR,
+        NVTX_GLOBAL_TABLE_ENTRY(nvtxNameClDeviceA),
+        NVTX_GLOBAL_TABLE_ENTRY(nvtxNameClDeviceW),
+        NVTX_GLOBAL_TABLE_ENTRY(nvtxNameClContextA),
+        NVTX_GLOBAL_TABLE_ENTRY(nvtxNameClContextW),
+        NVTX_GLOBAL_TABLE_ENTRY(nvtxNameClCommandQueueA),
+        NVTX_GLOBAL_TABLE_ENTRY(nvtxNameClCommandQueueW),
+        NVTX_GLOBAL_TABLE_ENTRY(nvtxNameClMemObjectA),
+        NVTX_GLOBAL_TABLE_ENTRY(nvtxNameClMemObjectW),
+        NVTX_GLOBAL_TABLE_ENTRY(nvtxNameClSamplerA),
+        NVTX_GLOBAL_TABLE_ENTRY(nvtxNameClSamplerW),
+        NVTX_GLOBAL_TABLE_ENTRY(nvtxNameClProgramA),
+        NVTX_GLOBAL_TABLE_ENTRY(nvtxNameClProgramW),
+        NVTX_GLOBAL_TABLE_ENTRY(nvtxNameClEventA),
+        NVTX_GLOBAL_TABLE_ENTRY(nvtxNameClEventW),
+        NVTX_NULLPTR
     },
     {
-        0,
-        (NvtxFunctionPointer*)&NVTX_VERSIONED_IDENTIFIER(nvtxGlobals).nvtxNameCudaDeviceA_impl_fnptr,
-        (NvtxFunctionPointer*)&NVTX_VERSIONED_IDENTIFIER(nvtxGlobals).nvtxNameCudaDeviceW_impl_fnptr,
-        (NvtxFunctionPointer*)&NVTX_VERSIONED_IDENTIFIER(nvtxGlobals).nvtxNameCudaStreamA_impl_fnptr,
-        (NvtxFunctionPointer*)&NVTX_VERSIONED_IDENTIFIER(nvtxGlobals).nvtxNameCudaStreamW_impl_fnptr,
-        (NvtxFunctionPointer*)&NVTX_VERSIONED_IDENTIFIER(nvtxGlobals).nvtxNameCudaEventA_impl_fnptr,
-        (NvtxFunctionPointer*)&NVTX_VERSIONED_IDENTIFIER(nvtxGlobals).nvtxNameCudaEventW_impl_fnptr,
-        0
+        NVTX_NULLPTR,
+        NVTX_GLOBAL_TABLE_ENTRY(nvtxNameCudaDeviceA),
+        NVTX_GLOBAL_TABLE_ENTRY(nvtxNameCudaDeviceW),
+        NVTX_GLOBAL_TABLE_ENTRY(nvtxNameCudaStreamA),
+        NVTX_GLOBAL_TABLE_ENTRY(nvtxNameCudaStreamW),
+        NVTX_GLOBAL_TABLE_ENTRY(nvtxNameCudaEventA),
+        NVTX_GLOBAL_TABLE_ENTRY(nvtxNameCudaEventW),
+        NVTX_NULLPTR
     },
     {
-        0,
-        (NvtxFunctionPointer*)&NVTX_VERSIONED_IDENTIFIER(nvtxGlobals).nvtxDomainMarkEx_impl_fnptr,
-        (NvtxFunctionPointer*)&NVTX_VERSIONED_IDENTIFIER(nvtxGlobals).nvtxDomainRangeStartEx_impl_fnptr,
-        (NvtxFunctionPointer*)&NVTX_VERSIONED_IDENTIFIER(nvtxGlobals).nvtxDomainRangeEnd_impl_fnptr,
-        (NvtxFunctionPointer*)&NVTX_VERSIONED_IDENTIFIER(nvtxGlobals).nvtxDomainRangePushEx_impl_fnptr,
-        (NvtxFunctionPointer*)&NVTX_VERSIONED_IDENTIFIER(nvtxGlobals).nvtxDomainRangePop_impl_fnptr,
-        (NvtxFunctionPointer*)&NVTX_VERSIONED_IDENTIFIER(nvtxGlobals).nvtxDomainResourceCreate_impl_fnptr,
-        (NvtxFunctionPointer*)&NVTX_VERSIONED_IDENTIFIER(nvtxGlobals).nvtxDomainResourceDestroy_impl_fnptr,
-        (NvtxFunctionPointer*)&NVTX_VERSIONED_IDENTIFIER(nvtxGlobals).nvtxDomainNameCategoryA_impl_fnptr,
-        (NvtxFunctionPointer*)&NVTX_VERSIONED_IDENTIFIER(nvtxGlobals).nvtxDomainNameCategoryW_impl_fnptr,
-        (NvtxFunctionPointer*)&NVTX_VERSIONED_IDENTIFIER(nvtxGlobals).nvtxDomainRegisterStringA_impl_fnptr,
-        (NvtxFunctionPointer*)&NVTX_VERSIONED_IDENTIFIER(nvtxGlobals).nvtxDomainRegisterStringW_impl_fnptr,
-        (NvtxFunctionPointer*)&NVTX_VERSIONED_IDENTIFIER(nvtxGlobals).nvtxDomainCreateA_impl_fnptr,
-        (NvtxFunctionPointer*)&NVTX_VERSIONED_IDENTIFIER(nvtxGlobals).nvtxDomainCreateW_impl_fnptr,
-        (NvtxFunctionPointer*)&NVTX_VERSIONED_IDENTIFIER(nvtxGlobals).nvtxDomainDestroy_impl_fnptr,
-        (NvtxFunctionPointer*)&NVTX_VERSIONED_IDENTIFIER(nvtxGlobals).nvtxInitialize_impl_fnptr,
-        0
+        NVTX_NULLPTR,
+        NVTX_GLOBAL_TABLE_ENTRY(nvtxDomainMarkEx),
+        NVTX_GLOBAL_TABLE_ENTRY(nvtxDomainRangeStartEx),
+        NVTX_GLOBAL_TABLE_ENTRY(nvtxDomainRangeEnd),
+        NVTX_GLOBAL_TABLE_ENTRY(nvtxDomainRangePushEx),
+        NVTX_GLOBAL_TABLE_ENTRY(nvtxDomainRangePop),
+        NVTX_GLOBAL_TABLE_ENTRY(nvtxDomainResourceCreate),
+        NVTX_GLOBAL_TABLE_ENTRY(nvtxDomainResourceDestroy),
+        NVTX_GLOBAL_TABLE_ENTRY(nvtxDomainNameCategoryA),
+        NVTX_GLOBAL_TABLE_ENTRY(nvtxDomainNameCategoryW),
+        NVTX_GLOBAL_TABLE_ENTRY(nvtxDomainRegisterStringA),
+        NVTX_GLOBAL_TABLE_ENTRY(nvtxDomainRegisterStringW),
+        NVTX_GLOBAL_TABLE_ENTRY(nvtxDomainCreateA),
+        NVTX_GLOBAL_TABLE_ENTRY(nvtxDomainCreateW),
+        NVTX_GLOBAL_TABLE_ENTRY(nvtxDomainDestroy),
+        NVTX_GLOBAL_TABLE_ENTRY(nvtxInitialize),
+        NVTX_NULLPTR
     },
     {
-        0,
-        (NvtxFunctionPointer*)&NVTX_VERSIONED_IDENTIFIER(nvtxGlobals).nvtxDomainSyncUserCreate_impl_fnptr,
-        (NvtxFunctionPointer*)&NVTX_VERSIONED_IDENTIFIER(nvtxGlobals).nvtxDomainSyncUserDestroy_impl_fnptr,
-        (NvtxFunctionPointer*)&NVTX_VERSIONED_IDENTIFIER(nvtxGlobals).nvtxDomainSyncUserAcquireStart_impl_fnptr,
-        (NvtxFunctionPointer*)&NVTX_VERSIONED_IDENTIFIER(nvtxGlobals).nvtxDomainSyncUserAcquireFailed_impl_fnptr,
-        (NvtxFunctionPointer*)&NVTX_VERSIONED_IDENTIFIER(nvtxGlobals).nvtxDomainSyncUserAcquireSuccess_impl_fnptr,
-        (NvtxFunctionPointer*)&NVTX_VERSIONED_IDENTIFIER(nvtxGlobals).nvtxDomainSyncUserReleasing_impl_fnptr,
-        0
+        NVTX_NULLPTR,
+        NVTX_GLOBAL_TABLE_ENTRY(nvtxDomainSyncUserCreate),
+        NVTX_GLOBAL_TABLE_ENTRY(nvtxDomainSyncUserDestroy),
+        NVTX_GLOBAL_TABLE_ENTRY(nvtxDomainSyncUserAcquireStart),
+        NVTX_GLOBAL_TABLE_ENTRY(nvtxDomainSyncUserAcquireFailed),
+        NVTX_GLOBAL_TABLE_ENTRY(nvtxDomainSyncUserAcquireSuccess),
+        NVTX_GLOBAL_TABLE_ENTRY(nvtxDomainSyncUserReleasing),
+        NVTX_NULLPTR
     }
 };
+
+#undef NVTX_GLOBAL_TABLE_ENTRY
 
 /* ---- Define static inline implementations of core API functions ---- */
 
@@ -374,39 +388,42 @@ NVTX_LINKONCE_DEFINE_FUNCTION int NVTX_API NVTX_VERSIONED_IDENTIFIER(nvtxEtiGetM
     unsigned int* out_size)
 {
     unsigned int bytes = 0;
-    NvtxFunctionTable table = (NvtxFunctionTable)0;
+    NvtxFunctionTable table = NVTX_NULLPTR;
 
     switch (module)
     {
     case NVTX_CB_MODULE_CORE:
         table = NVTX_VERSIONED_IDENTIFIER(nvtxGlobals).functionTable_CORE;
-        bytes = (unsigned int)sizeof(NVTX_VERSIONED_IDENTIFIER(nvtxGlobals).functionTable_CORE);
+        bytes = NVTX_STATIC_CAST(unsigned int, sizeof(NVTX_VERSIONED_IDENTIFIER(nvtxGlobals).functionTable_CORE));
         break;
     case NVTX_CB_MODULE_CUDA:
         table = NVTX_VERSIONED_IDENTIFIER(nvtxGlobals).functionTable_CUDA;
-        bytes = (unsigned int)sizeof(NVTX_VERSIONED_IDENTIFIER(nvtxGlobals).functionTable_CUDA);
+        bytes = NVTX_STATIC_CAST(unsigned int, sizeof(NVTX_VERSIONED_IDENTIFIER(nvtxGlobals).functionTable_CUDA));
         break;
     case NVTX_CB_MODULE_OPENCL:
         table = NVTX_VERSIONED_IDENTIFIER(nvtxGlobals).functionTable_OPENCL;
-        bytes = (unsigned int)sizeof(NVTX_VERSIONED_IDENTIFIER(nvtxGlobals).functionTable_OPENCL);
+        bytes = NVTX_STATIC_CAST(unsigned int, sizeof(NVTX_VERSIONED_IDENTIFIER(nvtxGlobals).functionTable_OPENCL));
         break;
     case NVTX_CB_MODULE_CUDART:
         table = NVTX_VERSIONED_IDENTIFIER(nvtxGlobals).functionTable_CUDART;
-        bytes = (unsigned int)sizeof(NVTX_VERSIONED_IDENTIFIER(nvtxGlobals).functionTable_CUDART);
+        bytes = NVTX_STATIC_CAST(unsigned int, sizeof(NVTX_VERSIONED_IDENTIFIER(nvtxGlobals).functionTable_CUDART));
         break;
     case NVTX_CB_MODULE_CORE2:
         table = NVTX_VERSIONED_IDENTIFIER(nvtxGlobals).functionTable_CORE2;
-        bytes = (unsigned int)sizeof(NVTX_VERSIONED_IDENTIFIER(nvtxGlobals).functionTable_CORE2);
+        bytes = NVTX_STATIC_CAST(unsigned int, sizeof(NVTX_VERSIONED_IDENTIFIER(nvtxGlobals).functionTable_CORE2));
         break;
     case NVTX_CB_MODULE_SYNC:
         table = NVTX_VERSIONED_IDENTIFIER(nvtxGlobals).functionTable_SYNC;
-        bytes = (unsigned int)sizeof(NVTX_VERSIONED_IDENTIFIER(nvtxGlobals).functionTable_SYNC);
+        bytes = NVTX_STATIC_CAST(unsigned int, sizeof(NVTX_VERSIONED_IDENTIFIER(nvtxGlobals).functionTable_SYNC));
         break;
+    case NVTX_CB_MODULE_INVALID:
+    case NVTX_CB_MODULE_SIZE:
+    case NVTX_CB_MODULE_FORCE_INT:
     default: return 0;
     }
 
     if (out_size)
-        *out_size = (bytes / (unsigned int)sizeof(NvtxFunctionPointer*)) - 1;
+        *out_size = (bytes / NVTX_STATIC_CAST(unsigned int, sizeof(NvtxFunctionPointer*))) - 1;
 
     if (out_table)
         *out_table = table;
@@ -420,7 +437,7 @@ NVTX_LINKONCE_DEFINE_FUNCTION const void* NVTX_API NVTX_VERSIONED_IDENTIFIER(nvt
     {
     case NVTX_ETID_CALLBACKS:       return &NVTX_VERSIONED_IDENTIFIER(nvtxGlobals).etblCallbacks;
     case NVTX_ETID_VERSIONINFO:     return &NVTX_VERSIONED_IDENTIFIER(nvtxGlobals).etblVersionInfo;
-    default:                        return 0;
+    default:                        return NVTX_NULLPTR;
     }
 }
 

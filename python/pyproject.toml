@@ -23,8 +23,8 @@ requires = ["setuptools", "wheel", "Cython==3.0.11"]
 
 [project]
 name = "nvtx"
-version = "0.2.11"
-description="PyNVTX - Python code annotation library"
+version = "0.2.12"
+description="Python NVTX - Python code annotation library"
 readme = "README.md"
 license = { text = "Apache 2.0" }
 authors = [{name = "NVIDIA Corporation"}]
@@ -45,13 +45,14 @@ classifiers = [
 
 [project.urls]
 Homepage = "https://github.com/NVIDIA/NVTX"
-Documentation = "https://github.com/NVIDIA/NVTX/blob/release-v3/python/docs/index.rst"
+Documentation = "https://nvidia.github.io/NVTX/python/"
 Repository = "https://github.com/NVIDIA/NVTX"
 License = "https://nvidia.github.io/NVTX/LICENSE.txt"
 Issues = "https://github.com/NVIDIA/NVTX/issues"
 
 [project.optional-dependencies]
 test = ["pytest", "Cython==3.0.11", "setuptools"]
+docs = ["sphinx", "nvidia_sphinx_theme"]
 
 [tool.setuptools.package-data]
 "nvtx._lib" = ["*.pxd"]

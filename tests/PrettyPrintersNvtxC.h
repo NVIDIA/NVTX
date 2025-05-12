@@ -30,7 +30,7 @@ inline void WriteColorType(std::ostream& os, nvtxColorType_t t)
     {
         case NVTX_COLOR_ARGB   : os << "NVTX_COLOR_ARGB"; break;
         case NVTX_COLOR_UNKNOWN: os << "<UNKNOWN TYPE>";  break;
-        default                : os << "<INVALID TYPE = " << (int32_t)t << ">";
+        default                : os << "<INVALID TYPE = " << static_cast<int32_t>(t) << ">";
     }
 }
 
@@ -51,7 +51,7 @@ inline void WritePayloadType(std::ostream& os, nvtxPayloadType_t t)
         case NVTX_PAYLOAD_TYPE_INT32         : os << "NVTX_PAYLOAD_TYPE_INT32         "; break;
         case NVTX_PAYLOAD_TYPE_FLOAT         : os << "NVTX_PAYLOAD_TYPE_FLOAT         "; break;
         case NVTX_PAYLOAD_UNKNOWN            : os << "<UNKNOWN TYPE>";                   break;
-        default                              : os << "<INVALID TYPE = " << (int32_t)t << ">";
+        default                              : os << "<INVALID TYPE = " << static_cast<int32_t>(t) << ">";
     }
 }
 
@@ -91,7 +91,7 @@ inline void WriteMessageType(std::ostream& os, nvtxMessageType_t t)
         case NVTX_MESSAGE_TYPE_UNICODE   : os << "NVTX_MESSAGE_TYPE_UNICODE";    break;
         case NVTX_MESSAGE_TYPE_REGISTERED: os << "NVTX_MESSAGE_TYPE_REGISTERED"; break;
         case NVTX_MESSAGE_UNKNOWN        : os << "<UNKNOWN TYPE>";               break;
-        default                          : os << "<INVALID TYPE = " << (int32_t)t << ">";
+        default                          : os << "<INVALID TYPE = " << static_cast<int32_t>(t) << ">";
     }
 }
 
@@ -101,7 +101,7 @@ inline void WriteMessageValue(std::ostream& os, nvtxMessageType_t t, nvtxMessage
     {
         case NVTX_MESSAGE_TYPE_ASCII     : os << val.ascii;             break;
         case NVTX_MESSAGE_TYPE_UNICODE   : os << "<Some wide chars>";   break;
-        case NVTX_MESSAGE_TYPE_REGISTERED: os << "Registered handle: " << (void*)val.registered; break;
+        case NVTX_MESSAGE_TYPE_REGISTERED: os << "Registered handle: " << static_cast<const void*>(val.registered); break;
         case NVTX_MESSAGE_UNKNOWN        : os << "<IGNORED VALUE>";     break;
         default                          : os << "<INVALID VALUE>";
     }
@@ -128,11 +128,11 @@ inline std::ostream& operator<<(std::ostream& os, nvtxEventAttributes_t const& a
     os << "{ver: " << a.version
         << ", size: " << a.size
         << ", category: " << a.category
-        << ", color: " << (nvtxColorType_t)a.colorType << " 0x" << std::hex << a.color << std::dec
-        << ", payload: " << (nvtxPayloadType_t)a.payloadType << " ";
-    WritePayloadValue(os, (nvtxPayloadType_t)a.payloadType, a.payload);
-    os << ", message: " << (nvtxMessageType_t)a.messageType << " \"";
-    WriteMessageValue(os, (nvtxMessageType_t)a.messageType, a.message);
+        << ", color: " << static_cast<nvtxColorType_t>(a.colorType) << " 0x" << std::hex << a.color << std::dec
+        << ", payload: " << static_cast<nvtxPayloadType_t>(a.payloadType) << " ";
+    WritePayloadValue(os, static_cast<nvtxPayloadType_t>(a.payloadType), a.payload);
+    os << ", message: " << static_cast<nvtxMessageType_t>(a.messageType) << " \"";
+    WriteMessageValue(os, static_cast<nvtxMessageType_t>(a.messageType), a.message);
     os << "\"}";
 
     return os;

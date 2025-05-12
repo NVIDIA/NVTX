@@ -520,16 +520,18 @@ inline InstallResult InstallHandlers(
         {
             auto count = size_of_tuple(handlerModule.handlers);
             printf("Module: %d   Count: %d  Highest: %d\n",
-                (int)handlerModule.moduleId, (int)count, (int)handlerModule.highestIdUsed);
+                static_cast<int>(handlerModule.moduleId),
+                static_cast<int>(count),
+                static_cast<int>(handlerModule.highestIdUsed));
 
             if (count > 0)
             {
                 for_each_in_tuple(handlerModule.handlers,
                     [](auto const& handler)
                     {
-                        auto addr = (long long)handler.Address();
+                        auto addr = static_cast<long long>(handler.Address());
                         printf("    Id: %d  Address: 0x%llx\n",
-                            (int)handler.id, addr);
+                            static_cast<int>(handler.id), addr);
                     }
                 );
             }

@@ -15,7 +15,7 @@ python -m pip install nvtx
 ## Quick start
 
 1. Annotate the parts of your Python code you wish to profile/analyze:
-   
+
    ```python
    # demo.py
 
@@ -37,7 +37,7 @@ python -m pip install nvtx
    ```
    nsys profile -t nvtx python demo.py
    ```
-   
+
 3. Visualize the results using the Nsight systems GUI:
 
    ![demo](https://raw.githubusercontent.com/NVIDIA/NVTX/release-v3/docs/images/example_range.png)

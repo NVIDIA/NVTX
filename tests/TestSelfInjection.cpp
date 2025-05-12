@@ -34,11 +34,11 @@ struct S1
     int i;
     float f;
 };
-bool operator==(S1 const& lhs, S1 const& rhs)
+static inline bool operator==(S1 const& lhs, S1 const& rhs)
 {
     return lhs.i == rhs.i && lhs.f == rhs.f;
 }
-std::ostream& operator<<(std::ostream& lhs, S1 const& rhs)
+static std::ostream& operator<<(std::ostream& lhs, S1 const& rhs)
 {
     return lhs << '{' << rhs.i << ',' << rhs.f << '}';
 }
@@ -238,7 +238,9 @@ static bool TestSame(bool verbose, bool deep)
 }
 
 extern "C" NVTX_DYNAMIC_EXPORT
-int RunTest(int argc, const char** argv)
+int RunTest(int /*argc*/, const char** /*argv*/);
+NVTX_DYNAMIC_EXPORT
+int RunTest(int /*argc*/, const char** /*argv*/)
 {
     NVTX_EXPORT_UNMANGLED_FUNCTION_NAME
 

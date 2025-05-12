@@ -69,22 +69,23 @@ constexpr char pathSep = '/';
 #endif
 
 // Adapted from C functions in NVTXW implementation
-static std::string GetCurrentProcessPath()
+static std::string GetCurrentProcessPath(void);
+static std::string GetCurrentProcessPath(void)
 {
     char* buf;
 #if defined(_WIN32)
     {
         DWORD size = MAX_PATH;
         DWORD newSize;
-        buf = NULL;
+        buf = nullptr;
         while (1)
         {
-            buf = (char*)realloc(buf, size);
+            buf = static_cast<char*>(realloc(buf, size));
             if (!buf)
             {
-                return NULL;
+                return nullptr;
             }
-            newSize = GetModuleFileNameA(NULL, buf, size);
+            newSize = GetModuleFileNameA(nullptr, buf, size);
             if (newSize < size)
             {
                 break;
@@ -96,16 +97,16 @@ static std::string GetCurrentProcessPath()
     {
         int ret;
         pid_t pid = getpid();
-        buf = (char*)malloc(PROC_PIDPATHINFO_MAXSIZE);
+        buf = static_cast<char*>(malloc(PROC_PIDPATHINFO_MAXSIZE));
         if (!buf)
         {
-            return NULL;
+            return nullptr;
         }
         ret = proc_pidpath(pid, buf, PROC_PIDPATHINFO_MAXSIZE);
         if (ret == 0)
         {
             free(buf);
-            return NULL;
+            return nullptr;
         }
     }
 #elif defined(__QNX__)
@@ -116,10 +117,10 @@ static std::string GetCurrentProcessPath()
             size = 4096;
         }
         ++size;
-        buf = (char*)malloc(size);
+        buf = static_cast<char*>(malloc(size));
         if (!buf)
         {
-            return NULL;
+            return nullptr;
         }
         _cmdname(buf);
     }
@@ -129,21 +130,21 @@ static std::string GetCurrentProcessPath()
         ssize_t bytesReadSigned;
         size_t bytesRead;
         static const char linkName[] = "/proc/self/exe";
-        buf = NULL;
+        buf = nullptr;
         while (1)
         {
-            buf = (char*)realloc(buf, size);
+            buf = static_cast<char*>(realloc(buf, size));
             if (!buf)
             {
-                return NULL;
+                return nullptr;
             }
             bytesReadSigned = readlink(linkName, buf, size);
             if (bytesReadSigned < 0)
             {
                 free(buf);
-                return NULL;
+                return nullptr;
             }
-            bytesRead = (size_t)bytesReadSigned;
+            bytesRead = static_cast<size_t>(bytesReadSigned);
             if (bytesRead < size) break;
             size *= 2;
         }
@@ -160,43 +161,52 @@ static std::string GetCurrentProcessPath()
     return result;
 }
 
-// We know the absolute path must have at least one slash in it,
-// right before the exe filename.  So we can truncate the string
-// to end just after the last slash, and append other file or
-// directory names.  Examples:
-//    C:\path\to\foo.exe -> C:\path\to\
-//    C:\foo.exe -> C:\
-//    /path/to/foo -> /path/to/
-//    /foo -> /
-std::string GetCurrentProcessDirWithSep()
+/*
+ * We know the absolute path must have at least one slash in it,
+ * right before the exe filename.  So we can truncate the string
+ * to end just after the last slash, and append other file or
+ * directory names.  Examples:
+ *    C:\path\to\foo.exe -> C:\path\to\
+ *    C:\foo.exe -> C:\
+ *    /path/to/foo -> /path/to/
+ *    /foo -> /
+ */
+static std::string GetCurrentProcessDirWithSep(void);
+static std::string GetCurrentProcessDirWithSep(void)
 {
     std::string exeAbsPath = GetCurrentProcessPath();
     exeAbsPath.resize(exeAbsPath.find_last_of(pathSep) + 1);
     return exeAbsPath;
 }
 
-// Take the absolute path to the current process's executable,
-// remove the executable's name, and then append the library
-// filename.  Applies the standard dynamic library prefix and
-// suffix to the library's base name, but the suffix may be
-// overridden if it isn't the standard one (e.g. ".so.1.1").
-// If subDirs has any entries, they are added between the
-// directory and the library name, with path separators added
-// between each.  Examples:
-//   (Assuming process is C:\path\to\foo.exe on Windows)
-//     AbsolutePathToLibraryInCurrentProcessPath("example")
-//       -> C:\path\to\example.dll
-//     AbsolutePathToLibraryInCurrentProcessPath("example", {"nested", "deeper"})
-//       -> C:\path\to\nested\deeper\example.dll
-//   (Assuming process is /path/to/foo on Linux)
-//     AbsolutePathToLibraryInCurrentProcessPath("example")
-//       -> /path/to/libexample.so
-//     AbsolutePathToLibraryInCurrentProcessPath("example", {"nested", "deeper"}, ".so.1")
-//       -> /path/to/nested/deeper/libexample.so.1
-std::string AbsolutePathToLibraryInCurrentProcessPath(
+/*
+ * Take the absolute path to the current process's executable,
+ * remove the executable's name, and then append the library
+ * filename.  Applies the standard dynamic library prefix and
+ * suffix to the library's base name, but the suffix may be
+ * overridden if it isn't the standard one (e.g. ".so.1.1").
+ * If subDirs has any entries, they are added between the
+ * directory and the library name, with path separators added
+ * between each.  Examples:
+ *   (Assuming process is C:\path\to\foo.exe on Windows)
+ *     AbsolutePathToLibraryInCurrentProcessPath("example")
+ *       -> C:\path\to\example.dll
+ *     AbsolutePathToLibraryInCurrentProcessPath("example", {"nested", "deeper"})
+ *       -> C:\path\to\nested\deeper\example.dll
+ *   (Assuming process is /path/to/foo on Linux)
+ *     AbsolutePathToLibraryInCurrentProcessPath("example")
+ *       -> /path/to/libexample.so
+ *     AbsolutePathToLibraryInCurrentProcessPath("example", {"nested", "deeper"}, ".so.1")
+ *       -> /path/to/nested/deeper/libexample.so.1
+ */
+static std::string AbsolutePathToLibraryInCurrentProcessPath(
     std::string libraryBaseName,
     std::vector<std::string> subDirs = {},
-    std::string libSuffix = DLL_SUFFIX)
+    std::string libSuffix = DLL_SUFFIX);
+static std::string AbsolutePathToLibraryInCurrentProcessPath(
+    std::string libraryBaseName,
+    std::vector<std::string> subDirs,
+    std::string libSuffix)
 {
     std::string result = GetCurrentProcessDirWithSep();
 

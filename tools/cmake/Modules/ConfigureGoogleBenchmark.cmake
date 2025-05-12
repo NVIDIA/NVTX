@@ -1,7 +1,7 @@
 set(GBENCH_ROOT "${CMAKE_BINARY_DIR}/googlebenchmark")
 
 set(GBENCH_CMAKE_ARGS " -DCMAKE_BUILD_TYPE=Release")
-                     #" -Dgtest_build_samples=ON" 
+                     #" -Dgtest_build_samples=ON"
                      #" -DCMAKE_VERBOSE_MAKEFILE=ON")
 
 configure_file("${CMAKE_SOURCE_DIR}/cmake/Templates/GoogleBenchmark.CMakeLists.txt.cmake"
