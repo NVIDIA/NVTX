@@ -50,8 +50,8 @@ static inline int gettid(void)
 // declaration [1], likewise for `nvtxStringRegistration_st` [2].
 // See the `DomainCreateA()/DomainDestroy()` callbacks below for how its lifetime is managed by NVTX.
 //
-// [1] https://github.com/NVIDIA/NVTX/blob/release-v3/c/include/nvtx3/nvToolsExt.h#L238
-// [2] https://github.com/NVIDIA/NVTX/blob/release-v3/c/include/nvtx3/nvToolsExt.h#L252
+// [1] https://github.com/NVIDIA/NVTX/blob/v3.1.1/c/include/nvtx3/nvToolsExt.h#L377
+// [2] https://github.com/NVIDIA/NVTX/blob/v3.1.1/c/include/nvtx3/nvToolsExt.h#L391
 struct nvtxDomainRegistration_st {
     const char* name;
 };
@@ -70,8 +70,8 @@ struct TearDownDetector
 // Returns a callback table ([1]) specified by the `module` argument or `nullptr` in case of error.
 // See `module`'s  valid values in the `NvtxCallbackModule` enum [2].
 //
-// [1] https://github.com/NVIDIA/NVTX/blob/release-v3/c/include/nvtx3/nvtxDetail/nvtxTypes.h#L266
-// [2] https://github.com/NVIDIA/NVTX/blob/release-v3/c/include/nvtx3/nvtxDetail/nvtxTypes.h#L127
+// [1] https://github.com/NVIDIA/NVTX/blob/v3.1.1/c/include/nvtx3/nvtxDetail/nvtxTypes.h#L277
+// [2] https://github.com/NVIDIA/NVTX/blob/v3.1.1/c/include/nvtx3/nvtxDetail/nvtxTypes.h#L138
 NvtxFunctionTable GetFunctionTable(NvtxGetExportTableFunc_t getExportTable, NvtxCallbackModule module) {
     auto callbacks = reinterpret_cast<const NvtxExportTableCallbacks*>(getExportTable(NVTX_ETID_CALLBACKS));
     if (!callbacks) {
@@ -197,12 +197,12 @@ EXPORT_SYMBOL int InitializeInjectionNvtx2(NvtxGetExportTableFunc_t getExportTab
     //     NVTX_CB_MODULE_CORE2: NVTX_CBID_CORE2_* (enum NvtxCallbackIdCore2, [5])
     //     NVTX_CB_MODULE_SYNC: NVTX_CBID_SYNC_* (enum NvtxCallbackIdSync, [6])
     //
-    // [1] https://github.com/NVIDIA/NVTX/blob/release-v3/c/include/nvtx3/nvtxDetail/nvtxTypes.h#L141
-    // [2] https://github.com/NVIDIA/NVTX/blob/release-v3/c/include/nvtx3/nvtxDetail/nvtxTypes.h#L187
-    // [3] https://github.com/NVIDIA/NVTX/blob/release-v3/c/include/nvtx3/nvtxDetail/nvtxTypes.h#L217
-    // [4] https://github.com/NVIDIA/NVTX/blob/release-v3/c/include/nvtx3/nvtxDetail/nvtxTypes.h#L203
-    // [5] https://github.com/NVIDIA/NVTX/blob/release-v3/c/include/nvtx3/nvtxDetail/nvtxTypes.h#L164
-    // [6] https://github.com/NVIDIA/NVTX/blob/release-v3/c/include/nvtx3/nvtxDetail/nvtxTypes.h#L239
+    // [1] https://github.com/NVIDIA/NVTX/blob/v3.1.1/c/include/nvtx3/nvtxDetail/nvtxTypes.h#L152
+    // [2] https://github.com/NVIDIA/NVTX/blob/v3.1.1/c/include/nvtx3/nvtxDetail/nvtxTypes.h#L198
+    // [3] https://github.com/NVIDIA/NVTX/blob/v3.1.1/c/include/nvtx3/nvtxDetail/nvtxTypes.h#L228
+    // [4] https://github.com/NVIDIA/NVTX/blob/v3.1.1/c/include/nvtx3/nvtxDetail/nvtxTypes.h#L214
+    // [5] https://github.com/NVIDIA/NVTX/blob/v3.1.1/c/include/nvtx3/nvtxDetail/nvtxTypes.h#L175
+    // [6] https://github.com/NVIDIA/NVTX/blob/v3.1.1/c/include/nvtx3/nvtxDetail/nvtxTypes.h#L250
     NvtxFunctionTable coreTable = GetFunctionTable(getExportTable, NVTX_CB_MODULE_CORE);
     *coreTable[NVTX_CBID_CORE_RangePushA] = reinterpret_cast<NvtxFunctionPointer>(impl::RangePushA);
     *coreTable[NVTX_CBID_CORE_RangePop] = (NvtxFunctionPointer) impl::RangePop; // C casting is also fine
