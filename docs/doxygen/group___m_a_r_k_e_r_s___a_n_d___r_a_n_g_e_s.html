@@ -168,7 +168,7 @@ NVTX_DECLSPEC int NVTX_API&#160;</td><td class="memItemRight" valign="bottom"><b
   </dd>
 </dl>
 <dl class="section see"><dt>See also</dt><dd><a class="el" href="group___m_a_r_k_e_r_s___a_n_d___r_a_n_g_e_s.html#gaa31a1079a237d0772f84c56aeda7b26d" title="Marks an instantaneous event in the application.">nvtxMarkEx</a></dd></dl>
-<dl class="section version"><dt>Version</dt><dd>\NVTX_VERSION_2 </dd></dl>
+<dl class="section version"><dt>Version</dt><dd>NVTX_VERSION_2 </dd></dl>
 
 </div>
 </div>
@@ -207,7 +207,7 @@ NVTX_DECLSPEC int NVTX_API&#160;</td><td class="memItemRight" valign="bottom"><b
   </dd>
 </dl>
 <dl class="section remark"><dt>Remarks</dt><dd>This function is offered completeness but is an alias for <a class="el" href="group___m_a_r_k_e_r_s___a_n_d___r_a_n_g_e_s.html#ga5e72fe22a8f4fde6e36ef15e7c1416bb" title="Ends a process range.">nvtxRangeEnd</a>. It does not need a domain param since that is associated with the range ID at <a class="el" href="group___m_a_r_k_e_r_s___a_n_d___r_a_n_g_e_s.html#gaf1cdd49e2d1fde6a62fabf30009adbc0" title="Starts a process range in a domain.">nvtxDomainRangeStartEx</a></dd></dl>
-<dl class="section user"><dt>Example:</dt><dd><div class="fragment"><div class="line">nvtxDomainHandle_t domain = <a class="code hl_function" href="group___d_o_m_a_i_n_s.html#ga2bbf44a48a4a46bf8900bd886524d87d">nvtxDomainCreateA</a>(<span class="stringliteral">&quot;my domain&quot;</span>);</div>
+<dl class="section user"><dt>Example</dt><dd>End a range for a domain: <div class="fragment"><div class="line">nvtxDomainHandle_t domain = <a class="code hl_function" href="group___d_o_m_a_i_n_s.html#ga2bbf44a48a4a46bf8900bd886524d87d">nvtxDomainCreateA</a>(<span class="stringliteral">&quot;my domain&quot;</span>);</div>
 <div class="line">nvtxEventAttributes_t eventAttrib = {0};</div>
 <div class="line">eventAttrib.version = <a class="code hl_define" href="nv_tools_ext_8h.html#a270c1573fb02bc9f15825438913a255c">NVTX_VERSION</a>;</div>
 <div class="line">eventAttrib.size = <a class="code hl_define" href="nv_tools_ext_8h.html#a5d1913ca9009ed5aad3208c3fb7a5a0e">NVTX_EVENT_ATTRIB_STRUCT_SIZE</a>;</div>
@@ -217,14 +217,14 @@ NVTX_DECLSPEC int NVTX_API&#160;</td><td class="memItemRight" valign="bottom"><b
 <div class="line"><span class="comment">// ...</span></div>
 <div class="line"><a class="code hl_function" href="group___m_a_r_k_e_r_s___a_n_d___r_a_n_g_e_s.html#ga29d0e8aa08dec9486559287a27ce7f3f">nvtxDomainRangeEnd</a>(domain, rangeId);</div>
 <div class="ttc" id="agroup___d_o_m_a_i_n_s_html_ga2bbf44a48a4a46bf8900bd886524d87d"><div class="ttname"><a href="group___d_o_m_a_i_n_s.html#ga2bbf44a48a4a46bf8900bd886524d87d">nvtxDomainCreateA</a></div><div class="ttdeci">NVTX_DECLSPEC nvtxDomainHandle_t NVTX_API nvtxDomainCreateA(const char *name)</div><div class="ttdoc">Register a NVTX domain.</div></div>
-<div class="ttc" id="agroup___g_e_n_e_r_a_l_html_ggaf74d5ab5269ee3c1de7aa0059ca31c46aad30a1fb6651b7f2c36d8d19ade74576"><div class="ttname"><a href="group___g_e_n_e_r_a_l.html#ggaf74d5ab5269ee3c1de7aa0059ca31c46aad30a1fb6651b7f2c36d8d19ade74576">NVTX_MESSAGE_TYPE_ASCII</a></div><div class="ttdeci">@ NVTX_MESSAGE_TYPE_ASCII</div><div class="ttdef"><b>Definition</b> <a href="nv_tools_ext_8h_source.html#l00424">nvToolsExt.h:424</a></div></div>
+<div class="ttc" id="agroup___g_e_n_e_r_a_l_html_ggaf74d5ab5269ee3c1de7aa0059ca31c46aad30a1fb6651b7f2c36d8d19ade74576"><div class="ttname"><a href="group___g_e_n_e_r_a_l.html#ggaf74d5ab5269ee3c1de7aa0059ca31c46aad30a1fb6651b7f2c36d8d19ade74576">NVTX_MESSAGE_TYPE_ASCII</a></div><div class="ttdeci">@ NVTX_MESSAGE_TYPE_ASCII</div><div class="ttdef"><b>Definition</b> <a href="nv_tools_ext_8h_source.html#l00450">nvToolsExt.h:450</a></div></div>
 <div class="ttc" id="agroup___m_a_r_k_e_r_s___a_n_d___r_a_n_g_e_s_html_ga29d0e8aa08dec9486559287a27ce7f3f"><div class="ttname"><a href="group___m_a_r_k_e_r_s___a_n_d___r_a_n_g_e_s.html#ga29d0e8aa08dec9486559287a27ce7f3f">nvtxDomainRangeEnd</a></div><div class="ttdeci">NVTX_DECLSPEC void NVTX_API nvtxDomainRangeEnd(nvtxDomainHandle_t domain, nvtxRangeId_t id)</div><div class="ttdoc">Ends a process range.</div></div>
 <div class="ttc" id="agroup___m_a_r_k_e_r_s___a_n_d___r_a_n_g_e_s_html_gaf1cdd49e2d1fde6a62fabf30009adbc0"><div class="ttname"><a href="group___m_a_r_k_e_r_s___a_n_d___r_a_n_g_e_s.html#gaf1cdd49e2d1fde6a62fabf30009adbc0">nvtxDomainRangeStartEx</a></div><div class="ttdeci">NVTX_DECLSPEC nvtxRangeId_t NVTX_API nvtxDomainRangeStartEx(nvtxDomainHandle_t domain, const nvtxEventAttributes_t *eventAttrib)</div><div class="ttdoc">Starts a process range in a domain.</div></div>
-<div class="ttc" id="anv_tools_ext_8h_html_a270c1573fb02bc9f15825438913a255c"><div class="ttname"><a href="nv_tools_ext_8h.html#a270c1573fb02bc9f15825438913a255c">NVTX_VERSION</a></div><div class="ttdeci">#define NVTX_VERSION</div><div class="ttdef"><b>Definition</b> <a href="nv_tools_ext_8h_source.html#l00167">nvToolsExt.h:167</a></div></div>
-<div class="ttc" id="anv_tools_ext_8h_html_a5d1913ca9009ed5aad3208c3fb7a5a0e"><div class="ttname"><a href="nv_tools_ext_8h.html#a5d1913ca9009ed5aad3208c3fb7a5a0e">NVTX_EVENT_ATTRIB_STRUCT_SIZE</a></div><div class="ttdeci">#define NVTX_EVENT_ATTRIB_STRUCT_SIZE</div><div class="ttdef"><b>Definition</b> <a href="nv_tools_ext_8h_source.html#l00370">nvToolsExt.h:370</a></div></div>
+<div class="ttc" id="anv_tools_ext_8h_html_a270c1573fb02bc9f15825438913a255c"><div class="ttname"><a href="nv_tools_ext_8h.html#a270c1573fb02bc9f15825438913a255c">NVTX_VERSION</a></div><div class="ttdeci">#define NVTX_VERSION</div><div class="ttdef"><b>Definition</b> <a href="nv_tools_ext_8h_source.html#l00177">nvToolsExt.h:177</a></div></div>
+<div class="ttc" id="anv_tools_ext_8h_html_a5d1913ca9009ed5aad3208c3fb7a5a0e"><div class="ttname"><a href="nv_tools_ext_8h.html#a5d1913ca9009ed5aad3208c3fb7a5a0e">NVTX_EVENT_ATTRIB_STRUCT_SIZE</a></div><div class="ttdeci">#define NVTX_EVENT_ATTRIB_STRUCT_SIZE</div><div class="ttdef"><b>Definition</b> <a href="nv_tools_ext_8h_source.html#l00396">nvToolsExt.h:396</a></div></div>
 </div><!-- fragment --></dd></dl>
 <dl class="section see"><dt>See also</dt><dd><a class="el" href="group___m_a_r_k_e_r_s___a_n_d___r_a_n_g_e_s.html#gaf1cdd49e2d1fde6a62fabf30009adbc0" title="Starts a process range in a domain.">nvtxDomainRangeStartEx</a></dd></dl>
-<dl class="section version"><dt>Version</dt><dd>\NVTX_VERSION_2 </dd></dl>
+<dl class="section version"><dt>Version</dt><dd>NVTX_VERSION_2 </dd></dl>
 
 </div>
 </div>
@@ -246,7 +246,7 @@ NVTX_DECLSPEC int NVTX_API&#160;</td><td class="memItemRight" valign="bottom"><b
 
 <p>Ends a nested thread range. </p>
 <dl class="section return"><dt>Returns</dt><dd>The level of the range being ended. If an error occurs a negative value is returned on the current thread.</dd></dl>
-<dl class="section user"><dt>Example:</dt><dd><div class="fragment"><div class="line">nvtxDomainHandle_t domain = <a class="code hl_function" href="group___d_o_m_a_i_n_s.html#ga2bbf44a48a4a46bf8900bd886524d87d">nvtxDomainCreateA</a>(<span class="stringliteral">&quot;example domain&quot;</span>);</div>
+<dl class="section user"><dt>Example</dt><dd>Pop a range for a domain: <div class="fragment"><div class="line">nvtxDomainHandle_t domain = <a class="code hl_function" href="group___d_o_m_a_i_n_s.html#ga2bbf44a48a4a46bf8900bd886524d87d">nvtxDomainCreateA</a>(<span class="stringliteral">&quot;example domain&quot;</span>);</div>
 <div class="line">nvtxEventAttributes_t eventAttrib = {0};</div>
 <div class="line">eventAttrib.version = <a class="code hl_define" href="nv_tools_ext_8h.html#a270c1573fb02bc9f15825438913a255c">NVTX_VERSION</a>;</div>
 <div class="line">eventAttrib.size = <a class="code hl_define" href="nv_tools_ext_8h.html#a5d1913ca9009ed5aad3208c3fb7a5a0e">NVTX_EVENT_ATTRIB_STRUCT_SIZE</a>;</div>
@@ -263,13 +263,13 @@ NVTX_DECLSPEC int NVTX_API&#160;</td><td class="memItemRight" valign="bottom"><b
 <div class="line"> </div>
 <div class="line"><a class="code hl_function" href="group___m_a_r_k_e_r_s___a_n_d___r_a_n_g_e_s.html#ga1b9340e7db3641deb5e14566c4fa6920">nvtxDomainRangePop</a>(domain); <span class="comment">// Level 1</span></div>
 <div class="line"><a class="code hl_function" href="group___m_a_r_k_e_r_s___a_n_d___r_a_n_g_e_s.html#ga1b9340e7db3641deb5e14566c4fa6920">nvtxDomainRangePop</a>(domain); <span class="comment">// Level 0</span></div>
-<div class="ttc" id="agroup___g_e_n_e_r_a_l_html_ggad03fafe52eed68d119c1c4ea6e92a521a63a59d87ec996a2eb620e26e37bd705e"><div class="ttname"><a href="group___g_e_n_e_r_a_l.html#ggad03fafe52eed68d119c1c4ea6e92a521a63a59d87ec996a2eb620e26e37bd705e">NVTX_COLOR_ARGB</a></div><div class="ttdeci">@ NVTX_COLOR_ARGB</div><div class="ttdef"><b>Definition</b> <a href="nv_tools_ext_8h_source.html#l00416">nvToolsExt.h:415</a></div></div>
-<div class="ttc" id="agroup___g_e_n_e_r_a_l_html_ggaf74d5ab5269ee3c1de7aa0059ca31c46aac3516268f6c4b3f188b551ac5e1688b"><div class="ttname"><a href="group___g_e_n_e_r_a_l.html#ggaf74d5ab5269ee3c1de7aa0059ca31c46aac3516268f6c4b3f188b551ac5e1688b">NVTX_MESSAGE_TYPE_UNICODE</a></div><div class="ttdeci">@ NVTX_MESSAGE_TYPE_UNICODE</div><div class="ttdef"><b>Definition</b> <a href="nv_tools_ext_8h_source.html#l00425">nvToolsExt.h:425</a></div></div>
+<div class="ttc" id="agroup___g_e_n_e_r_a_l_html_ggad03fafe52eed68d119c1c4ea6e92a521a63a59d87ec996a2eb620e26e37bd705e"><div class="ttname"><a href="group___g_e_n_e_r_a_l.html#ggad03fafe52eed68d119c1c4ea6e92a521a63a59d87ec996a2eb620e26e37bd705e">NVTX_COLOR_ARGB</a></div><div class="ttdeci">@ NVTX_COLOR_ARGB</div><div class="ttdef"><b>Definition</b> <a href="nv_tools_ext_8h_source.html#l00442">nvToolsExt.h:441</a></div></div>
+<div class="ttc" id="agroup___g_e_n_e_r_a_l_html_ggaf74d5ab5269ee3c1de7aa0059ca31c46aac3516268f6c4b3f188b551ac5e1688b"><div class="ttname"><a href="group___g_e_n_e_r_a_l.html#ggaf74d5ab5269ee3c1de7aa0059ca31c46aac3516268f6c4b3f188b551ac5e1688b">NVTX_MESSAGE_TYPE_UNICODE</a></div><div class="ttdeci">@ NVTX_MESSAGE_TYPE_UNICODE</div><div class="ttdef"><b>Definition</b> <a href="nv_tools_ext_8h_source.html#l00451">nvToolsExt.h:451</a></div></div>
 <div class="ttc" id="agroup___m_a_r_k_e_r_s___a_n_d___r_a_n_g_e_s_html_ga1b9340e7db3641deb5e14566c4fa6920"><div class="ttname"><a href="group___m_a_r_k_e_r_s___a_n_d___r_a_n_g_e_s.html#ga1b9340e7db3641deb5e14566c4fa6920">nvtxDomainRangePop</a></div><div class="ttdeci">NVTX_DECLSPEC int NVTX_API nvtxDomainRangePop(nvtxDomainHandle_t domain)</div><div class="ttdoc">Ends a nested thread range.</div></div>
 <div class="ttc" id="agroup___m_a_r_k_e_r_s___a_n_d___r_a_n_g_e_s_html_ga5bba05d37e356e080b8b68d6618f174d"><div class="ttname"><a href="group___m_a_r_k_e_r_s___a_n_d___r_a_n_g_e_s.html#ga5bba05d37e356e080b8b68d6618f174d">nvtxDomainRangePushEx</a></div><div class="ttdeci">NVTX_DECLSPEC int NVTX_API nvtxDomainRangePushEx(nvtxDomainHandle_t domain, const nvtxEventAttributes_t *eventAttrib)</div><div class="ttdoc">Starts a nested thread range.</div></div>
 </div><!-- fragment --></dd></dl>
 <dl class="section see"><dt>See also</dt><dd><a class="el" href="group___m_a_r_k_e_r_s___a_n_d___r_a_n_g_e_s.html#gadab44822980b42e4b73b19edcd9de92c" title="Starts a nested thread range.">nvtxRangePushEx</a> <a class="el" href="group___m_a_r_k_e_r_s___a_n_d___r_a_n_g_e_s.html#ga67e1802542efa43b20471ad8dec30c1c" title="Starts a nested thread range.">nvtxRangePushA</a> nvtxRangePushW</dd></dl>
-<dl class="section version"><dt>Version</dt><dd>\NVTX_VERSION_2 </dd></dl>
+<dl class="section version"><dt>Version</dt><dd>NVTX_VERSION_2 </dd></dl>
 
 </div>
 </div>
@@ -308,7 +308,7 @@ NVTX_DECLSPEC int NVTX_API&#160;</td><td class="memItemRight" valign="bottom"><b
   </dd>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>The 0 based level of range being started. This value is scoped to the domain. If an error occurs, a negative value is returned.</dd></dl>
-<dl class="section user"><dt>Example:</dt><dd><div class="fragment"><div class="line">nvtxDomainHandle_t domain = <a class="code hl_function" href="group___d_o_m_a_i_n_s.html#ga2bbf44a48a4a46bf8900bd886524d87d">nvtxDomainCreateA</a>(<span class="stringliteral">&quot;example domain&quot;</span>);</div>
+<dl class="section user"><dt>Example</dt><dd>Push a range with attributes for a domain: <div class="fragment"><div class="line">nvtxDomainHandle_t domain = <a class="code hl_function" href="group___d_o_m_a_i_n_s.html#ga2bbf44a48a4a46bf8900bd886524d87d">nvtxDomainCreateA</a>(<span class="stringliteral">&quot;example domain&quot;</span>);</div>
 <div class="line">nvtxEventAttributes_t eventAttrib = {0};</div>
 <div class="line">eventAttrib.version = <a class="code hl_define" href="nv_tools_ext_8h.html#a270c1573fb02bc9f15825438913a255c">NVTX_VERSION</a>;</div>
 <div class="line">eventAttrib.size = <a class="code hl_define" href="nv_tools_ext_8h.html#a5d1913ca9009ed5aad3208c3fb7a5a0e">NVTX_EVENT_ATTRIB_STRUCT_SIZE</a>;</div>
@@ -327,7 +327,7 @@ NVTX_DECLSPEC int NVTX_API&#160;</td><td class="memItemRight" valign="bottom"><b
 <div class="line"><a class="code hl_function" href="group___m_a_r_k_e_r_s___a_n_d___r_a_n_g_e_s.html#ga1b9340e7db3641deb5e14566c4fa6920">nvtxDomainRangePop</a>(domain); <span class="comment">// Level 0</span></div>
 </div><!-- fragment --></dd></dl>
 <dl class="section see"><dt>See also</dt><dd><a class="el" href="group___m_a_r_k_e_r_s___a_n_d___r_a_n_g_e_s.html#ga1b9340e7db3641deb5e14566c4fa6920" title="Ends a nested thread range.">nvtxDomainRangePop</a></dd></dl>
-<dl class="section version"><dt>Version</dt><dd>\NVTX_VERSION_2 </dd></dl>
+<dl class="section version"><dt>Version</dt><dd>NVTX_VERSION_2 </dd></dl>
 
 </div>
 </div>
@@ -367,7 +367,7 @@ NVTX_DECLSPEC int NVTX_API&#160;</td><td class="memItemRight" valign="bottom"><b
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>The unique ID used to correlate a pair of Start and End events.</dd></dl>
 <dl class="section remark"><dt>Remarks</dt><dd>Ranges defined by Start/End can overlap.</dd></dl>
-<dl class="section user"><dt>Example:</dt><dd><div class="fragment"><div class="line">nvtxDomainHandle_t domain = <a class="code hl_function" href="group___d_o_m_a_i_n_s.html#ga2bbf44a48a4a46bf8900bd886524d87d">nvtxDomainCreateA</a>(<span class="stringliteral">&quot;my domain&quot;</span>);</div>
+<dl class="section user"><dt>Example</dt><dd>Start a range with attributes for a domain: <div class="fragment"><div class="line">nvtxDomainHandle_t domain = <a class="code hl_function" href="group___d_o_m_a_i_n_s.html#ga2bbf44a48a4a46bf8900bd886524d87d">nvtxDomainCreateA</a>(<span class="stringliteral">&quot;my domain&quot;</span>);</div>
 <div class="line">nvtxEventAttributes_t eventAttrib = {0};</div>
 <div class="line">eventAttrib.version = <a class="code hl_define" href="nv_tools_ext_8h.html#a270c1573fb02bc9f15825438913a255c">NVTX_VERSION</a>;</div>
 <div class="line">eventAttrib.size = <a class="code hl_define" href="nv_tools_ext_8h.html#a5d1913ca9009ed5aad3208c3fb7a5a0e">NVTX_EVENT_ATTRIB_STRUCT_SIZE</a>;</div>
@@ -378,7 +378,7 @@ NVTX_DECLSPEC int NVTX_API&#160;</td><td class="memItemRight" valign="bottom"><b
 <div class="line"><a class="code hl_function" href="group___m_a_r_k_e_r_s___a_n_d___r_a_n_g_e_s.html#ga29d0e8aa08dec9486559287a27ce7f3f">nvtxDomainRangeEnd</a>(domain, rangeId);</div>
 </div><!-- fragment --></dd></dl>
 <dl class="section see"><dt>See also</dt><dd><a class="el" href="group___m_a_r_k_e_r_s___a_n_d___r_a_n_g_e_s.html#ga29d0e8aa08dec9486559287a27ce7f3f" title="Ends a process range.">nvtxDomainRangeEnd</a></dd></dl>
-<dl class="section version"><dt>Version</dt><dd>\NVTX_VERSION_2 </dd></dl>
+<dl class="section version"><dt>Version</dt><dd>NVTX_VERSION_2 </dd></dl>
 
 </div>
 </div>
@@ -406,12 +406,12 @@ NVTX_DECLSPEC int NVTX_API&#160;</td><td class="memItemRight" valign="bottom"><b
   </table>
   </dd>
 </dl>
-<dl class="section user"><dt>Example:</dt><dd><div class="fragment"><div class="line"><a class="code hl_function" href="group___m_a_r_k_e_r_s___a_n_d___r_a_n_g_e_s.html#gaa8b4b68acc37bdaf14349b25752b26f9">nvtxMarkA</a>(<span class="stringliteral">&quot;Example nvtxMarkA&quot;</span>);</div>
+<dl class="section user"><dt>Example</dt><dd>Place a mark: <div class="fragment"><div class="line"><a class="code hl_function" href="group___m_a_r_k_e_r_s___a_n_d___r_a_n_g_e_s.html#gaa8b4b68acc37bdaf14349b25752b26f9">nvtxMarkA</a>(<span class="stringliteral">&quot;Example nvtxMarkA&quot;</span>);</div>
 <div class="line">nvtxMarkW(L<span class="stringliteral">&quot;Example nvtxMarkW&quot;</span>);</div>
 <div class="ttc" id="agroup___m_a_r_k_e_r_s___a_n_d___r_a_n_g_e_s_html_gaa8b4b68acc37bdaf14349b25752b26f9"><div class="ttname"><a href="group___m_a_r_k_e_r_s___a_n_d___r_a_n_g_e_s.html#gaa8b4b68acc37bdaf14349b25752b26f9">nvtxMarkA</a></div><div class="ttdeci">NVTX_DECLSPEC void NVTX_API nvtxMarkA(const char *message)</div><div class="ttdoc">Marks an instantaneous event in the application.</div></div>
 </div><!-- fragment --></dd></dl>
 <dl class="section see"><dt>See also</dt><dd><a class="el" href="group___m_a_r_k_e_r_s___a_n_d___r_a_n_g_e_s.html#ga9e31d7977bcd3b4e64da577908f20e70" title="Marks an instantaneous event in the application.">nvtxDomainMarkEx</a> <a class="el" href="group___m_a_r_k_e_r_s___a_n_d___r_a_n_g_e_s.html#gaa31a1079a237d0772f84c56aeda7b26d" title="Marks an instantaneous event in the application.">nvtxMarkEx</a></dd></dl>
-<dl class="section version"><dt>Version</dt><dd>\NVTX_VERSION_0 </dd></dl>
+<dl class="section version"><dt>Version</dt><dd>NVTX_VERSION_0 </dd></dl>
 
 </div>
 </div>
@@ -439,7 +439,7 @@ NVTX_DECLSPEC int NVTX_API&#160;</td><td class="memItemRight" valign="bottom"><b
   </table>
   </dd>
 </dl>
-<dl class="section user"><dt>Example:</dt><dd><div class="fragment"><div class="line"><span class="comment">// zero the structure</span></div>
+<dl class="section user"><dt>Example</dt><dd>Place a mark with attributes: <div class="fragment"><div class="line"><span class="comment">// zero the structure</span></div>
 <div class="line">nvtxEventAttributes_t eventAttrib = {0};</div>
 <div class="line"><span class="comment">// set the version and the size information</span></div>
 <div class="line">eventAttrib.version = <a class="code hl_define" href="nv_tools_ext_8h.html#a270c1573fb02bc9f15825438913a255c">NVTX_VERSION</a>;</div>
@@ -453,7 +453,7 @@ NVTX_DECLSPEC int NVTX_API&#160;</td><td class="memItemRight" valign="bottom"><b
 <div class="ttc" id="agroup___m_a_r_k_e_r_s___a_n_d___r_a_n_g_e_s_html_gaa31a1079a237d0772f84c56aeda7b26d"><div class="ttname"><a href="group___m_a_r_k_e_r_s___a_n_d___r_a_n_g_e_s.html#gaa31a1079a237d0772f84c56aeda7b26d">nvtxMarkEx</a></div><div class="ttdeci">NVTX_DECLSPEC void NVTX_API nvtxMarkEx(const nvtxEventAttributes_t *eventAttrib)</div><div class="ttdoc">Marks an instantaneous event in the application.</div></div>
 </div><!-- fragment --></dd></dl>
 <dl class="section see"><dt>See also</dt><dd><a class="el" href="group___m_a_r_k_e_r_s___a_n_d___r_a_n_g_e_s.html#ga9e31d7977bcd3b4e64da577908f20e70" title="Marks an instantaneous event in the application.">nvtxDomainMarkEx</a></dd></dl>
-<dl class="section version"><dt>Version</dt><dd>\NVTX_VERSION_1 </dd></dl>
+<dl class="section version"><dt>Version</dt><dd>NVTX_VERSION_1 </dd></dl>
 
 </div>
 </div>
@@ -481,7 +481,7 @@ NVTX_DECLSPEC int NVTX_API&#160;</td><td class="memItemRight" valign="bottom"><b
   </dd>
 </dl>
 <dl class="section see"><dt>See also</dt><dd><a class="el" href="group___m_a_r_k_e_r_s___a_n_d___r_a_n_g_e_s.html#gaf1cdd49e2d1fde6a62fabf30009adbc0" title="Starts a process range in a domain.">nvtxDomainRangeStartEx</a> <a class="el" href="group___m_a_r_k_e_r_s___a_n_d___r_a_n_g_e_s.html#gadfb180099c39096e890ad698c5d3efab" title="Starts a process range.">nvtxRangeStartEx</a> <a class="el" href="group___m_a_r_k_e_r_s___a_n_d___r_a_n_g_e_s.html#ga3069ca1d13ba40acd58bb2bde935c19b" title="Starts a process range.">nvtxRangeStartA</a> nvtxRangeStartW</dd></dl>
-<dl class="section version"><dt>Version</dt><dd>\NVTX_VERSION_0 </dd></dl>
+<dl class="section version"><dt>Version</dt><dd>NVTX_VERSION_0 </dd></dl>
 
 </div>
 </div>
@@ -503,7 +503,7 @@ NVTX_DECLSPEC int NVTX_API&#160;</td><td class="memItemRight" valign="bottom"><b
 
 <p>Ends a nested thread range. </p>
 <dl class="section return"><dt>Returns</dt><dd>The level of the range being ended. If an error occurs a negative value is returned on the current thread.</dd></dl>
-<dl class="section user"><dt>Example:</dt><dd><div class="fragment"><div class="line"><a class="code hl_function" href="group___m_a_r_k_e_r_s___a_n_d___r_a_n_g_e_s.html#ga67e1802542efa43b20471ad8dec30c1c">nvtxRangePushA</a>(<span class="stringliteral">&quot;Level 0&quot;</span>);</div>
+<dl class="section user"><dt>Example</dt><dd>Pop a range: <div class="fragment"><div class="line"><a class="code hl_function" href="group___m_a_r_k_e_r_s___a_n_d___r_a_n_g_e_s.html#ga67e1802542efa43b20471ad8dec30c1c">nvtxRangePushA</a>(<span class="stringliteral">&quot;Level 0&quot;</span>);</div>
 <div class="line">nvtxRangePushW(L<span class="stringliteral">&quot;Level 1&quot;</span>);</div>
 <div class="line"><a class="code hl_function" href="group___m_a_r_k_e_r_s___a_n_d___r_a_n_g_e_s.html#ga44275a20ccd53472750b46988c772930">nvtxRangePop</a>(); <span class="comment">// Level 1</span></div>
 <div class="line"><a class="code hl_function" href="group___m_a_r_k_e_r_s___a_n_d___r_a_n_g_e_s.html#ga44275a20ccd53472750b46988c772930">nvtxRangePop</a>(); <span class="comment">// Level 0</span></div>
@@ -511,7 +511,7 @@ NVTX_DECLSPEC int NVTX_API&#160;</td><td class="memItemRight" valign="bottom"><b
 <div class="ttc" id="agroup___m_a_r_k_e_r_s___a_n_d___r_a_n_g_e_s_html_ga67e1802542efa43b20471ad8dec30c1c"><div class="ttname"><a href="group___m_a_r_k_e_r_s___a_n_d___r_a_n_g_e_s.html#ga67e1802542efa43b20471ad8dec30c1c">nvtxRangePushA</a></div><div class="ttdeci">NVTX_DECLSPEC int NVTX_API nvtxRangePushA(const char *message)</div><div class="ttdoc">Starts a nested thread range.</div></div>
 </div><!-- fragment --></dd></dl>
 <dl class="section see"><dt>See also</dt><dd><a class="el" href="group___m_a_r_k_e_r_s___a_n_d___r_a_n_g_e_s.html#gadab44822980b42e4b73b19edcd9de92c" title="Starts a nested thread range.">nvtxRangePushEx</a> <a class="el" href="group___m_a_r_k_e_r_s___a_n_d___r_a_n_g_e_s.html#ga67e1802542efa43b20471ad8dec30c1c" title="Starts a nested thread range.">nvtxRangePushA</a> nvtxRangePushW</dd></dl>
-<dl class="section version"><dt>Version</dt><dd>\NVTX_VERSION_0 </dd></dl>
+<dl class="section version"><dt>Version</dt><dd>NVTX_VERSION_0 </dd></dl>
 
 </div>
 </div>
@@ -539,13 +539,13 @@ NVTX_DECLSPEC int NVTX_API&#160;</td><td class="memItemRight" valign="bottom"><b
   </dd>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>The 0 based level of range being started. If an error occurs a negative value is returned.</dd></dl>
-<dl class="section user"><dt>Example:</dt><dd><div class="fragment"><div class="line"><a class="code hl_function" href="group___m_a_r_k_e_r_s___a_n_d___r_a_n_g_e_s.html#ga67e1802542efa43b20471ad8dec30c1c">nvtxRangePushA</a>(<span class="stringliteral">&quot;Level 0&quot;</span>);</div>
+<dl class="section user"><dt>Example</dt><dd>Push a range: <div class="fragment"><div class="line"><a class="code hl_function" href="group___m_a_r_k_e_r_s___a_n_d___r_a_n_g_e_s.html#ga67e1802542efa43b20471ad8dec30c1c">nvtxRangePushA</a>(<span class="stringliteral">&quot;Level 0&quot;</span>);</div>
 <div class="line">nvtxRangePushW(L<span class="stringliteral">&quot;Level 1&quot;</span>);</div>
 <div class="line"><a class="code hl_function" href="group___m_a_r_k_e_r_s___a_n_d___r_a_n_g_e_s.html#ga44275a20ccd53472750b46988c772930">nvtxRangePop</a>(); <span class="comment">// Level 1</span></div>
 <div class="line"><a class="code hl_function" href="group___m_a_r_k_e_r_s___a_n_d___r_a_n_g_e_s.html#ga44275a20ccd53472750b46988c772930">nvtxRangePop</a>(); <span class="comment">// Level 0</span></div>
 </div><!-- fragment --></dd></dl>
 <dl class="section see"><dt>See also</dt><dd><a class="el" href="group___m_a_r_k_e_r_s___a_n_d___r_a_n_g_e_s.html#ga5bba05d37e356e080b8b68d6618f174d" title="Starts a nested thread range.">nvtxDomainRangePushEx</a> <a class="el" href="group___m_a_r_k_e_r_s___a_n_d___r_a_n_g_e_s.html#ga44275a20ccd53472750b46988c772930" title="Ends a nested thread range.">nvtxRangePop</a></dd></dl>
-<dl class="section version"><dt>Version</dt><dd>\NVTX_VERSION_0 </dd></dl>
+<dl class="section version"><dt>Version</dt><dd>NVTX_VERSION_0 </dd></dl>
 
 </div>
 </div>
@@ -573,7 +573,7 @@ NVTX_DECLSPEC int NVTX_API&#160;</td><td class="memItemRight" valign="bottom"><b
   </dd>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>The 0 based level of range being started. This level is per domain. If an error occurs a negative value is returned.</dd></dl>
-<dl class="section user"><dt>Example:</dt><dd><div class="fragment"><div class="line">nvtxEventAttributes_t eventAttrib = {0};</div>
+<dl class="section user"><dt>Example</dt><dd>Push a range with attributes: <div class="fragment"><div class="line">nvtxEventAttributes_t eventAttrib = {0};</div>
 <div class="line">eventAttrib.version = <a class="code hl_define" href="nv_tools_ext_8h.html#a270c1573fb02bc9f15825438913a255c">NVTX_VERSION</a>;</div>
 <div class="line">eventAttrib.size = <a class="code hl_define" href="nv_tools_ext_8h.html#a5d1913ca9009ed5aad3208c3fb7a5a0e">NVTX_EVENT_ATTRIB_STRUCT_SIZE</a>;</div>
 <div class="line">eventAttrib.colorType = <a class="code hl_enumvalue" href="group___g_e_n_e_r_a_l.html#ggad03fafe52eed68d119c1c4ea6e92a521a63a59d87ec996a2eb620e26e37bd705e">NVTX_COLOR_ARGB</a>;</div>
@@ -592,7 +592,7 @@ NVTX_DECLSPEC int NVTX_API&#160;</td><td class="memItemRight" valign="bottom"><b
 <div class="ttc" id="agroup___m_a_r_k_e_r_s___a_n_d___r_a_n_g_e_s_html_gadab44822980b42e4b73b19edcd9de92c"><div class="ttname"><a href="group___m_a_r_k_e_r_s___a_n_d___r_a_n_g_e_s.html#gadab44822980b42e4b73b19edcd9de92c">nvtxRangePushEx</a></div><div class="ttdeci">NVTX_DECLSPEC int NVTX_API nvtxRangePushEx(const nvtxEventAttributes_t *eventAttrib)</div><div class="ttdoc">Starts a nested thread range.</div></div>
 </div><!-- fragment --></dd></dl>
 <dl class="section see"><dt>See also</dt><dd><a class="el" href="group___m_a_r_k_e_r_s___a_n_d___r_a_n_g_e_s.html#ga5bba05d37e356e080b8b68d6618f174d" title="Starts a nested thread range.">nvtxDomainRangePushEx</a> <a class="el" href="group___m_a_r_k_e_r_s___a_n_d___r_a_n_g_e_s.html#ga44275a20ccd53472750b46988c772930" title="Ends a nested thread range.">nvtxRangePop</a></dd></dl>
-<dl class="section version"><dt>Version</dt><dd>\NVTX_VERSION_1 </dd></dl>
+<dl class="section version"><dt>Version</dt><dd>NVTX_VERSION_1 </dd></dl>
 
 </div>
 </div>
@@ -621,7 +621,7 @@ NVTX_DECLSPEC int NVTX_API&#160;</td><td class="memItemRight" valign="bottom"><b
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>The unique ID used to correlate a pair of Start and End events.</dd></dl>
 <dl class="section remark"><dt>Remarks</dt><dd>Ranges defined by Start/End can overlap.</dd></dl>
-<dl class="section user"><dt>Example:</dt><dd><div class="fragment"><div class="line">nvtxRangeId_t r1 = <a class="code hl_function" href="group___m_a_r_k_e_r_s___a_n_d___r_a_n_g_e_s.html#ga3069ca1d13ba40acd58bb2bde935c19b">nvtxRangeStartA</a>(<span class="stringliteral">&quot;Range 1&quot;</span>);</div>
+<dl class="section user"><dt>Example</dt><dd>Start a range: <div class="fragment"><div class="line">nvtxRangeId_t r1 = <a class="code hl_function" href="group___m_a_r_k_e_r_s___a_n_d___r_a_n_g_e_s.html#ga3069ca1d13ba40acd58bb2bde935c19b">nvtxRangeStartA</a>(<span class="stringliteral">&quot;Range 1&quot;</span>);</div>
 <div class="line">nvtxRangeId_t r2 = nvtxRangeStartW(L<span class="stringliteral">&quot;Range 2&quot;</span>);</div>
 <div class="line"><a class="code hl_function" href="group___m_a_r_k_e_r_s___a_n_d___r_a_n_g_e_s.html#ga5e72fe22a8f4fde6e36ef15e7c1416bb">nvtxRangeEnd</a>(r1);</div>
 <div class="line"><a class="code hl_function" href="group___m_a_r_k_e_r_s___a_n_d___r_a_n_g_e_s.html#ga5e72fe22a8f4fde6e36ef15e7c1416bb">nvtxRangeEnd</a>(r2);</div>
@@ -629,7 +629,7 @@ NVTX_DECLSPEC int NVTX_API&#160;</td><td class="memItemRight" valign="bottom"><b
 <div class="ttc" id="agroup___m_a_r_k_e_r_s___a_n_d___r_a_n_g_e_s_html_ga5e72fe22a8f4fde6e36ef15e7c1416bb"><div class="ttname"><a href="group___m_a_r_k_e_r_s___a_n_d___r_a_n_g_e_s.html#ga5e72fe22a8f4fde6e36ef15e7c1416bb">nvtxRangeEnd</a></div><div class="ttdeci">NVTX_DECLSPEC void NVTX_API nvtxRangeEnd(nvtxRangeId_t id)</div><div class="ttdoc">Ends a process range.</div></div>
 </div><!-- fragment --></dd></dl>
 <dl class="section see"><dt>See also</dt><dd><a class="el" href="group___m_a_r_k_e_r_s___a_n_d___r_a_n_g_e_s.html#ga5e72fe22a8f4fde6e36ef15e7c1416bb" title="Ends a process range.">nvtxRangeEnd</a> <a class="el" href="group___m_a_r_k_e_r_s___a_n_d___r_a_n_g_e_s.html#gadfb180099c39096e890ad698c5d3efab" title="Starts a process range.">nvtxRangeStartEx</a> <a class="el" href="group___m_a_r_k_e_r_s___a_n_d___r_a_n_g_e_s.html#gaf1cdd49e2d1fde6a62fabf30009adbc0" title="Starts a process range in a domain.">nvtxDomainRangeStartEx</a></dd></dl>
-<dl class="section version"><dt>Version</dt><dd>\NVTX_VERSION_0 </dd></dl>
+<dl class="section version"><dt>Version</dt><dd>NVTX_VERSION_0 </dd></dl>
 
 </div>
 </div>
@@ -658,7 +658,7 @@ NVTX_DECLSPEC int NVTX_API&#160;</td><td class="memItemRight" valign="bottom"><b
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>The unique ID used to correlate a pair of Start and End events.</dd></dl>
 <dl class="section remark"><dt>Remarks</dt><dd>Ranges defined by Start/End can overlap.</dd></dl>
-<dl class="section user"><dt>Example:</dt><dd><div class="fragment"><div class="line">nvtxEventAttributes_t eventAttrib = {0};</div>
+<dl class="section user"><dt>Example</dt><dd>Start a range with attributes: <div class="fragment"><div class="line">nvtxEventAttributes_t eventAttrib = {0};</div>
 <div class="line">eventAttrib.version = <a class="code hl_define" href="nv_tools_ext_8h.html#a270c1573fb02bc9f15825438913a255c">NVTX_VERSION</a>;</div>
 <div class="line">eventAttrib.size = <a class="code hl_define" href="nv_tools_ext_8h.html#a5d1913ca9009ed5aad3208c3fb7a5a0e">NVTX_EVENT_ATTRIB_STRUCT_SIZE</a>;</div>
 <div class="line">eventAttrib.category = 3;</div>
@@ -672,7 +672,7 @@ NVTX_DECLSPEC int NVTX_API&#160;</td><td class="memItemRight" valign="bottom"><b
 <div class="ttc" id="agroup___m_a_r_k_e_r_s___a_n_d___r_a_n_g_e_s_html_gadfb180099c39096e890ad698c5d3efab"><div class="ttname"><a href="group___m_a_r_k_e_r_s___a_n_d___r_a_n_g_e_s.html#gadfb180099c39096e890ad698c5d3efab">nvtxRangeStartEx</a></div><div class="ttdeci">NVTX_DECLSPEC nvtxRangeId_t NVTX_API nvtxRangeStartEx(const nvtxEventAttributes_t *eventAttrib)</div><div class="ttdoc">Starts a process range.</div></div>
 </div><!-- fragment --></dd></dl>
 <dl class="section see"><dt>See also</dt><dd><a class="el" href="group___m_a_r_k_e_r_s___a_n_d___r_a_n_g_e_s.html#ga5e72fe22a8f4fde6e36ef15e7c1416bb" title="Ends a process range.">nvtxRangeEnd</a> <a class="el" href="group___m_a_r_k_e_r_s___a_n_d___r_a_n_g_e_s.html#gaf1cdd49e2d1fde6a62fabf30009adbc0" title="Starts a process range in a domain.">nvtxDomainRangeStartEx</a></dd></dl>
-<dl class="section version"><dt>Version</dt><dd>\NVTX_VERSION_1 </dd></dl>
+<dl class="section version"><dt>Version</dt><dd>NVTX_VERSION_1 </dd></dl>
 
 </div>
 </div>

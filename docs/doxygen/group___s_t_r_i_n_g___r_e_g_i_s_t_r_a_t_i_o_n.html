@@ -123,7 +123,7 @@ NVTX_DECLSPEC nvtxStringHandle_t NVTX_API&#160;</td><td class="memItemRight" val
   </dd>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>A handle representing the registered string.</dd></dl>
-<dl class="section user"><dt>Example:</dt><dd><div class="fragment"><div class="line">nvtxDomainHandle_t domain = <a class="code hl_function" href="group___d_o_m_a_i_n_s.html#ga2bbf44a48a4a46bf8900bd886524d87d">nvtxDomainCreateA</a>(<span class="stringliteral">&quot;com.nvidia.nvtx.example&quot;</span>);</div>
+<dl class="section user"><dt>Example</dt><dd>Register a string: <div class="fragment"><div class="line">nvtxDomainHandle_t domain = <a class="code hl_function" href="group___d_o_m_a_i_n_s.html#ga2bbf44a48a4a46bf8900bd886524d87d">nvtxDomainCreateA</a>(<span class="stringliteral">&quot;com.nvidia.nvtx.example&quot;</span>);</div>
 <div class="line">nvtxStringHandle_t message = <a class="code hl_function" href="group___s_t_r_i_n_g___r_e_g_i_s_t_r_a_t_i_o_n.html#gaed4907d1c69789ca32d59788a6386a1f">nvtxDomainRegisterStringA</a>(domain, <span class="stringliteral">&quot;registered string&quot;</span>);</div>
 <div class="line">nvtxEventAttributes_t eventAttrib = {0};</div>
 <div class="line">eventAttrib.version = <a class="code hl_define" href="nv_tools_ext_8h.html#a270c1573fb02bc9f15825438913a255c">NVTX_VERSION</a>;</div>
@@ -131,12 +131,12 @@ NVTX_DECLSPEC nvtxStringHandle_t NVTX_API&#160;</td><td class="memItemRight" val
 <div class="line">eventAttrib.messageType = <a class="code hl_enumvalue" href="group___g_e_n_e_r_a_l.html#ggaf74d5ab5269ee3c1de7aa0059ca31c46a4dfd8514ece4f6d1b0aa350b882950ea">NVTX_MESSAGE_TYPE_REGISTERED</a>;</div>
 <div class="line">eventAttrib.message.registered = message;</div>
 <div class="ttc" id="agroup___d_o_m_a_i_n_s_html_ga2bbf44a48a4a46bf8900bd886524d87d"><div class="ttname"><a href="group___d_o_m_a_i_n_s.html#ga2bbf44a48a4a46bf8900bd886524d87d">nvtxDomainCreateA</a></div><div class="ttdeci">NVTX_DECLSPEC nvtxDomainHandle_t NVTX_API nvtxDomainCreateA(const char *name)</div><div class="ttdoc">Register a NVTX domain.</div></div>
-<div class="ttc" id="agroup___g_e_n_e_r_a_l_html_ggaf74d5ab5269ee3c1de7aa0059ca31c46a4dfd8514ece4f6d1b0aa350b882950ea"><div class="ttname"><a href="group___g_e_n_e_r_a_l.html#ggaf74d5ab5269ee3c1de7aa0059ca31c46a4dfd8514ece4f6d1b0aa350b882950ea">NVTX_MESSAGE_TYPE_REGISTERED</a></div><div class="ttdeci">@ NVTX_MESSAGE_TYPE_REGISTERED</div><div class="ttdef"><b>Definition</b> <a href="nv_tools_ext_8h_source.html#l00429">nvToolsExt.h:427</a></div></div>
+<div class="ttc" id="agroup___g_e_n_e_r_a_l_html_ggaf74d5ab5269ee3c1de7aa0059ca31c46a4dfd8514ece4f6d1b0aa350b882950ea"><div class="ttname"><a href="group___g_e_n_e_r_a_l.html#ggaf74d5ab5269ee3c1de7aa0059ca31c46a4dfd8514ece4f6d1b0aa350b882950ea">NVTX_MESSAGE_TYPE_REGISTERED</a></div><div class="ttdeci">@ NVTX_MESSAGE_TYPE_REGISTERED</div><div class="ttdef"><b>Definition</b> <a href="nv_tools_ext_8h_source.html#l00456">nvToolsExt.h:453</a></div></div>
 <div class="ttc" id="agroup___s_t_r_i_n_g___r_e_g_i_s_t_r_a_t_i_o_n_html_gaed4907d1c69789ca32d59788a6386a1f"><div class="ttname"><a href="group___s_t_r_i_n_g___r_e_g_i_s_t_r_a_t_i_o_n.html#gaed4907d1c69789ca32d59788a6386a1f">nvtxDomainRegisterStringA</a></div><div class="ttdeci">NVTX_DECLSPEC nvtxStringHandle_t NVTX_API nvtxDomainRegisterStringA(nvtxDomainHandle_t domain, const char *string)</div><div class="ttdoc">Register a string.</div></div>
-<div class="ttc" id="anv_tools_ext_8h_html_a270c1573fb02bc9f15825438913a255c"><div class="ttname"><a href="nv_tools_ext_8h.html#a270c1573fb02bc9f15825438913a255c">NVTX_VERSION</a></div><div class="ttdeci">#define NVTX_VERSION</div><div class="ttdef"><b>Definition</b> <a href="nv_tools_ext_8h_source.html#l00167">nvToolsExt.h:167</a></div></div>
-<div class="ttc" id="anv_tools_ext_8h_html_a5d1913ca9009ed5aad3208c3fb7a5a0e"><div class="ttname"><a href="nv_tools_ext_8h.html#a5d1913ca9009ed5aad3208c3fb7a5a0e">NVTX_EVENT_ATTRIB_STRUCT_SIZE</a></div><div class="ttdeci">#define NVTX_EVENT_ATTRIB_STRUCT_SIZE</div><div class="ttdef"><b>Definition</b> <a href="nv_tools_ext_8h_source.html#l00370">nvToolsExt.h:370</a></div></div>
+<div class="ttc" id="anv_tools_ext_8h_html_a270c1573fb02bc9f15825438913a255c"><div class="ttname"><a href="nv_tools_ext_8h.html#a270c1573fb02bc9f15825438913a255c">NVTX_VERSION</a></div><div class="ttdeci">#define NVTX_VERSION</div><div class="ttdef"><b>Definition</b> <a href="nv_tools_ext_8h_source.html#l00177">nvToolsExt.h:177</a></div></div>
+<div class="ttc" id="anv_tools_ext_8h_html_a5d1913ca9009ed5aad3208c3fb7a5a0e"><div class="ttname"><a href="nv_tools_ext_8h.html#a5d1913ca9009ed5aad3208c3fb7a5a0e">NVTX_EVENT_ATTRIB_STRUCT_SIZE</a></div><div class="ttdeci">#define NVTX_EVENT_ATTRIB_STRUCT_SIZE</div><div class="ttdef"><b>Definition</b> <a href="nv_tools_ext_8h_source.html#l00396">nvToolsExt.h:396</a></div></div>
 </div><!-- fragment --></dd></dl>
-<dl class="section version"><dt>Version</dt><dd>\NVTX_VERSION_2 </dd></dl>
+<dl class="section version"><dt>Version</dt><dd>NVTX_VERSION_2 </dd></dl>
 
 </div>
 </div>

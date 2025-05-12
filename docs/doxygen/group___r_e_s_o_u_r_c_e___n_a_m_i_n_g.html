@@ -265,7 +265,7 @@ OpenCL Resource Naming</h1>
 
 <p>Resource types for CUDART. </p>
 
-<p class="definition">Definition at line <a class="el" href="nv_tools_ext_cuda_rt_8h_source.html#l00056">56</a> of file <a class="el" href="nv_tools_ext_cuda_rt_8h_source.html">nvToolsExtCudaRt.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="nv_tools_ext_cuda_rt_8h_source.html#l00066">66</a> of file <a class="el" href="nv_tools_ext_cuda_rt_8h_source.html">nvToolsExtCudaRt.h</a>.</p>
 
 </div>
 </div>
@@ -283,7 +283,7 @@ OpenCL Resource Naming</h1>
 
 <p>Resource types for CUDA. </p>
 
-<p class="definition">Definition at line <a class="el" href="nv_tools_ext_cuda_8h_source.html#l00055">55</a> of file <a class="el" href="nv_tools_ext_cuda_8h_source.html">nvToolsExtCuda.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="nv_tools_ext_cuda_8h_source.html#l00065">65</a> of file <a class="el" href="nv_tools_ext_cuda_8h_source.html">nvToolsExtCuda.h</a>.</p>
 
 </div>
 </div>
@@ -301,7 +301,7 @@ OpenCL Resource Naming</h1>
 
 <p>Generic resource type for when a resource class is not available. </p>
 <dl class="section see"><dt>See also</dt><dd><a class="el" href="group___r_e_s_o_u_r_c_e___n_a_m_i_n_g.html#ga12271bb3f03619d5862bd5a900f9aac1" title="Create a resource object to track and associate data with OS and middleware objects.">nvtxDomainResourceCreate</a></dd></dl>
-<dl class="section version"><dt>Version</dt><dd>\NVTX_VERSION_2 </dd></dl>
+<dl class="section version"><dt>Version</dt><dd>NVTX_VERSION_2 </dd></dl>
 <table class="fieldtable">
 <tr><th colspan="2">Enumerator</th></tr><tr><td class="fieldname"><a id="ggabaaf30c7cfd72033a5521de326eacdabac874caafa9e3038f4c3302917278f57f" name="ggabaaf30c7cfd72033a5521de326eacdabac874caafa9e3038f4c3302917278f57f"></a>NVTX_RESOURCE_TYPE_GENERIC_POINTER&#160;</td><td class="fielddoc"><p>Generic pointer assumed to have no collisions with other pointers. </p>
 </td></tr>
@@ -313,7 +313,7 @@ OpenCL Resource Naming</h1>
 </td></tr>
 </table>
 
-<p class="definition">Definition at line <a class="el" href="nv_tools_ext_8h_source.html#l01100">1100</a> of file <a class="el" href="nv_tools_ext_8h_source.html">nvToolsExt.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="nv_tools_ext_8h_source.html#l01136">1136</a> of file <a class="el" href="nv_tools_ext_8h_source.html">nvToolsExt.h</a>.</p>
 
 </div>
 </div>
@@ -331,7 +331,7 @@ OpenCL Resource Naming</h1>
 
 <p>Resource types for OpenCL. </p>
 
-<p class="definition">Definition at line <a class="el" href="nv_tools_ext_open_c_l_8h_source.html#l00055">55</a> of file <a class="el" href="nv_tools_ext_open_c_l_8h_source.html">nvToolsExtOpenCL.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="nv_tools_ext_open_c_l_8h_source.html#l00065">65</a> of file <a class="el" href="nv_tools_ext_open_c_l_8h_source.html">nvToolsExtOpenCL.h</a>.</p>
 
 </div>
 </div>
@@ -380,13 +380,13 @@ OpenCL Resource Naming</h1>
   </dd>
 </dl>
 <dl class="section remark"><dt>Remarks</dt><dd>The category names are tracked per domain.</dd></dl>
-<dl class="section user"><dt>Example:</dt><dd><div class="fragment"><div class="line">nvtxDomainHandle_t domain = <a class="code hl_function" href="group___d_o_m_a_i_n_s.html#ga2bbf44a48a4a46bf8900bd886524d87d">nvtxDomainCreateA</a>(<span class="stringliteral">&quot;example&quot;</span>);</div>
+<dl class="section user"><dt>Example</dt><dd>Assign names to categories in a domain: <div class="fragment"><div class="line">nvtxDomainHandle_t domain = <a class="code hl_function" href="group___d_o_m_a_i_n_s.html#ga2bbf44a48a4a46bf8900bd886524d87d">nvtxDomainCreateA</a>(<span class="stringliteral">&quot;example&quot;</span>);</div>
 <div class="line"><a class="code hl_function" href="group___r_e_s_o_u_r_c_e___n_a_m_i_n_g.html#gaf2898af52be50279355c0ee1f57afbaa">nvtxDomainNameCategoryA</a>(domain, 1, <span class="stringliteral">&quot;Memory Allocation&quot;</span>);</div>
 <div class="line">nvtxDomainNameCategoryW(domain, 2, L<span class="stringliteral">&quot;Memory Transfer&quot;</span>);</div>
 <div class="ttc" id="agroup___d_o_m_a_i_n_s_html_ga2bbf44a48a4a46bf8900bd886524d87d"><div class="ttname"><a href="group___d_o_m_a_i_n_s.html#ga2bbf44a48a4a46bf8900bd886524d87d">nvtxDomainCreateA</a></div><div class="ttdeci">NVTX_DECLSPEC nvtxDomainHandle_t NVTX_API nvtxDomainCreateA(const char *name)</div><div class="ttdoc">Register a NVTX domain.</div></div>
 <div class="ttc" id="agroup___r_e_s_o_u_r_c_e___n_a_m_i_n_g_html_gaf2898af52be50279355c0ee1f57afbaa"><div class="ttname"><a href="group___r_e_s_o_u_r_c_e___n_a_m_i_n_g.html#gaf2898af52be50279355c0ee1f57afbaa">nvtxDomainNameCategoryA</a></div><div class="ttdeci">NVTX_DECLSPEC void NVTX_API nvtxDomainNameCategoryA(nvtxDomainHandle_t domain, uint32_t category, const char *name)</div><div class="ttdoc">Annotate an NVTX category used within a domain.</div></div>
 </div><!-- fragment --></dd></dl>
-<dl class="section version"><dt>Version</dt><dd>\NVTX_VERSION_2 </dd></dl>
+<dl class="section version"><dt>Version</dt><dd>NVTX_VERSION_2 </dd></dl>
 
 </div>
 </div>
@@ -426,7 +426,7 @@ OpenCL Resource Naming</h1>
   </dd>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>A handle that represents the newly created resource object.</dd></dl>
-<dl class="section user"><dt>Example:</dt><dd><div class="fragment"><div class="line">nvtxDomainHandle_t domain = <a class="code hl_function" href="group___d_o_m_a_i_n_s.html#ga2bbf44a48a4a46bf8900bd886524d87d">nvtxDomainCreateA</a>(<span class="stringliteral">&quot;example domain&quot;</span>);</div>
+<dl class="section user"><dt>Example</dt><dd>Register a resource: <div class="fragment"><div class="line">nvtxDomainHandle_t domain = <a class="code hl_function" href="group___d_o_m_a_i_n_s.html#ga2bbf44a48a4a46bf8900bd886524d87d">nvtxDomainCreateA</a>(<span class="stringliteral">&quot;example domain&quot;</span>);</div>
 <div class="line">nvtxResourceAttributes_t attribs = {0};</div>
 <div class="line">attribs.version = <a class="code hl_define" href="nv_tools_ext_8h.html#a270c1573fb02bc9f15825438913a255c">NVTX_VERSION</a>;</div>
 <div class="line">attribs.size = NVTX_RESOURCE_ATTRIB_STRUCT_SIZE;</div>
@@ -435,13 +435,13 @@ OpenCL Resource Naming</h1>
 <div class="line">attribs.messageType = <a class="code hl_enumvalue" href="group___g_e_n_e_r_a_l.html#ggaf74d5ab5269ee3c1de7aa0059ca31c46aad30a1fb6651b7f2c36d8d19ade74576">NVTX_MESSAGE_TYPE_ASCII</a>;</div>
 <div class="line">attribs.message.ascii = <span class="stringliteral">&quot;Single thread access to database.&quot;</span>;</div>
 <div class="line">nvtxResourceHandle_t handle = <a class="code hl_function" href="group___r_e_s_o_u_r_c_e___n_a_m_i_n_g.html#ga12271bb3f03619d5862bd5a900f9aac1">nvtxDomainResourceCreate</a>(domain, &amp;attribs);</div>
-<div class="ttc" id="agroup___g_e_n_e_r_a_l_html_ggaf74d5ab5269ee3c1de7aa0059ca31c46aad30a1fb6651b7f2c36d8d19ade74576"><div class="ttname"><a href="group___g_e_n_e_r_a_l.html#ggaf74d5ab5269ee3c1de7aa0059ca31c46aad30a1fb6651b7f2c36d8d19ade74576">NVTX_MESSAGE_TYPE_ASCII</a></div><div class="ttdeci">@ NVTX_MESSAGE_TYPE_ASCII</div><div class="ttdef"><b>Definition</b> <a href="nv_tools_ext_8h_source.html#l00424">nvToolsExt.h:424</a></div></div>
+<div class="ttc" id="agroup___g_e_n_e_r_a_l_html_ggaf74d5ab5269ee3c1de7aa0059ca31c46aad30a1fb6651b7f2c36d8d19ade74576"><div class="ttname"><a href="group___g_e_n_e_r_a_l.html#ggaf74d5ab5269ee3c1de7aa0059ca31c46aad30a1fb6651b7f2c36d8d19ade74576">NVTX_MESSAGE_TYPE_ASCII</a></div><div class="ttdeci">@ NVTX_MESSAGE_TYPE_ASCII</div><div class="ttdef"><b>Definition</b> <a href="nv_tools_ext_8h_source.html#l00450">nvToolsExt.h:450</a></div></div>
 <div class="ttc" id="agroup___r_e_s_o_u_r_c_e___n_a_m_i_n_g_html_ga12271bb3f03619d5862bd5a900f9aac1"><div class="ttname"><a href="group___r_e_s_o_u_r_c_e___n_a_m_i_n_g.html#ga12271bb3f03619d5862bd5a900f9aac1">nvtxDomainResourceCreate</a></div><div class="ttdeci">NVTX_DECLSPEC nvtxResourceHandle_t NVTX_API nvtxDomainResourceCreate(nvtxDomainHandle_t domain, nvtxResourceAttributes_t *attribs)</div><div class="ttdoc">Create a resource object to track and associate data with OS and middleware objects.</div></div>
-<div class="ttc" id="agroup___r_e_s_o_u_r_c_e___n_a_m_i_n_g_html_ggabaaf30c7cfd72033a5521de326eacdabac874caafa9e3038f4c3302917278f57f"><div class="ttname"><a href="group___r_e_s_o_u_r_c_e___n_a_m_i_n_g.html#ggabaaf30c7cfd72033a5521de326eacdabac874caafa9e3038f4c3302917278f57f">NVTX_RESOURCE_TYPE_GENERIC_POINTER</a></div><div class="ttdeci">@ NVTX_RESOURCE_TYPE_GENERIC_POINTER</div><div class="ttdef"><b>Definition</b> <a href="nv_tools_ext_8h_source.html#l01103">nvToolsExt.h:1103</a></div></div>
-<div class="ttc" id="anv_tools_ext_8h_html_a270c1573fb02bc9f15825438913a255c"><div class="ttname"><a href="nv_tools_ext_8h.html#a270c1573fb02bc9f15825438913a255c">NVTX_VERSION</a></div><div class="ttdeci">#define NVTX_VERSION</div><div class="ttdef"><b>Definition</b> <a href="nv_tools_ext_8h_source.html#l00167">nvToolsExt.h:167</a></div></div>
+<div class="ttc" id="agroup___r_e_s_o_u_r_c_e___n_a_m_i_n_g_html_ggabaaf30c7cfd72033a5521de326eacdabac874caafa9e3038f4c3302917278f57f"><div class="ttname"><a href="group___r_e_s_o_u_r_c_e___n_a_m_i_n_g.html#ggabaaf30c7cfd72033a5521de326eacdabac874caafa9e3038f4c3302917278f57f">NVTX_RESOURCE_TYPE_GENERIC_POINTER</a></div><div class="ttdeci">@ NVTX_RESOURCE_TYPE_GENERIC_POINTER</div><div class="ttdef"><b>Definition</b> <a href="nv_tools_ext_8h_source.html#l01139">nvToolsExt.h:1139</a></div></div>
+<div class="ttc" id="anv_tools_ext_8h_html_a270c1573fb02bc9f15825438913a255c"><div class="ttname"><a href="nv_tools_ext_8h.html#a270c1573fb02bc9f15825438913a255c">NVTX_VERSION</a></div><div class="ttdeci">#define NVTX_VERSION</div><div class="ttdef"><b>Definition</b> <a href="nv_tools_ext_8h_source.html#l00177">nvToolsExt.h:177</a></div></div>
 </div><!-- fragment --></dd></dl>
 <dl class="section see"><dt>See also</dt><dd>::nvtxResourceAttributes_t <a class="el" href="group___r_e_s_o_u_r_c_e___n_a_m_i_n_g.html#gaa95f902006e108c6fcca5c76b2d4a2b1" title="Destroy a resource object to track and associate data with OS and middleware objects.">nvtxDomainResourceDestroy</a></dd></dl>
-<dl class="section version"><dt>Version</dt><dd>\NVTX_VERSION_2 </dd></dl>
+<dl class="section version"><dt>Version</dt><dd>NVTX_VERSION_2 </dd></dl>
 
 </div>
 </div>
@@ -469,7 +469,7 @@ OpenCL Resource Naming</h1>
   </table>
   </dd>
 </dl>
-<dl class="section user"><dt>Example:</dt><dd><div class="fragment"><div class="line">nvtxDomainHandle_t domain = <a class="code hl_function" href="group___d_o_m_a_i_n_s.html#ga2bbf44a48a4a46bf8900bd886524d87d">nvtxDomainCreateA</a>(<span class="stringliteral">&quot;example domain&quot;</span>);</div>
+<dl class="section user"><dt>Example</dt><dd>Unregister a resource: <div class="fragment"><div class="line">nvtxDomainHandle_t domain = <a class="code hl_function" href="group___d_o_m_a_i_n_s.html#ga2bbf44a48a4a46bf8900bd886524d87d">nvtxDomainCreateA</a>(<span class="stringliteral">&quot;example domain&quot;</span>);</div>
 <div class="line">nvtxResourceAttributes_t attribs = {0};</div>
 <div class="line">attribs.version = <a class="code hl_define" href="nv_tools_ext_8h.html#a270c1573fb02bc9f15825438913a255c">NVTX_VERSION</a>;</div>
 <div class="line">attribs.size = NVTX_RESOURCE_ATTRIB_STRUCT_SIZE;</div>
@@ -483,7 +483,7 @@ OpenCL Resource Naming</h1>
 <div class="ttc" id="agroup___r_e_s_o_u_r_c_e___n_a_m_i_n_g_html_gaa95f902006e108c6fcca5c76b2d4a2b1"><div class="ttname"><a href="group___r_e_s_o_u_r_c_e___n_a_m_i_n_g.html#gaa95f902006e108c6fcca5c76b2d4a2b1">nvtxDomainResourceDestroy</a></div><div class="ttdeci">NVTX_DECLSPEC void NVTX_API nvtxDomainResourceDestroy(nvtxResourceHandle_t resource)</div><div class="ttdoc">Destroy a resource object to track and associate data with OS and middleware objects.</div></div>
 </div><!-- fragment --></dd></dl>
 <dl class="section see"><dt>See also</dt><dd><a class="el" href="group___r_e_s_o_u_r_c_e___n_a_m_i_n_g.html#ga12271bb3f03619d5862bd5a900f9aac1" title="Create a resource object to track and associate data with OS and middleware objects.">nvtxDomainResourceCreate</a></dd></dl>
-<dl class="section version"><dt>Version</dt><dd>\NVTX_VERSION_2 </dd></dl>
+<dl class="section version"><dt>Version</dt><dd>NVTX_VERSION_2 </dd></dl>
 
 </div>
 </div>
@@ -523,11 +523,11 @@ OpenCL Resource Naming</h1>
   </dd>
 </dl>
 <dl class="section remark"><dt>Remarks</dt><dd>The category names are tracked per process.</dd></dl>
-<dl class="section user"><dt>Example:</dt><dd><div class="fragment"><div class="line">nvtxNameCategory(1, <span class="stringliteral">&quot;Memory Allocation&quot;</span>);</div>
+<dl class="section user"><dt>Example</dt><dd>Assign names to categories: <div class="fragment"><div class="line">nvtxNameCategory(1, <span class="stringliteral">&quot;Memory Allocation&quot;</span>);</div>
 <div class="line">nvtxNameCategory(2, <span class="stringliteral">&quot;Memory Transfer&quot;</span>);</div>
 <div class="line">nvtxNameCategory(3, <span class="stringliteral">&quot;Memory Object Lifetime&quot;</span>);</div>
 </div><!-- fragment --></dd></dl>
-<dl class="section version"><dt>Version</dt><dd>\NVTX_VERSION_1 </dd></dl>
+<dl class="section version"><dt>Version</dt><dd>NVTX_VERSION_1 </dd></dl>
 
 </div>
 </div>
@@ -566,7 +566,7 @@ OpenCL Resource Naming</h1>
   </table>
   </dd>
 </dl>
-<dl class="section version"><dt>Version</dt><dd>\NVTX_VERSION_1 </dd></dl>
+<dl class="section version"><dt>Version</dt><dd>NVTX_VERSION_1 </dd></dl>
 
 </div>
 </div>
@@ -605,7 +605,7 @@ OpenCL Resource Naming</h1>
   </table>
   </dd>
 </dl>
-<dl class="section version"><dt>Version</dt><dd>\NVTX_VERSION_1 </dd></dl>
+<dl class="section version"><dt>Version</dt><dd>NVTX_VERSION_1 </dd></dl>
 
 </div>
 </div>
@@ -644,7 +644,7 @@ OpenCL Resource Naming</h1>
   </table>
   </dd>
 </dl>
-<dl class="section version"><dt>Version</dt><dd>\NVTX_VERSION_1 </dd></dl>
+<dl class="section version"><dt>Version</dt><dd>NVTX_VERSION_1 </dd></dl>
 
 </div>
 </div>
@@ -683,7 +683,7 @@ OpenCL Resource Naming</h1>
   </table>
   </dd>
 </dl>
-<dl class="section version"><dt>Version</dt><dd>\NVTX_VERSION_1 </dd></dl>
+<dl class="section version"><dt>Version</dt><dd>NVTX_VERSION_1 </dd></dl>
 
 </div>
 </div>
@@ -722,7 +722,7 @@ OpenCL Resource Naming</h1>
   </table>
   </dd>
 </dl>
-<dl class="section version"><dt>Version</dt><dd>\NVTX_VERSION_1 </dd></dl>
+<dl class="section version"><dt>Version</dt><dd>NVTX_VERSION_1 </dd></dl>
 
 </div>
 </div>
@@ -765,7 +765,7 @@ OpenCL Resource Naming</h1>
 <div class="line">    (<span class="keyword">const</span> <span class="keywordtype">char</span> **) &amp;cSourceCL, &amp;program_length, &amp;ciErrNum);</div>
 <div class="line">shrCheckErrorEX(ciErrNum, CL_SUCCESS, pCleanup);</div>
 <div class="line">nvtxNameClProgram(cpProgram, L<span class="stringliteral">&quot;PROGRAM_NAME&quot;</span>);</div>
-</div><!-- fragment --><dl class="section version"><dt>Version</dt><dd>\NVTX_VERSION_1 </dd></dl>
+</div><!-- fragment --><dl class="section version"><dt>Version</dt><dd>NVTX_VERSION_1 </dd></dl>
 
 </div>
 </div>
@@ -804,7 +804,7 @@ OpenCL Resource Naming</h1>
   </table>
   </dd>
 </dl>
-<dl class="section version"><dt>Version</dt><dd>\NVTX_VERSION_1 </dd></dl>
+<dl class="section version"><dt>Version</dt><dd>NVTX_VERSION_1 </dd></dl>
 
 </div>
 </div>
@@ -843,12 +843,12 @@ OpenCL Resource Naming</h1>
   </table>
   </dd>
 </dl>
-<dl class="section user"><dt>Example:</dt><dd><div class="fragment"><div class="line">CUresult status = cuCtxCreate( &amp;cuContext, 0, cuDevice );</div>
+<dl class="section user"><dt>Example</dt><dd>Name a CUDA context: <div class="fragment"><div class="line">CUresult status = cuCtxCreate( &amp;cuContext, 0, cuDevice );</div>
 <div class="line"><span class="keywordflow">if</span> ( CUDA_SUCCESS != status )</div>
 <div class="line">    <span class="keywordflow">goto</span> Error;</div>
 <div class="line">nvtxNameCuContext(cuContext, <span class="stringliteral">&quot;CTX_NAME&quot;</span>);</div>
 </div><!-- fragment --></dd></dl>
-<dl class="section version"><dt>Version</dt><dd>\NVTX_VERSION_1 </dd></dl>
+<dl class="section version"><dt>Version</dt><dd>NVTX_VERSION_1 </dd></dl>
 
 </div>
 </div>
@@ -887,7 +887,7 @@ OpenCL Resource Naming</h1>
   </table>
   </dd>
 </dl>
-<dl class="section version"><dt>Version</dt><dd>\NVTX_VERSION_1 </dd></dl>
+<dl class="section version"><dt>Version</dt><dd>NVTX_VERSION_1 </dd></dl>
 
 </div>
 </div>
@@ -926,7 +926,7 @@ OpenCL Resource Naming</h1>
   </table>
   </dd>
 </dl>
-<dl class="section version"><dt>Version</dt><dd>\NVTX_VERSION_1 </dd></dl>
+<dl class="section version"><dt>Version</dt><dd>NVTX_VERSION_1 </dd></dl>
 
 </div>
 </div>
@@ -965,7 +965,7 @@ OpenCL Resource Naming</h1>
   </table>
   </dd>
 </dl>
-<dl class="section version"><dt>Version</dt><dd>\NVTX_VERSION_1 </dd></dl>
+<dl class="section version"><dt>Version</dt><dd>NVTX_VERSION_1 </dd></dl>
 
 </div>
 </div>
@@ -1004,7 +1004,7 @@ OpenCL Resource Naming</h1>
   </table>
   </dd>
 </dl>
-<dl class="section version"><dt>Version</dt><dd>\NVTX_VERSION_1 </dd></dl>
+<dl class="section version"><dt>Version</dt><dd>NVTX_VERSION_1 </dd></dl>
 
 </div>
 </div>
@@ -1043,7 +1043,7 @@ OpenCL Resource Naming</h1>
   </table>
   </dd>
 </dl>
-<dl class="section version"><dt>Version</dt><dd>\NVTX_VERSION_1 </dd></dl>
+<dl class="section version"><dt>Version</dt><dd>NVTX_VERSION_1 </dd></dl>
 
 </div>
 </div>
@@ -1082,7 +1082,7 @@ OpenCL Resource Naming</h1>
   </table>
   </dd>
 </dl>
-<dl class="section version"><dt>Version</dt><dd>\NVTX_VERSION_1 </dd></dl>
+<dl class="section version"><dt>Version</dt><dd>NVTX_VERSION_1 </dd></dl>
 
 </div>
 </div>
@@ -1124,11 +1124,11 @@ OpenCL Resource Naming</h1>
   </table>
   </dd>
 </dl>
-<dl class="section user"><dt>Examples:</dt><dd>MS Windows: <div class="fragment"><div class="line"><span class="preprocessor">#include &lt;windows.h&gt;</span></div>
+<dl class="section user"><dt>Examples</dt><dd>Name a thread based on the given operating system:</dd></dl>
+<p>Windows: </p><div class="fragment"><div class="line"><span class="preprocessor">#include &lt;windows.h&gt;</span></div>
 <div class="line">nvtxNameOsThread(GetCurrentThreadId(), <span class="stringliteral">&quot;Current thread&quot;</span>);</div>
 <div class="line">nvtxNameOsThread(GetThreadId(SomeThreadHandle), <span class="stringliteral">&quot;Other thread&quot;</span>);</div>
-</div><!-- fragment --></dd></dl>
-<p>Android: </p><div class="fragment"><div class="line"><span class="preprocessor">#include &lt;unistd.h&gt;</span></div>
+</div><!-- fragment --><p>Android: </p><div class="fragment"><div class="line"><span class="preprocessor">#include &lt;unistd.h&gt;</span></div>
 <div class="line"><a class="code hl_function" href="group___r_e_s_o_u_r_c_e___n_a_m_i_n_g.html#gaeb7d5b25e1147fc4aaf1f3acb8e719d0">nvtxNameOsThreadA</a>(gettid(), <span class="stringliteral">&quot;Current thread&quot;</span>);</div>
 <div class="line"><a class="code hl_function" href="group___r_e_s_o_u_r_c_e___n_a_m_i_n_g.html#gaeb7d5b25e1147fc4aaf1f3acb8e719d0">nvtxNameOsThreadA</a>(getpid(), <span class="stringliteral">&quot;Main thread&quot;</span>);</div>
 <div class="ttc" id="agroup___r_e_s_o_u_r_c_e___n_a_m_i_n_g_html_gaeb7d5b25e1147fc4aaf1f3acb8e719d0"><div class="ttname"><a href="group___r_e_s_o_u_r_c_e___n_a_m_i_n_g.html#gaeb7d5b25e1147fc4aaf1f3acb8e719d0">nvtxNameOsThreadA</a></div><div class="ttdeci">NVTX_DECLSPEC void NVTX_API nvtxNameOsThreadA(uint32_t threadId, const char *name)</div><div class="ttdoc">Annotate an OS thread.</div></div>
@@ -1136,7 +1136,7 @@ OpenCL Resource Naming</h1>
 <div class="line"><a class="code hl_function" href="group___r_e_s_o_u_r_c_e___n_a_m_i_n_g.html#gaeb7d5b25e1147fc4aaf1f3acb8e719d0">nvtxNameOsThreadA</a>(syscall(SYS_gettid), <span class="stringliteral">&quot;Current thread&quot;</span>);</div>
 </div><!-- fragment --> <div class="fragment"><div class="line"><span class="preprocessor">#include &lt;unistd.h&gt;</span></div>
 <div class="line"><a class="code hl_function" href="group___r_e_s_o_u_r_c_e___n_a_m_i_n_g.html#gaeb7d5b25e1147fc4aaf1f3acb8e719d0">nvtxNameOsThreadA</a>(getpid(), <span class="stringliteral">&quot;Main thread&quot;</span>);</div>
-</div><!-- fragment --><p>OS X: </p><div class="fragment"><div class="line"><span class="preprocessor">#include &lt;sys/syscall.h&gt;</span></div>
+</div><!-- fragment --><p>macOS: </p><div class="fragment"><div class="line"><span class="preprocessor">#include &lt;sys/syscall.h&gt;</span></div>
 <div class="line"><a class="code hl_function" href="group___r_e_s_o_u_r_c_e___n_a_m_i_n_g.html#gaeb7d5b25e1147fc4aaf1f3acb8e719d0">nvtxNameOsThreadA</a>(syscall(SYS_thread_selfid), <span class="stringliteral">&quot;Current thread&quot;</span>);</div>
 </div><!-- fragment --> <div class="fragment"><div class="line"><span class="preprocessor">#include &lt;pthread.h&gt;</span></div>
 <div class="line">__uint64_t id;</div>
@@ -1144,7 +1144,7 @@ OpenCL Resource Naming</h1>
 <div class="line"><a class="code hl_function" href="group___r_e_s_o_u_r_c_e___n_a_m_i_n_g.html#gaeb7d5b25e1147fc4aaf1f3acb8e719d0">nvtxNameOsThreadA</a>(<span class="keywordtype">id</span>, <span class="stringliteral">&quot;Current thread&quot;</span>);</div>
 <div class="line">pthread_threadid_np(somePThreadId, &amp;<span class="keywordtype">id</span>);</div>
 <div class="line"><a class="code hl_function" href="group___r_e_s_o_u_r_c_e___n_a_m_i_n_g.html#gaeb7d5b25e1147fc4aaf1f3acb8e719d0">nvtxNameOsThreadA</a>(<span class="keywordtype">id</span>, <span class="stringliteral">&quot;Other thread&quot;</span>);</div>
-</div><!-- fragment --><dl class="section version"><dt>Version</dt><dd>\NVTX_VERSION_1 </dd></dl>
+</div><!-- fragment --><dl class="section version"><dt>Version</dt><dd>NVTX_VERSION_1 </dd></dl>
 
 </div>
 </div>

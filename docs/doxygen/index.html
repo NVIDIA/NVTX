@@ -75,7 +75,7 @@ $(function() {
 <div class="contents">
 <div class="toc"><h3>Table of Contents</h3>
 <ul><li class="level1"><a href="#INTRODUCTION">Introduction</a></li>
-<li class="level1"><a href="#INITIALIZATION_SECTION">Initialization</a></li>
+<li class="level1"><a href="#INITIALIZATION">Initialization</a></li>
 <li class="level1"><a href="#MARKERS_AND_RANGES">Markers and Ranges</a><ul><li class="level2"><a href="#MARKERS">Markers</a></li>
 <li class="level2"><a href="#THREAD_RANGES">Thread Ranges</a></li>
 <li class="level2"><a href="#PROCESS_RANGES">Process Ranges</a></li>
@@ -95,9 +95,9 @@ $(function() {
 Introduction</h1>
 <p>The NVIDIA Tools Extension library is a set of functions that a developer can use to provide additional information to tools. The additional information is used by the tool to improve analysis and visualization of data.</p>
 <p>The library introduces close to zero overhead if no tool is attached to the application. The overhead when a tool is attached is specific to the tool.</p>
-<h1><a class="anchor" id="INITIALIZATION_SECTION"></a>
+<h1><a class="anchor" id="INITIALIZATION"></a>
 Initialization</h1>
-<p>Typically the tool's library that plugs into NVTX is indirectly loaded via environmental properties that are platform specific. For some platform or special cases, the user may be required to instead explicitly initialize instead though. This can also be helpful to control when the API loads a tool's library instead of what would typically be the first function call to emit info. For these rare case, see INITIALIZATION for additional information.</p>
+<p>Typically the tool's library that plugs into NVTX is indirectly loaded via environmental properties that are platform specific. For some platform or special cases, the user may be required to instead explicitly initialize instead though. This can also be helpful to control when the API loads a tool's library instead of what would typically be the first function call to emit info. For these rare case, see <a class="el" href="index.html#INITIALIZATION">Initialization</a> for additional information.</p>
 <h1><a class="anchor" id="MARKERS_AND_RANGES"></a>
 Markers and Ranges</h1>
 <p>Markers and ranges are used to describe events at a specific time (markers) or over a time span (ranges) during the execution of the application respectively.</p>
