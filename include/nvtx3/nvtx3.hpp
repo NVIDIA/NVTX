@@ -18,6 +18,16 @@
  * See https://nvidia.github.io/NVTX/LICENSE.txt for license information.
  */
 
+#if defined(NVTX_AS_SYSTEM_HEADER)
+#if defined(__clang__)
+#pragma clang system_header
+#elif defined(__GNUC__) || defined(__NVCOMPILER)
+#pragma GCC system_header
+#elif defined(_MSC_VER)
+#pragma system_header
+#endif
+#endif
+
 /* Temporary helper #defines, #undef'ed at end of header */
 #define NVTX3_CPP_VERSION_MAJOR 1
 #define NVTX3_CPP_VERSION_MINOR 0
@@ -113,13 +123,13 @@
  * destroyed.
  *
  * \code{.cpp}
- * #include "nvtx3.hpp"
+ * #include "nvtx3/nvtx3.hpp"
  * void some_function() {
  *    // Begins a NVTX range with the message "some_function"
  *    // The range ends when some_function() returns and `r` is destroyed
  *    nvtx3::scoped_range r{"some_function"};
  *
- *    for(int i = 0; i < 6; ++i) {
+ *    for(int i = 0; i < 5; ++i) {
  *       nvtx3::scoped_range loop{"loop range"};
  *       std::this_thread::sleep_for(std::chrono::seconds{1});
  *    }
@@ -137,7 +147,7 @@
  * as the range's message.
  *
  * \code{.cpp}
- * #include "nvtx3.hpp"
+ * #include "nvtx3/nvtx3.hpp"
  * void some_function() {
  *    // Creates a range with a message "some_function" that ends when the
  *    // enclosing function returns
@@ -540,7 +550,7 @@
  * my_scoped_range r3{msg, cat, nvtx3::payload{42}};
  *
  * // Any number of arguments in any order
- * my_scoped_range r{nvtx3::rgb{127, 255,0}, msg};
+ * my_scoped_range r{nvtx3::rgb{127, 255, 0}, msg};
  *
  * \endcode
  * \section MACROS Convenience Macros
@@ -697,6 +707,9 @@ struct is_c_string<T, typename std::enable_if<
 
 template <typename T>
 using is_uint32 = std::is_same<typename std::decay<T>::type, uint32_t>;
+
+template <typename... Args>
+static inline void silence_unused(Args const&...) noexcept {}
 
 }  // namespace detail
 
@@ -1957,7 +1970,7 @@ class event_attributes {
         0,                              // reserved 4B
         {0},                            // payload value (union)
         NVTX_MESSAGE_UNKNOWN,           // message type
-        {0}                             // message value (union)
+        {nullptr}                       // message value (union)
       }
   {
   }
@@ -2193,6 +2206,8 @@ public:
 
     nvtxDomainRangePushEx(domain::get<D>(), attr.get());
     initialized = true;
+#else
+    (void)attr;
 #endif
   }
 
@@ -2374,6 +2389,7 @@ NVTX3_NO_DISCARD inline range_handle start_range_in(Args const&... args) noexcep
 #ifndef NVTX_DISABLE
   return start_range_in<D>(event_attributes{args...});
 #else
+  detail::silence_unused(args...);
   return {};
 #endif
 }
@@ -2447,6 +2463,7 @@ NVTX3_NO_DISCARD inline range_handle start_range(Args const&... args) noexcept
 #ifndef NVTX_DISABLE
   return start_range_in<domain::global>(args...);
 #else
+  detail::silence_unused(args...);
   return {};
 #endif
 }
@@ -2684,6 +2701,8 @@ inline void mark_in(Args const&... args) noexcept
 {
 #ifndef NVTX_DISABLE
   mark_in<D>(event_attributes{args...});
+#else
+  detail::silence_unused(args...);
 #endif
 }
 
@@ -2711,6 +2730,8 @@ inline void mark(event_attributes const& attr) noexcept
 {
 #ifndef NVTX_DISABLE
   mark_in<domain::global>(attr);
+#else
+  (void)attr;
 #endif
 }
 
@@ -2743,6 +2764,8 @@ inline void mark(Args const&... args) noexcept
 {
 #ifndef NVTX_DISABLE
   mark_in<domain::global>(args...);
+#else
+  detail::silence_unused(args...);
 #endif
 }
 
@@ -2782,7 +2805,7 @@ inline void mark(Args const&... args) noexcept
 #define NVTX3_V1_FUNC_RANGE_IN(D)                                                  \
   static ::nvtx3::v1::registered_string_in<D> const nvtx3_func_name__{__func__};   \
   static ::nvtx3::v1::event_attributes const nvtx3_func_attr__{nvtx3_func_name__}; \
-  ::nvtx3::v1::scoped_range_in<D> const nvtx3_range__{nvtx3_func_attr__};
+  ::nvtx3::v1::scoped_range_in<D> const nvtx3_range__{nvtx3_func_attr__}
 
 /**
  * @brief Convenience macro for generating a range in the specified `domain`
@@ -2806,11 +2829,11 @@ inline void mark(Args const&... args) noexcept
     static ::nvtx3::v1::registered_string_in<D> const nvtx3_func_name__{__func__};   \
     static ::nvtx3::v1::event_attributes const nvtx3_func_attr__{nvtx3_func_name__}; \
     optional_nvtx3_range__.begin(nvtx3_func_attr__);                                 \
-  }
-#else
-#define NVTX3_V1_FUNC_RANGE_IN(D)
-#define NVTX3_V1_FUNC_RANGE_IF_IN(D, C)
-#endif  // NVTX_DISABLE
+  } (void)0
+#else /* NVTX_DISABLE */
+#define NVTX3_V1_FUNC_RANGE_IN(D) (void)0
+#define NVTX3_V1_FUNC_RANGE_IF_IN(D, C) (void)(C)
+#endif /* NVTX_DISABLE */
 
 /**
  * @brief Convenience macro for generating a range in the global domain from the

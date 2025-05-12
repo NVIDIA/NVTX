@@ -27,6 +27,16 @@
 #error Never include this file directly -- it is automatically included by nvToolsExt.h.
 #endif
 
+#if defined(NVTX_AS_SYSTEM_HEADER)
+#if defined(__clang__)
+#pragma clang system_header
+#elif defined(__GNUC__) || defined(__NVCOMPILER)
+#pragma GCC system_header
+#elif defined(_MSC_VER)
+#pragma system_header
+#endif
+#endif
+
 /* ------ Dependency-free types binary-compatible with real types ------- */
 
 /* In order to avoid having the NVTX core API headers depend on non-NVTX

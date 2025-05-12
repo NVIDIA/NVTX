@@ -22,6 +22,16 @@
 #error Never include this file directly -- it is automatically included by nvToolsExtCuda.h (except when NVTX_NO_IMPL is defined).
 #endif
 
+#if defined(NVTX_AS_SYSTEM_HEADER)
+#if defined(__clang__)
+#pragma clang system_header
+#elif defined(__GNUC__) || defined(__NVCOMPILER)
+#pragma GCC system_header
+#elif defined(_MSC_VER)
+#pragma system_header
+#endif
+#endif
+
 
 #ifdef __cplusplus
 extern "C" {
@@ -39,81 +49,105 @@ typedef void (NVTX_API * nvtxNameCuEventW_impl_fntype)(CUevent event, const wcha
 NVTX_DECLSPEC void NVTX_API nvtxNameCuDeviceA(CUdevice device, const char* name)
 {
     NVTX_SET_NAME_MANGLING_OPTIONS
-#ifndef NVTX_DISABLE
-    nvtxNameCuDeviceA_impl_fntype local = (nvtxNameCuDeviceA_impl_fntype)NVTX_VERSIONED_IDENTIFIER(nvtxGlobals).nvtxNameCuDeviceA_impl_fnptr;
-    if(local!=0)
+#ifdef NVTX_DISABLE
+    (void)device;
+    (void)name;
+#else /* NVTX_DISABLE */
+    nvtxNameCuDeviceA_impl_fntype local = NVTX_VERSIONED_IDENTIFIER(nvtxGlobals).nvtxNameCuDeviceA_impl_fnptr;
+    if (local != NVTX_NULLPTR)
         (*local)(device, name);
-#endif /*NVTX_DISABLE*/
+#endif /* NVTX_DISABLE */
 }
 
 NVTX_DECLSPEC void NVTX_API nvtxNameCuDeviceW(CUdevice device, const wchar_t* name)
 {
     NVTX_SET_NAME_MANGLING_OPTIONS
-#ifndef NVTX_DISABLE
-    nvtxNameCuDeviceW_impl_fntype local = (nvtxNameCuDeviceW_impl_fntype)NVTX_VERSIONED_IDENTIFIER(nvtxGlobals).nvtxNameCuDeviceW_impl_fnptr;
-    if(local!=0)
+#ifdef NVTX_DISABLE
+    (void)device;
+    (void)name;
+#else /* NVTX_DISABLE */
+    nvtxNameCuDeviceW_impl_fntype local = NVTX_VERSIONED_IDENTIFIER(nvtxGlobals).nvtxNameCuDeviceW_impl_fnptr;
+    if (local != NVTX_NULLPTR)
         (*local)(device, name);
-#endif /*NVTX_DISABLE*/
+#endif /* NVTX_DISABLE */
 }
 
 NVTX_DECLSPEC void NVTX_API nvtxNameCuContextA(CUcontext context, const char* name)
 {
     NVTX_SET_NAME_MANGLING_OPTIONS
-#ifndef NVTX_DISABLE
-    nvtxNameCuContextA_impl_fntype local = (nvtxNameCuContextA_impl_fntype)NVTX_VERSIONED_IDENTIFIER(nvtxGlobals).nvtxNameCuContextA_impl_fnptr;
-    if(local!=0)
+#ifdef NVTX_DISABLE
+    (void)context;
+    (void)name;
+#else /* NVTX_DISABLE */
+    nvtxNameCuContextA_impl_fntype local = NVTX_REINTERPRET_CAST(nvtxNameCuContextA_impl_fntype, NVTX_VERSIONED_IDENTIFIER(nvtxGlobals).nvtxNameCuContextA_impl_fnptr);
+    if (local != NVTX_NULLPTR)
         (*local)(context, name);
-#endif /*NVTX_DISABLE*/
+#endif /* NVTX_DISABLE */
 }
 
 NVTX_DECLSPEC void NVTX_API nvtxNameCuContextW(CUcontext context, const wchar_t* name)
 {
     NVTX_SET_NAME_MANGLING_OPTIONS
-#ifndef NVTX_DISABLE
-    nvtxNameCuContextW_impl_fntype local = (nvtxNameCuContextW_impl_fntype)NVTX_VERSIONED_IDENTIFIER(nvtxGlobals).nvtxNameCuContextW_impl_fnptr;
-    if(local!=0)
+#ifdef NVTX_DISABLE
+    (void)context;
+    (void)name;
+#else /* NVTX_DISABLE */
+    nvtxNameCuContextW_impl_fntype local = NVTX_REINTERPRET_CAST(nvtxNameCuContextW_impl_fntype, NVTX_VERSIONED_IDENTIFIER(nvtxGlobals).nvtxNameCuContextW_impl_fnptr);
+    if (local != NVTX_NULLPTR)
         (*local)(context, name);
-#endif /*NVTX_DISABLE*/
+#endif /* NVTX_DISABLE */
 }
 
 NVTX_DECLSPEC void NVTX_API nvtxNameCuStreamA(CUstream stream, const char* name)
 {
     NVTX_SET_NAME_MANGLING_OPTIONS
-#ifndef NVTX_DISABLE
-    nvtxNameCuStreamA_impl_fntype local = (nvtxNameCuStreamA_impl_fntype)NVTX_VERSIONED_IDENTIFIER(nvtxGlobals).nvtxNameCuStreamA_impl_fnptr;
-    if(local!=0)
+#ifdef NVTX_DISABLE
+    (void)stream;
+    (void)name;
+#else /* NVTX_DISABLE */
+    nvtxNameCuStreamA_impl_fntype local = NVTX_REINTERPRET_CAST(nvtxNameCuStreamA_impl_fntype, NVTX_VERSIONED_IDENTIFIER(nvtxGlobals).nvtxNameCuStreamA_impl_fnptr);
+    if (local != NVTX_NULLPTR)
         (*local)(stream, name);
-#endif /*NVTX_DISABLE*/
+#endif /* NVTX_DISABLE */
 }
 
 NVTX_DECLSPEC void NVTX_API nvtxNameCuStreamW(CUstream stream, const wchar_t* name)
 {
     NVTX_SET_NAME_MANGLING_OPTIONS
-#ifndef NVTX_DISABLE
-    nvtxNameCuStreamW_impl_fntype local = (nvtxNameCuStreamW_impl_fntype)NVTX_VERSIONED_IDENTIFIER(nvtxGlobals).nvtxNameCuStreamW_impl_fnptr;
-    if(local!=0)
+#ifdef NVTX_DISABLE
+    (void)stream;
+    (void)name;
+#else /* NVTX_DISABLE */
+    nvtxNameCuStreamW_impl_fntype local = NVTX_REINTERPRET_CAST(nvtxNameCuStreamW_impl_fntype, NVTX_VERSIONED_IDENTIFIER(nvtxGlobals).nvtxNameCuStreamW_impl_fnptr);
+    if (local != NVTX_NULLPTR)
         (*local)(stream, name);
-#endif /*NVTX_DISABLE*/
+#endif /* NVTX_DISABLE */
 }
 
 NVTX_DECLSPEC void NVTX_API nvtxNameCuEventA(CUevent event, const char* name)
 {
     NVTX_SET_NAME_MANGLING_OPTIONS
-#ifndef NVTX_DISABLE
-    nvtxNameCuEventA_impl_fntype local = (nvtxNameCuEventA_impl_fntype)NVTX_VERSIONED_IDENTIFIER(nvtxGlobals).nvtxNameCuEventA_impl_fnptr;
-    if(local!=0)
+#ifdef NVTX_DISABLE
+    (void)event;
+    (void)name;
+#else /* NVTX_DISABLE */
+    nvtxNameCuEventA_impl_fntype local = NVTX_REINTERPRET_CAST(nvtxNameCuEventA_impl_fntype, NVTX_VERSIONED_IDENTIFIER(nvtxGlobals).nvtxNameCuEventA_impl_fnptr);
+    if (local != NVTX_NULLPTR)
         (*local)(event, name);
-#endif /*NVTX_DISABLE*/
+#endif /* NVTX_DISABLE */
 }
 
 NVTX_DECLSPEC void NVTX_API nvtxNameCuEventW(CUevent event, const wchar_t* name)
 {
     NVTX_SET_NAME_MANGLING_OPTIONS
-#ifndef NVTX_DISABLE
-    nvtxNameCuEventW_impl_fntype local = (nvtxNameCuEventW_impl_fntype)NVTX_VERSIONED_IDENTIFIER(nvtxGlobals).nvtxNameCuEventW_impl_fnptr;
-    if(local!=0)
+#ifdef NVTX_DISABLE
+    (void)event;
+    (void)name;
+#else /* NVTX_DISABLE */
+    nvtxNameCuEventW_impl_fntype local = NVTX_REINTERPRET_CAST(nvtxNameCuEventW_impl_fntype, NVTX_VERSIONED_IDENTIFIER(nvtxGlobals).nvtxNameCuEventW_impl_fnptr);
+    if (local != NVTX_NULLPTR)
         (*local)(event, name);
-#endif /*NVTX_DISABLE*/
+#endif /* NVTX_DISABLE */
 }
 
 #ifdef __cplusplus

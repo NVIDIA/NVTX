@@ -22,6 +22,16 @@
 #error Never include this file directly -- it is automatically included by nvToolsExtCuda.h (except when NVTX_NO_IMPL is defined).
 #endif
 
+#if defined(NVTX_AS_SYSTEM_HEADER)
+#if defined(__clang__)
+#pragma clang system_header
+#elif defined(__GNUC__) || defined(__NVCOMPILER)
+#pragma GCC system_header
+#elif defined(_MSC_VER)
+#pragma system_header
+#endif
+#endif
+
 
 #ifdef __cplusplus
 extern "C" {
@@ -37,63 +47,76 @@ typedef void (NVTX_API * nvtxDomainSyncUserReleasing_impl_fntype)(nvtxSyncUser_t
 NVTX_DECLSPEC nvtxSyncUser_t NVTX_API nvtxDomainSyncUserCreate(nvtxDomainHandle_t domain, const nvtxSyncUserAttributes_t* attribs)
 {
     NVTX_SET_NAME_MANGLING_OPTIONS
-#ifndef NVTX_DISABLE
-    nvtxDomainSyncUserCreate_impl_fntype local = (nvtxDomainSyncUserCreate_impl_fntype)NVTX_VERSIONED_IDENTIFIER(nvtxGlobals).nvtxDomainSyncUserCreate_impl_fnptr;
-    if(local!=0)
+#ifdef NVTX_DISABLE
+    (void)domain;
+    (void)attribs;
+#else /* NVTX_DISABLE */
+    nvtxDomainSyncUserCreate_impl_fntype local = NVTX_REINTERPRET_CAST(nvtxDomainSyncUserCreate_impl_fntype, NVTX_VERSIONED_IDENTIFIER(nvtxGlobals).nvtxDomainSyncUserCreate_impl_fnptr);
+    if (local != NVTX_NULLPTR)
         return (*local)(domain, attribs);
     else
-#endif  /*NVTX_DISABLE*/
-        return (nvtxSyncUser_t)0;
+#endif /* NVTX_DISABLE */
+        return NVTX_NULLPTR;
 }
 
 NVTX_DECLSPEC void NVTX_API nvtxDomainSyncUserDestroy(nvtxSyncUser_t handle)
 {
     NVTX_SET_NAME_MANGLING_OPTIONS
-#ifndef NVTX_DISABLE
-    nvtxDomainSyncUserDestroy_impl_fntype local = (nvtxDomainSyncUserDestroy_impl_fntype)NVTX_VERSIONED_IDENTIFIER(nvtxGlobals).nvtxDomainSyncUserDestroy_impl_fnptr;
-    if(local!=0)
+#ifdef NVTX_DISABLE
+    (void)handle;
+#else /* NVTX_DISABLE */
+    nvtxDomainSyncUserDestroy_impl_fntype local = NVTX_REINTERPRET_CAST(nvtxDomainSyncUserDestroy_impl_fntype, NVTX_VERSIONED_IDENTIFIER(nvtxGlobals).nvtxDomainSyncUserDestroy_impl_fnptr);
+    if (local != NVTX_NULLPTR)
         (*local)(handle);
-#endif /*NVTX_DISABLE*/
+#endif /* NVTX_DISABLE */
 }
 
 NVTX_DECLSPEC void NVTX_API nvtxDomainSyncUserAcquireStart(nvtxSyncUser_t handle)
 {
     NVTX_SET_NAME_MANGLING_OPTIONS
-#ifndef NVTX_DISABLE
-    nvtxDomainSyncUserAcquireStart_impl_fntype local = (nvtxDomainSyncUserAcquireStart_impl_fntype)NVTX_VERSIONED_IDENTIFIER(nvtxGlobals).nvtxDomainSyncUserAcquireStart_impl_fnptr;
-    if(local!=0)
+#ifdef NVTX_DISABLE
+    (void)handle;
+#else /* NVTX_DISABLE */
+    nvtxDomainSyncUserAcquireStart_impl_fntype local = NVTX_REINTERPRET_CAST(nvtxDomainSyncUserAcquireStart_impl_fntype, NVTX_VERSIONED_IDENTIFIER(nvtxGlobals).nvtxDomainSyncUserAcquireStart_impl_fnptr);
+    if (local != NVTX_NULLPTR)
         (*local)(handle);
-#endif /*NVTX_DISABLE*/
+#endif /* NVTX_DISABLE */
 }
 
 NVTX_DECLSPEC void NVTX_API nvtxDomainSyncUserAcquireFailed(nvtxSyncUser_t handle)
 {
     NVTX_SET_NAME_MANGLING_OPTIONS
-#ifndef NVTX_DISABLE
-    nvtxDomainSyncUserAcquireFailed_impl_fntype local = (nvtxDomainSyncUserAcquireFailed_impl_fntype)NVTX_VERSIONED_IDENTIFIER(nvtxGlobals).nvtxDomainSyncUserAcquireFailed_impl_fnptr;
-    if(local!=0)
+#ifdef NVTX_DISABLE
+    (void)handle;
+#else /* NVTX_DISABLE */
+    nvtxDomainSyncUserAcquireFailed_impl_fntype local = NVTX_REINTERPRET_CAST(nvtxDomainSyncUserAcquireFailed_impl_fntype, NVTX_VERSIONED_IDENTIFIER(nvtxGlobals).nvtxDomainSyncUserAcquireFailed_impl_fnptr);
+    if (local != NVTX_NULLPTR)
         (*local)(handle);
-#endif /*NVTX_DISABLE*/
+#endif /* NVTX_DISABLE */
 }
 
 NVTX_DECLSPEC void NVTX_API nvtxDomainSyncUserAcquireSuccess(nvtxSyncUser_t handle)
 {
     NVTX_SET_NAME_MANGLING_OPTIONS
-#ifndef NVTX_DISABLE
-    nvtxDomainSyncUserAcquireSuccess_impl_fntype local = (nvtxDomainSyncUserAcquireSuccess_impl_fntype)NVTX_VERSIONED_IDENTIFIER(nvtxGlobals).nvtxDomainSyncUserAcquireSuccess_impl_fnptr;
-    if(local!=0)
+#ifdef NVTX_DISABLE
+    (void)handle;
+#else /* NVTX_DISABLE */
+    nvtxDomainSyncUserAcquireSuccess_impl_fntype local = NVTX_REINTERPRET_CAST(nvtxDomainSyncUserAcquireSuccess_impl_fntype, NVTX_VERSIONED_IDENTIFIER(nvtxGlobals).nvtxDomainSyncUserAcquireSuccess_impl_fnptr);
+    if (local != NVTX_NULLPTR)
         (*local)(handle);
-#endif /*NVTX_DISABLE*/
+#endif /* NVTX_DISABLE */
 }
 
 NVTX_DECLSPEC void NVTX_API nvtxDomainSyncUserReleasing(nvtxSyncUser_t handle)
 {
     NVTX_SET_NAME_MANGLING_OPTIONS
-#ifndef NVTX_DISABLE
-    nvtxDomainSyncUserReleasing_impl_fntype local = (nvtxDomainSyncUserReleasing_impl_fntype)NVTX_VERSIONED_IDENTIFIER(nvtxGlobals).nvtxDomainSyncUserReleasing_impl_fnptr;
-    if(local!=0)
+#ifdef NVTX_DISABLE
+    (void)handle;
+#else /* NVTX_DISABLE */
+    nvtxDomainSyncUserReleasing_impl_fntype local = NVTX_REINTERPRET_CAST(nvtxDomainSyncUserReleasing_impl_fntype, NVTX_VERSIONED_IDENTIFIER(nvtxGlobals).nvtxDomainSyncUserReleasing_impl_fnptr);
+    if (local != NVTX_NULLPTR)
         (*local)(handle);
-#endif /*NVTX_DISABLE*/
+#endif /* NVTX_DISABLE */
 }
 
 #ifdef __cplusplus

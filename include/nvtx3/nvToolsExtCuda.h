@@ -18,6 +18,16 @@
  * See https://nvidia.github.io/NVTX/LICENSE.txt for license information.
  */
 
+#if defined(NVTX_AS_SYSTEM_HEADER)
+#if defined(__clang__)
+#pragma clang system_header
+#elif defined(__GNUC__) || defined(__NVCOMPILER)
+#pragma GCC system_header
+#elif defined(_MSC_VER)
+#pragma system_header
+#endif
+#endif
+
 #include "nvToolsExt.h"
 
 #include "cuda.h"
@@ -44,7 +54,7 @@ extern "C" {
 /*  ------------------------------------------------------------------------- */
 /* \cond SHOW_HIDDEN
 * \brief Used to build a non-colliding value for resource types separated class
-* \version \NVTX_VERSION_2
+* \version NVTX_VERSION_2
 */
 #define NVTX_RESOURCE_CLASS_CUDA  4
 /** \endcond */
@@ -57,7 +67,7 @@ typedef enum nvtxResourceCUDAType_t
     NVTX_RESOURCE_TYPE_CUDA_DEVICE = NVTX_RESOURCE_MAKE_TYPE(CUDA, 1), /* CUdevice */
     NVTX_RESOURCE_TYPE_CUDA_CONTEXT = NVTX_RESOURCE_MAKE_TYPE(CUDA, 2), /* CUcontext */
     NVTX_RESOURCE_TYPE_CUDA_STREAM = NVTX_RESOURCE_MAKE_TYPE(CUDA, 3), /* CUstream */
-    NVTX_RESOURCE_TYPE_CUDA_EVENT = NVTX_RESOURCE_MAKE_TYPE(CUDA, 4), /* CUevent */
+    NVTX_RESOURCE_TYPE_CUDA_EVENT = NVTX_RESOURCE_MAKE_TYPE(CUDA, 4) /* CUevent */
 } nvtxResourceCUDAType_t;
 
 
@@ -69,7 +79,7 @@ typedef enum nvtxResourceCUDAType_t
  * \param device - The handle of the CUDA device to name.
  * \param name   - The name of the CUDA device.
  *
- * \version \NVTX_VERSION_1
+ * \version NVTX_VERSION_1
  * @{ */
 NVTX_DECLSPEC void NVTX_API nvtxNameCuDeviceA(CUdevice device, const char* name);
 NVTX_DECLSPEC void NVTX_API nvtxNameCuDeviceW(CUdevice device, const wchar_t* name);
@@ -83,7 +93,8 @@ NVTX_DECLSPEC void NVTX_API nvtxNameCuDeviceW(CUdevice device, const wchar_t* na
  * \param context - The handle of the CUDA context to name.
  * \param name    - The name of the CUDA context.
  *
- * \par Example:
+ * \par Example
+ * Name a CUDA context:
  * \code
  * CUresult status = cuCtxCreate( &cuContext, 0, cuDevice );
  * if ( CUDA_SUCCESS != status )
@@ -91,7 +102,7 @@ NVTX_DECLSPEC void NVTX_API nvtxNameCuDeviceW(CUdevice device, const wchar_t* na
  * nvtxNameCuContext(cuContext, "CTX_NAME");
  * \endcode
  *
- * \version \NVTX_VERSION_1
+ * \version NVTX_VERSION_1
  * @{ */
 NVTX_DECLSPEC void NVTX_API nvtxNameCuContextA(CUcontext context, const char* name);
 NVTX_DECLSPEC void NVTX_API nvtxNameCuContextW(CUcontext context, const wchar_t* name);
@@ -105,7 +116,7 @@ NVTX_DECLSPEC void NVTX_API nvtxNameCuContextW(CUcontext context, const wchar_t*
  * \param stream - The handle of the CUDA stream to name.
  * \param name   - The name of the CUDA stream.
  *
- * \version \NVTX_VERSION_1
+ * \version NVTX_VERSION_1
  * @{ */
 NVTX_DECLSPEC void NVTX_API nvtxNameCuStreamA(CUstream stream, const char* name);
 NVTX_DECLSPEC void NVTX_API nvtxNameCuStreamW(CUstream stream, const wchar_t* name);
@@ -119,7 +130,7 @@ NVTX_DECLSPEC void NVTX_API nvtxNameCuStreamW(CUstream stream, const wchar_t* na
  * \param event - The handle of the CUDA event to name.
  * \param name  - The name of the CUDA event.
  *
- * \version \NVTX_VERSION_1
+ * \version NVTX_VERSION_1
  * @{ */
 NVTX_DECLSPEC void NVTX_API nvtxNameCuEventA(CUevent event, const char* name);
 NVTX_DECLSPEC void NVTX_API nvtxNameCuEventW(CUevent event, const wchar_t* name);
