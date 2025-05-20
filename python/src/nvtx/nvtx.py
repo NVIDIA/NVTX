@@ -20,7 +20,7 @@ import contextlib
 import os
 
 from functools import wraps, lru_cache
-from typing import Optional, Union
+from typing import Optional, Union, Tuple
 
 from nvtx._lib import (
     Domain,
@@ -230,7 +230,7 @@ def pop_range(domain: Optional[str] = None):
 
 def start_range(message: Optional[str] = None, color: Optional[Union[str, int]] = None,
                 domain: Optional[str] = None, category: Optional[Union[str, int]] = None,
-                payload: Optional[Union[int, float]] = None) -> tuple[int, int]:
+                payload: Optional[Union[int, float]] = None) -> Tuple[int, int]:
     """
     Mark the beginning of a process range.
 
@@ -277,7 +277,7 @@ def start_range(message: Optional[str] = None, color: Optional[Union[str, int]] 
             domain.get_event_attributes(message, color, category, payload), domain.handle)
 
 
-def end_range(range_id: tuple[int, int]):
+def end_range(range_id: Tuple[int, int]):
     """
     Mark the end of a code range that was started with :func:`start_range`.
 
