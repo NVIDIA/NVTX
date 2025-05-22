@@ -44,4 +44,12 @@ python -m pip install nvtx
 
 ## Documentation
 
-See [here](https://github.com/NVIDIA/NVTX/blob/release-v3/python/docs/index.rst) for detailed docs.
+See [here](https://nvidia.github.io/NVTX/python/) for detailed docs.
+
+## Release Notes
+
+### 0.2.12
+
+- Expose API via `domain` object for better performance.
+- No-OP when domain is disabled.
+- Improved documentation.
