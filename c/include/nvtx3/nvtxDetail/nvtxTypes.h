@@ -292,7 +292,7 @@ typedef struct NvtxExportTableCallbacks
 
     /* returns an array of pointer to function pointers*/
     int (NVTX_API *GetModuleFunctionTable)(
-        NvtxCallbackModule module,
+        NvtxCallbackModule callback_module,
         NvtxFunctionTable* out_table,
         unsigned int* out_size);
 } NvtxExportTableCallbacks;
@@ -316,10 +316,3 @@ typedef struct NvtxExportTableVersionInfo
     void (NVTX_API *SetInjectionNvtxVersion)(
         uint32_t version);
 } NvtxExportTableVersionInfo;
-
-
-
-
-
-
-
