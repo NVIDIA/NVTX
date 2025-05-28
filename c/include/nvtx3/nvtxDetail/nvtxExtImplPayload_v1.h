@@ -85,7 +85,7 @@ NVTX_LINKONCE_DEFINE_FUNCTION void NVTX_EXT_PAYLOAD_VERSIONED_ID(nvtxExtPayloadI
         NVTX_NULLPTR /* function slots */
     };
 
-    nvtxExtModuleInfo_t module = {
+    nvtxExtModuleInfo_t module_info = {
         NVTX_VERSION, sizeof(nvtxExtModuleInfo_t),
         NVTX_EXT_PAYLOAD_MODULEID, NVTX_EXT_PAYLOAD_COMPATID,
         1, NVTX_NULLPTR, /* number of segments, segments */
@@ -95,11 +95,11 @@ NVTX_LINKONCE_DEFINE_FUNCTION void NVTX_EXT_PAYLOAD_VERSIONED_ID(nvtxExtPayloadI
     };
 
     segment.functionSlots = fnSlots;
-    module.segments = &segment;
+    module_info.segments = &segment;
 
     NVTX_INFO( "%s\n", __FUNCTION__  );
 
-    NVTX_VERSIONED_IDENTIFIER(nvtxExtInitOnce)(&module,
+    NVTX_VERSIONED_IDENTIFIER(nvtxExtInitOnce)(&module_info,
         NVTX_EXT_PAYLOAD_VERSIONED_ID(nvtxExtPayloadSlots));
 }
 
@@ -227,4 +227,3 @@ NVTX_EXT_PAYLOAD_IMPL_FN_V1(void, nvtxEventBatchSubmit, (nvtxDomainHandle_t doma
 #endif /* __cplusplus */
 
 #endif /* NVTX_EXT_IMPL_PAYLOAD_V1 */
-

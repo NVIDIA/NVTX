@@ -72,7 +72,7 @@ struct TearDownDetector
 //
 // [1] https://github.com/NVIDIA/NVTX/blob/v3.1.1/c/include/nvtx3/nvtxDetail/nvtxTypes.h#L277
 // [2] https://github.com/NVIDIA/NVTX/blob/v3.1.1/c/include/nvtx3/nvtxDetail/nvtxTypes.h#L138
-NvtxFunctionTable GetFunctionTable(NvtxGetExportTableFunc_t getExportTable, NvtxCallbackModule module) {
+NvtxFunctionTable GetFunctionTable(NvtxGetExportTableFunc_t getExportTable, NvtxCallbackModule callbackModule) {
     auto callbacks = reinterpret_cast<const NvtxExportTableCallbacks*>(getExportTable(NVTX_ETID_CALLBACKS));
     if (!callbacks) {
         fprintf(stderr, "[NVTX] Could not get NVTX_ETID_CALLBACKS.\n");
@@ -81,8 +81,8 @@ NvtxFunctionTable GetFunctionTable(NvtxGetExportTableFunc_t getExportTable, Nvtx
 
     NvtxFunctionTable table = nullptr;
     unsigned int tableSize = 0;
-    if (!callbacks->GetModuleFunctionTable(module, &table, &tableSize)) {
-        fprintf(stderr, "[NVTX] Could not get function table of module %d.\n", module);
+    if (!callbacks->GetModuleFunctionTable(callbackModule, &table, &tableSize)) {
+        fprintf(stderr, "[NVTX] Could not get function table of module %d.\n", callbackModule);
         return nullptr;
     }
 
