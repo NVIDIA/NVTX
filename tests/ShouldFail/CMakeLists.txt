@@ -81,3 +81,34 @@ add_should_fail_test(
     PayloadData.cpp
     EVENT_ATTRIBUTES_COPY_EVENT_ATTRIBUTES_FROM_TEMPORARY_PAYLOAD_DATA
 )
+
+
+add_library(message-baseline Message.cpp)
+target_link_libraries(message-baseline PRIVATE nvtx3-cpp)
+
+add_test(
+    NAME "ShouldFail message-baseline"
+    COMMAND ${CMAKE_COMMAND} --build . --target message-baseline --config $<CONFIGURATION>
+    WORKING_DIRECTORY ${CMAKE_BINARY_DIR}
+)
+
+# Add tests that should fail to compile
+add_should_fail_test(
+    Message.cpp
+    EVENT_ATTRIBUTES_FROM_MESSAGE_FROM_TEMPORARY_STRING
+)
+
+add_should_fail_test(
+    Message.cpp
+    START_RANGE_IN_FROM_MESSAGE_FROM_TEMPORARY_STRING
+)
+
+add_should_fail_test(
+    Message.cpp
+    EVENT_ATTRIBUTES_FROM_MESSAGE_FROM_TEMPORARY_WSTRING
+)
+
+add_should_fail_test(
+    Message.cpp
+    START_RANGE_IN_FROM_MESSAGE_FROM_TEMPORARY_WSTRING
+)
