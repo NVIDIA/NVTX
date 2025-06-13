@@ -20,6 +20,9 @@
 
 #pragma once
 #include <nvtx3/nvToolsExt.h>
+#include <nvtx3/nvToolsExtPayload.h>
+
+#include <cstdint>
 #include <iostream>
 
 // Pretty-printers for color, payload, and message discriminated-union types
@@ -40,7 +43,7 @@ inline std::ostream& operator<<(std::ostream& os, nvtxColorType_t t)
     return os;
 }
 
-inline void WritePayloadType(std::ostream& os, nvtxPayloadType_t t)
+inline void WritePayloadType(std::ostream& os, int32_t t)
 {
     switch (t)
     {
@@ -50,12 +53,16 @@ inline void WritePayloadType(std::ostream& os, nvtxPayloadType_t t)
         case NVTX_PAYLOAD_TYPE_UNSIGNED_INT32: os << "NVTX_PAYLOAD_TYPE_UNSIGNED_INT32"; break;
         case NVTX_PAYLOAD_TYPE_INT32         : os << "NVTX_PAYLOAD_TYPE_INT32         "; break;
         case NVTX_PAYLOAD_TYPE_FLOAT         : os << "NVTX_PAYLOAD_TYPE_FLOAT         "; break;
-        case NVTX_PAYLOAD_UNKNOWN            : os << "<UNKNOWN TYPE>";                   break;
-        default                              : os << "<INVALID TYPE = " << static_cast<int32_t>(t) << ">";
+        case NVTX_PAYLOAD_TYPE_EXT           : os << "NVTX_PAYLOAD_TYPE_EXT           "; break;
+        case NVTX_PAYLOAD_UNKNOWN:
+            os << "<UNKNOWN TYPE>";
+            break;
+        default:
+            os << "<INVALID TYPE = " << static_cast<int32_t>(t) << ">";
     }
 }
 
-inline void WritePayloadValue(std::ostream& os, nvtxPayloadType_t t, nvtxEventAttributes_v2::payload_t val)
+inline void WritePayloadValue(std::ostream& os, int32_t t, nvtxEventAttributes_v2::payload_t val)
 {
     switch (t)
     {
@@ -70,7 +77,7 @@ inline void WritePayloadValue(std::ostream& os, nvtxPayloadType_t t, nvtxEventAt
     }
 }
 
-inline void WritePayload(std::ostream& os, nvtxPayloadType_t t, nvtxEventAttributes_v2::payload_t val)
+inline void WritePayload(std::ostream& os, int32_t t, nvtxEventAttributes_v2::payload_t val)
 {
     WritePayloadType(os, t);
     os << " = ";
@@ -129,7 +136,9 @@ inline std::ostream& operator<<(std::ostream& os, nvtxEventAttributes_t const& a
         << ", size: " << a.size
         << ", category: " << a.category
         << ", color: " << static_cast<nvtxColorType_t>(a.colorType) << " 0x" << std::hex << a.color << std::dec
-        << ", payload: " << static_cast<nvtxPayloadType_t>(a.payloadType) << " ";
+        << ", payload: ";
+    WritePayloadType(os, a.payloadType);
+    os << " ";
     WritePayloadValue(os, static_cast<nvtxPayloadType_t>(a.payloadType), a.payload);
     os << ", message: " << static_cast<nvtxMessageType_t>(a.messageType) << " \"";
     WriteMessageValue(os, static_cast<nvtxMessageType_t>(a.messageType), a.message);
