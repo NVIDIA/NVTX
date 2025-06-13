@@ -1809,7 +1809,9 @@ class message {
    * a dangling pointer.
    *
    */
+#ifndef NVTX3_ALLOW_RVALUE_CONSTRUCTORS
   message(std::string&&) = delete;
+#endif
 
   /**
    * @brief Construct a `message` whose contents are specified by `msg`.
@@ -1836,7 +1838,9 @@ class message {
    * a dangling pointer.
    *
    */
+#ifndef NVTX3_ALLOW_RVALUE_CONSTRUCTORS
   message(std::wstring&&) = delete;
+#endif
 
   /**
    * @brief Construct a `message` from a `registered_string_in`.
@@ -2127,10 +2131,12 @@ public:
   explicit payload_data(R&& t)
       : data_{schema::get<T>().get_handle(), sizeof(T), &t}
   {
+#ifndef NVTX3_ALLOW_RVALUE_CONSTRUCTORS
     NVTX3_STATIC_ASSERT(
         std::is_lvalue_reference<R>::value,
         "payload_data requires an lvalue reference to the underlying data. Constructing "
         "from an rvalue is potentially unsafe and therefore forbidden.");
+#endif
     NVTX3_STATIC_ASSERT(
         std::is_standard_layout<T>::value && std::is_trivially_copyable<T>::value,
         "structs used for NVTX3 payload schema must be standard layout and trivially "
@@ -2323,8 +2329,10 @@ class event_attributes {
    * `payload_data`. Therefore this constructor is deleted by default to prevent dangling
    * pointers.
    */
+#ifndef NVTX3_ALLOW_RVALUE_CONSTRUCTORS
   template <typename... Args>
   NVTX3_CONSTEXPR_IF_CPP14 explicit event_attributes(payload_data&& pd, Args const&... args) = delete;
+#endif
 
   /**
    * @brief Variadic constructor template for containers of `payload_data`.
