@@ -30,7 +30,7 @@
 
 /* Temporary helper #defines, #undef'ed at end of header */
 #define NVTX3_CPP_VERSION_MAJOR 1
-#define NVTX3_CPP_VERSION_MINOR 0
+#define NVTX3_CPP_VERSION_MINOR 1
 
 /* This section handles the decision of whether to provide unversioned symbols.
  * If NVTX3_CPP_REQUIRE_EXPLICIT_VERSION is #defined, unversioned symbols are
@@ -85,7 +85,7 @@
      *
      * Not to be confused with the version number of the NVTX core library.
      */
-    #define NVTX3_CPP_INLINED_VERSION_MINOR 0  // NVTX3_CPP_VERSION_MINOR
+    #define NVTX3_CPP_INLINED_VERSION_MINOR 1  // NVTX3_CPP_VERSION_MINOR
   #elif NVTX3_CPP_INLINED_VERSION_MAJOR != NVTX3_CPP_VERSION_MAJOR
     /* Unsupported case -- cannot define unversioned symbols for different major versions
      * in the same translation unit.
@@ -99,7 +99,7 @@
      * redefine the minor version macro to this header's version.
      */
     #undef NVTX3_CPP_INLINED_VERSION_MINOR
-    #define NVTX3_CPP_INLINED_VERSION_MINOR 0  // NVTX3_CPP_VERSION_MINOR
+    #define NVTX3_CPP_INLINED_VERSION_MINOR 1  // NVTX3_CPP_VERSION_MINOR
     // else, already have this version or newer, nothing to do
   #endif
 #endif
@@ -650,6 +650,9 @@
 #define NVTX3_CONCAT(A, B) A##B
 #define NVTX3_NAMESPACE_FOR(VERSION) NVTX3_CONCAT(v, VERSION)
 #define NVTX3_VERSION_NAMESPACE NVTX3_NAMESPACE_FOR(NVTX3_CPP_VERSION_MAJOR)
+/* We use a different prefix to avoid ambiguity with the version namespace */
+#define NVTX3_MINOR_NAMESPACE_FOR(VERSION) NVTX3_CONCAT(mv, VERSION)
+#define NVTX3_MINOR_VERSION_NAMESPACE NVTX3_MINOR_NAMESPACE_FOR(NVTX3_CPP_VERSION_MINOR)
 
 /* Avoid duplicating #if defined(NVTX3_INLINE_THIS_VERSION) for namespaces
  * in each minor version by making a macro to use unconditionally, which
@@ -728,6 +731,8 @@
 namespace nvtx3 {
 
 NVTX3_INLINE_IF_REQUESTED namespace NVTX3_VERSION_NAMESPACE
+{
+inline namespace NVTX3_MINOR_VERSION_NAMESPACE
 {
 
 namespace detail {
@@ -3110,9 +3115,9 @@ inline void mark(Args const&... args) noexcept
 #endif
 }
 
+}  // namespace NVTX3_MINOR_VERSION_NAMESPACE
 }  // namespace NVTX3_VERSION_NAMESPACE
-
-}  // namespace nvtx3
+} // namespace nvtx3
 
 #ifndef NVTX_DISABLE
 /**
@@ -3225,6 +3230,8 @@ inline void mark(Args const&... args) noexcept
  *
  * Use this macro after your struct to enable the struct to be used as a payload.
  *
+ * Note: This macro must not be used inside a namespace.
+ *
  * Example:
  * \code{.cpp}
  * struct SensorData
@@ -3249,18 +3256,19 @@ inline void mark(Args const&... args) noexcept
  * @param[in] schema_name Name of the payload schema.
  * @param[in] entries Payload schema entries using NVTX_PAYLOAD_ENTRIES macro.
  */
-#define NVTX3_V1_DEFINE_SCHEMA_GET(dom, struct_id, schema_name, entries)                              \
-    template <>                                                                                       \
-    NVTX3_V1_NO_DISCARD inline nvtx3::schema const& nvtx3::schema::get<struct_id>() noexcept          \
-    {                                                                                                 \
-        static_assert(                                                                                \
-            std::is_standard_layout<struct_id>::value&& std::is_trivially_copyable<struct_id>::value, \
-            "structs used for NVTX3 payload schema must be standard layout and trivially "            \
-            "copyable");                                                                              \
-        _NVTX_DEFINE_SCHEMA_FOR_STRUCT(struct_id, schema_name, static constexpr, entries)             \
-        static const schema s{                                                                        \
-            nvtxPayloadSchemaRegister(nvtx3::domain::get<dom>(), &struct_id##Attr)};                  \
-        return s;                                                                                     \
+#define NVTX3_V1_DEFINE_SCHEMA_GET(dom, struct_id, schema_name, entries)                               \
+    template <>                                                                                        \
+    NVTX3_V1_NO_DISCARD inline nvtx3::v1::schema const& nvtx3::v1::schema::get<struct_id>() noexcept   \
+    {                                                                                                  \
+        static_assert(                                                                                 \
+            std::is_standard_layout<struct_id>::value && std::is_trivially_copyable<struct_id>::value, \
+            "structs used for NVTX3 payload schema must be standard layout and trivially "             \
+            "copyable");                                                                               \
+        using nvtx_struct_id = struct_id; /* avoids issues with namespaced struct_id */                \
+        _NVTX_DEFINE_SCHEMA_FOR_STRUCT(nvtx_struct_id, schema_name, static constexpr, entries)         \
+        static const schema s{                                                                         \
+            nvtxPayloadSchemaRegister(nvtx3::v1::domain::get<dom>(), &nvtx_struct_id##Attr)};          \
+        return s;                                                                                      \
     }
 
 /* When inlining this version, versioned macros must have unversioned aliases.
@@ -3313,6 +3321,8 @@ inline void mark(Args const&... args) noexcept
 #undef NVTX3_CONCAT
 #undef NVTX3_NAMESPACE_FOR
 #undef NVTX3_VERSION_NAMESPACE
+#undef NVTX3_MINOR_NAMESPACE_FOR
+#undef NVTX3_MINOR_VERSION_NAMESPACE
 #undef NVTX3_INLINE_IF_REQUESTED
 #undef NVTX3_CONSTEXPR_IF_CPP14
 #undef NVTX3_MAYBE_UNUSED

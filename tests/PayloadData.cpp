@@ -66,6 +66,26 @@ NVTX3_DEFINE_SCHEMA_GET(
         (val_int64, TYPE_INT64, "MyInt64"),
         (val_reg_str, TYPE_NVTX_REGISTERED_STRING_HANDLE, "MyRegisteredString")))
 
+namespace application_namespace
+{
+  struct domain
+  {
+    static constexpr char const* name{"NamespacedDomain"};
+  };
+
+  struct MyPayloadStruct
+  {
+    uint32_t val_uint32;
+  };
+}
+
+NVTX3_DEFINE_SCHEMA_GET(
+    application_namespace::domain,
+    application_namespace::MyPayloadStruct,
+    "application_namespace::MyPayloadStruct",
+    NVTX_PAYLOAD_ENTRIES((val_uint32, TYPE_UINT32, "MyUInt32")))
+
+
 struct test_message
 {
   static constexpr const char* message{"TestMessage"};
