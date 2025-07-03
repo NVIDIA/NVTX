@@ -2144,8 +2144,7 @@ public:
 #endif
     NVTX3_STATIC_ASSERT(
         std::is_standard_layout<T>::value && std::is_trivially_copyable<T>::value,
-        "structs used for NVTX3 payload schema must be standard layout and trivially "
-        "copyable");
+        "structs used for NVTX3 payload schema must be standard layout and trivially copyable");
   }
 
   /**
@@ -2165,8 +2164,7 @@ public:
   {
     NVTX3_STATIC_ASSERT(
         std::is_standard_layout<T>::value && std::is_trivially_copyable<T>::value,
-        "structs used for NVTX3 payload schema must be standard layout and trivially "
-        "copyable");
+        "structs used for NVTX3 payload schema must be standard layout and trivially copyable");
   }
 
   /**
