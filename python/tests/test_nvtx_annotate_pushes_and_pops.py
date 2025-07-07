@@ -23,119 +23,89 @@ import pytest
 import nvtx
 
 
-def test_annotate_ctx_manager_pops():
+@pytest.fixture
+def mock_domain():
+    mock_domain = unittest.mock.MagicMock()
+    mock_domain.handle = unittest.mock.MagicMock()
+    mock_domain.get_event_attributes.return_value = unittest.mock.MagicMock()
+    mock_domain.get_registered_string.return_value = unittest.mock.MagicMock()
+    with unittest.mock.patch(
+        "nvtx.nvtx.get_domain", return_value=mock_domain
+    ) as mock:
+        yield mock
+
+
+@pytest.fixture
+def mock_push():
+    with unittest.mock.patch("nvtx.nvtx.libnvtx_push_range") as mock:
+        yield mock
+
+
+@pytest.fixture
+def mock_pop():
+    with unittest.mock.patch("nvtx.nvtx.libnvtx_pop_range") as mock:
+        yield mock
+
+
+def test_annotate_ctx_manager_pops(mock_domain, mock_push, mock_pop):
     """
     Test that the NVTX range is properly popped when the context manager is exited normally.
     """
-    # Create a mock domain that behaves like a real domain
-    mock_domain = unittest.mock.MagicMock()
-    mock_domain.handle = unittest.mock.MagicMock()
-    mock_domain.get_event_attributes.return_value = unittest.mock.MagicMock()
-    mock_domain.get_registered_string.return_value = unittest.mock.MagicMock()
+    with nvtx.annotate():
+        pass
 
-    # Mock get_domain to return our mock domain instead of dummy_domain
-    with unittest.mock.patch(
-        "nvtx.nvtx.get_domain", return_value=mock_domain
-    ), unittest.mock.patch(
-        "nvtx.nvtx.libnvtx_push_range"
-    ) as mock_push, unittest.mock.patch(
-        "nvtx.nvtx.libnvtx_pop_range"
-    ) as mock_pop:
-
-        with nvtx.annotate():
-            pass
-
-        mock_push.assert_called_once()
-        mock_pop.assert_called_once()
+    mock_push.assert_called_once()
+    mock_pop.assert_called_once()
 
 
-def test_annotate_ctx_manager_pops_with_exception():
+def test_annotate_ctx_manager_pops_with_exception(
+    mock_domain, mock_push, mock_pop
+):
     """
     Test that the NVTX range is properly popped when the context manager throws an exception.
     """
-    # Create a mock domain that behaves like a real domain
-    mock_domain = unittest.mock.MagicMock()
-    mock_domain.handle = unittest.mock.MagicMock()
-    mock_domain.get_event_attributes.return_value = unittest.mock.MagicMock()
-    mock_domain.get_registered_string.return_value = unittest.mock.MagicMock()
+    with pytest.raises(Exception):
+        with nvtx.annotate():
+            raise Exception("test")
 
-    # Mock get_domain to return our mock domain instead of dummy_domain
-    with unittest.mock.patch(
-        "nvtx.nvtx.get_domain", return_value=mock_domain
-    ), unittest.mock.patch(
-        "nvtx.nvtx.libnvtx_push_range"
-    ) as mock_push, unittest.mock.patch(
-        "nvtx.nvtx.libnvtx_pop_range"
-    ) as mock_pop:
+    mock_push.assert_called_once()
 
-        with pytest.raises(Exception):
-            with nvtx.annotate():
-                raise Exception("test")
-
-        mock_push.assert_called_once()
-
-        # Make sure that pop_range was called even though an exception was raised
-        # inside the context manager for nvtx.annotate
-        mock_pop.assert_called_once()
+    # Make sure that pop_range was called even though an exception was raised
+    # inside the context manager for nvtx.annotate
+    mock_pop.assert_called_once()
 
 
-def test_annotate_decorator_pushes_and_pops():
+def test_annotate_decorator_pushes_and_pops(mock_domain, mock_push, mock_pop):
     """
     Test that the NVTX range is properly popped when a decorated function exits normally.
     """
-    # Create a mock domain that behaves like a real domain
-    mock_domain = unittest.mock.MagicMock()
-    mock_domain.handle = unittest.mock.MagicMock()
-    mock_domain.get_event_attributes.return_value = unittest.mock.MagicMock()
-    mock_domain.get_registered_string.return_value = unittest.mock.MagicMock()
 
-    # Mock get_domain to return our mock domain instead of dummy_domain
-    with unittest.mock.patch(
-        "nvtx.nvtx.get_domain", return_value=mock_domain
-    ), unittest.mock.patch(
-        "nvtx.nvtx.libnvtx_push_range"
-    ) as mock_push, unittest.mock.patch(
-        "nvtx.nvtx.libnvtx_pop_range"
-    ) as mock_pop:
+    @nvtx.annotate(message="foo", color="blue", domain="test")
+    def foo():
+        pass
 
-        @nvtx.annotate(message="foo", color="blue", domain="test")
-        def foo():
-            pass
+    foo()
 
-        foo()
-
-        mock_push.assert_called_once()
-        mock_pop.assert_called_once()
+    mock_push.assert_called_once()
+    mock_pop.assert_called_once()
 
 
-def test_annotate_decorator_pushes_and_pops_with_exception():
+def test_annotate_decorator_pushes_and_pops_with_exception(
+    mock_domain, mock_push, mock_pop
+):
     """
     Test that the NVTX range is properly popped when a decorated function raises an exception.
     """
-    # Create a mock domain that behaves like a real domain
-    mock_domain = unittest.mock.MagicMock()
-    mock_domain.handle = unittest.mock.MagicMock()
-    mock_domain.get_event_attributes.return_value = unittest.mock.MagicMock()
-    mock_domain.get_registered_string.return_value = unittest.mock.MagicMock()
 
-    # Mock get_domain to return our mock domain instead of dummy_domain
-    with unittest.mock.patch(
-        "nvtx.nvtx.get_domain", return_value=mock_domain
-    ), unittest.mock.patch(
-        "nvtx.nvtx.libnvtx_push_range"
-    ) as mock_push, unittest.mock.patch(
-        "nvtx.nvtx.libnvtx_pop_range"
-    ) as mock_pop:
+    @nvtx.annotate(message="foo", color="blue", domain="test")
+    def foo():
+        raise Exception("test")
 
-        @nvtx.annotate(message="foo", color="blue", domain="test")
-        def foo():
-            raise Exception("test")
+    with pytest.raises(Exception):
+        foo()
 
-        with pytest.raises(Exception):
-            foo()
+    mock_push.assert_called_once()
 
-        mock_push.assert_called_once()
-
-        # Make sure that pop_range was called even though an exception was raised
-        # inside the function decorated with nvtx.annotate
-        mock_pop.assert_called_once()
+    # Make sure that pop_range was called even though an exception was raised
+    # inside the function decorated with nvtx.annotate
+    mock_pop.assert_called_once()
