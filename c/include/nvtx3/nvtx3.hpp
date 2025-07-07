@@ -2132,7 +2132,11 @@ public:
   // We cannot simply delete the rvalue constructor here because with a template
   // parameter that would be a forwarding reference. Thus, we have this one
   // ctor with a forwarding reference and use a static assert for the rvalue check.
-  template <typename R, typename T = typename std::remove_cv<typename std::remove_reference<R>::type>::type>
+  // Disable this for the C-style nvtxPayloadData_t to prefer above ctor for non-const.
+  template <
+      typename R,
+      typename T = typename std::remove_cv<typename std::remove_reference<R>::type>::type,
+      typename = typename std::enable_if<!std::is_same<T, nvtxPayloadData_t>::value>::type>
   explicit payload_data(R&& t)
       : data_{schema::get<T>().get_handle(), sizeof(T), &t}
   {

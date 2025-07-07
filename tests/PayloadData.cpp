@@ -193,5 +193,23 @@ extern "C" NVTX_DYNAMIC_EXPORT int RunTest(int argc, const char** argv)
   }
   std::cout << "-------------------------------------\n";
 
+  {
+    std::cout << "Test with C-style nvtxPayloadData_t:\n";
+    MyPayloadStruct1 pds1 = {777, 88.99f};
+    nvtxPayloadData_t cPayloadData = {123, sizeof(pds1), &pds1};
+    nvtx3::payload_data pd{cPayloadData};
+    nvtx3::event_attributes attr{pd};
+    std::cout << attr;
+  }
+
+  {
+    std::cout << "Test with C-style const nvtxPayloadData_t:\n";
+    MyPayloadStruct1 pds1 = {777, 88.99f};
+    const nvtxPayloadData_t cPayloadData = {123, sizeof(pds1), &pds1};
+    nvtx3::payload_data pd{cPayloadData};
+    nvtx3::event_attributes attr{pd};
+    std::cout << attr;
+  }
+
   return 0;
 }
