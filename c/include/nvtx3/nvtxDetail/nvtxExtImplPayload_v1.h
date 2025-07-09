@@ -99,7 +99,7 @@ NVTX_LINKONCE_DEFINE_FUNCTION void NVTX_EXT_PAYLOAD_VERSIONED_ID(nvtxInitIsDomai
     if (*pSlot == NVTX_EXTENSION_DISABLED &&
         NVTX_VERSIONED_IDENTIFIER(nvtxExtGlobals1).injectionFnPtr != NVTX_NULLPTR)
     {
-        *pSlot = (intptr_t)NVTX_EXT_PAYLOAD_VERSIONED_ID(nvtxReturnOne);
+        *pSlot = NVTX_REINTERPRET_CAST(intptr_t, NVTX_EXT_PAYLOAD_VERSIONED_ID(nvtxReturnOne));
     }
 }
 
