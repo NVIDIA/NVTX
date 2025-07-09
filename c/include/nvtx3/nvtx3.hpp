@@ -520,11 +520,11 @@
  * `nvtx3::payload_data` allows associating arbitrary structured data with an NVTX event.
  *
  * First, define a `struct` that is *standard-layout* and *trivially copyable*.
- * Then use `NVTX3_DEFINE_SCHEMA_GET` to define the schema layout.
+ * Then use `NVTX3_DEFINE_SCHEMA_GET` (`NVTX3_V1_DEFINE_SCHEMA_GET()`) to define the schema layout.
  * Finally you can use any such instance wrapped in `nvtx3::payload_data` in an
  * `nvtx3::event_attributes` object.
  * You can also pass containers (e.g., `std::vector`, `std::array`) of `payload_data` objects.
- * Note: Constructing `nvtx3::payload_data` from temporaries or using tempoarary
+ * \note Constructing `nvtx3::payload_data` from temporaries or using tempoarary
  * `nvtx3::payload_data` objects is disabled to prevent dangling pointers.
  *
  * \section EXAMPLE Example
@@ -2028,7 +2028,7 @@ class payload {
  * using `nvtxPayloadSchemaRegister`. The primary mechanism for obtaining an
  * instance is via the static template function `get<T>()`, which must be
  * specialized for each payload struct type `T` using the
- * `NVTX3_DEFINE_SCHEMA_GET` macro.
+ * `NVTX3_DEFINE_SCHEMA_GET` (`NVTX3_V1_DEFINE_SCHEMA_GET()`) macro.
  *
  * The schema ID is used internally when constructing `payload_data` objects.
  */
@@ -2067,7 +2067,7 @@ private:
    *
    * This function relies on template specialization. Users must provide a
    * specialization for each payload struct type `T` using the
-   * `NVTX3_DEFINE_SCHEMA_GET` macro.
+   * `NVTX3_DEFINE_SCHEMA_GET` (`NVTX3_V1_DEFINE_SCHEMA_GET()`) macro.
    *
    * @tparam T The payload struct type for which to get the schema.
    * @return A constant reference to the schema object for type `T`.
@@ -2122,7 +2122,7 @@ public:
    * This template constructor automatically retrieves the necessary information
    * from the given struct type `T` and the reference to the instance.
    * The type `T` must be standard layout and trivially copyable as well as
-   * have a `schema::get<T>()` specialization via `NVTX3_DEFINE_SCHEMA_GET`.
+   * have a `schema::get<T>()` specialization via `NVTX3_DEFINE_SCHEMA_GET` (`NVTX3_V1_DEFINE_SCHEMA_GET()`).
    *
    * Make sure the provided referenace is valid for the lifetime of the created
    * `payload_data` object.
@@ -2155,12 +2155,13 @@ public:
    * @brief Constructs `payload_data` for a payload instance with a given schema.
    *
    * Use this constructor if you have a dynamic schema for your struct rather than
-   * a static one defined by `NVTX3_DEFINE_SCHEMA_GET`.
+   * a static one defined by `NVTX3_DEFINE_SCHEMA_GET` (`NVTX3_V1_DEFINE_SCHEMA_GET()`).
    *
    * Make sure the provided referenace is valid for the lifetime of the created
    * `payload_data` object.
    *
    * @param t A constant reference to the payload struct instance.
+   * @param s The schema to use for the payload data.
    */
   template <typename T>
   explicit payload_data(T const& t, schema s)
@@ -3232,7 +3233,7 @@ inline void mark(Args const&... args) noexcept
  *
  * Use this macro after your struct to enable the struct to be used as a payload.
  *
- * Note: This macro must not be used inside a namespace.
+ * \note This macro must not be used inside a namespace.
  *
  * Example:
  * \code{.cpp}
@@ -3253,7 +3254,7 @@ inline void mark(Args const&... args) noexcept
  * )
  * \endcode
  *
- * @param[in] domain The NVTX domain.
+ * @param[in] dom The NVTX domain.
  * @param[in] struct_id The name of the struct.
  * @param[in] schema_name Name of the payload schema.
  * @param[in] entries Payload schema entries using NVTX_PAYLOAD_ENTRIES macro.
