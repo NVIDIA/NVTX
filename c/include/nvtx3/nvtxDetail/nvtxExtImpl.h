@@ -91,10 +91,11 @@ extern "C" {
 #pragma GCC visibility push(hidden)
 #endif
 
-#define NVTX_EXTENSION_FRESH 0
-#define NVTX_EXTENSION_DISABLED 1
-#define NVTX_EXTENSION_STARTING 2
-#define NVTX_EXTENSION_LOADED 3
+#define NVTX_EXTENSION_FRESH 0    /* Uninitialized extension or function slot */
+#define NVTX_EXTENSION_DISABLED 1 /* Disabled extension or function slot */
+#define NVTX_EXTENSION_STARTING 2 /* Extension is being initialized. */
+#define NVTX_EXTENSION_LOADED 3   /* Extension is initialized successfully. */
+#define NVTX_EXTENSION_INIT_FN_FAILED 4 /* Extension init function returned failure. */
 
 /* Function slots are local to each extension */
 typedef struct nvtxExtGlobals1_t

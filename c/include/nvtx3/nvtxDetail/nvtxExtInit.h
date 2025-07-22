@@ -339,7 +339,9 @@ NVTX_LINKONCE_DEFINE_FUNCTION void NVTX_VERSIONED_IDENTIFIER(nvtxExtInitOnce) (
 
     NVTX_INFO( "%s\n", __FUNCTION__ );
 
-    if (*moduleState == NVTX_EXTENSION_LOADED)
+    if (*moduleState == NVTX_EXTENSION_LOADED ||
+        *moduleState == NVTX_EXTENSION_DISABLED ||
+        *moduleState == NVTX_EXTENSION_INIT_FN_FAILED)
     {
         NVTX_INFO("Module loaded\n");
         return;
@@ -352,6 +354,7 @@ NVTX_LINKONCE_DEFINE_FUNCTION void NVTX_VERSIONED_IDENTIFIER(nvtxExtInitOnce) (
         NVTX_EXTENSION_FRESH);
     if (old == NVTX_EXTENSION_FRESH)
     {
+        intptr_t stateReturnValue = NVTX_EXTENSION_LOADED;
         NvtxExtInitializeInjectionFunc_t init_fnptr =
             NVTX_VERSIONED_IDENTIFIER(nvtxExtGlobals1).injectionFnPtr;
         int entryPointStatus = 0;
@@ -375,7 +378,11 @@ NVTX_LINKONCE_DEFINE_FUNCTION void NVTX_VERSIONED_IDENTIFIER(nvtxExtInitOnce) (
             }
             else
             {
-                NVTX_ERR("Failed to load injection library\n");
+                if (result == NVTX_ERR_INIT_MISSING_LIBRARY_ENTRY_POINT)
+                {
+                    stateReturnValue = NVTX_EXTENSION_DISABLED;
+                }
+                NVTX_ERR("Failed to load injection library.\n");
             }
         }
 
@@ -386,6 +393,7 @@ NVTX_LINKONCE_DEFINE_FUNCTION void NVTX_VERSIONED_IDENTIFIER(nvtxExtInitOnce) (
             entryPointStatus = init_fnptr(moduleInfo);
             if (entryPointStatus == 0)
             {
+                stateReturnValue = NVTX_EXTENSION_INIT_FN_FAILED;
                 NVTX_ERR("Failed to initialize injection library -- initialization function returned 0\n");
             }
         }
@@ -408,14 +416,15 @@ NVTX_LINKONCE_DEFINE_FUNCTION void NVTX_VERSIONED_IDENTIFIER(nvtxExtInitOnce) (
 
         NVTX_MEMBAR();
 
-        /* Signal that initialization has finished and the assigned function
-           pointers will be used. */
-        NVTX_ATOMIC_WRITE_PTR(moduleState, NVTX_EXTENSION_LOADED);
+        /* Signal that initialization has finished and the function pointers are set. */
+        NVTX_ATOMIC_WRITE_PTR(moduleState, stateReturnValue);
     }
     else /* Spin-wait until initialization has finished. */
     {
         NVTX_MEMBAR();
-        while (*moduleState != NVTX_EXTENSION_LOADED)
+        while (*moduleState != NVTX_EXTENSION_LOADED &&
+               *moduleState != NVTX_EXTENSION_DISABLED &&
+               *moduleState != NVTX_EXTENSION_INIT_FN_FAILED)
         {
             NVTX_YIELD();
             NVTX_MEMBAR();
