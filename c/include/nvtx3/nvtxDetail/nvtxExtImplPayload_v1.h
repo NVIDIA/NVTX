@@ -92,14 +92,20 @@ NVTX_LINKONCE_DEFINE_FUNCTION void NVTX_EXT_PAYLOAD_VERSIONED_ID(nvtxInitIsDomai
 {
     intptr_t* pSlot = &NVTX_EXT_PAYLOAD_VERSIONED_ID(nvtxExtPayloadSlots)[NVTX3EXT_CBID_nvtxDomainIsEnabled + 1];
 
-    /* The initialization disables all slots that have not been set by the tool.
-       This also happens if no tool is attached. If `injectionFnPtr` is set, a
-       tool is attached. A failng injection init function is not considered and
-       `nvtxDomainIsEnabled` will return `1`. */
-    if (*pSlot == NVTX_EXTENSION_DISABLED &&
-        NVTX_VERSIONED_IDENTIFIER(nvtxExtGlobals1).injectionFnPtr != NVTX_NULLPTR)
+    /* The initialization disables all slots that have not been set by the tool. */
+    if (*pSlot == NVTX_EXTENSION_DISABLED)
     {
-        *pSlot = NVTX_REINTERPRET_CAST(intptr_t, NVTX_EXT_PAYLOAD_VERSIONED_ID(nvtxReturnOne));
+        intptr_t* moduleState = NVTX_EXT_PAYLOAD_VERSIONED_ID(nvtxExtPayloadSlots);
+        int isInitFnSet =
+            NVTX_VERSIONED_IDENTIFIER(nvtxExtGlobals1).injectionFnPtr != NVTX_NULLPTR;
+
+        /* Make `nvtxDomainIsEnabled` return `1`, if the tool does not provide an extension
+           initialization function or if the tool does not handle `nvtxDomainIsEnabled`. */
+        if (*moduleState == NVTX_EXTENSION_DISABLED ||
+            (isInitFnSet && *moduleState != NVTX_EXTENSION_INIT_FN_FAILED))
+        {
+            *pSlot = NVTX_REINTERPRET_CAST(intptr_t, NVTX_EXT_PAYLOAD_VERSIONED_ID(nvtxReturnOne));
+        }
     }
 }
 
