@@ -235,7 +235,6 @@ class Domain:
         )
         return category_id
 
-    @lru_cache(maxsize=None)
     def get_event_attributes(self, message=None, color=None, category=None, payload=None
             )-> EventAttributes:
         """
