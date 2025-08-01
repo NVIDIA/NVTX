@@ -235,18 +235,16 @@ class Domain:
         )
         return category_id
 
-    @lru_cache(maxsize=None)
     def get_event_attributes(self, message=None, color=None, category=None, payload=None
             )-> EventAttributes:
         """
-        Get or create an :class:`nvtx._lib.lib.EventAttributes` object.
-        The results of this function are cached, i.e.,
-        the same object is returned for the same parameters.
+        Create an :class:`nvtx._lib.lib.EventAttributes` object.
 
         Parameters
         ----------
         message : str
             A message associated with the event.
+            If the given message is not registered, it is registered under this domain.
         color : str, int, optional
             A color associated with the event.
             Supports `matplotlib` colors if it is available.
