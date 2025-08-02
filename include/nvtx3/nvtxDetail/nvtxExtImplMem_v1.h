@@ -77,7 +77,7 @@ NVTX_LINKONCE_DEFINE_FUNCTION void NVTX_EXT_MEM_VERSIONED_ID(nvtxExtMemInitOnce)
         NVTX_NULLPTR /* function slots */
     };
 
-    nvtxExtModuleInfo_t module = {
+    nvtxExtModuleInfo_t module_info = {
         NVTX_VERSION, sizeof(nvtxExtModuleInfo_t),
         NVTX_EXT_MODULEID_MEM, NVTX_EXT_COMPATID_MEM,
         1, NVTX_NULLPTR, /* number of segments, segments */
@@ -86,11 +86,11 @@ NVTX_LINKONCE_DEFINE_FUNCTION void NVTX_EXT_MEM_VERSIONED_ID(nvtxExtMemInitOnce)
     };
 
     segment.functionSlots = fnSlots;
-    module.segments = &segment;
+    module_info.segments = &segment;
 
     NVTX_INFO( "%s\n", __FUNCTION__  );
 
-    NVTX_VERSIONED_IDENTIFIER(nvtxExtInitOnce)(&module,
+    NVTX_VERSIONED_IDENTIFIER(nvtxExtInitOnce)(&module_info,
         NVTX_EXT_MEM_VERSIONED_ID(nvtxExtMemSlots));
 }
 

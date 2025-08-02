@@ -74,7 +74,41 @@ NVTX_LINKONCE_DEFINE_GLOBAL intptr_t
 NVTX_EXT_PAYLOAD_VERSIONED_ID(nvtxExtPayloadSlots)[NVTX_EXT_PAYLOAD_SLOT_COUNT + 1]
     = {0};
 
-/* Avoid warnings about missing prototype. */
+/* `NVTX_LINKONCE_FWDDECL_FUNCTION` is used to avoid warnings about missing prototypes. */
+
+/* This helper returns always `1` as `uint8_t`. */
+NVTX_LINKONCE_FWDDECL_FUNCTION uint8_t NVTX_EXT_PAYLOAD_VERSIONED_ID(nvtxReturnOne)(void);
+NVTX_LINKONCE_DEFINE_FUNCTION uint8_t NVTX_EXT_PAYLOAD_VERSIONED_ID(nvtxReturnOne)(void)
+{
+    return NVTX_STATIC_CAST(uint8_t, 1);
+}
+
+/*
+ * If a tool is attached, but does not handle `nvtxDomainIsEnabled`, the latter
+ * will always return `1` (enabled).
+ */
+NVTX_LINKONCE_FWDDECL_FUNCTION void NVTX_EXT_PAYLOAD_VERSIONED_ID(nvtxInitIsDomainEnabledFn)(void);
+NVTX_LINKONCE_DEFINE_FUNCTION void NVTX_EXT_PAYLOAD_VERSIONED_ID(nvtxInitIsDomainEnabledFn)(void)
+{
+    intptr_t* pSlot = &NVTX_EXT_PAYLOAD_VERSIONED_ID(nvtxExtPayloadSlots)[NVTX3EXT_CBID_nvtxDomainIsEnabled + 1];
+
+    /* The initialization disables all slots that have not been set by the tool. */
+    if (*pSlot == NVTX_EXTENSION_DISABLED)
+    {
+        intptr_t* moduleState = NVTX_EXT_PAYLOAD_VERSIONED_ID(nvtxExtPayloadSlots);
+        int isInitFnSet =
+            NVTX_VERSIONED_IDENTIFIER(nvtxExtGlobals1).injectionFnPtr != NVTX_NULLPTR;
+
+        /* Make `nvtxDomainIsEnabled` return `1`, if the tool does not provide an extension
+           initialization function or if the tool does not handle `nvtxDomainIsEnabled`. */
+        if (*moduleState == NVTX_EXTENSION_DISABLED ||
+            (isInitFnSet && *moduleState != NVTX_EXTENSION_INIT_FN_FAILED))
+        {
+            *pSlot = NVTX_REINTERPRET_CAST(intptr_t, NVTX_EXT_PAYLOAD_VERSIONED_ID(nvtxReturnOne));
+        }
+    }
+}
+
 NVTX_LINKONCE_FWDDECL_FUNCTION void NVTX_EXT_PAYLOAD_VERSIONED_ID(nvtxExtPayloadInitOnce)(void);
 NVTX_LINKONCE_DEFINE_FUNCTION void NVTX_EXT_PAYLOAD_VERSIONED_ID(nvtxExtPayloadInitOnce)(void)
 {
@@ -85,7 +119,7 @@ NVTX_LINKONCE_DEFINE_FUNCTION void NVTX_EXT_PAYLOAD_VERSIONED_ID(nvtxExtPayloadI
         NVTX_NULLPTR /* function slots */
     };
 
-    nvtxExtModuleInfo_t module = {
+    nvtxExtModuleInfo_t module_info = {
         NVTX_VERSION, sizeof(nvtxExtModuleInfo_t),
         NVTX_EXT_PAYLOAD_MODULEID, NVTX_EXT_PAYLOAD_COMPATID,
         1, NVTX_NULLPTR, /* number of segments, segments */
@@ -95,12 +129,14 @@ NVTX_LINKONCE_DEFINE_FUNCTION void NVTX_EXT_PAYLOAD_VERSIONED_ID(nvtxExtPayloadI
     };
 
     segment.functionSlots = fnSlots;
-    module.segments = &segment;
+    module_info.segments = &segment;
 
     NVTX_INFO( "%s\n", __FUNCTION__  );
 
-    NVTX_VERSIONED_IDENTIFIER(nvtxExtInitOnce)(&module,
+    NVTX_VERSIONED_IDENTIFIER(nvtxExtInitOnce)(&module_info,
         NVTX_EXT_PAYLOAD_VERSIONED_ID(nvtxExtPayloadSlots));
+
+    NVTX_EXT_PAYLOAD_VERSIONED_ID(nvtxInitIsDomainEnabledFn)();
 }
 
 #define NVTX_EXT_PAYLOAD_IMPL_FN_V1(ret_type, fn_name, signature, arg_names) \
@@ -227,4 +263,3 @@ NVTX_EXT_PAYLOAD_IMPL_FN_V1(void, nvtxEventBatchSubmit, (nvtxDomainHandle_t doma
 #endif /* __cplusplus */
 
 #endif /* NVTX_EXT_IMPL_PAYLOAD_V1 */
-

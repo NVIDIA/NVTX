@@ -96,7 +96,7 @@ extern "C" {
 
 NVTX_LINKONCE_FWDDECL_FUNCTION void NVTX_VERSIONED_IDENTIFIER(nvtxInitOnce)(void);
 NVTX_LINKONCE_FWDDECL_FUNCTION int NVTX_API NVTX_VERSIONED_IDENTIFIER(nvtxEtiGetModuleFunctionTable)(
-    NvtxCallbackModule module,
+    NvtxCallbackModule callback_module,
     NvtxFunctionTable* out_table,
     unsigned int* out_size);
 NVTX_LINKONCE_FWDDECL_FUNCTION void NVTX_API NVTX_VERSIONED_IDENTIFIER(nvtxEtiSetInjectionNvtxVersion)(
@@ -383,14 +383,14 @@ NVTX_LINKONCE_DEFINE_GLOBAL nvtxGlobals_t NVTX_VERSIONED_IDENTIFIER(nvtxGlobals)
 /* ---- Define implementations of export table functions ---- */
 
 NVTX_LINKONCE_DEFINE_FUNCTION int NVTX_API NVTX_VERSIONED_IDENTIFIER(nvtxEtiGetModuleFunctionTable)(
-    NvtxCallbackModule module,
+    NvtxCallbackModule callback_module,
     NvtxFunctionTable* out_table,
     unsigned int* out_size)
 {
     unsigned int bytes = 0;
     NvtxFunctionTable table = NVTX_NULLPTR;
 
-    switch (module)
+    switch (callback_module)
     {
     case NVTX_CB_MODULE_CORE:
         table = NVTX_VERSIONED_IDENTIFIER(nvtxGlobals).functionTable_CORE;
