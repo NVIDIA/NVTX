@@ -1145,10 +1145,20 @@ NVTX_DECLSPEC void NVTX_API nvtxRangeEndPayload(
     size_t count);
 
 /**
- * @brief Checks if an NVTX domain is enabled.
+ * \brief Checks if the given NVTX domain is enabled.
+ *
+ * This function can be used to guard expensive code instrumentation.
+ * In general, it is recommended to avoid different execution branches based on
+ * NVTX instrumenation.
+ *
+ * If no tool is attached, this function will always return `0`.
+ * If a tool is attached, but does not handle this function, `1` is returned.
+ * If a tool is attached and handles this function, the return value is
+ * determined by the tool. Positive (>0) return values indicate that the domain
+ * is enabled, `0` indicates that the domain is disabled.
  *
  * @param domain NVTX domain handle
- * @return 0 if the domain is not enabled.
+ * @return 0 if the domain is disabled. Values > 0 indicate an enabled domain.
  */
 NVTX_DECLSPEC uint8_t NVTX_API nvtxDomainIsEnabled(
     nvtxDomainHandle_t domain);

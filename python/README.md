@@ -48,6 +48,12 @@ See [here](https://nvidia.github.io/NVTX/python/) for detailed docs.
 
 ## Release Notes
 
+### 0.2.13
+
+- Fix tracing with tools that do not implement `nvtxDomainIsEnabled`.
+- Fix decorator ranges not ending when an exception is thrown.
+- Fix automatic function name annotation for decorator ranges.
+
 ### 0.2.12
 
 - Expose API via `domain` object for better performance.

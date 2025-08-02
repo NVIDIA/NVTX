@@ -19,7 +19,7 @@
 #=============================================================================
 cmake_minimum_required(VERSION 3.19)
 
-set(NVTX3_VERSION 3.2.0)
+set(NVTX3_VERSION 3.2.2)
 
 # This CMake script defines targets the NVTX C and C++ APIs.
 # By default, these targets are defined as IMPORTED, so libraries can include

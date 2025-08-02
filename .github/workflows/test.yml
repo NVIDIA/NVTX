@@ -326,6 +326,86 @@ jobs:
         cd tests/build-clang-15
         ctest --output-on-failure
 
+  test-windows-2025-a:
+    name: Windows Server 2025 (A)
+    runs-on: windows-2025
+    steps:
+    - uses: actions/checkout@v4
+
+    - uses: conda-incubator/setup-miniconda@v3
+      with:
+        auto-update-conda: true
+        conda-remove-defaults: true
+
+    - name: Conda - Create Environment
+      shell: cmd
+      run: |
+        conda create -y --name cuda-env
+
+    - name: Conda - Install CUDA Toolchain
+      shell: cmd
+      run: |
+        conda install -y --name cuda-env conda-forge::cuda-minimal-build
+
+    - name: Build (VS 2022)
+      shell: cmd
+      run: |
+        cd tests
+        mkdir build-vs
+        cd build-vs
+        set FLAGS=-Wall -wd4191 -wd4255 -wd4355 -wd4365 -wd4514 -wd4668 -wd4710 -wd4711 -wd4820 -wd5039 -wd5045 -wd5220 -WX
+        "%ProgramFiles%\Microsoft Visual Studio\2022\Enterprise\VC\Auxiliary\Build\vcvars64.bat" && "%ProgramFiles%\Microsoft Visual Studio\2022\Enterprise\Common7\IDE\CommonExtensions\Microsoft\CMake\CMake\bin\cmake.exe" .. -G Ninja -DCMAKE_BUILD_TYPE=Release -DCMAKE_CUDA_COMPILER="%CONDA:\=/%/envs/cuda-env/Library/bin/nvcc.exe" -DCMAKE_C_FLAGS="-O2 %FLAGS%" -DCMAKE_CXX_FLAGS="-O2 %FLAGS%" -DCMAKE_CUDA_FLAGS="%FLAGS% -wd4555 --Wno-deprecated-gpu-targets --Werror all-warnings" && ninja
+
+    - name: Run (VS 2022)
+      shell: cmd
+      run: |
+        cd tests/build-vs
+        "%ProgramFiles%\Microsoft Visual Studio\2022\Enterprise\Common7\IDE\CommonExtensions\Microsoft\CMake\CMake\bin\ctest.exe" --output-on-failure
+
+  test-windows-2025-b:
+    name: Windows Server 2025 (B)
+    runs-on: windows-2025
+    steps:
+    - uses: actions/checkout@v4
+
+    - name: Build (VS 2022 x86)
+      shell: cmd
+      run: |
+        cd tests
+        mkdir build-vs-x86
+        cd build-vs-x86
+        set FLAGS=-Wall -wd4191 -wd4255 -wd4355 -wd4365 -wd4514 -wd4668 -wd4710 -wd4711 -wd4820 -wd5039 -wd5045 -wd5220 -WX
+        "%ProgramFiles%\Microsoft Visual Studio\2022\Enterprise\VC\Auxiliary\Build\vcvarsamd64_x86.bat" && "%ProgramFiles%\Microsoft Visual Studio\2022\Enterprise\Common7\IDE\CommonExtensions\Microsoft\CMake\CMake\bin\cmake.exe" .. -G Ninja -DCMAKE_BUILD_TYPE=Release -DENABLE_CUDA=False -DCMAKE_C_FLAGS="-O2 %FLAGS%" -DCMAKE_CXX_FLAGS="-O2 %FLAGS%" && ninja
+
+    - name: Build (VS 2022 Arm64)
+      shell: cmd
+      run: |
+        cd tests
+        mkdir build-vs-arm64
+        cd build-vs-arm64
+        set FLAGS=-Wall -wd4191 -wd4255 -wd4355 -wd4365 -wd4514 -wd4668 -wd4710 -wd4711 -wd4746 -wd4820 -wd5039 -wd5045 -wd5220 -WX
+        "%ProgramFiles%\Microsoft Visual Studio\2022\Enterprise\VC\Auxiliary\Build\vcvarsamd64_arm64.bat" && "%ProgramFiles%\Microsoft Visual Studio\2022\Enterprise\Common7\IDE\CommonExtensions\Microsoft\CMake\CMake\bin\cmake.exe" .. -G Ninja -DCMAKE_BUILD_TYPE=Release -DENABLE_CUDA=False -DCMAKE_C_FLAGS="-O2 %FLAGS%" -DCMAKE_CXX_FLAGS="-O2 %FLAGS%" && ninja
+
+    - name: Build (Clang-CL)
+      shell: cmd
+      run: |
+        cd tests
+        mkdir build-clang-cl
+        cd build-clang-cl
+        "%ProgramFiles%\Microsoft Visual Studio\2022\Enterprise\VC\Auxiliary\Build\vcvars64.bat" && "%ProgramFiles%\Microsoft Visual Studio\2022\Enterprise\Common7\IDE\CommonExtensions\Microsoft\CMake\CMake\bin\cmake.exe" .. -G Ninja -DCMAKE_BUILD_TYPE=Release -DCMAKE_C_COMPILER="%ProgramFiles:\=/%/Microsoft Visual Studio/2022/Enterprise/VC/Tools/Llvm/x64/bin/clang-cl.exe" -DCMAKE_CXX_COMPILER="%ProgramFiles:\=/%/Microsoft Visual Studio/2022/Enterprise/VC/Tools/Llvm/x64/bin/clang-cl.exe" -DCMAKE_LINKER="%ProgramFiles:\=/%/Microsoft Visual Studio/2022/Enterprise/VC/Tools/Llvm/x64/bin/lld-link.exe" -DENABLE_CUDA=False && ninja
+
+    - name: Run (VS 2022 x86)
+      shell: cmd
+      run: |
+        cd tests/build-vs-x86
+        "%ProgramFiles%\Microsoft Visual Studio\2022\Enterprise\Common7\IDE\CommonExtensions\Microsoft\CMake\CMake\bin\ctest.exe" --output-on-failure
+
+    - name: Run (Clang-CL)
+      shell: cmd
+      run: |
+        cd tests/build-clang-cl
+        "%ProgramFiles%\Microsoft Visual Studio\2022\Enterprise\Common7\IDE\CommonExtensions\Microsoft\CMake\CMake\bin\ctest.exe" --output-on-failure
+
   test-windows-2022-a:
     name: Windows Server 2022 (A)
     runs-on: windows-2022
@@ -406,86 +486,6 @@ jobs:
         cd tests/build-clang-cl
         "%ProgramFiles%\Microsoft Visual Studio\2022\Enterprise\Common7\IDE\CommonExtensions\Microsoft\CMake\CMake\bin\ctest.exe" --output-on-failure
 
-  test-windows-2019-a:
-    name: Windows Server 2019 (A)
-    runs-on: windows-2019
-    steps:
-    - uses: actions/checkout@v4
-
-    - uses: conda-incubator/setup-miniconda@v3
-      with:
-        auto-update-conda: true
-        conda-remove-defaults: true
-
-    - name: Conda - Create Environment
-      shell: cmd
-      run: |
-        conda create -y --name cuda-env
-
-    - name: Conda - Install CUDA Toolchain
-      shell: cmd
-      run: |
-        conda install -y --name cuda-env cuda-minimal-build
-
-    - name: Build (VS 2019)
-      shell: cmd
-      run: |
-        cd tests
-        mkdir build-vs
-        cd build-vs
-        set FLAGS=-Wall -wd4191 -wd4355 -wd4365 -wd4514 -wd4668 -wd4710 -wd4711 -wd4820 -wd5039 -wd5045 -wd5220 -WX
-        "%ProgramFiles(x86)%\Microsoft Visual Studio\2019\Enterprise\VC\Auxiliary\Build\vcvars64.bat" && "%ProgramFiles(x86)%\Microsoft Visual Studio\2019\Enterprise\Common7\IDE\CommonExtensions\Microsoft\CMake\CMake\bin\cmake.exe" .. -G Ninja -DCMAKE_BUILD_TYPE=Release -DCMAKE_CUDA_COMPILER="%CONDA:\=/%/envs/cuda-env/Library/bin/nvcc.exe" -DCMAKE_C_FLAGS="-O2 %FLAGS%" -DCMAKE_CXX_FLAGS="-O2 %FLAGS%" -DCMAKE_CUDA_FLAGS="%FLAGS% -wd4555 -wd5031 --Wno-deprecated-gpu-targets --Werror all-warnings" && ninja
-
-    - name: Run (VS 2019)
-      shell: cmd
-      run: |
-        cd tests/build-vs
-        "%ProgramFiles(x86)%\Microsoft Visual Studio\2019\Enterprise\Common7\IDE\CommonExtensions\Microsoft\CMake\CMake\bin\ctest.exe" --output-on-failure
-
-  test-windows-2019-b:
-    name: Windows Server 2019 (B)
-    runs-on: windows-2019
-    steps:
-    - uses: actions/checkout@v4
-
-    - name: Build (VS 2019 x86)
-      shell: cmd
-      run: |
-        cd tests
-        mkdir build-vs-x86
-        cd build-vs-x86
-        set FLAGS=-Wall -wd4191 -wd4355 -wd4365 -wd4514 -wd4668 -wd4710 -wd4711 -wd4820 -wd5039 -wd5045 -wd5220 -WX
-        "%ProgramFiles(x86)%\Microsoft Visual Studio\2019\Enterprise\VC\Auxiliary\Build\vcvarsamd64_x86.bat" && "%ProgramFiles(x86)%\Microsoft Visual Studio\2019\Enterprise\Common7\IDE\CommonExtensions\Microsoft\CMake\CMake\bin\cmake.exe" .. -G Ninja -DCMAKE_BUILD_TYPE=Release -DENABLE_CUDA=False && ninja
-
-    - name: Build (VS 2019 Arm64)
-      shell: cmd
-      run: |
-        cd tests
-        mkdir build-vs-arm64
-        cd build-vs-arm64
-        set FLAGS=-Wall -wd4191 -wd4355 -wd4365 -wd4514 -wd4668 -wd4710 -wd4711 -wd4820 -wd5039 -wd5045 -wd5220 -WX
-        "%ProgramFiles(x86)%\Microsoft Visual Studio\2019\Enterprise\VC\Auxiliary\Build\vcvarsamd64_arm64.bat" && "%ProgramFiles(x86)%\Microsoft Visual Studio\2019\Enterprise\Common7\IDE\CommonExtensions\Microsoft\CMake\CMake\bin\cmake.exe" .. -G Ninja -DCMAKE_BUILD_TYPE=Release -DENABLE_CUDA=False && ninja
-
-    - name: Build (Clang-CL)
-      shell: cmd
-      run: |
-        cd tests
-        mkdir build-clang-cl
-        cd build-clang-cl
-        "%ProgramFiles(x86)%\Microsoft Visual Studio\2019\Enterprise\VC\Auxiliary\Build\vcvars64.bat" && "%ProgramFiles(x86)%\Microsoft Visual Studio\2019\Enterprise\Common7\IDE\CommonExtensions\Microsoft\CMake\CMake\bin\cmake.exe" .. -G Ninja -DCMAKE_BUILD_TYPE=Release -DCMAKE_C_COMPILER="%ProgramFiles(x86):\=/%/Microsoft Visual Studio/2019/Enterprise/VC/Tools/Llvm/x64/bin/clang-cl.exe" -DCMAKE_CXX_COMPILER="%ProgramFiles(x86):\=/%/Microsoft Visual Studio/2019/Enterprise/VC/Tools/Llvm/x64/bin/clang-cl.exe" -DCMAKE_LINKER="%ProgramFiles(x86):\=/%/Microsoft Visual Studio/2019/Enterprise/VC/Tools/Llvm/x64/bin/lld-link.exe" -DENABLE_CUDA=False && ninja
-
-    - name: Run (VS 2019 x86)
-      shell: cmd
-      run: |
-        cd tests/build-vs-x86
-        "%ProgramFiles(x86)%\Microsoft Visual Studio\2019\Enterprise\Common7\IDE\CommonExtensions\Microsoft\CMake\CMake\bin\ctest.exe" --output-on-failure
-
-    - name: Run (Clang-CL)
-      shell: cmd
-      run: |
-        cd tests/build-clang-cl
-        "%ProgramFiles(x86)%\Microsoft Visual Studio\2019\Enterprise\Common7\IDE\CommonExtensions\Microsoft\CMake\CMake\bin\ctest.exe" --output-on-failure
-
   test-macos-15:
     name: macOS 15
     runs-on: macos-15
@@ -494,7 +494,7 @@ jobs:
 
     - name: Install Toolchain
       run: |
-        brew install --force-bottle llvm lld mingw-w64
+        brew install --force-bottle gcc llvm lld mingw-w64
 
     - name: Build (Apple Clang)
       run: |
@@ -507,6 +507,7 @@ jobs:
 
     - name: Build (GCC)
       run: |
+        sudo xcode-select --switch /Library/Developer/CommandLineTools
         cd tests
         mkdir build-gcc
         cd build-gcc
@@ -559,7 +560,7 @@ jobs:
 
     - name: Install Toolchain
       run: |
-        brew install --force-bottle llvm lld mingw-w64
+        brew install --force-bottle gcc llvm lld mingw-w64
 
     - name: Build (Apple Clang)
       run: |
@@ -624,7 +625,7 @@ jobs:
 
     - name: Install Toolchain
       run: |
-        brew install --force-bottle llvm lld mingw-w64
+        brew install --force-bottle gcc llvm lld mingw-w64
 
     - name: Build (Apple Clang)
       run: |

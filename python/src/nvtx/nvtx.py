@@ -119,8 +119,11 @@ class annotate:
         @wraps(func)
         def inner(*args, **kwargs):
             libnvtx_push_range(self.attributes, self.domain.handle)
-            result = func(*args, **kwargs)
-            libnvtx_pop_range(self.domain.handle)
+            try:
+                result = func(*args, **kwargs)
+            finally:
+                # Always pop the range, even if an exception is raised
+                libnvtx_pop_range(self.domain.handle)
             return result
 
         return inner
