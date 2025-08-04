@@ -3,9 +3,9 @@
    You can adapt this file completely to your liking, but it should at least
    contain the root `toctree` directive.
 
-==================================================
+=======================================================
 Python NVTX - Annotate code ranges and events in Python
-==================================================
+=======================================================
 
 | NVTX is a cross-platform API for annotating source code to provide contextual
   information to developer tools.

@@ -31,7 +31,7 @@
   <link href="_static/styles/theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
 <link href="_static/styles/pydata-sphinx-theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
 
-    <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=a746c00c" />
+    <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=8f2a1f02" />
     <link rel="stylesheet" type="text/css" href="_static/styles/nvidia-sphinx-theme.css?v=df3ac72c" />
   
   <!-- So that users can add custom icons -->
@@ -40,7 +40,7 @@
   <link rel="preload" as="script" href="_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf" />
 <link rel="preload" as="script" href="_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf" />
 
-    <script src="_static/documentation_options.js?v=29c81e07"></script>
+    <script src="_static/documentation_options.js?v=ba481074"></script>
     <script src="_static/doctools.js?v=9bcbadda"></script>
     <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
     <script>DOCUMENTATION_OPTIONS.pagename = 'annotate';</script>
@@ -316,13 +316,13 @@
 <p><a class="reference internal" href="reference.html#nvtx.annotate" title="nvtx.annotate"><code class="xref py py-class docutils literal notranslate"><span class="pre">nvtx.annotate</span></code></a> can be used in two ways:</p>
 <p>As a function decorator, for generating a range every time the function is called:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="nd">@nvtx</span><span class="o">.</span><span class="n">annotate</span><span class="p">(</span><span class="n">message</span><span class="o">=</span><span class="s2">&quot;my_message&quot;</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s2">&quot;blue&quot;</span><span class="p">)</span>
-<span class="k">def</span> <span class="nf">my_func</span><span class="p">():</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">my_func</span><span class="p">():</span>
     <span class="k">pass</span>
 </pre></div>
 </div>
 <p>The <code class="docutils literal notranslate"><span class="pre">message</span></code> argument defaults to the name of the function being decorated:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="nd">@nvtx</span><span class="o">.</span><span class="n">annotate</span><span class="p">()</span>  <span class="c1"># message defaults to &quot;my_func&quot;</span>
-<span class="k">def</span> <span class="nf">my_func</span><span class="p">():</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">my_func</span><span class="p">():</span>
     <span class="k">pass</span>
 </pre></div>
 </div>

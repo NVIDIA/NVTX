@@ -31,7 +31,7 @@
   <link href="_static/styles/theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
 <link href="_static/styles/pydata-sphinx-theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
 
-    <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=a746c00c" />
+    <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=8f2a1f02" />
     <link rel="stylesheet" type="text/css" href="_static/styles/nvidia-sphinx-theme.css?v=df3ac72c" />
   
   <!-- So that users can add custom icons -->
@@ -40,7 +40,7 @@
   <link rel="preload" as="script" href="_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf" />
 <link rel="preload" as="script" href="_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf" />
 
-    <script src="_static/documentation_options.js?v=29c81e07"></script>
+    <script src="_static/documentation_options.js?v=ba481074"></script>
     <script src="_static/doctools.js?v=9bcbadda"></script>
     <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
     <script>DOCUMENTATION_OPTIONS.pagename = 'best_practices';</script>
@@ -339,21 +339,21 @@ Tools are encouraged to logically group annotations into categories.
 Using slashes in category names like filesystem paths allows the user to
 create a hierarchy of categories, and tools should handle these as a hierarchy.</p>
 </section>
-<section id="reduce-cache-lookups">
-<h2>Reduce cache lookups<a class="headerlink" href="#reduce-cache-lookups" title="Link to this heading">#</a></h2>
+<section id="reduce-cache-lookups-and-object-allocations">
+<h2>Reduce cache lookups and object allocations<a class="headerlink" href="#reduce-cache-lookups-and-object-allocations" title="Link to this heading">#</a></h2>
 <p>NVTX is designed to produce minimal overhead during the program execution.
-As such, it caches <a class="reference internal" href="reference.html#nvtx.Domain" title="nvtx.Domain"><code class="xref py py-class docutils literal notranslate"><span class="pre">nvtx.Domain</span></code></a> and <a class="reference internal" href="reference.html#nvtx._lib.lib.EventAttributes" title="nvtx._lib.lib.EventAttributes"><code class="xref py py-class docutils literal notranslate"><span class="pre">nvtx._lib.lib.EventAttributes</span></code></a> objects,
-as well as <a class="reference internal" href="reference.html#nvtx._lib.lib.RegisteredString" title="nvtx._lib.lib.RegisteredString"><code class="xref py py-class docutils literal notranslate"><span class="pre">nvtx._lib.lib.RegisteredString</span></code></a> objects and category IDs.</p>
-<p>The functions <a class="reference internal" href="reference.html#nvtx.mark" title="nvtx.mark"><code class="xref py py-func docutils literal notranslate"><span class="pre">nvtx.mark()</span></code></a>, <a class="reference internal" href="reference.html#nvtx.push_range" title="nvtx.push_range"><code class="xref py py-func docutils literal notranslate"><span class="pre">nvtx.push_range()</span></code></a>, <a class="reference internal" href="reference.html#nvtx.pop_range" title="nvtx.pop_range"><code class="xref py py-func docutils literal notranslate"><span class="pre">nvtx.pop_range()</span></code></a>,
+As such, it caches <a class="reference internal" href="reference.html#nvtx.Domain" title="nvtx.Domain"><code class="xref py py-class docutils literal notranslate"><span class="pre">nvtx.Domain</span></code></a> objects,
+<a class="reference internal" href="reference.html#nvtx._lib.lib.RegisteredString" title="nvtx._lib.lib.RegisteredString"><code class="xref py py-class docutils literal notranslate"><span class="pre">nvtx._lib.lib.RegisteredString</span></code></a> objects and category IDs.</p>
+<p>Although the functions <a class="reference internal" href="reference.html#nvtx.mark" title="nvtx.mark"><code class="xref py py-func docutils literal notranslate"><span class="pre">nvtx.mark()</span></code></a>, <a class="reference internal" href="reference.html#nvtx.push_range" title="nvtx.push_range"><code class="xref py py-func docutils literal notranslate"><span class="pre">nvtx.push_range()</span></code></a>, <a class="reference internal" href="reference.html#nvtx.pop_range" title="nvtx.pop_range"><code class="xref py py-func docutils literal notranslate"><span class="pre">nvtx.pop_range()</span></code></a>,
 <a class="reference internal" href="reference.html#nvtx.start_range" title="nvtx.start_range"><code class="xref py py-func docutils literal notranslate"><span class="pre">nvtx.start_range()</span></code></a>, and <a class="reference internal" href="reference.html#nvtx.end_range" title="nvtx.end_range"><code class="xref py py-func docutils literal notranslate"><span class="pre">nvtx.end_range()</span></code></a> are convenient to use,
-but they include cache lookups for the domain and event attributes.
+they include event attributes object allocation and cache lookups for the domain on each call.
 Therefore, for best performance, it’s better to use the methods from <a class="reference internal" href="reference.html#nvtx.Domain" title="nvtx.Domain"><code class="xref py py-class docutils literal notranslate"><span class="pre">nvtx.Domain</span></code></a> instead.
 For example:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">nvtx</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span> <span class="kn">import</span><span class="w"> </span><span class="nn">nvtx</span>
 
- <span class="k">def</span> <span class="nf">my_func</span><span class="p">(</span><span class="n">param</span><span class="p">:</span> <span class="nb">int</span><span class="p">):</span>
-     <span class="c1"># This call includes a cache lookup for the domain, the message registered string,</span>
-     <span class="c1"># the category ID and the event attributes object.</span>
+ <span class="k">def</span><span class="w"> </span><span class="nf">my_func</span><span class="p">(</span><span class="n">param</span><span class="p">:</span> <span class="nb">int</span><span class="p">):</span>
+     <span class="c1"># This call includes allocation of the event attributes object,</span>
+     <span class="c1"># and a cache lookup for the domain, the message registered string and the category ID.</span>
      <span class="c1"># See `my_func_fast` for a faster alternative.</span>
      <span class="n">nvtx</span><span class="o">.</span><span class="n">mark</span><span class="p">(</span><span class="n">message</span><span class="o">=</span><span class="s1">&#39;my_func&#39;</span><span class="p">,</span> <span class="n">domain</span><span class="o">=</span><span class="s1">&#39;My Lib&#39;</span><span class="p">,</span> <span class="n">category</span><span class="o">=</span><span class="s1">&#39;my_category&#39;</span><span class="p">,</span> <span class="n">payload</span><span class="o">=</span><span class="n">param</span><span class="p">)</span>
 
@@ -361,7 +361,7 @@ For example:</p>
 
 <span class="c1"># Save a reference to the domain object,</span>
 <span class="c1"># so it can be accessed everywhere in the library code,</span>
-<span class="c1"># to avoid multiple calls to nvtx.get_domain()</span>
+<span class="c1"># to avoid multiple calls to `nvtx.get_domain()`</span>
 <span class="n">domain</span> <span class="o">=</span> <span class="n">nvtx</span><span class="o">.</span><span class="n">get_domain</span><span class="p">(</span><span class="s1">&#39;My Lib&#39;</span><span class="p">)</span>
 
 <span class="c1"># Reuse category IDs and EventAttributes objects when possible</span>
@@ -369,7 +369,7 @@ For example:</p>
 <span class="n">category_id</span> <span class="o">=</span> <span class="n">domain</span><span class="o">.</span><span class="n">get_category_id</span><span class="p">(</span><span class="s1">&#39;my_category&#39;</span><span class="p">)</span>
 <span class="n">attr</span> <span class="o">=</span> <span class="n">domain</span><span class="o">.</span><span class="n">get_event_attributes</span><span class="p">(</span><span class="n">message</span><span class="o">=</span><span class="s1">&#39;my_func&#39;</span><span class="p">)</span>
 
-<span class="k">def</span> <span class="nf">my_func_fast</span><span class="p">(</span><span class="n">param</span><span class="p">:</span> <span class="nb">int</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">my_func_fast</span><span class="p">(</span><span class="n">param</span><span class="p">:</span> <span class="nb">int</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Faster version of my_func() using the domain object directly.&quot;&quot;&quot;</span>
     <span class="n">attr</span><span class="o">.</span><span class="n">payload</span> <span class="o">=</span> <span class="n">param</span>
     <span class="n">domain</span><span class="o">.</span><span class="n">mark</span><span class="p">(</span><span class="n">attr</span><span class="p">)</span>    <span class="c1"># No cache lookups</span>
@@ -432,7 +432,7 @@ For example:</p>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#give-don-t-take">Give, don’t take</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#isolate-nvtx-annotations-in-a-library-using-a-domain">Isolate NVTX annotations in a library using a domain</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#use-categories-to-organize-annotations">Use categories to organize annotations</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#reduce-cache-lookups">Reduce cache lookups</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#reduce-cache-lookups-and-object-allocations">Reduce cache lookups and object allocations</a></li>
 </ul>
   </nav></div>
 

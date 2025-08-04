@@ -31,7 +31,7 @@
   <link href="_static/styles/theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
 <link href="_static/styles/pydata-sphinx-theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
 
-    <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=a746c00c" />
+    <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=8f2a1f02" />
     <link rel="stylesheet" type="text/css" href="_static/styles/nvidia-sphinx-theme.css?v=df3ac72c" />
   
   <!-- So that users can add custom icons -->
@@ -40,7 +40,7 @@
   <link rel="preload" as="script" href="_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf" />
 <link rel="preload" as="script" href="_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf" />
 
-    <script src="_static/documentation_options.js?v=29c81e07"></script>
+    <script src="_static/documentation_options.js?v=ba481074"></script>
     <script src="_static/doctools.js?v=9bcbadda"></script>
     <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
     <script>DOCUMENTATION_OPTIONS.pagename = 'reference';</script>
@@ -349,13 +349,13 @@ range is not associated with a category.</p></li>
 </dd>
 </dl>
 <p class="rubric">Examples</p>
-<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">nvtx</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">time</span>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span><span class="w"> </span><span class="nn">nvtx</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span><span class="w"> </span><span class="nn">time</span>
 </pre></div>
 </div>
 <p>Using a decorator:</p>
 <div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="nd">@nvtx</span><span class="o">.</span><span class="n">annotate</span><span class="p">(</span><span class="n">color</span><span class="o">=</span><span class="s2">&quot;red&quot;</span><span class="p">,</span> <span class="n">domain</span><span class="o">=</span><span class="s2">&quot;my_domain&quot;</span><span class="p">):</span>    <span class="c1"># `message` defaults to &quot;func&quot;</span>
-<span class="gp">... </span><span class="k">def</span> <span class="nf">func</span><span class="p">():</span>
+<span class="gp">... </span><span class="k">def</span><span class="w"> </span><span class="nf">func</span><span class="p">():</span>
 <span class="gp">... </span>    <span class="n">time</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="mf">0.1</span><span class="p">)</span>
 </pre></div>
 </div>
@@ -403,8 +403,8 @@ is not associated with a category.</p></li>
 <p>When applicable, prefer to use <a class="reference internal" href="#nvtx.annotate" title="nvtx.annotate"><code class="xref py py-class docutils literal notranslate"><span class="pre">annotate</span></code></a>.
 Otherwise, for best performance, use <a class="reference internal" href="#nvtx.Domain.push_range" title="nvtx.Domain.push_range"><code class="xref py py-func docutils literal notranslate"><span class="pre">Domain.push_range()</span></code></a> and <a class="reference internal" href="#nvtx.Domain.pop_range" title="nvtx.Domain.pop_range"><code class="xref py py-func docutils literal notranslate"><span class="pre">Domain.pop_range()</span></code></a>.</p>
 <p class="rubric">Examples</p>
-<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">time</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">nvtx</span>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span><span class="w"> </span><span class="nn">time</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span><span class="w"> </span><span class="nn">nvtx</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">nvtx</span><span class="o">.</span><span class="n">push_range</span><span class="p">(</span><span class="s2">&quot;my_code_range&quot;</span><span class="p">,</span> <span class="n">domain</span><span class="o">=</span><span class="s2">&quot;my_domain&quot;</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">time</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">nvtx</span><span class="o">.</span><span class="n">pop_range</span><span class="p">(</span><span class="n">domain</span><span class="o">=</span><span class="s2">&quot;my_domain&quot;</span><span class="p">)</span>
@@ -436,7 +436,7 @@ domain is “NVTX”.</p>
 <dd><em class="sig-param"><span class="n"><span class="pre">payload</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">float</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>,</dd>
 </dl>
 
-<span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#nvtx.start_range" title="Link to this definition">#</a></dt>
+<span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#nvtx.start_range" title="Link to this definition">#</a></dt>
 <dd><p>Mark the beginning of a process range.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
@@ -463,8 +463,8 @@ is not associated with a category.</p></li>
 <p class="rubric">Notes</p>
 <p>For best performance, use <a class="reference internal" href="#nvtx.Domain.start_range" title="nvtx.Domain.start_range"><code class="xref py py-func docutils literal notranslate"><span class="pre">Domain.start_range()</span></code></a> and <a class="reference internal" href="#nvtx.Domain.end_range" title="nvtx.Domain.end_range"><code class="xref py py-func docutils literal notranslate"><span class="pre">Domain.end_range()</span></code></a>.</p>
 <p class="rubric">Examples</p>
-<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">time</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">nvtx</span>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span><span class="w"> </span><span class="nn">time</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span><span class="w"> </span><span class="nn">nvtx</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">range_id</span> <span class="o">=</span> <span class="n">nvtx</span><span class="o">.</span><span class="n">start_range</span><span class="p">(</span><span class="s2">&quot;my_code_range&quot;</span><span class="p">,</span> <span class="n">domain</span><span class="o">=</span><span class="s2">&quot;my_domain&quot;</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">time</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">nvtx</span><span class="o">.</span><span class="n">end_range</span><span class="p">(</span><span class="n">range_id</span><span class="p">)</span>
@@ -474,7 +474,7 @@ is not associated with a category.</p></li>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="nvtx.end_range">
-<span class="sig-prename descclassname"><span class="pre">nvtx.</span></span><span class="sig-name descname"><span class="pre">end_range</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">range_id</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#nvtx.end_range" title="Link to this definition">#</a></dt>
+<span class="sig-prename descclassname"><span class="pre">nvtx.</span></span><span class="sig-name descname"><span class="pre">end_range</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">range_id</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#nvtx.end_range" title="Link to this definition">#</a></dt>
 <dd><p>Mark the end of a code range that was started with <a class="reference internal" href="#nvtx.start_range" title="nvtx.start_range"><code class="xref py py-func docutils literal notranslate"><span class="pre">start_range()</span></code></a>.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
@@ -519,7 +519,7 @@ not associated with a category.</p></li>
 <p class="rubric">Notes</p>
 <p>For best performance, use <a class="reference internal" href="#nvtx.Domain.mark" title="nvtx.Domain.mark"><code class="xref py py-func docutils literal notranslate"><span class="pre">Domain.mark()</span></code></a>.</p>
 <p class="rubric">Examples</p>
-<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">nvtx</span>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span><span class="w"> </span><span class="nn">nvtx</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">nvtx</span><span class="o">.</span><span class="n">mark</span><span class="p">(</span><span class="s2">&quot;my_marker&quot;</span><span class="p">,</span> <span class="n">domain</span><span class="o">=</span><span class="s2">&quot;my_domain&quot;</span><span class="p">)</span>
 </pre></div>
 </div>
@@ -558,7 +558,7 @@ the instance returned is a <a class="reference internal" href="#nvtx._lib.lib.Du
 </dd>
 </dl>
 <p class="rubric">Examples</p>
-<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">nvtx</span>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span><span class="w"> </span><span class="nn">nvtx</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">domain</span> <span class="o">=</span> <span class="n">nvtx</span><span class="o">.</span><span class="n">Domain</span><span class="p">(</span><span class="s1">&#39;my_domain&#39;</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">attributes</span> <span class="o">=</span> <span class="n">domain</span><span class="o">.</span><span class="n">get_event_attributes</span><span class="p">(</span><span class="n">message</span><span class="o">=</span><span class="s1">&#39;my_marker&#39;</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">domain</span><span class="o">.</span><span class="n">mark</span><span class="p">(</span><span class="n">attributes</span><span class="p">)</span>
@@ -578,8 +578,8 @@ the instance returned is a <a class="reference internal" href="#nvtx._lib.lib.Du
 <p class="rubric">Notes</p>
 <p>When applicable, prefer to use <a class="reference internal" href="#nvtx.annotate" title="nvtx.annotate"><code class="xref py py-class docutils literal notranslate"><span class="pre">annotate</span></code></a>.</p>
 <p class="rubric">Examples</p>
-<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">time</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">nvtx</span>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span><span class="w"> </span><span class="nn">time</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span><span class="w"> </span><span class="nn">nvtx</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">domain</span> <span class="o">=</span> <span class="n">nvtx</span><span class="o">.</span><span class="n">Domain</span><span class="p">(</span><span class="s1">&#39;my_domain&#39;</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">attributes</span> <span class="o">=</span> <span class="n">domain</span><span class="o">.</span><span class="n">get_event_attributes</span><span class="p">(</span><span class="n">message</span><span class="o">=</span><span class="s1">&#39;my_code_range&#39;</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">domain</span><span class="o">.</span><span class="n">push_range</span><span class="p">(</span><span class="n">attributes</span><span class="p">)</span>
@@ -608,8 +608,8 @@ the instance returned is a <a class="reference internal" href="#nvtx._lib.lib.Du
 </dd>
 </dl>
 <p class="rubric">Examples</p>
-<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">time</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">nvtx</span>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span><span class="w"> </span><span class="nn">time</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span><span class="w"> </span><span class="nn">nvtx</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">domain</span> <span class="o">=</span> <span class="n">nvtx</span><span class="o">.</span><span class="n">Domain</span><span class="p">(</span><span class="s1">&#39;my_domain&#39;</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">attributes</span> <span class="o">=</span> <span class="n">domain</span><span class="o">.</span><span class="n">get_event_attributes</span><span class="p">(</span><span class="n">message</span><span class="o">=</span><span class="s1">&#39;my_code_range&#39;</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">range_id</span> <span class="o">=</span> <span class="n">domain</span><span class="o">.</span><span class="n">start_range</span><span class="p">(</span><span class="n">attributes</span><span class="p">)</span>
@@ -643,13 +643,12 @@ the instance returned is a <a class="reference internal" href="#nvtx._lib.lib.Du
 </dl>
 
 <span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="#nvtx._lib.lib.EventAttributes" title="nvtx._lib.lib.EventAttributes"><span class="pre">EventAttributes</span></a></span></span><a class="headerlink" href="#nvtx.Domain.get_event_attributes" title="Link to this definition">#</a></dt>
-<dd><p>Get or create an <a class="reference internal" href="#nvtx._lib.lib.EventAttributes" title="nvtx._lib.lib.EventAttributes"><code class="xref py py-class docutils literal notranslate"><span class="pre">nvtx._lib.lib.EventAttributes</span></code></a> object.
-The results of this function are cached, i.e.,
-the same object is returned for the same parameters.</p>
+<dd><p>Create an <a class="reference internal" href="#nvtx._lib.lib.EventAttributes" title="nvtx._lib.lib.EventAttributes"><code class="xref py py-class docutils literal notranslate"><span class="pre">nvtx._lib.lib.EventAttributes</span></code></a> object.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>message</strong> (<em>str</em>) – A message associated with the event.</p></li>
+<li><p><strong>message</strong> (<em>str</em>) – A message associated with the event.
+If the given message is not registered, it is registered under this domain.</p></li>
 <li><p><strong>color</strong> (<em>str</em><em>, </em><em>int</em><em>, </em><em>optional</em>) – A color associated with the event.
 Supports <cite>matplotlib</cite> colors if it is available.</p></li>
 <li><p><strong>category</strong> (<em>str</em><em>, </em><em>int</em><em>, </em><em>optional</em>) – A string or an integer specifying the category within the domain under which the event
@@ -768,8 +767,8 @@ Use <a class="reference internal" href="#nvtx.Domain.get_registered_string" titl
 </dd>
 </dl>
 <p class="rubric">Examples</p>
-<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">nvtx</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">time</span>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span><span class="w"> </span><span class="nn">nvtx</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span><span class="w"> </span><span class="nn">time</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">pr</span> <span class="o">=</span> <span class="n">nvtx</span><span class="o">.</span><span class="n">Profile</span><span class="p">()</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">pr</span><span class="o">.</span><span class="n">enable</span><span class="p">()</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">time</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span> <span class="c1"># this call to `sleep` is captured by nvtx.</span>
