@@ -30,7 +30,7 @@
 
 /* Temporary helper #defines, #undef'ed at end of header */
 #define NVTX3_CPP_VERSION_MAJOR 1
-#define NVTX3_CPP_VERSION_MINOR 0
+#define NVTX3_CPP_VERSION_MINOR 1
 
 /* This section handles the decision of whether to provide unversioned symbols.
  * If NVTX3_CPP_REQUIRE_EXPLICIT_VERSION is #defined, unversioned symbols are
@@ -85,7 +85,7 @@
      *
      * Not to be confused with the version number of the NVTX core library.
      */
-    #define NVTX3_CPP_INLINED_VERSION_MINOR 0  // NVTX3_CPP_VERSION_MINOR
+    #define NVTX3_CPP_INLINED_VERSION_MINOR 1  // NVTX3_CPP_VERSION_MINOR
   #elif NVTX3_CPP_INLINED_VERSION_MAJOR != NVTX3_CPP_VERSION_MAJOR
     /* Unsupported case -- cannot define unversioned symbols for different major versions
      * in the same translation unit.
@@ -99,7 +99,7 @@
      * redefine the minor version macro to this header's version.
      */
     #undef NVTX3_CPP_INLINED_VERSION_MINOR
-    #define NVTX3_CPP_INLINED_VERSION_MINOR 0  // NVTX3_CPP_VERSION_MINOR
+    #define NVTX3_CPP_INLINED_VERSION_MINOR 1  // NVTX3_CPP_VERSION_MINOR
     // else, already have this version or newer, nothing to do
   #endif
 #endif
@@ -353,17 +353,18 @@
  * event (such as the color used). These attributes can be specified per-event
  * via arguments to a `nvtx3::event_attributes` object.
  *
- * NVTX events can be customized via four "attributes":
+ * NVTX events can be customized via five "attributes":
  * - \ref COLOR : color used to visualize the event in tools.
  * - \ref MESSAGES :  Custom message string.
  * - \ref PAYLOAD :  User-defined numerical value.
+ * - \ref PAYLOAD_DATA : User-defined structured data (exclusive of payload).
  * - \ref CATEGORY : Intra-domain grouping.
  *
  * It is possible to construct a `nvtx3::event_attributes` from any number of
  * attribute objects (nvtx3::color, nvtx3::message, nvtx3::payload,
- * nvtx3::category) in any order. If an attribute is not specified, a tool
- * specific default value is used. See `nvtx3::event_attributes` for more
- * information.
+ * nvtx3::category, nvtx3::payload_data, or a container of nvtx3::payload_data)
+ * in any order. If an attribute is not specified, a tool specific default value
+ * is used. See `nvtx3::event_attributes` for more information.
  *
  * \code{.cpp}
  * // Set message, same as passing nvtx3::message{"message"}
@@ -387,6 +388,7 @@
  * // Multiple arguments of the same type are allowed, but only the first is
  * // used -- in this example, payload is set to 42:
  * nvtx3::event_attributes attr{ nvtx3::payload{42}, nvtx3::payload{7} };
+ * // payload and payload_data should not be used together.
  *
  * // Using the nvtx3 namespace in a local scope makes the syntax more succinct:
  * using namespace nvtx3;
@@ -438,6 +440,13 @@
  * // Uses construct on first use to register the contents of
  * // `my_message::message`
  * auto& msg = nvtx3::registered_string_in<my_domain>::get<my_message>();
+ * \endcode
+ *
+ * A `nvtx3::registered_string_in` can also be used inside of a struct for
+ * `nvtx3::payload_data` using `TYPE_NVTX_REGISTERED_STRING_HANDLE`.
+ *
+ * \code{.cpp}
+ *
  * \endcode
  *
  * \subsection COLOR color
@@ -506,6 +515,17 @@
  * nvtx3:: event_attributes attr{nvtx3::payload{42}};
  * \endcode
  *
+ * \subsection PAYLOAD_DATA payload_data
+ *
+ * `nvtx3::payload_data` allows associating arbitrary structured data with an NVTX event.
+ *
+ * First, define a `struct` that is *standard-layout* and *trivially copyable*.
+ * Then use `NVTX3_DEFINE_SCHEMA_GET` (`NVTX3_V1_DEFINE_SCHEMA_GET()`) to define the schema layout.
+ * Finally you can use any such instance wrapped in `nvtx3::payload_data` in an
+ * `nvtx3::event_attributes` object.
+ * You can also pass containers (e.g., `std::vector`, `std::array`) of `payload_data` objects.
+ * \note Constructing `nvtx3::payload_data` from temporaries or using tempoarary
+ * `nvtx3::payload_data` objects is disabled to prevent dangling pointers.
  *
  * \section EXAMPLE Example
  *
@@ -528,6 +548,19 @@
  * using my_registered_string = nvtx3::registered_string_in<my_domain>;
  * using my_named_category = nvtx3::named_category_in<my_domain>;
  *
+ * // Custom payload data
+ * struct my_payload_data {
+ *     uint32_t iteration;
+ *     float    temperature;
+ * };
+ * NVTX3_DEFINE_SCHEMA_GET(
+ *     my_domain,
+ *     my_payload_data,
+ *     "MyPayloadData",
+ *     NVTX_PAYLOAD_ENTRIES((iteration, TYPE_UINT32, "Iteration Count"),
+ *                          (temperature, TYPE_FLOAT, "Temperature"))
+ * )
+ *
  * // Default values for all attributes
  * nvtx3::event_attributes attr{};
  * my_scoped_range r0{attr};
@@ -548,6 +581,15 @@
  *
  * // Use registered string and named category with a custom payload
  * my_scoped_range r3{msg, cat, nvtx3::payload{42}};
+ *
+ * // Use custom payload data
+ * my_payload_data extras{42, 0.7f};
+ * nvtx3::payload_data pd{extras};
+ * my_scoped_range r4{pd};
+ *
+ * // Use a container of payload_data, can use different struct types
+ * auto multiple = std::to_array({pd, pd2});
+ * my_scoped_range r5{multiple};
  *
  * // Any number of arguments in any order
  * my_scoped_range r{nvtx3::rgb{127, 255, 0}, msg};
@@ -608,6 +650,9 @@
 #define NVTX3_CONCAT(A, B) A##B
 #define NVTX3_NAMESPACE_FOR(VERSION) NVTX3_CONCAT(v, VERSION)
 #define NVTX3_VERSION_NAMESPACE NVTX3_NAMESPACE_FOR(NVTX3_CPP_VERSION_MAJOR)
+/* We use a different prefix to avoid ambiguity with the version namespace */
+#define NVTX3_MINOR_NAMESPACE_FOR(VERSION) NVTX3_CONCAT(mv, VERSION)
+#define NVTX3_MINOR_VERSION_NAMESPACE NVTX3_MINOR_NAMESPACE_FOR(NVTX3_CPP_VERSION_MINOR)
 
 /* Avoid duplicating #if defined(NVTX3_INLINE_THIS_VERSION) for namespaces
  * in each minor version by making a macro to use unconditionally, which
@@ -632,6 +677,14 @@
 #define NVTX3_CONSTEXPR_IF_CPP14 constexpr
 #else
 #define NVTX3_CONSTEXPR_IF_CPP14
+#endif
+
+/* Enables the use of constexpr when support for C++20 constexpr is present.
+ */
+#if __cplusplus >= 202002L
+#define NVTX3_CONSTEXPR_IF_CPP20 constexpr
+#else
+#define NVTX3_CONSTEXPR_IF_CPP20
 #endif
 
 // Macro wrappers for C++ attributes
@@ -665,16 +718,21 @@
 #define NVTX3_CPP_DEFINITIONS_V1_0
 
 #include "nvToolsExt.h"
+#include "nvToolsExtPayload.h"
+#include "nvToolsExtPayloadHelper.h"
 
 #include <memory>
 #include <string>
 #include <type_traits>
 #include <utility>
 #include <cstddef>
+#include <cstdint>
 
 namespace nvtx3 {
 
 NVTX3_INLINE_IF_REQUESTED namespace NVTX3_VERSION_NAMESPACE
+{
+inline namespace NVTX3_MINOR_VERSION_NAMESPACE
 {
 
 namespace detail {
@@ -711,7 +769,65 @@ using is_uint32 = std::is_same<typename std::decay<T>::type, uint32_t>;
 template <typename... Args>
 static inline void silence_unused(Args const&...) noexcept {}
 
-}  // namespace detail
+// Type trait to check for a .data() member returning T* or const T*
+// Some day, we can just use std::span
+template <typename T, typename TD>
+struct has_data_member
+{
+private:
+    template <typename U>
+    static auto test_data(int) -> decltype(std::declval<const U>().data());
+    template <typename>
+    static auto test_data(...) -> void;
+    using return_type = decltype(test_data<T>(0));
+
+public:
+    static constexpr bool value =
+        std::is_same<return_type, TD*>::value || std::is_same<return_type, TD const*>::value;
+};
+
+// Type trait to check for a .size() member returning something convertible to size_t
+template <typename T>
+struct has_size_member
+{
+private:
+    template <typename U>
+    static auto test_size(int) -> decltype(std::declval<const U>().size());
+    template <typename>
+    static auto test_size(...) -> void;
+    using return_type = decltype(test_size<T>(0));
+
+public:
+    static constexpr bool value = !std::is_same<return_type, void>::value &&
+                                    std::is_convertible<return_type, size_t>::value;
+};
+
+/**
+    * To ensure that we can "safely" use one type as another, for pointers, in
+    * arrays or in structs. This is used for our wrappers around C-types so that
+    * we can pass them back to C.
+    *
+    * This is by no means perfect and foolproof.
+    *
+    * @tparam W The wrapper type.
+    * @tparam U The type it is wrapping.
+    */
+template <typename W, typename U, typename = void>
+struct is_safe_wrapper_of : std::false_type
+{
+};
+
+template <typename W, typename U>
+struct is_safe_wrapper_of<
+    W,
+    U,
+    typename std::enable_if<
+        std::is_standard_layout<W>::value && std::is_standard_layout<U>::value &&
+        std::is_trivially_copyable<W>::value && std::is_trivially_copyable<U>::value &&
+        sizeof(W) == sizeof(U)>::type> : std::true_type
+{
+};
+} // namespace detail
 
 /**
  * @brief `domain`s allow for grouping NVTX events into a single scope to
@@ -1601,7 +1717,15 @@ class registered_string_in {
    * @brief Returns the registered string's handle
    *
    */
-  nvtxStringHandle_t get_handle() const noexcept { return handle_; }
+  nvtxStringHandle_t get_handle() const noexcept
+  {
+    // We want to ensure that we can use the registered_string in place of a handle
+    // in a payload data struct.
+    NVTX3_STATIC_ASSERT(
+      (detail::is_safe_wrapper_of<registered_string_in<D>, nvtxStringHandle_t>::value),
+      "Internal error! registered_string_in is potentially unsafe.");
+    return handle_;
+  }
 
 private:
   // Default constructor is only used internally for static_assert(false) cases.
@@ -1690,7 +1814,9 @@ class message {
    * a dangling pointer.
    *
    */
+#ifndef NVTX3_ALLOW_RVALUE_CONSTRUCTORS
   message(std::string&&) = delete;
+#endif
 
   /**
    * @brief Construct a `message` whose contents are specified by `msg`.
@@ -1717,7 +1843,9 @@ class message {
    * a dangling pointer.
    *
    */
+#ifndef NVTX3_ALLOW_RVALUE_CONSTRUCTORS
   message(std::wstring&&) = delete;
+#endif
 
   /**
    * @brief Construct a `message` from a `registered_string_in`.
@@ -1894,6 +2022,173 @@ class payload {
 };
 
 /**
+ * @brief Represents the registered schema for a payload struct.
+ *
+ * This class encapsulates the schema ID obtained by registering a payload struct
+ * using `nvtxPayloadSchemaRegister`. The primary mechanism for obtaining an
+ * instance is via the static template function `get<T>()`, which must be
+ * specialized for each payload struct type `T` using the
+ * `NVTX3_DEFINE_SCHEMA_GET` (`NVTX3_V1_DEFINE_SCHEMA_GET()`) macro.
+ *
+ * The schema ID is used internally when constructing `payload_data` objects.
+ */
+class schema
+{
+private:
+  /**
+   * @brief Private default constructor.
+   *
+   * Used only internally for static_assert(false) cases.
+   */
+  schema()
+      : _schema_id{0}
+  {}
+
+  public:
+  schema(schema const&) = delete;
+  schema& operator=(schema const&) = delete;
+  schema(schema&&) = delete;
+  schema& operator=(schema&&) = delete;
+
+  /**
+   * @brief Constructs a schema object directly from a schema ID.
+   *
+   * This constructor is primarily for internal use or advanced scenarios where
+   * the schema ID is obtained manually.
+   *
+   * @param id The NVTX schema ID.
+   */
+  explicit schema(uint64_t id)
+      : _schema_id{id}
+  {}
+
+  /**
+   * @brief Gets the schema instance for a specific payload struct type.
+   *
+   * This function relies on template specialization. Users must provide a
+   * specialization for each payload struct type `T` using the
+   * `NVTX3_DEFINE_SCHEMA_GET` (`NVTX3_V1_DEFINE_SCHEMA_GET()`) macro.
+   *
+   * @tparam T The payload struct type for which to get the schema.
+   * @return A constant reference to the schema object for type `T`.
+   */
+  template <typename T>
+  NVTX3_NO_DISCARD static schema const& get() noexcept
+  {
+    NVTX3_STATIC_ASSERT(
+        detail::always_false<T>::value,
+        "payload_data schema deduction requires a template specialization. Use the macro "
+        "NVTX3_DEFINE_SCHEMA_GET to generate this specialization.");
+    static schema unused;
+    return unused;
+  }
+
+  /**
+   * @brief Return the underlying C handle of the schema.
+   */
+  uint64_t get_handle() const noexcept
+  {
+    return _schema_id;
+  }
+
+private:
+  uint64_t const _schema_id;
+};
+
+/**
+ * @brief Wrapper around the NVTX C API `nvtxPayloadData_t` struct.
+ *
+ * This class facilitates associating a structured payload with an NVTX event.
+ * It combines a pointer to the payload data instance with its registered schema
+ * ID and size.
+ */
+class payload_data
+{
+public:
+  /**
+   * @brief Constructs `payload_data` from an existing NVTX C API struct.
+   *
+   * Provides interoperability with code using the NVTX C API directly.
+   *
+   * @param pd An existing `nvtxPayloadData_t` struct.
+   */
+  explicit payload_data(nvtxPayloadData_t const& pd)
+      : data_(pd)
+  {}
+
+  /**
+   * @brief Constructs `payload_data` for a specific payload struct instance.
+   *
+   * This template constructor automatically retrieves the necessary information
+   * from the given struct type `T` and the reference to the instance.
+   * The type `T` must be standard layout and trivially copyable as well as
+   * have a `schema::get<T>()` specialization via `NVTX3_DEFINE_SCHEMA_GET` (`NVTX3_V1_DEFINE_SCHEMA_GET()`).
+   *
+   * Make sure the provided referenace is valid for the lifetime of the created
+   * `payload_data` object.
+   *
+   * @param t A constant reference to the payload struct instance.
+   */
+  // We cannot simply delete the rvalue constructor here because with a template
+  // parameter that would be a forwarding reference. Thus, we have this one
+  // ctor with a forwarding reference and use a static assert for the rvalue check.
+  // Disable this for the C-style nvtxPayloadData_t to prefer above ctor for non-const.
+  template <
+      typename R,
+      typename T = typename std::remove_cv<typename std::remove_reference<R>::type>::type,
+      typename = typename std::enable_if<!std::is_same<T, nvtxPayloadData_t>::value>::type>
+  explicit payload_data(R&& t)
+      : data_{schema::get<T>().get_handle(), sizeof(T), &t}
+  {
+#ifndef NVTX3_ALLOW_RVALUE_CONSTRUCTORS
+    NVTX3_STATIC_ASSERT(
+        std::is_lvalue_reference<R>::value,
+        "payload_data requires an lvalue reference to the underlying data. Constructing "
+        "from an rvalue is potentially unsafe and therefore forbidden.");
+#endif
+    NVTX3_STATIC_ASSERT(
+        std::is_standard_layout<T>::value && std::is_trivially_copyable<T>::value,
+        "structs used for NVTX3 payload schema must be standard layout and trivially copyable");
+  }
+
+  /**
+   * @brief Constructs `payload_data` for a payload instance with a given schema.
+   *
+   * Use this constructor if you have a dynamic schema for your struct rather than
+   * a static one defined by `NVTX3_DEFINE_SCHEMA_GET` (`NVTX3_V1_DEFINE_SCHEMA_GET()`).
+   *
+   * Make sure the provided referenace is valid for the lifetime of the created
+   * `payload_data` object.
+   *
+   * @param t A constant reference to the payload struct instance.
+   * @param s The schema to use for the payload data.
+   */
+  template <typename T>
+  explicit payload_data(T const& t, schema s)
+      : data_{s.get_handle(), sizeof(T), &t}
+  {
+    NVTX3_STATIC_ASSERT(
+        std::is_standard_layout<T>::value && std::is_trivially_copyable<T>::value,
+        "structs used for NVTX3 payload schema must be standard layout and trivially copyable");
+  }
+
+  /**
+   * @return A pointer to the `nvtxPayloadData_t` struct as ullValue to use
+   * with NVTX C API functions.
+   */
+  uint64_t as_ull_value() const noexcept
+  {
+    NVTX3_STATIC_ASSERT(
+        (detail::is_safe_wrapper_of<payload_data, nvtxPayloadData_t>::value),
+        "Internal error! payload_data is potentially unsafe.");
+    return NVTX_POINTER_AS_PAYLOAD_ULLVALUE(&data_);
+  }
+
+private:
+  nvtxPayloadData_t data_;
+};
+
+/**
  * @brief Describes the attributes of a NVTX event.
  *
  * NVTX events can be customized via four "attributes":
@@ -2017,6 +2312,60 @@ class event_attributes {
   {
     attributes_.payload     = p.get_value();
     attributes_.payloadType = p.get_type();
+  }
+
+  /**
+   * @brief Variadic constructor where the first argument is a single `payload_data`.
+   *
+   * Sets the value of the `EventAttribute`s payload data based on `pd` and forwards
+   * the remaining variadic parameter pack to the next constructor.
+   *
+   */
+  template <typename... Args>
+  NVTX3_CONSTEXPR_IF_CPP14 explicit event_attributes(payload_data const& pd, Args const&... args) noexcept
+      : event_attributes(args...)
+  {
+    attributes_.payloadType = NVTX_PAYLOAD_TYPE_EXT;
+    attributes_.reserved0 = 1;
+    attributes_.payload.ullValue = pd.as_ull_value();
+  }
+
+  /**
+   * @brief Deleted constructor for `payload_data` rvalue references.
+   *
+   * `event_attributes` is non-owning and therefore cannot take ownership of an r-value
+   * `payload_data`. Therefore this constructor is deleted by default to prevent dangling
+   * pointers.
+   */
+#ifndef NVTX3_ALLOW_RVALUE_CONSTRUCTORS
+  template <typename... Args>
+  NVTX3_CONSTEXPR_IF_CPP14 explicit event_attributes(payload_data&& pd, Args const&... args) = delete;
+#endif
+
+  /**
+   * @brief Variadic constructor template for containers of `payload_data`.
+   *
+   * Associates multiple structured payloads contained in `pdc` with the event attributes.
+   * This constructor is enabled for types that have both a `data()` member function
+   * returning `payload_data*` or `const payload_data*` and a `size()` member function.
+   * E.g., `std::vector` or `std::array` can be used.
+   * Forwards the remaining variadic parameter pack to the next constructor.
+   */
+  template <
+      typename T,
+      typename... Args,
+      typename = typename std::enable_if<
+          detail::has_data_member<T, payload_data>::value && detail::has_size_member<T>::value>::type>
+  NVTX3_CONSTEXPR_IF_CPP20 explicit event_attributes(T&& pdc, Args const&... args) noexcept
+      : event_attributes(args...)
+  {
+    NVTX3_STATIC_ASSERT(
+        std::is_lvalue_reference<T>::value,
+        "event_attributes requires an lvalue reference to the underlying data. "
+        "Constructing from an rvalue is potentially unsafe and therefore forbidden.");
+    attributes_.payloadType = NVTX_PAYLOAD_TYPE_EXT;
+    attributes_.reserved0 = static_cast<int32_t>(pdc.size()); // Cast size to int32_t
+    attributes_.payload.ullValue = pdc.data()->as_ull_value();
   }
 
   /**
@@ -2769,9 +3118,9 @@ inline void mark(Args const&... args) noexcept
 #endif
 }
 
+}  // namespace NVTX3_MINOR_VERSION_NAMESPACE
 }  // namespace NVTX3_VERSION_NAMESPACE
-
-}  // namespace nvtx3
+} // namespace nvtx3
 
 #ifndef NVTX_DISABLE
 /**
@@ -2872,14 +3221,68 @@ inline void mark(Args const&... args) noexcept
  */
 #define NVTX3_V1_FUNC_RANGE_IF(C) NVTX3_V1_FUNC_RANGE_IF_IN(::nvtx3::v1::domain::global, C)
 
+// We need another helper macro because the other one will get undefined
+#if __has_cpp_attribute(nodiscard)
+#define NVTX3_V1_NO_DISCARD [[nodiscard]]
+#else
+#define NVTX3_V1_NO_DISCARD
+#endif
+/**
+ * @brief Convenience macro for generating a sspecialization of nvtx3::schema::get
+ * for an existing `struct`.
+ *
+ * Use this macro after your struct to enable the struct to be used as a payload.
+ *
+ * \note This macro must not be used inside a namespace.
+ *
+ * Example:
+ * \code{.cpp}
+ * struct SensorData
+ * {
+ *     int32_t sensorId;
+ *     uint8_t channelId;
+ * };
+ *
+ * NVTX3_DEFINE_SCHEMA_GET(
+ *     my_domain,
+ *     SensorData,
+ *     "SensorEvent",
+ *     NVTX_PAYLOAD_ENTRIES(
+ *         (sensorId, TYPE_INT32, "SensorID"),
+ *         (channelId, TYPE_UINT8, "ChannelID")
+ *     )
+ * )
+ * \endcode
+ *
+ * @param[in] dom The NVTX domain.
+ * @param[in] struct_id The name of the struct.
+ * @param[in] schema_name Name of the payload schema.
+ * @param[in] entries Payload schema entries using NVTX_PAYLOAD_ENTRIES macro.
+ */
+#define NVTX3_V1_DEFINE_SCHEMA_GET(dom, struct_id, schema_name, entries)                               \
+    template <>                                                                                        \
+    NVTX3_V1_NO_DISCARD inline nvtx3::v1::schema const& nvtx3::v1::schema::get<struct_id>() noexcept   \
+    {                                                                                                  \
+        static_assert(                                                                                 \
+            std::is_standard_layout<struct_id>::value && std::is_trivially_copyable<struct_id>::value, \
+            "structs used for NVTX3 payload schema must be standard layout and trivially "             \
+            "copyable");                                                                               \
+        using nvtx_struct_id = struct_id; /* avoids issues with namespaced struct_id */                \
+        _NVTX_DEFINE_SCHEMA_FOR_STRUCT(nvtx_struct_id, schema_name, static constexpr, entries)         \
+        static const schema s{                                                                         \
+            nvtxPayloadSchemaRegister(nvtx3::v1::domain::get<dom>(), &nvtx_struct_id##Attr)};          \
+        return s;                                                                                      \
+    }
+
 /* When inlining this version, versioned macros must have unversioned aliases.
  * For each NVTX3_Vx_ #define, make an NVTX3_ alias of it here.*/
 #if defined(NVTX3_INLINE_THIS_VERSION)
 /* clang format off */
-#define NVTX3_FUNC_RANGE       NVTX3_V1_FUNC_RANGE
-#define NVTX3_FUNC_RANGE_IF    NVTX3_V1_FUNC_RANGE_IF
-#define NVTX3_FUNC_RANGE_IN    NVTX3_V1_FUNC_RANGE_IN
-#define NVTX3_FUNC_RANGE_IF_IN NVTX3_V1_FUNC_RANGE_IF_IN
+#define NVTX3_FUNC_RANGE        NVTX3_V1_FUNC_RANGE
+#define NVTX3_FUNC_RANGE_IF     NVTX3_V1_FUNC_RANGE_IF
+#define NVTX3_FUNC_RANGE_IN     NVTX3_V1_FUNC_RANGE_IN
+#define NVTX3_FUNC_RANGE_IF_IN  NVTX3_V1_FUNC_RANGE_IF_IN
+#define NVTX3_DEFINE_SCHEMA_GET NVTX3_V1_DEFINE_SCHEMA_GET
 /* clang format on */
 #endif
 
@@ -2921,6 +3324,8 @@ inline void mark(Args const&... args) noexcept
 #undef NVTX3_CONCAT
 #undef NVTX3_NAMESPACE_FOR
 #undef NVTX3_VERSION_NAMESPACE
+#undef NVTX3_MINOR_NAMESPACE_FOR
+#undef NVTX3_MINOR_VERSION_NAMESPACE
 #undef NVTX3_INLINE_IF_REQUESTED
 #undef NVTX3_CONSTEXPR_IF_CPP14
 #undef NVTX3_MAYBE_UNUSED
