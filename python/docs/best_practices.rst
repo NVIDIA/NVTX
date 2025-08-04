@@ -26,25 +26,25 @@ Tools are encouraged to logically group annotations into categories.
 Using slashes in category names like filesystem paths allows the user to
 create a hierarchy of categories, and tools should handle these as a hierarchy.
 
-Reduce cache lookups
---------------------
+Reduce cache lookups and object allocations
+-------------------------------------------
 
 NVTX is designed to produce minimal overhead during the program execution.
-As such, it caches :class:`nvtx.Domain` and :class:`nvtx._lib.lib.EventAttributes` objects,
-as well as :class:`nvtx._lib.lib.RegisteredString` objects and category IDs.
+As such, it caches :class:`nvtx.Domain` objects,
+:class:`nvtx._lib.lib.RegisteredString` objects and category IDs.
 
-The functions :func:`nvtx.mark`, :func:`nvtx.push_range`, :func:`nvtx.pop_range`,
+Although the functions :func:`nvtx.mark`, :func:`nvtx.push_range`, :func:`nvtx.pop_range`,
 :func:`nvtx.start_range`, and :func:`nvtx.end_range` are convenient to use,
-but they include cache lookups for the domain and event attributes.
+they include event attributes object allocation and cache lookups for the domain on each call.
 Therefore, for best performance, it's better to use the methods from :class:`nvtx.Domain` instead.
 For example:
 ::
 
-   import nvtx
+    import nvtx
 
     def my_func(param: int):
-        # This call includes a cache lookup for the domain, the message registered string,
-        # the category ID and the event attributes object.
+        # This call includes allocation of the event attributes object,
+        # and a cache lookup for the domain, the message registered string and the category ID.
         # See `my_func_fast` for a faster alternative.
         nvtx.mark(message='my_func', domain='My Lib', category='my_category', payload=param)
 
@@ -52,7 +52,7 @@ For example:
 
    # Save a reference to the domain object,
    # so it can be accessed everywhere in the library code,
-   # to avoid multiple calls to nvtx.get_domain()
+   # to avoid multiple calls to `nvtx.get_domain()`
    domain = nvtx.get_domain('My Lib')
 
    # Reuse category IDs and EventAttributes objects when possible
