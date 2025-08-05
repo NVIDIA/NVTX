@@ -89,6 +89,8 @@ void dummy()
 #ifdef SCOPED_RANGE_FROM_EVENT_ATTRIBUTES_FROM_TEMPORARY_PAYLOAD_DATA
         nvtx3::event_attributes attr{nvtx3::payload_data{pds1}};
         scoped_range r1{attr};
+#else
+        (void)pds1;
 #endif
     }
     {
@@ -96,6 +98,8 @@ void dummy()
 #ifdef START_RANGE_IN_FROM_EVENT_ATTRIBUTES_FROM_TEMPORARY_PAYLOAD_DATA
         nvtx3::event_attributes attr{nvtx3::payload_data{pds1}};
         (void)nvtx3::start_range_in<test_payload_domain>(attr);
+#else
+        (void)pds1;
 #endif
     }
     {
@@ -103,6 +107,8 @@ void dummy()
 #ifdef START_RANGE_FROM_EVENT_ATTRIBUTES_FROM_TEMPORARY_PAYLOAD_DATA
         nvtx3::event_attributes attr{nvtx3::payload_data{pds1}};
         (void)nvtx3::start_range(attr);
+#else
+        (void)pds1;
 #endif
     }
     {
@@ -112,6 +118,9 @@ void dummy()
         nvtx3::event_attributes attr{
             std::array<nvtx3::payload_data, 2>{nvtx3::payload_data{pds1}, nvtx3::payload_data{pds2}}};
         scoped_range r1{attr};
+#else
+        (void)pds1;
+        (void)pds2;
 #endif
     }
     {
@@ -119,6 +128,8 @@ void dummy()
 #ifdef START_RANGE_IN_FROM_PAYLOAD_DATA_FROM_TEMPORARY
         nvtx3::payload_data pd{MyPayloadStruct1{123, 456.789f}};
         (void)nvtx3::start_range_in<test_payload_domain>(attr{pd});
+#else
+        (void)pds1;
 #endif
     }
     {
@@ -126,6 +137,8 @@ void dummy()
 #ifdef START_RANGE_FROM_PAYLOAD_DATA_FROM_TEMPORARY
         nvtx3::payload_data pd{MyPayloadStruct1{123, 456.789f}};
         (void)nvtx3::start_range(nvtx3::event_attributes{pd});
+#else
+        (void)pds1;
 #endif
     }
     {
@@ -133,6 +146,8 @@ void dummy()
 #ifdef EVENT_ATTRIBUTES_FROM_EVENT_ATTRIBUTES_FROM_TEMPORARY_PAYLOAD_DATA
         nvtx3::event_attributes attr{nvtx3::payload_data{pds1}};
         nvtx3::event_attributes attr_copy{attr};
+#else
+        (void)pds1;
 #endif
     }
     {
@@ -141,6 +156,9 @@ void dummy()
 #ifdef EVENT_ATTRIBUTES_COPY_EVENT_ATTRIBUTES_FROM_TEMPORARY_PAYLOAD_DATA
         nvtx3::event_attributes attr{nvtx3::payload_data{pds1}};
         attr2 = attr;
+#else
+        (void)pds1;
+        (void)attr2;
 #endif
     }
 }
