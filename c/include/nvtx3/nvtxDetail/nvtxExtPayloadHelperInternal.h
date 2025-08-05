@@ -64,7 +64,8 @@
         /*.flags = */schema_flags, \
         /*.entries = */struct_id##Schema, /*.numEntries = */num_entries, \
         /*.payloadStaticSize = */sizeof(struct_id), \
-        /*.packAlign = */0, /*.schemaId = */schema_id};
+        /*.packAlign = */0, /*.schemaId = */schema_id, \
+        /*.extension = */NVTX_NULLPTR};
 
 
 /*****************************************************************/
@@ -92,7 +93,8 @@
 /* Resolve to schema entry. `entry` is `(ctype, name, ...)`. */
 #define _NVTX_PAYLOAD_SCHEMA_ENTRY(struct_id, entry) \
     {_NVTX_PAYLOAD_SCHEMA_ENTRY_FRONT entry \
-    offsetof(struct_id, _NVTX_PAYLOAD_SCHEMA_ENTRY_END entry)},
+    offsetof(struct_id, _NVTX_PAYLOAD_SCHEMA_ENTRY_END entry), \
+    NVTX_NULLPTR, NVTX_NULLPTR},
 
 /* Handle up to 16 schema entries. */
 #define _NVTX_PAYLOAD_SME1(s,e1,...)  _NVTX_PAYLOAD_SCHEMA_ENTRY(s,e1)
@@ -115,7 +117,7 @@
 #define _NVTX_PAYLOAD_SCHEMA_ENTRIES(struct_id, ...) \
   nvtxPayloadSchemaEntry_t struct_id##Schema[] = { \
     NVTX_EXT_CONCAT(_NVTX_PAYLOAD_SME, NVTX_EXT_NUM_ARGS(__VA_ARGS__))(struct_id, __VA_ARGS__) \
-    {0, 0} \
+    {0, 0, NVTX_NULLPTR, NVTX_NULLPTR, 0, 0, NVTX_NULLPTR, NVTX_NULLPTR} \
   };
 
 /*
@@ -252,7 +254,7 @@
 #define _NVTX_PAYLOAD_SCHEMA_INIT_ENTRIES(struct_id, ...) \
   nvtxPayloadSchemaEntry_t struct_id##Schema[] = { \
     NVTX_EXT_CONCAT(_NVTX_PAYLOAD_INIT_SME, NVTX_EXT_NUM_ARGS(__VA_ARGS__))(struct_id, __VA_ARGS__) \
-    {0, 0} \
+    {0, 0, NVTX_NULLPTR, NVTX_NULLPTR, 0, 0, NVTX_NULLPTR, NVTX_NULLPTR} \
   };
 
 /*
