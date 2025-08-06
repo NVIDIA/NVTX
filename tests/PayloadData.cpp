@@ -35,13 +35,8 @@ using registered_string = nvtx3::registered_string_in<test_payload_domain>;
 
 struct MyPayloadStruct1
 {
-  // None of these should ever be used/needed for internal NVTX use.
-  // Especially, we should never accidentially copy this!
   MyPayloadStruct1() = delete;
-  MyPayloadStruct1(MyPayloadStruct1 const&) = delete;
-  MyPayloadStruct1(MyPayloadStruct1&&) = delete;
-  MyPayloadStruct1& operator=(MyPayloadStruct1 const&) = delete;
-  MyPayloadStruct1& operator=(MyPayloadStruct1&&) = delete;
+  MyPayloadStruct1(uint32_t u, float f) : val_uint32{u}, val_float{f} {}
   uint32_t val_uint32;
   float val_float;
 };
@@ -54,6 +49,8 @@ NVTX3_DEFINE_SCHEMA_GET(
 
 struct MyPayloadStruct2
 {
+  MyPayloadStruct2() = delete;
+  MyPayloadStruct2(int64_t i, registered_string r) : val_int64{i}, val_reg_str{r} {}
   int64_t val_int64;
   registered_string val_reg_str; // you can use registered_string in place of a handle
 };

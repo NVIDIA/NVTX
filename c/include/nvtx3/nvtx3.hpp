@@ -3264,9 +3264,11 @@ inline void mark(Args const&... args) noexcept
     NVTX3_V1_NO_DISCARD inline nvtx3::v1::schema const& nvtx3::v1::schema::get<struct_id>() noexcept   \
     {                                                                                                  \
         static_assert(                                                                                 \
-            std::is_standard_layout<struct_id>::value && std::is_trivially_copyable<struct_id>::value, \
-            "structs used for NVTX3 payload schema must be standard layout and trivially "             \
-            "copyable");                                                                               \
+            std::is_standard_layout<struct_id>::value,                                                 \
+            "structs used for NVTX3 payload schema must be standard layout");                          \
+        static_assert(                                                                                 \
+            std::is_trivially_copyable<struct_id>::value,                                              \
+            "structs used for NVTX3 payload schema must be trivially copyable");                       \
         using nvtx_struct_id = struct_id; /* avoids issues with namespaced struct_id */                \
         _NVTX_DEFINE_SCHEMA_FOR_STRUCT(nvtx_struct_id, schema_name, static constexpr, entries)         \
         static const schema s{                                                                         \
