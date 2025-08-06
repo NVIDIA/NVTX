@@ -62,6 +62,7 @@ struct test_message
     static constexpr const char* message{"TestMessage"};
 };
 
+extern void dummy();
 void dummy()
 {
     // Just make sure the basics work

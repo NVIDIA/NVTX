@@ -30,6 +30,7 @@ struct test_message_domain
 using registered_string = nvtx3::registered_string_in<test_message_domain>;
 using scoped_range = nvtx3::scoped_range_in<test_message_domain>;
 
+extern void dummy();
 void dummy()
 {
     // Just make sure the basics work

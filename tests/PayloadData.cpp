@@ -91,7 +91,10 @@ struct test_message
   static constexpr const char* message{"TestMessage"};
 };
 
-extern "C" NVTX_DYNAMIC_EXPORT int RunTest(int argc, const char** argv)
+extern "C" NVTX_DYNAMIC_EXPORT
+int RunTest(int argc, const char** argv);
+NVTX_DYNAMIC_EXPORT
+int RunTest(int argc, const char** argv)
 {
   NVTX_EXPORT_UNMANGLED_FUNCTION_NAME
 
