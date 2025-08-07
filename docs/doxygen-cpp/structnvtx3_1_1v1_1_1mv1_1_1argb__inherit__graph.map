@@ -1,0 +1,5 @@
+<map id="nvtx3::v1::mv1::argb" name="nvtx3::v1::mv1::argb">
+<area shape="rect" id="Node000001" title="Indicates the value of the alpha, red, green, and blue color channels for an ARGB color to use as an ..." alt="" coords="5,79,163,104"/>
+<area shape="rect" id="Node000002" href="$structnvtx3_1_1v1_1_1mv1_1_1rgb.html" title="Indicates the values of the red, green, and blue color channels for an RGB color to use as an event a..." alt="" coords="9,5,159,31"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="87,44,87,79,81,79,81,44"/>
+</map>

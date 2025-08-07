@@ -227,3 +227,13 @@ The NVTX C++ API is a header-only library, implemented as a wrapper over the NVT
 - Microsoft Visual C++ (VS 2015 to VS 2022)
     - On VS 2017.7 and newer, NVTX enables better error message output
 - NVIDIA nvcc (CUDA 7.0 and newer)
+
+### C++ version compatibility notes
+
+Minor versions of NVTX releases may introduce new features into the `nvtx3::v1` namespace.
+To use these features, ensure that within each compilation unit, the first inclusion of `nvtx3.hpp` is based at least on this release.
+If an older version is included first, the new features will not be available.
+
+### C++ version history
+
+- v3.3: Add `payload_data` wrapper for `nvtxPayloadData_t` in support of extended payloads.

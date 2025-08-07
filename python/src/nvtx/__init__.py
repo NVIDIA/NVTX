@@ -28,4 +28,15 @@ from nvtx.nvtx import (
     Domain,
 )
 
-from nvtx._lib.profiler import Profile
+if enabled():
+    from nvtx._lib.profiler import Profile
+else:
+    class Profile:
+        def __init__(self, *args, **kwargs):
+            pass
+
+        def enable(self):
+            pass
+
+        def disable(self):
+            pass
