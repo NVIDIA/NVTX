@@ -35,6 +35,7 @@ share/python-wheels/
 MANIFEST
 python/nvtx/_lib/**/*.c
 python/docs/_build/
+.doctrees
 
 ### Nsight Systems ###
 *.qdrep
