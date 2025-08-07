@@ -36,6 +36,7 @@ MANIFEST
 python/nvtx/_lib/**/*.c
 python/nvtx/_lib/*.c
 python/docs/_build/
+docs/python/.buildinfo.bak
 .doctrees
 
 ### Nsight Systems ###
