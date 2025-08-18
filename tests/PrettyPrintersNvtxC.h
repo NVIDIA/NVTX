@@ -20,11 +20,7 @@
 
 #pragma once
 #include <nvtx3/nvToolsExt.h>
-
-/* KEEPINSYNC: nvToolsExtPayload.h */
-#ifndef NVTX_PAYLOAD_TYPE_EXT
-#define NVTX_PAYLOAD_TYPE_EXT (NVTX_STATIC_CAST(int32_t, 0xDFBD0009))
-#endif
+#include <nvtx3/nvToolsExtPayload.h>
 
 #include <cstdint>
 #include <iostream>
