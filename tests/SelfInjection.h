@@ -18,7 +18,6 @@
  * See https://nvidia.github.io/NVTX/LICENSE.txt for license information.
  */
 
-#define NVTX_NO_IMPL
 #include "nvtx3/nvToolsExt.h"
 
 #include "Same.h"

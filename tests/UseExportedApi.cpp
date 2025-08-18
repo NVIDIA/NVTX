@@ -18,6 +18,8 @@
  * See https://nvidia.github.io/NVTX/LICENSE.txt for license information.
  */
 
+#define NVTX_NO_IMPL
+
 #include "PathHelper.h"
 
 #include <nvtx3/nvToolsExt.h>
