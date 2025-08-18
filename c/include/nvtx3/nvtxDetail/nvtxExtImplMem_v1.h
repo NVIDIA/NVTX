@@ -66,7 +66,7 @@ NVTX_LINKONCE_DEFINE_GLOBAL intptr_t
 NVTX_EXT_MEM_VERSIONED_ID(nvtxExtMemSlots)[NVTX_EXT_MEM_SLOT_COUNT + 1]
     = {0};
 
-/* Avoid warnings about missing prototype. */
+/* `NVTX_LINKONCE_FWDDECL_FUNCTION` is used to avoid warnings about missing prototypes. */
 NVTX_LINKONCE_FWDDECL_FUNCTION void NVTX_EXT_MEM_VERSIONED_ID(nvtxExtMemInitOnce)(void);
 NVTX_LINKONCE_DEFINE_FUNCTION void NVTX_EXT_MEM_VERSIONED_ID(nvtxExtMemInitOnce)(void)
 {
