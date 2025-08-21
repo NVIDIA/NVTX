@@ -20,6 +20,7 @@
 
 #include "PrettyPrintersNvtxCpp.h"
 
+#include <nvtx3/nvToolsExtSemanticsScope.h>
 #include <nvtx3/nvtx3.hpp>
 
 #include <array>
@@ -55,12 +56,22 @@ struct MyPayloadStruct2
   registered_string val_reg_str; // you can use registered_string in place of a handle
 };
 
+constexpr nvtxSemanticsScope_v1 semantic = {
+    {
+        sizeof(nvtxSemanticsScope_v1),
+        NVTX_SEMANTIC_ID_SCOPE_V1,
+        NVTX_SCOPE_SEMANTIC_VERSION,
+        nullptr,
+    },
+    0,
+};
+
 NVTX3_DEFINE_SCHEMA_GET(
     test_payload_domain,
     MyPayloadStruct2,
     "MyPayloadStruct2_schema",
     NVTX_PAYLOAD_ENTRIES(
-        (val_int64, TYPE_INT64, "MyInt64"),
+        (val_int64, TYPE_INT64, "MyInt64", nullptr, 0, UNUSED, &semantic.header),
         (val_reg_str, TYPE_NVTX_REGISTERED_STRING_HANDLE, "MyRegisteredString")))
 
 namespace application_namespace

@@ -30,8 +30,12 @@
 
 #include "nvToolsExtPayload.h"
 
+/** Use with the semanticId field of `nvtxSemanticsHeader_t`. */
 #ifndef NVTX_SEMANTIC_ID_SCOPE_V1
 #define NVTX_SEMANTIC_ID_SCOPE_V1 1
+
+/** Use with the version field of `nvtxSemanticsHeader_t`. */
+#define NVTX_SCOPE_SEMANTIC_VERSION 1
 
 /**
  * \brief Specify the NVTX scope for a payload entry.
