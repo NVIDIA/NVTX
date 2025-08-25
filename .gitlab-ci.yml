@@ -1,0 +1,324 @@
+
+stages:
+  - Build
+  - Run
+
+Build Linux NVHPC:
+  tags:
+    - linux
+  stage: Build
+  timeout: 10m
+  script:
+    - tests/scripts/build-linux-nvhpc.sh
+  artifacts:
+    paths:
+      - tests/build-linux-nvhpc/
+    expire_in: 1 day
+
+Run Linux NVHPC:
+  tags:
+    - linux
+  stage: Run
+  timeout: 10m
+  needs: ["Build Linux NVHPC"]
+  script:
+    - cd tests/build-linux-nvhpc
+    - ctest --output-on-failure
+
+Build Linux GCC 9:
+  tags:
+    - linux
+  stage: Build
+  timeout: 10m
+  script:
+    - tests/scripts/build-linux-gcc-9.sh
+  artifacts:
+    paths:
+      - tests/build-linux-gcc-9/
+    expire_in: 1 day
+
+Run Linux GCC 9:
+  tags:
+    - linux
+  stage: Run
+  timeout: 10m
+  needs: ["Build Linux GCC 9"]
+  script:
+    - cd tests/build-linux-gcc-9
+    - ctest --output-on-failure
+
+Build Linux GCC 10:
+  tags:
+    - linux
+  stage: Build
+  timeout: 10m
+  script:
+    - tests/scripts/build-linux-gcc-10.sh
+  artifacts:
+    paths:
+      - tests/build-linux-gcc-10/
+    expire_in: 1 day
+
+Run Linux GCC 10:
+  tags:
+    - linux
+  stage: Run
+  timeout: 10m
+  needs: ["Build Linux GCC 10"]
+  script:
+    - cd tests/build-linux-gcc-10
+    - ctest --output-on-failure
+
+Build Linux GCC 11:
+  tags:
+    - linux
+  stage: Build
+  timeout: 10m
+  script:
+    - tests/scripts/build-linux-gcc-11.sh
+  artifacts:
+    paths:
+      - tests/build-linux-gcc-11/
+    expire_in: 1 day
+
+Run Linux GCC 11:
+  tags:
+    - linux
+  stage: Run
+  timeout: 10m
+  needs: ["Build Linux GCC 11"]
+  script:
+    - cd tests/build-linux-gcc-11
+    - ctest --output-on-failure
+
+Build Linux GCC 12:
+  tags:
+    - linux
+  stage: Build
+  timeout: 10m
+  script:
+    - tests/scripts/build-linux-gcc-12.sh
+  artifacts:
+    paths:
+      - tests/build-linux-gcc-12/
+    expire_in: 1 day
+
+Run Linux GCC 12:
+  tags:
+    - linux
+  stage: Run
+  timeout: 10m
+  needs: ["Build Linux GCC 12"]
+  script:
+    - cd tests/build-linux-gcc-12
+    - ctest --output-on-failure
+
+Build Linux GCC 13:
+  tags:
+    - linux
+  stage: Build
+  timeout: 10m
+  script:
+    - tests/scripts/build-linux-gcc-13.sh
+  artifacts:
+    paths:
+      - tests/build-linux-gcc-13/
+    expire_in: 1 day
+
+Run Linux GCC 13:
+  tags:
+    - linux
+  stage: Run
+  timeout: 10m
+  needs: ["Build Linux GCC 13"]
+  script:
+    - cd tests/build-linux-gcc-13
+    - ctest --output-on-failure
+
+Build Linux GCC 14:
+  tags:
+    - linux
+  stage: Build
+  timeout: 10m
+  script:
+    - tests/scripts/build-linux-gcc-14.sh
+  artifacts:
+    paths:
+      - tests/build-linux-gcc-14/
+    expire_in: 1 day
+
+Run Linux GCC 14:
+  tags:
+    - linux
+  stage: Run
+  timeout: 10m
+  needs: ["Build Linux GCC 14"]
+  script:
+    - cd tests/build-linux-gcc-14
+    - ctest --output-on-failure
+
+Build Linux Clang 14:
+  tags:
+    - linux
+  stage: Build
+  timeout: 10m
+  script:
+    - tests/scripts/build-linux-clang-14.sh
+  artifacts:
+    paths:
+      - tests/build-linux-clang-14/
+    expire_in: 1 day
+
+Run Linux Clang 14:
+  tags:
+    - linux
+  stage: Run
+  timeout: 10m
+  needs: ["Build Linux Clang 14"]
+  script:
+    - cd tests/build-linux-clang-14
+    - ctest --output-on-failure
+
+Build Linux Clang 15:
+  tags:
+    - linux
+  stage: Build
+  timeout: 10m
+  script:
+    - tests/scripts/build-linux-clang-15.sh
+  artifacts:
+    paths:
+      - tests/build-linux-clang-15/
+    expire_in: 1 day
+
+Run Linux Clang 15:
+  tags:
+    - linux
+  stage: Run
+  timeout: 10m
+  needs: ["Build Linux Clang 15"]
+  script:
+    - cd tests/build-linux-clang-15
+    - ctest --output-on-failure
+
+Build Linux Clang 16:
+  tags:
+    - linux
+  stage: Build
+  timeout: 10m
+  script:
+    - tests/scripts/build-linux-clang-16.sh
+  artifacts:
+    paths:
+      - tests/build-linux-clang-16/
+    expire_in: 1 day
+
+Run Linux Clang 16:
+  tags:
+    - linux
+  stage: Run
+  timeout: 10m
+  needs: ["Build Linux Clang 16"]
+  script:
+    - cd tests/build-linux-clang-16
+    - ctest --output-on-failure
+
+Build Linux Clang 17:
+  tags:
+    - linux
+  stage: Build
+  timeout: 10m
+  script:
+    - tests/scripts/build-linux-clang-17.sh
+  artifacts:
+    paths:
+      - tests/build-linux-clang-17/
+    expire_in: 1 day
+
+Run Linux Clang 17:
+  tags:
+    - linux
+  stage: Run
+  timeout: 10m
+  needs: ["Build Linux Clang 17"]
+  script:
+    - cd tests/build-linux-clang-17
+    - ctest --output-on-failure
+
+Build Linux Clang 18:
+  tags:
+    - linux
+  stage: Build
+  timeout: 10m
+  script:
+    - tests/scripts/build-linux-clang-18.sh
+  artifacts:
+    paths:
+      - tests/build-linux-clang-18/
+    expire_in: 1 day
+
+Run Linux Clang 18:
+  tags:
+    - linux
+  stage: Run
+  timeout: 10m
+  needs: ["Build Linux Clang 18"]
+  script:
+    - cd tests/build-linux-clang-18
+    - ctest --output-on-failure
+
+Build Linux Clang 19:
+  tags:
+    - linux
+  stage: Build
+  timeout: 10m
+  script:
+    - tests/scripts/build-linux-clang-19.sh
+  artifacts:
+    paths:
+      - tests/build-linux-clang-19/
+    expire_in: 1 day
+
+Run Linux Clang 19:
+  tags:
+    - linux
+  stage: Run
+  timeout: 10m
+  needs: ["Build Linux Clang 19"]
+  script:
+    - cd tests/build-linux-clang-19
+    - ctest --output-on-failure
+
+Build Linux AOCC:
+  tags:
+    - linux
+  stage: Build
+  timeout: 10m
+  script:
+    - tests/scripts/build-linux-aocc.sh
+  artifacts:
+    paths:
+      - tests/build-linux-aocc/
+    expire_in: 1 day
+
+Run Linux AOCC:
+  tags:
+    - linux
+  stage: Run
+  timeout: 10m
+  needs: ["Build Linux AOCC"]
+  script:
+    - cd tests/build-linux-aocc
+    - ctest --output-on-failure
+
+Build Linux MinGW-w64 GCC:
+  tags:
+    - linux
+  stage: Build
+  timeout: 10m
+  script:
+    - tests/scripts/build-linux-mingw-w64-gcc.sh
+  artifacts:
+    paths:
+      - tests/build-linux-mingw-w64-gcc/
+    expire_in: 1 day
