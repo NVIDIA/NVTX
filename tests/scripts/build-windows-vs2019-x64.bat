@@ -1,11 +1,11 @@
 @echo off
 pushd "%~dp0\.."
 
-set NAME=build-windows-vs2022-x64
+set NAME=build-windows-vs2019-x64
 mkdir %NAME%
 cd %NAME%
 
-call "%VSPATH%\VC\Auxiliary\Build\vcvarsall.bat" x64 -vcvars_ver=14.44
+call "%VSPATH%\VC\Auxiliary\Build\vcvarsall.bat" x64 -vcvars_ver=14.29
 
 set ENABLE_CUDA=False
 set NVCC=%CONDA%\envs\cuda-env\Library\bin\nvcc.exe
