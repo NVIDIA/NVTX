@@ -95,6 +95,8 @@ void example()
 }
 ```
 
+On Windows, be aware that NVTX includes `windows.h`. Without intervention, this will define tokens in the global namespace such as `min`, `max`, and `small`. Take care to `#define` any desired macros such as `WIN32_LEAN_AND_MEAN`, `NOMINMAX`, etc. before including any NVTX headers.
+
 The NVTX C++ API is a set of wrappers around the C API, so the C API functions are usable from C++ as well.
 
 Since the C and C++ APIs are header-only, dependency-free, and don't require explicit initialization, they are suitable for annotating other header-only libraries.  Libraries using different versions of the NVTX headers in the same translation unit or different translation units will not have conflicts, as long as best practices are followed.
