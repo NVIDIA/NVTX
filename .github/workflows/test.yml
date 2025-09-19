@@ -524,7 +524,7 @@ jobs:
         export PATH="/opt/homebrew/opt/llvm/bin:$PATH"
         export LDFLAGS="-L/opt/homebrew/opt/llvm/lib"
         export CPPFLAGS="-I/opt/homebrew/opt/llvm/include"
-        FLAGS="-O3 -Weverything -Wno-c++98-compat -Wno-c++98-compat-pedantic -Wno-c++17-attribute-extensions -Wno-variadic-macros -Wno-long-long -Wno-reserved-identifier -Wno-unsafe-buffer-usage -Wno-sign-conversion -Wno-float-equal -Wno-padded -Wno-cast-function-type-strict -Wno-covered-switch-default -Wno-atomic-implicit-seq-cst -Wno-exit-time-destructors -Wno-global-constructors -Wno-missing-variable-declarations"
+        FLAGS="-O3 -Weverything -Wno-c++98-compat -Wno-c++98-compat-pedantic -Wno-c++17-attribute-extensions -Wno-variadic-macros -Wno-long-long -Wno-reserved-identifier -Wno-unsafe-buffer-usage -Wno-sign-conversion -Wno-float-equal -Wno-padded -Wno-cast-function-type-strict -Wno-covered-switch-default -Wno-atomic-implicit-seq-cst -Wno-exit-time-destructors -Wno-global-constructors -Wno-missing-variable-declarations -Wno-c++-keyword"
         cmake .. -G Ninja -DCMAKE_BUILD_TYPE=Release -DCMAKE_C_COMPILER="/opt/homebrew/opt/llvm/bin/clang" -DCMAKE_CXX_COMPILER="/opt/homebrew/opt/llvm/bin/clang++" -DCMAKE_LINKER="ld64.lld" -DCMAKE_C_FLAGS="$FLAGS -Werror" -DCMAKE_CXX_FLAGS="$FLAGS -Werror"
         ninja
 
@@ -589,7 +589,7 @@ jobs:
         export PATH="/opt/homebrew/opt/llvm/bin:$PATH"
         export LDFLAGS="-L/opt/homebrew/opt/llvm/lib"
         export CPPFLAGS="-I/opt/homebrew/opt/llvm/include"
-        FLAGS="-O3 -Weverything -Wno-c++98-compat -Wno-c++98-compat-pedantic -Wno-c++17-attribute-extensions -Wno-variadic-macros -Wno-long-long -Wno-reserved-identifier -Wno-unsafe-buffer-usage -Wno-sign-conversion -Wno-float-equal -Wno-padded -Wno-cast-function-type-strict -Wno-covered-switch-default -Wno-atomic-implicit-seq-cst -Wno-exit-time-destructors -Wno-global-constructors -Wno-missing-variable-declarations"
+        FLAGS="-O3 -Weverything -Wno-c++98-compat -Wno-c++98-compat-pedantic -Wno-c++17-attribute-extensions -Wno-variadic-macros -Wno-long-long -Wno-reserved-identifier -Wno-unsafe-buffer-usage -Wno-sign-conversion -Wno-float-equal -Wno-padded -Wno-cast-function-type-strict -Wno-covered-switch-default -Wno-atomic-implicit-seq-cst -Wno-exit-time-destructors -Wno-global-constructors -Wno-missing-variable-declarations -Wno-c++-keyword"
         cmake .. -G Ninja -DCMAKE_BUILD_TYPE=Release -DCMAKE_C_COMPILER="/opt/homebrew/opt/llvm/bin/clang" -DCMAKE_CXX_COMPILER="/opt/homebrew/opt/llvm/bin/clang++" -DCMAKE_LINKER="ld64.lld" -DCMAKE_C_FLAGS="$FLAGS -Werror" -DCMAKE_CXX_FLAGS="$FLAGS -Werror"
         ninja
 
@@ -654,7 +654,7 @@ jobs:
         export PATH="/usr/local/opt/llvm/bin:$PATH"
         export LDFLAGS="-L/usr/local/opt/llvm/lib"
         export CPPFLAGS="-I/usr/local/opt/llvm/include"
-        FLAGS="-O3 -Weverything -Wno-c++98-compat -Wno-c++98-compat-pedantic -Wno-c++17-attribute-extensions -Wno-variadic-macros -Wno-long-long -Wno-reserved-identifier -Wno-unsafe-buffer-usage -Wno-sign-conversion -Wno-float-equal -Wno-padded -Wno-cast-function-type-strict -Wno-covered-switch-default -Wno-atomic-implicit-seq-cst -Wno-exit-time-destructors -Wno-global-constructors -Wno-missing-variable-declarations"
+        FLAGS="-O3 -Weverything -Wno-c++98-compat -Wno-c++98-compat-pedantic -Wno-c++17-attribute-extensions -Wno-variadic-macros -Wno-long-long -Wno-reserved-identifier -Wno-unsafe-buffer-usage -Wno-sign-conversion -Wno-float-equal -Wno-padded -Wno-cast-function-type-strict -Wno-covered-switch-default -Wno-atomic-implicit-seq-cst -Wno-exit-time-destructors -Wno-global-constructors -Wno-missing-variable-declarations -Wno-c++-keyword"
         cmake .. -G Ninja -DCMAKE_BUILD_TYPE=Release -DCMAKE_C_COMPILER="/usr/local/opt/llvm/bin/clang" -DCMAKE_CXX_COMPILER="/usr/local/opt/llvm/bin/clang++" -DCMAKE_LINKER="ld64.lld" -DCMAKE_C_FLAGS="$FLAGS -Werror" -DCMAKE_CXX_FLAGS="$FLAGS -Werror"
         ninja
 
