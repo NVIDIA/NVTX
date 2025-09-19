@@ -360,18 +360,18 @@ See more details in [the `c` directory](/c) of this repo, and the [NVTX C API Re
 
 ## C++
 
-The NVTX C++ API is a header-only library, implemented as a wrapper over the NVTX C API, using **standard C++11**.  The C++ headers are provided alongside the C headers.  NVTX C++ is implemented , and can be compiled with `-std=c++11` or newer using many common compilers.  Tested compilers include:
-- GNU g++ (4.8.5 to 11.1)
-- clang (3.5.2 to 12.0)
-- Microsoft Visual C++ (VS 2015 to VS 2022)
-    - On VS 2017.7 and newer, NVTX enables better error message output
+The NVTX C++ API is a header-only library, implemented as a wrapper over the NVTX C API, using **standard C++11**.  The C++ headers are provided alongside the C headers.  NVTX C++ can be compiled with `-std=c++11` or newer using many common compilers.  Tested compilers include:
+- GNU g++ (4.8.5 and newer)
+- clang (3.5.2 and newer)
+- Microsoft Visual C++ (VS 2015 and newer)
+    - On VS 2017.7 and newer, NVTX enables better error message output.
 - NVIDIA nvcc (CUDA 7.0 and newer)
 
 See more details in [the `c` directory](/c) of this repo, and the [NVTX C++ API Reference](https://nvidia.github.io/NVTX/doxygen-cpp/index.html).
 
 ## Python
 
-The NVTX Python API provides native Python wrappers for a subset of the NVTX C API.  NVTX Python requires **Python 3.6 or newer**.  It has been tested on Linux, with Python 3.6 to 3.9.
+The NVTX Python API provides native Python wrappers for a subset of the NVTX C API.  NVTX Python requires **Python 3.6 or newer**.  It has been tested on Linux.
 
 See more details in [the `python` directory](/python) of this repo.
 
