@@ -24,7 +24,7 @@ static void TestCounter(void)
 {
     nvtxDomainHandle_t domain;
     uint64_t counter;
-    nvtxCounterAttr_t attr;
+    nvtxCounterAttr_t attr = { 0 };
     int64_t i64 = 0;
     double f64 = 0.0;
 

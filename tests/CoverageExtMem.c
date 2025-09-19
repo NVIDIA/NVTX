@@ -24,7 +24,7 @@ static nvtxMemHeapHandle_t TestMem(void)
 {
     nvtxDomainHandle_t domain;
     nvtxMemHeapHandle_t heap;
-    nvtxMemHeapDesc_t heapDesc;
+    nvtxMemHeapDesc_t heapDesc = { 0 };
 
     domain = nvtxDomainCreateA("Domain");
 

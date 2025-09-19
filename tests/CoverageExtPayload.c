@@ -24,7 +24,7 @@ static uint64_t TestPayload(void)
 {
     nvtxDomainHandle_t domain;
     uint64_t handle;
-    nvtxPayloadSchemaAttr_t attr;
+    nvtxPayloadSchemaAttr_t attr = { 0 };
 
     domain = nvtxDomainCreateA("Domain");
     /*enabled =*/ nvtxDomainIsEnabled(domain);
