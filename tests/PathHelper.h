@@ -83,7 +83,7 @@ static std::string GetCurrentProcessPath(void)
             buf = static_cast<char*>(realloc(buf, size));
             if (!buf)
             {
-                return nullptr;
+                return std::string{};
             }
             newSize = GetModuleFileNameA(nullptr, buf, size);
             if (newSize < size)
@@ -100,13 +100,13 @@ static std::string GetCurrentProcessPath(void)
         buf = static_cast<char*>(malloc(PROC_PIDPATHINFO_MAXSIZE));
         if (!buf)
         {
-            return nullptr;
+            return std::string{};
         }
         ret = proc_pidpath(pid, buf, PROC_PIDPATHINFO_MAXSIZE);
         if (ret == 0)
         {
             free(buf);
-            return nullptr;
+            return std::string{};
         }
     }
 #elif defined(__QNX__)
@@ -120,7 +120,7 @@ static std::string GetCurrentProcessPath(void)
         buf = static_cast<char*>(malloc(size));
         if (!buf)
         {
-            return nullptr;
+            return std::string{};
         }
         _cmdname(buf);
     }
@@ -136,13 +136,13 @@ static std::string GetCurrentProcessPath(void)
             buf = static_cast<char*>(realloc(buf, size));
             if (!buf)
             {
-                return nullptr;
+                return std::string{};
             }
             bytesReadSigned = readlink(linkName, buf, size);
             if (bytesReadSigned < 0)
             {
                 free(buf);
-                return nullptr;
+                return std::string{};
             }
             bytesRead = static_cast<size_t>(bytesReadSigned);
             if (bytesRead < size) break;
