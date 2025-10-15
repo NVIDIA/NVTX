@@ -93,9 +93,10 @@ cdef class EventAttributes:
 
     @category.setter
     def category(self, value):
-        if value is not None:
-            self._category = value
-            self.c_obj.category = value
+        if value is None:
+            value = 0
+        self._category = value
+        self.c_obj.category = value
 
     @property
     def payload(self):
