@@ -58,7 +58,6 @@ cdef class EventAttributes:
         self.c_obj.version = NVTX_VERSION
         self.c_obj.size = NVTX_EVENT_ATTRIB_STRUCT_SIZE
         self.c_obj.colorType = NVTX_COLOR_ARGB
-        self.c_obj.messageType = NVTX_MESSAGE_TYPE_REGISTERED
 
         self.message = message
         self.color = color
@@ -71,8 +70,13 @@ cdef class EventAttributes:
 
     @message.setter
     def message(self, object value):
-        self._message = value
-        self.c_obj.message.registered = (<StringHandle> self._message.handle).c_obj
+        if value is None:
+            self.c_obj.messageType = NVTX_MESSAGE_UNKNOWN
+            self._message = None
+        else:
+            self.c_obj.messageType = NVTX_MESSAGE_TYPE_REGISTERED
+            self._message = value
+            self.c_obj.message.registered = (<StringHandle> self._message.handle).c_obj
 
     @property
     def color(self):
@@ -256,7 +260,9 @@ class Domain:
         """
         if isinstance(category, str):
             category = self.get_category_id(category)
-        return EventAttributes(self.get_registered_string(message), color, category, payload)
+        if message is not None:
+            message = self.get_registered_string(message)
+        return EventAttributes(self, message, color, category, payload)
 
     def mark(self, EventAttributes attributes):
         """

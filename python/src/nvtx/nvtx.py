@@ -113,7 +113,7 @@ class annotate:
     def __call__(self, func):
         if self.domain is dummy_domain:
             return func
-        if not self.attributes.message.string:
+        if self.attributes.message is None:
             self.attributes.message = self.domain.get_registered_string(func.__name__)
 
         @wraps(func)
