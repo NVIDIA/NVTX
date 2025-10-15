@@ -54,7 +54,6 @@ cdef class EventAttributes:
     """
 
     def __init__(self, object message=None, color=None, category=None, payload=None):
-        self.c_obj = nvtxEventAttributes_t(0)
         self.c_obj.version = NVTX_VERSION
         self.c_obj.size = NVTX_EVENT_ATTRIB_STRUCT_SIZE
         self.c_obj.colorType = NVTX_COLOR_ARGB
