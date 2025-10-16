@@ -90,8 +90,13 @@ cdef class EventAttributes:
         under which the event is scoped.
         If not set, the event is not associated with a category.
         Retrieved by :func:`nvtx.Domain.get_category_id`.
-    payload : int
-        A numeric value to be associated with this event.
+    payload : int, float, numpy.ndarray, list, tuple, range, or bytes
+        A value associated with this event. Using payload for large data
+        is more efficient than embedding data in messages.
+        It also produces richer information for analysis by profiling tools.
+
+        .. note:: payloads of type other than ``int`` or ``float`` requires
+                  NumPy to be installed (not installed with ``nvtx`` package).
     """
 
     def __dealloc__(self):

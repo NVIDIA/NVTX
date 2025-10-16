@@ -66,3 +66,12 @@ For example:
        domain.mark(attr)    # No cache lookups
 
        # continue with the function logic
+
+Use payload for large data, don't embed data in messages
+--------------------------------------------------------
+
+Embedding data in messages may lead to increased memory usage at measurement time,
+because messages are cached and registered.
+Furthermore, using payloads provides a separation between the message and the data of the event,
+which is often useful for analysis.
+In the Nsight Systems GUI, payloads are displayed in the description and the tooltip of the event.
