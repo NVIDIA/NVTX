@@ -40,7 +40,7 @@
   <link rel="preload" as="script" href="_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf" />
 <link rel="preload" as="script" href="_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf" />
 
-    <script src="_static/documentation_options.js?v=ba481074"></script>
+    <script src="_static/documentation_options.js?v=d31d9382"></script>
     <script src="_static/doctools.js?v=9bcbadda"></script>
     <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
     <script>DOCUMENTATION_OPTIONS.pagename = 'annotation_attributes';</script>
@@ -340,7 +340,26 @@ Additional domains with distinct names can be registered by using <a class="refe
 </li>
 <li><p>Payload</p>
 <ul>
-<li><p>A numeric value associated with the annotation.</p></li>
+<li><p>Additional data associated with the annotation.</p></li>
+<li><p>Parmeters or metadata are recommended to be added as payloads,
+rather than embedding them into the message string.</p></li>
+<li><p>Payloads provide a separation between the message and the data of the event,
+which is often useful for analysis.</p></li>
+<li><p>In the Nsight Systems GUI,
+payloads are displayed in the tooltip of the event and in the event view.</p></li>
+<li><p><strong>Supported Types:</strong></p>
+<ul>
+<li><p><strong>int</strong>: 64-bit signed integer</p></li>
+<li><p><strong>float</strong>: 64-bit floating point</p></li>
+<li><p><strong>numpy.ndarray</strong>: NumPy arrays (requires NumPy)</p>
+<ul>
+<li><p>Including <a class="reference external" href="https://numpy.org/doc/stable/user/basics.rec.html#structured-arrays">Structured arrays</a>.</p></li>
+</ul>
+</li>
+<li><p><strong>list, tuple, range</strong>: Converted to NumPy arrays (requires NumPy)</p></li>
+<li><p><strong>bytes</strong>: Byte sequences (requires NumPy)</p></li>
+</ul>
+</li>
 </ul>
 </li>
 </ul>
@@ -370,6 +389,38 @@ Additional domains with distinct names can be registered by using <a class="refe
 </div>
 <p>Profiling the above code with Nsight Systems will produce the following timeline:</p>
 <img alt="_images/annotations_attributes.png" class="align-center" src="_images/annotations_attributes.png" />
+<div class="line-block">
+<div class="line"><br /></div>
+</div>
+<p><strong>Extended Payload Example:</strong></p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">nvtx</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+
+<span class="c1"># Examples with builtin Python iterable objects.</span>
+<span class="n">nvtx</span><span class="o">.</span><span class="n">push_range</span><span class="p">(</span><span class="n">message</span><span class="o">=</span><span class="s1">&#39;my float list&#39;</span><span class="p">,</span> <span class="n">payload</span><span class="o">=</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mf">2.5</span><span class="p">,</span> <span class="mf">3.5</span><span class="p">,</span> <span class="mf">4.5</span><span class="p">])</span>
+<span class="n">nvtx</span><span class="o">.</span><span class="n">push_range</span><span class="p">(</span><span class="n">message</span><span class="o">=</span><span class="s1">&#39;my range&#39;</span><span class="p">,</span> <span class="n">payload</span><span class="o">=</span><span class="nb">range</span><span class="p">(</span><span class="mi">10</span><span class="p">))</span>
+<span class="n">nvtx</span><span class="o">.</span><span class="n">push_range</span><span class="p">(</span><span class="n">message</span><span class="o">=</span><span class="s1">&#39;my bytes&#39;</span><span class="p">,</span> <span class="n">payload</span><span class="o">=</span><span class="sa">b</span><span class="s1">&#39;</span><span class="se">\xde\xad\xbe\xef</span><span class="s1">&#39;</span><span class="p">)</span>
+
+
+<span class="c1"># Example with structured datatype.</span>
+<span class="c1"># Payload is passed as a NumPy array.</span>
+<span class="n">my_dtype</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">dtype</span><span class="p">([</span>
+    <span class="p">(</span><span class="s1">&#39;my int8&#39;</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">int8</span><span class="p">),</span>
+    <span class="p">(</span><span class="s1">&#39;my float32&#39;</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">float32</span><span class="p">),</span>
+    <span class="p">(</span><span class="s1">&#39;my uint32 list&#39;</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">uint32</span><span class="p">,</span> <span class="mi">4</span><span class="p">)</span>
+<span class="p">])</span>
+
+<span class="n">nvtx</span><span class="o">.</span><span class="n">push_range</span><span class="p">(</span><span class="n">message</span><span class="o">=</span><span class="s1">&#39;my dtype&#39;</span><span class="p">,</span> <span class="n">payload</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">((</span><span class="mi">10</span><span class="p">,</span> <span class="mf">20.5</span><span class="p">,</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">3</span><span class="p">,</span><span class="mi">4</span><span class="p">]),</span> <span class="n">dtype</span><span class="o">=</span><span class="n">my_dtype</span><span class="p">))</span>
+<span class="n">nvtx</span><span class="o">.</span><span class="n">push_range</span><span class="p">(</span><span class="n">message</span><span class="o">=</span><span class="s1">&#39;my dtype array&#39;</span><span class="p">,</span>
+                <span class="n">payload</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([(</span><span class="mi">10</span><span class="p">,</span> <span class="mf">20.5</span><span class="p">,</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">3</span><span class="p">,</span><span class="mi">4</span><span class="p">]),(</span><span class="mi">30</span><span class="p">,</span> <span class="mf">40.5</span><span class="p">,</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">3</span><span class="p">,</span><span class="mi">4</span><span class="p">])],</span> <span class="n">dtype</span><span class="o">=</span><span class="n">my_dtype</span><span class="p">))</span>
+
+<span class="c1"># Pop all pushed ranges.</span>
+<span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">5</span><span class="p">):</span>
+    <span class="n">nvtx</span><span class="o">.</span><span class="n">pop_range</span><span class="p">()</span>
+</pre></div>
+</div>
+<p>Profiling the above code with Nsight Systems will produce the following timeline:</p>
+<img alt="_images/annotations_attributes_extended_payload.png" class="align-center" src="_images/annotations_attributes_extended_payload.png" />
 </section>
 
 
