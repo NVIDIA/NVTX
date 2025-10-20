@@ -19,7 +19,7 @@ exclude = '''
 '''
 
 [build-system]
-requires = ["setuptools", "wheel", "Cython==3.0.11"]
+requires = ["setuptools", "wheel", "Cython>=3.1"]
 
 [project]
 name = "nvtx"
@@ -52,7 +52,7 @@ License = "https://nvidia.github.io/NVTX/LICENSE.txt"
 Issues = "https://github.com/NVIDIA/NVTX/issues"
 
 [project.optional-dependencies]
-test = ["pytest", "Cython==3.0.11", "setuptools"]
+test = ["pytest", "Cython>=3.1", "setuptools"]
 docs = ["sphinx", "nvidia_sphinx_theme"]
 
 [tool.setuptools.package-data]
