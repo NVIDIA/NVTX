@@ -1394,6 +1394,21 @@ NVTX_DECLSPEC void NVTX_API nvtxEventBatchSubmit(
     (evtAttr).payload.ullValue = NVTX_POINTER_AS_PAYLOAD_ULLVALUE(pldata);
 #endif /* NVTX_PAYLOAD_EVTATTR_SET_MULTIPLE */
 
+#ifndef NVTX_PAYLOAD_EVTATTR_SET_MULTIPLE_N
+/**
+ * \brief Helper macro to attach multiple payloads to an NVTX event attribute
+ * with an explicit count of payload data objects.
+ *
+ * @param evtAttr NVTX event attribute (variable name)
+ * @param pldata Payload data array (of type `nvtxPayloadData_t`)
+ * @param count Number of entries in payload data array
+ */
+#define NVTX_PAYLOAD_EVTATTR_SET_MULTIPLE_N(evtAttr, pldata, count) \
+    (evtAttr).payloadType = NVTX_PAYLOAD_TYPE_EXT; \
+    (evtAttr).reserved0 = NVTX_STATIC_CAST(int32_t, count); \
+    (evtAttr).payload.ullValue = NVTX_POINTER_AS_PAYLOAD_ULLVALUE(pldata);
+#endif /* NVTX_PAYLOAD_EVTATTR_SET_MULTIPLE_N */
+
 #ifndef NVTX_PAYLOAD_EVTATTR_SET
 /*
  * Do not use this macro directly! It is a helper to attach a single payload to
