@@ -46,5 +46,6 @@ setup(
     cmdclass=dict(sdist=NvtxSdist),
     ext_modules=cythonize(
         Extension('*', sources=['src/nvtx/_lib/*.pyx'], include_dirs=include_dirs),
-        compiler_directives=dict(language_level=3, embedsignature=True))
+        compiler_directives=dict(language_level=3, embedsignature=True,
+                                 freethreading_compatible=True))
 )
