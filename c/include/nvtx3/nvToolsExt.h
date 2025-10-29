@@ -204,7 +204,7 @@
 #endif
 
 #if defined(_MSC_VER) && (defined(_M_IX86) || defined(_M_ARM64EC))
-#define NVTX_EXPORT_UNMANGLED_FUNCTION_NAME _Pragma("comment(linker, \"/EXPORT:\" __FUNCTION__ \"=\" __FUNCDNAME__)")
+#define NVTX_EXPORT_UNMANGLED_FUNCTION_NAME __pragma(comment(linker, "/EXPORT:" __FUNCTION__ "=" __FUNCDNAME__))
 #else
 #define NVTX_EXPORT_UNMANGLED_FUNCTION_NAME
 #endif
