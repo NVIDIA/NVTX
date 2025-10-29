@@ -157,13 +157,12 @@ void dummy()
     }
     {
         MyPayloadStruct1 pds1 = {123, 456.789f};
-        nvtx3::event_attributes attr2;
 #ifdef EVENT_ATTRIBUTES_COPY_EVENT_ATTRIBUTES_FROM_TEMPORARY_PAYLOAD_DATA
+        nvtx3::event_attributes attr2;
         nvtx3::event_attributes attr{nvtx3::payload_data{pds1}};
         attr2 = attr;
 #else
         (void)pds1;
-        (void)attr2;
 #endif
     }
 }
