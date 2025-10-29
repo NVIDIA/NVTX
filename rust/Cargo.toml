@@ -2,18 +2,18 @@
 members = ["crates/nvtx-sys"]
 
 [workspace.package]
-version = "0.2.0"
-authors = ["Voltron Data"]
+version = "0.2.1"
+authors = ["NVIDIA", "Voltron Data"]
 edition = "2021"
 rust-version = "1.77.0"
-description = "NVIDIA NVTX bindings for Rust"
-repository = "https://github.com/voltrondata/nvtx-rs"
+description = "NVIDIA Tools Extension SDK"
+repository = "https://github.com/NVIDIA/NVTX"
 readme = "README.md"
 publish = false
 license = "Apache-2.0 WITH LLVM-exception"
 
 [package]
-name = "nvtx"
+name = "nvidia-nvtx"
 version.workspace = true
 authors.workspace = true
 edition.workspace = true
@@ -23,6 +23,9 @@ repository.workspace = true
 readme.workspace = true
 publish.workspace = true
 license.workspace = true
+
+[lib]
+name = "nvtx"
 
 [features]
 default = [

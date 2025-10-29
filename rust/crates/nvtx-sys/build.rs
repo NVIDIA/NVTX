@@ -10,7 +10,7 @@ fn main() {
     let mut builder = bindgen::Builder::default();
 
     lib_builder
-        .include("vendor/nvtx/c/include")
+        .include("../../../c/include")
         .include("c/include")
         .opt_level(2)
         .file(Path::new("c/src/lib.c"));
@@ -22,7 +22,7 @@ fn main() {
         ) // MSRV
         .detect_include_paths(true)
         .clang_arg("-I")
-        .clang_arg("vendor/nvtx/c/include")
+        .clang_arg("../../../c/include")
         .clang_arg("-I")
         .clang_arg("c/include")
         .header("c/include/wrapper.h")
@@ -40,7 +40,7 @@ fn main() {
         .sort_semantically(true)
         .translate_enum_integer_types(true)
         .wrap_unsafe_ops(true)
-        // mark any nvxt(...)_t type as required except those starting with nvtxRes
+        // mark any nvtx(...)_t type as required except those starting with nvtxRes
         .must_use_type("nvtx[^R][^e][^s].*_t")
         // permit all nvtx-prefixed types except internal ones
         .allowlist_type("nvtx[^_].*")
