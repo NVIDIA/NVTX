@@ -1,0 +1,119 @@
+name: Check
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - ".github/workflows/check.yml"
+      - "**/Cargo.*"
+      - "crates/**"
+      - "examples/**"
+      - "src/**"
+    tags:
+      - "v*"
+  pull_request:
+    paths:
+      - ".github/workflows/check.yml"
+      - "**/Cargo.*"
+      - "crates/**"
+      - "examples/**"
+      - "src/**"
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ${{ github.ref }}-check
+  cancel-in-progress: true
+
+env:
+  CARGO_CACHE_PATH: |
+    ~/.cargo/bin/
+    ~/.cargo/registry/index/
+    ~/.cargo/registry/cache/
+    ~/.cargo/git/db/
+    target/
+
+jobs:
+  msrv:
+    name: Minimum supported Rust version
+    runs-on:
+      - self-hosted
+      - rootless-dind-ubuntu
+      - small
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          submodules: true
+      - uses: dtolnay/rust-toolchain@1.77.0
+        id: toolchain
+      - uses: actions/cache@v4
+        with:
+          path: ${{ env.CARGO_CACHE_PATH }}
+          key: ${{ runner.os }}-cargo-${{ steps.toolchain.outputs.cachekey }}-${{ hashFiles('**/Cargo.lock') }}
+          restore-keys: ${{ runner.os }}-cargo-${{ steps.toolchain.outputs.cachekey }}-
+      - run: cargo check --workspace --all-targets --all-features
+
+  deny:
+    name: Deny
+    runs-on:
+      - self-hosted
+      - rootless-dind-ubuntu
+      - small
+    steps:
+      - uses: actions/checkout@v4
+      - uses: dtolnay/rust-toolchain@stable
+        id: toolchain
+      - uses: actions/cache@v4
+        with:
+          path: ${{ env.CARGO_CACHE_PATH }}
+          key: ${{ runner.os }}-cargo-deny-${{ steps.toolchain.outputs.cachekey }}
+          restore-keys: ${{ runner.os }}-cargo-deny-
+      - run: cargo install --locked cargo-deny || true
+      - run: cargo deny --workspace --all-features check --show-stats
+
+  rustfmt:
+    name: Rustfmt
+    runs-on:
+      - self-hosted
+      - rootless-dind-ubuntu
+      - small
+    steps:
+      - uses: actions/checkout@v4
+      - uses: dtolnay/rust-toolchain@stable
+        with:
+          components: rustfmt
+      - run: cargo fmt --all -- --check
+
+  check:
+    name: Check
+    runs-on:
+      - self-hosted
+      - rootless-dind-ubuntu
+      - small
+    strategy:
+      fail-fast: false
+      matrix:
+        features: ["--all-features", "--no-default-features"]
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          submodules: true
+      - uses: dtolnay/rust-toolchain@stable
+        id: toolchain
+        with:
+          components: clippy
+      - uses: actions/cache@v4
+        with:
+          path: ${{ env.CARGO_CACHE_PATH }}
+          key: ${{ runner.os }}-cargo-check-${{ steps.toolchain.outputs.cachekey }}-${{ matrix.features }}-${{ hashFiles('**/Cargo.lock') }}
+          restore-keys: ${{ runner.os }}-cargo-check-${{ steps.toolchain.outputs.cachekey }}-${{ matrix.features }}-
+      - name: Check
+        run: cargo check --workspace --all-targets ${{ matrix.features }}
+      - name: Test
+        run: cargo test --workspace --all-targets ${{ matrix.features }}
+      - name: Doctest
+        run: cargo test --workspace --doc ${{ matrix.features }}
+      - name: Clippy
+        run: cargo clippy --workspace --all-targets ${{ matrix.features }} -- -Dwarnings
