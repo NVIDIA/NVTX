@@ -3,8 +3,6 @@ use std::{
     path::{Path, PathBuf},
 };
 
-use bindgen::RustTarget;
-
 fn main() {
     let mut lib_builder = cc::Build::new();
     let mut builder = bindgen::Builder::default();
@@ -16,10 +14,6 @@ fn main() {
         .file(Path::new("c/src/lib.c"));
 
     builder = builder
-        .rust_target(
-            #[allow(deprecated)]
-            RustTarget::Stable_1_77,
-        ) // MSRV
         .detect_include_paths(true)
         .clang_arg("-I")
         .clang_arg("../../../c/include")
