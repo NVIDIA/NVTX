@@ -33,6 +33,8 @@ from nvtx._lib import (
     end_range as libnvtx_end_range,
 )
 
+
+_immutable_payload_types = {int, float, tuple, range, bytes}
 _ENABLED = not os.getenv("NVTX_DISABLE", False)
 
 
@@ -95,13 +97,20 @@ class annotate:
         self.init_args = message, color, domain, category, payload
         self.domain = get_domain(domain)
         if self.domain is not dummy_domain:
-            self.attributes = self.domain.get_event_attributes(message, color, category, payload)
+            if payload is not None and type(payload) not in _immutable_payload_types:
+                self.mutable_payload = payload
+                self.attributes = self.domain.get_event_attributes(message, color, category)
+            else:
+                self.mutable_payload = None
+                self.attributes = self.domain.get_event_attributes(message, color, category, payload)
 
     def __reduce__(self):
         return self.__class__, self.init_args
 
     def __enter__(self):
         if self.domain is not dummy_domain:
+            if self.mutable_payload is not None:
+                self.attributes.payload = self.mutable_payload
             libnvtx_push_range(self.attributes, self.domain.handle)
         return self
 
@@ -118,6 +127,8 @@ class annotate:
 
         @wraps(func)
         def inner(*args, **kwargs):
+            if self.mutable_payload is not None:
+                self.attributes.payload = self.mutable_payload
             libnvtx_push_range(self.attributes, self.domain.handle)
             try:
                 result = func(*args, **kwargs)
