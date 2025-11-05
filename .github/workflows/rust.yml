@@ -1,31 +1,39 @@
-name: Check
+name: Rust
 
 on:
   push:
     branches:
-      - main
+      - dev
+      - release-v3
+      - test-*
     paths:
-      - ".github/workflows/check.yml"
+      - ".github/workflows/rust.yml"
       - "**/Cargo.*"
-      - "crates/**"
-      - "examples/**"
-      - "src/**"
+      - "c/include/**"
+      - "rust/crates/**"
+      - "rust/examples/**"
+      - "rust/src/**"
     tags:
       - "v*"
   pull_request:
     paths:
-      - ".github/workflows/check.yml"
+      - ".github/workflows/rust.yml"
       - "**/Cargo.*"
-      - "crates/**"
-      - "examples/**"
-      - "src/**"
+      - "c/include/**"
+      - "rust/crates/**"
+      - "rust/examples/**"
+      - "rust/src/**"
 
 permissions:
   contents: read
 
 concurrency:
-  group: ${{ github.ref }}-check
+  group: ${{ github.ref }}-rust
   cancel-in-progress: true
+
+defaults:
+  run:
+    working-directory: rust
 
 env:
   CARGO_CACHE_PATH: |
@@ -38,33 +46,22 @@ env:
 jobs:
   msrv:
     name: Minimum supported Rust version
-    runs-on:
-      - self-hosted
-      - rootless-dind-ubuntu
-      - small
+    runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-        with:
-          submodules: true
-      - uses: dtolnay/rust-toolchain@1.77.0
-        id: toolchain
       - uses: actions/cache@v4
         with:
           path: ${{ env.CARGO_CACHE_PATH }}
           key: ${{ runner.os }}-cargo-${{ steps.toolchain.outputs.cachekey }}-${{ hashFiles('**/Cargo.lock') }}
           restore-keys: ${{ runner.os }}-cargo-${{ steps.toolchain.outputs.cachekey }}-
-      - run: cargo check --workspace --all-targets --all-features
+      - run: rustup install 1.77.0
+      - run: cargo +1.77.0 check --workspace --all-targets --all-features
 
   deny:
     name: Deny
-    runs-on:
-      - self-hosted
-      - rootless-dind-ubuntu
-      - small
+    runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - uses: dtolnay/rust-toolchain@stable
-        id: toolchain
       - uses: actions/cache@v4
         with:
           path: ${{ env.CARGO_CACHE_PATH }}
@@ -75,35 +72,20 @@ jobs:
 
   rustfmt:
     name: Rustfmt
-    runs-on:
-      - self-hosted
-      - rootless-dind-ubuntu
-      - small
+    runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - uses: dtolnay/rust-toolchain@stable
-        with:
-          components: rustfmt
       - run: cargo fmt --all -- --check
 
   check:
     name: Check
-    runs-on:
-      - self-hosted
-      - rootless-dind-ubuntu
-      - small
+    runs-on: ubuntu-latest
     strategy:
       fail-fast: false
       matrix:
         features: ["--all-features", "--no-default-features"]
     steps:
       - uses: actions/checkout@v4
-        with:
-          submodules: true
-      - uses: dtolnay/rust-toolchain@stable
-        id: toolchain
-        with:
-          components: clippy
       - uses: actions/cache@v4
         with:
           path: ${{ env.CARGO_CACHE_PATH }}
@@ -111,9 +93,9 @@ jobs:
           restore-keys: ${{ runner.os }}-cargo-check-${{ steps.toolchain.outputs.cachekey }}-${{ matrix.features }}-
       - name: Check
         run: cargo check --workspace --all-targets ${{ matrix.features }}
+      - name: Clippy
+        run: cargo clippy --workspace --all-targets ${{ matrix.features }} -- -Dwarnings
       - name: Test
         run: cargo test --workspace --all-targets ${{ matrix.features }}
       - name: Doctest
         run: cargo test --workspace --doc ${{ matrix.features }}
-      - name: Clippy
-        run: cargo clippy --workspace --all-targets ${{ matrix.features }} -- -Dwarnings
