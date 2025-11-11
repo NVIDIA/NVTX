@@ -39,7 +39,9 @@
 #include <nvtx3/nvToolsExtSemanticsTime.h>
 #endif
 
+#ifndef DISABLE_NVTX3_HPP
 #include <nvtx3/nvtx3.hpp>
+#endif
 
 #include <iostream>
 #include <string>
