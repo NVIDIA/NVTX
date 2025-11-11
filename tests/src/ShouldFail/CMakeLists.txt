@@ -30,6 +30,8 @@ endfunction()
 
 if(ENABLE_NVTX3_HPP_TESTS)
 
+if(NOT MSVC OR MSVC_TOOLSET_VERSION GREATER 140)
+
 add_library(payload_data-baseline PayloadData.cpp)
 target_link_libraries(payload_data-baseline PRIVATE nvtx3-cpp)
 
@@ -83,6 +85,8 @@ add_should_fail_test(
     PayloadData.cpp
     EVENT_ATTRIBUTES_COPY_EVENT_ATTRIBUTES_FROM_TEMPORARY_PAYLOAD_DATA
 )
+
+endif()
 
 
 add_library(message-baseline Message.cpp)
