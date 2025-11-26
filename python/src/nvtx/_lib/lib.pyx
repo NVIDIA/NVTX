@@ -40,7 +40,6 @@ try:
         np.float16: NVTX_PAYLOAD_ENTRY_TYPE_FLOAT16,
         np.float32: NVTX_PAYLOAD_ENTRY_TYPE_FLOAT32,
         np.float64: NVTX_PAYLOAD_ENTRY_TYPE_FLOAT64,
-        np.float128: NVTX_PAYLOAD_ENTRY_TYPE_FLOAT128,
         np.str_: NVTX_PAYLOAD_ENTRY_TYPE_CSTRING_UTF32,
         np.bytes_: NVTX_PAYLOAD_ENTRY_TYPE_BYTE,
     }
@@ -217,7 +216,7 @@ cdef class EventAttributes:
             if self._allocated_payload is NULL:
                 raise MemoryError("Failed to allocate memory for payload")
             memcpy(self._allocated_payload, &array_length, sizeof(uint64_t))
-            memcpy(self._allocated_payload + sizeof(uint64_t), payload, nbytes)
+            memcpy(<char*>self._allocated_payload + sizeof(uint64_t), payload, nbytes)
 
     cdef _clear_payload(self):
         self._payload = None
