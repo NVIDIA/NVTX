@@ -5,7 +5,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=11"/>
 <meta name="generator" content="Doxygen 1.9.8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1"/>
-<title>NVTX C API Reference: nvToolsExtPayloadHelper.h Source File</title>
+<title>NVTX C API Reference: nvToolsExtSemanticsCorrelation.h Source File</title>
 <link href="tabs.css" rel="stylesheet" type="text/css"/>
 <script type="text/javascript" src="jquery.js"></script>
 <script type="text/javascript" src="dynsections.js"></script>
@@ -79,11 +79,11 @@ $(document).ready(function() { init_codefold(0); });
 </div>
 </div><!-- top -->
 <div class="header">
-  <div class="headertitle"><div class="title">nvToolsExtPayloadHelper.h</div></div>
+  <div class="headertitle"><div class="title">nvToolsExtSemanticsCorrelation.h</div></div>
 </div><!--header-->
 <div class="contents">
 <div class="fragment"><div class="line"><a id="l00001" name="l00001"></a><span class="lineno">    1</span><span class="comment">/*</span></div>
-<div class="line"><a id="l00002" name="l00002"></a><span class="lineno">    2</span><span class="comment"> * SPDX-FileCopyrightText: Copyright (c) 2023-2025 NVIDIA CORPORATION &amp; AFFILIATES. All rights reserved.</span></div>
+<div class="line"><a id="l00002" name="l00002"></a><span class="lineno">    2</span><span class="comment"> * SPDX-FileCopyrightText: Copyright (c) 2025 NVIDIA CORPORATION &amp; AFFILIATES. All rights reserved.</span></div>
 <div class="line"><a id="l00003" name="l00003"></a><span class="lineno">    3</span><span class="comment"> * SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception</span></div>
 <div class="line"><a id="l00004" name="l00004"></a><span class="lineno">    4</span><span class="comment"> *</span></div>
 <div class="line"><a id="l00005" name="l00005"></a><span class="lineno">    5</span><span class="comment"> * Licensed under the Apache License, Version 2.0 (the &quot;License&quot;);</span></div>
@@ -99,7 +99,7 @@ $(document).ready(function() { init_codefold(0); });
 <div class="line"><a id="l00015" name="l00015"></a><span class="lineno">   15</span><span class="comment"> * limitations under the License.</span></div>
 <div class="line"><a id="l00016" name="l00016"></a><span class="lineno">   16</span><span class="comment"> *</span></div>
 <div class="line"><a id="l00017" name="l00017"></a><span class="lineno">   17</span><span class="comment"> * Licensed under the Apache License v2.0 with LLVM Exceptions.</span></div>
-<div class="line"><a id="l00018" name="l00018"></a><span class="lineno">   18</span><span class="comment"> * See https://nvidia.github.io/NVTX/LICENSE.txt for license information.</span></div>
+<div class="line"><a id="l00018" name="l00018"></a><span class="lineno">   18</span><span class="comment"> * See LICENSE.txt for license information.</span></div>
 <div class="line"><a id="l00019" name="l00019"></a><span class="lineno">   19</span><span class="comment"> */</span></div>
 <div class="line"><a id="l00020" name="l00020"></a><span class="lineno">   20</span> </div>
 <div class="line"><a id="l00021" name="l00021"></a><span class="lineno">   21</span><span class="preprocessor">#if defined(NVTX_AS_SYSTEM_HEADER)</span></div>
@@ -112,38 +112,36 @@ $(document).ready(function() { init_codefold(0); });
 <div class="line"><a id="l00028" name="l00028"></a><span class="lineno">   28</span><span class="preprocessor">#endif</span></div>
 <div class="line"><a id="l00029" name="l00029"></a><span class="lineno">   29</span><span class="preprocessor">#endif</span></div>
 <div class="line"><a id="l00030" name="l00030"></a><span class="lineno">   30</span> </div>
-<div class="line"><a id="l00031" name="l00031"></a><span class="lineno">   31</span><span class="preprocessor">#include &quot;nvtxDetail/nvtxExtPayloadHelperInternal.h&quot;</span></div>
+<div class="line"><a id="l00031" name="l00031"></a><span class="lineno">   31</span><span class="preprocessor">#include &quot;nvToolsExtPayload.h&quot;</span></div>
 <div class="line"><a id="l00032" name="l00032"></a><span class="lineno">   32</span> </div>
-<div class="line"><a id="l00033" name="l00033"></a><span class="lineno">   33</span> </div>
-<div class="line"><a id="l00034" name="l00034"></a><span class="lineno">   34</span><span class="comment">/* This is just an empty marker (for readability), which can be omitted. */</span></div>
-<div class="line"><a id="l00035" name="l00035"></a><span class="lineno">   35</span><span class="comment">/* TODO: Fix issue with trailing comma at end of entry list. */</span></div>
-<div class="line"><a id="l00036" name="l00036"></a><span class="lineno">   36</span><span class="preprocessor">#define NVTX_PAYLOAD_ENTRIES</span></div>
-<div class="line"><a id="l00037" name="l00037"></a><span class="lineno">   37</span> </div>
-<div class="line"><a id="l00038" name="l00038"></a><span class="lineno">   38</span> </div>
-<div class="line"><a id="l00043" name="l00043"></a><span class="lineno">   43</span><span class="preprocessor">#define NVTX_PAYLOAD_NESTED(schemaId) _NVTX_PAYLOAD_NESTED(schemaId)</span></div>
-<div class="line"><a id="l00044" name="l00044"></a><span class="lineno">   44</span> </div>
-<div class="line"><a id="l00045" name="l00045"></a><span class="lineno">   45</span> </div>
-<div class="line"><a id="l00086" name="l00086"></a><span class="lineno">   86</span><span class="preprocessor">#define NVTX_DEFINE_SCHEMA_FOR_STRUCT(struct_id, ...) \</span></div>
-<div class="line"><a id="l00087" name="l00087"></a><span class="lineno">   87</span><span class="preprocessor">    _NVTX_DEFINE_SCHEMA_FOR_STRUCT(struct_id, __VA_ARGS__)</span></div>
-<div class="line"><a id="l00088" name="l00088"></a><span class="lineno">   88</span> </div>
-<div class="line"><a id="l00089" name="l00089"></a><span class="lineno">   89</span> </div>
-<div class="line"><a id="l00130" name="l00130"></a><span class="lineno">  130</span><span class="preprocessor">#define NVTX_DEFINE_STRUCT_WITH_SCHEMA(struct_id, ...) \</span></div>
-<div class="line"><a id="l00131" name="l00131"></a><span class="lineno">  131</span><span class="preprocessor">    _NVTX_DEFINE_STRUCT_WITH_SCHEMA(struct_id, __VA_ARGS__)</span></div>
-<div class="line"><a id="l00132" name="l00132"></a><span class="lineno">  132</span> </div>
-<div class="line"><a id="l00143" name="l00143"></a><span class="lineno">  143</span><span class="preprocessor">#define NVTX_DEFINE_STRUCT_WITH_SCHEMA_AND_REGISTER(domain, struct_id, ...) \</span></div>
-<div class="line"><a id="l00144" name="l00144"></a><span class="lineno">  144</span><span class="preprocessor">    _NVTX_DEFINE_STRUCT_WITH_SCHEMA(struct_id, __VA_ARGS__) \</span></div>
-<div class="line"><a id="l00145" name="l00145"></a><span class="lineno">  145</span><span class="preprocessor">    const uint64_t struct_id##_schemaId = nvtxPayloadSchemaRegister(domain, &amp;struct_id##Attr);</span></div>
-<div class="line"><a id="l00146" name="l00146"></a><span class="lineno">  146</span> </div>
-<div class="line"><a id="l00156" name="l00156"></a><span class="lineno">  156</span><span class="preprocessor">#define NVTX_DEFINE_SCHEMA_FOR_STRUCT_AND_REGISTER(domain, struct_id, ...) \</span></div>
-<div class="line"><a id="l00157" name="l00157"></a><span class="lineno">  157</span><span class="preprocessor">    _NVTX_DEFINE_SCHEMA_FOR_STRUCT(struct_id, __VA_ARGS__) \</span></div>
-<div class="line"><a id="l00158" name="l00158"></a><span class="lineno">  158</span><span class="preprocessor">    const uint64_t struct_id##_schemaId = nvtxPayloadSchemaRegister(domain, &amp;struct_id##Attr);</span></div>
-<div class="line"><a id="l00159" name="l00159"></a><span class="lineno">  159</span> </div>
-<div class="line"><a id="l00175" name="l00175"></a><span class="lineno">  175</span><span class="preprocessor">#define NVTX_DEFINE_STRUCT(struct_id, ...) \</span></div>
-<div class="line"><a id="l00176" name="l00176"></a><span class="lineno">  176</span><span class="preprocessor">    _NVTX_PAYLOAD_TYPEDEF_STRUCT(struct_id, __VA_ARGS__)</span></div>
-<div class="line"><a id="l00177" name="l00177"></a><span class="lineno">  177</span> </div>
-<div class="line"><a id="l00190" name="l00190"></a><span class="lineno">  190</span><span class="preprocessor">#define NVTX_PAYLOAD_SCHEMA_REGISTER(domain, struct_id) \</span></div>
-<div class="line"><a id="l00191" name="l00191"></a><span class="lineno">  191</span><span class="preprocessor">    nvtxPayloadSchemaRegister(domain, &amp;struct_id##Attr)</span></div>
-<div class="line"><a id="l00192" name="l00192"></a><span class="lineno">  192</span> </div>
+<div class="line"><a id="l00034" name="l00034"></a><span class="lineno">   34</span><span class="preprocessor">#ifndef NVTX_SEMANTIC_ID_CORRELATION_V1</span></div>
+<div class="line"><a id="l00035" name="l00035"></a><span class="lineno">   35</span><span class="preprocessor">#define NVTX_SEMANTIC_ID_CORRELATION_V1 3</span></div>
+<div class="line"><a id="l00036" name="l00036"></a><span class="lineno">   36</span> </div>
+<div class="line"><a id="l00037" name="l00037"></a><span class="lineno">   37</span><span class="comment">/* Use with the version field of `nvtxSemanticsHeader_t`. */</span></div>
+<div class="line"><a id="l00038" name="l00038"></a><span class="lineno">   38</span><span class="preprocessor">#define NVTX_CORRELATION_SEMANTIC_VERSION 1</span></div>
+<div class="line"><a id="l00039" name="l00039"></a><span class="lineno">   39</span> </div>
+<div class="line"><a id="l00041" name="l00041"></a><span class="lineno">   41</span><span class="preprocessor">#define NVTX_CORRELATION_ROLE_NONE 0</span></div>
+<div class="line"><a id="l00042" name="l00042"></a><span class="lineno">   42</span><span class="comment">/* Roles will be added as required. */</span></div>
+<div class="line"><a id="l00043" name="l00043"></a><span class="lineno">   43</span> </div>
+<div class="line"><a id="l00045" name="l00045"></a><span class="lineno">   45</span><span class="preprocessor">#define NVTX_CORRELATION_VALUE_NONE 0</span></div>
+<div class="line"><a id="l00046" name="l00046"></a><span class="lineno">   46</span> </div>
+<div class="foldopen" id="foldopen00051" data-start="{" data-end="};">
+<div class="line"><a id="l00051" name="l00051"></a><span class="lineno"><a class="line" href="structnvtx_semantics_correlation__t.html">   51</a></span><span class="keyword">typedef</span> <span class="keyword">struct </span>nvtxSemanticsCorrelation_v1</div>
+<div class="line"><a id="l00052" name="l00052"></a><span class="lineno">   52</span>{</div>
+<div class="line"><a id="l00053" name="l00053"></a><span class="lineno">   53</span>    <span class="keyword">struct </span>nvtxSemanticsHeader_v1 header;</div>
+<div class="line"><a id="l00054" name="l00054"></a><span class="lineno">   54</span> </div>
+<div class="line"><a id="l00056" name="l00056"></a><span class="lineno"><a class="line" href="structnvtx_semantics_correlation__t.html#ada580ed40ad9eb37adcd610548430e29">   56</a></span>    <span class="keywordtype">unsigned</span> <span class="keywordtype">char</span> correlationDomainUuid[16];</div>
+<div class="line"><a id="l00057" name="l00057"></a><span class="lineno">   57</span> </div>
+<div class="line"><a id="l00062" name="l00062"></a><span class="lineno"><a class="line" href="structnvtx_semantics_correlation__t.html#aeba176053808f68d0dac53aab3fa153b">   62</a></span>    <span class="keyword">const</span> <span class="keywordtype">char</span>* <a class="code hl_variable" href="structnvtx_semantics_correlation__t.html#aeba176053808f68d0dac53aab3fa153b">displayName</a>;</div>
+<div class="line"><a id="l00063" name="l00063"></a><span class="lineno">   63</span> </div>
+<div class="line"><a id="l00065" name="l00065"></a><span class="lineno"><a class="line" href="structnvtx_semantics_correlation__t.html#adfa233dff15c8ba6455ec2a4122b0442">   65</a></span>    uint64_t <a class="code hl_variable" href="structnvtx_semantics_correlation__t.html#adfa233dff15c8ba6455ec2a4122b0442">role</a>;</div>
+<div class="line"><a id="l00066" name="l00066"></a><span class="lineno">   66</span>} <a class="code hl_struct" href="structnvtx_semantics_correlation__t.html">nvtxSemanticsCorrelation_t</a>;</div>
+</div>
+<div class="line"><a id="l00067" name="l00067"></a><span class="lineno">   67</span> </div>
+<div class="line"><a id="l00068" name="l00068"></a><span class="lineno">   68</span><span class="preprocessor">#endif </span><span class="comment">/* NVTX_SEMANTIC_ID_CORRELATION_V1 */</span><span class="preprocessor"></span></div>
+<div class="ttc" id="astructnvtx_semantics_correlation__t_html"><div class="ttname"><a href="structnvtx_semantics_correlation__t.html">nvtxSemanticsCorrelation_t</a></div><div class="ttdef"><b>Definition</b> <a href="nv_tools_ext_semantics_correlation_8h_source.html#l00051">nvToolsExtSemanticsCorrelation.h:52</a></div></div>
+<div class="ttc" id="astructnvtx_semantics_correlation__t_html_adfa233dff15c8ba6455ec2a4122b0442"><div class="ttname"><a href="structnvtx_semantics_correlation__t.html#adfa233dff15c8ba6455ec2a4122b0442">nvtxSemanticsCorrelation_t::role</a></div><div class="ttdeci">uint64_t role</div><div class="ttdef"><b>Definition</b> <a href="nv_tools_ext_semantics_correlation_8h_source.html#l00065">nvToolsExtSemanticsCorrelation.h:65</a></div></div>
+<div class="ttc" id="astructnvtx_semantics_correlation__t_html_aeba176053808f68d0dac53aab3fa153b"><div class="ttname"><a href="structnvtx_semantics_correlation__t.html#aeba176053808f68d0dac53aab3fa153b">nvtxSemanticsCorrelation_t::displayName</a></div><div class="ttdeci">const char * displayName</div><div class="ttdef"><b>Definition</b> <a href="nv_tools_ext_semantics_correlation_8h_source.html#l00062">nvToolsExtSemanticsCorrelation.h:62</a></div></div>
 </div><!-- fragment --></div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>

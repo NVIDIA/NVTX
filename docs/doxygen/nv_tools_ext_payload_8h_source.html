@@ -734,7 +734,7 @@ $(document).ready(function() { init_codefold(0); });
 <div class="line"><a id="l01358" name="l01358"></a><span class="lineno"> 1358</span><span class="preprocessor"># define NVTX_POINTER_AS_PAYLOAD_ULLVALUE(p) \</span></div>
 <div class="line"><a id="l01359" name="l01359"></a><span class="lineno"> 1359</span><span class="preprocessor">    static_cast&lt;uint64_t&gt;(reinterpret_cast&lt;uintptr_t&gt;(p))</span></div>
 <div class="line"><a id="l01360" name="l01360"></a><span class="lineno"> 1360</span><span class="preprocessor"># else</span></div>
-<div class="line"><a id="l01361" name="l01361"></a><span class="lineno"> 1361</span><span class="preprocessor">#define NVTX_POINTER_AS_PAYLOAD_ULLVALUE(p) (NVTX_STATIC_CAST(uint64_t, NVTX_STATIC_CAST(uintptr_t, p))</span></div>
+<div class="line"><a id="l01361" name="l01361"></a><span class="lineno"> 1361</span><span class="preprocessor">#define NVTX_POINTER_AS_PAYLOAD_ULLVALUE(p) (NVTX_STATIC_CAST(uint64_t, NVTX_STATIC_CAST(uintptr_t, p)))</span></div>
 <div class="line"><a id="l01362" name="l01362"></a><span class="lineno"> 1362</span><span class="preprocessor"># endif</span></div>
 <div class="line"><a id="l01363" name="l01363"></a><span class="lineno"> 1363</span><span class="preprocessor">#endif</span></div>
 <div class="line"><a id="l01364" name="l01364"></a><span class="lineno"> 1364</span> </div>
