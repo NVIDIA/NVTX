@@ -22,7 +22,7 @@ copyright = "2020-2025, NVIDIA Corporation"
 author = "NVIDIA Corporation"
 
 # The full version, including alpha/beta/rc tags
-release = "0.2.14a1"
+release = "0.2.14"
 
 
 # -- General configuration ---------------------------------------------------
