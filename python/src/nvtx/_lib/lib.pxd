@@ -79,6 +79,7 @@ cdef extern from "nvtx3/nvToolsExt.h" nogil:
         int32_t colorType
         uint32_t color
         int32_t payloadType
+        int32_t reserved0
         payload_t payload
         int32_t messageType
         nvtxMessageValue_t message
@@ -119,14 +120,93 @@ cdef extern from "nvtx3/nvToolsExt.h" nogil:
 cdef extern from "nvtx3/nvToolsExtPayload.h" nogil:
     cdef uint8_t nvtxDomainIsEnabled(nvtxDomainHandle_t domain)
 
+    cdef int NVTX_PAYLOAD_ENTRY_FLAG_UNUSED
+    cdef int NVTX_PAYLOAD_ENTRY_FLAG_ARRAY_FIXED_SIZE
+    cdef int NVTX_PAYLOAD_ENTRY_FLAG_ARRAY_LENGTH_INDEX
+
+    cdef int NVTX_PAYLOAD_TYPE_EXT
+
+    cdef int NVTX_PAYLOAD_ENTRY_TYPE_INVALID
+    cdef int NVTX_PAYLOAD_ENTRY_TYPE_INT8
+    cdef int NVTX_PAYLOAD_ENTRY_TYPE_UINT8
+    cdef int NVTX_PAYLOAD_ENTRY_TYPE_INT16
+    cdef int NVTX_PAYLOAD_ENTRY_TYPE_UINT16
+    cdef int NVTX_PAYLOAD_ENTRY_TYPE_INT32
+    cdef int NVTX_PAYLOAD_ENTRY_TYPE_UINT32
+    cdef int NVTX_PAYLOAD_ENTRY_TYPE_INT64
+    cdef int NVTX_PAYLOAD_ENTRY_TYPE_UINT64
+    cdef int NVTX_PAYLOAD_ENTRY_TYPE_FLOAT16
+    cdef int NVTX_PAYLOAD_ENTRY_TYPE_FLOAT32
+    cdef int NVTX_PAYLOAD_ENTRY_TYPE_FLOAT64
+    cdef int NVTX_PAYLOAD_ENTRY_TYPE_FLOAT128
+    cdef int NVTX_PAYLOAD_ENTRY_TYPE_BYTE
+    cdef int NVTX_PAYLOAD_ENTRY_TYPE_CSTRING_UTF32
+
+    cdef int NVTX_PAYLOAD_SCHEMA_ATTR_FIELD_TYPE
+    cdef int NVTX_PAYLOAD_SCHEMA_ATTR_FIELD_ENTRIES
+    cdef int NVTX_PAYLOAD_SCHEMA_ATTR_FIELD_NUM_ENTRIES
+    cdef int NVTX_PAYLOAD_SCHEMA_ATTR_FIELD_STATIC_SIZE
+
+    cdef int NVTX_PAYLOAD_SCHEMA_TYPE_STATIC
+    cdef int NVTX_PAYLOAD_SCHEMA_TYPE_DYNAMIC
+
+    ctypedef struct nvtxPayloadData_v1:
+        uint64_t schemaId
+        size_t size
+        const void* payload
+
+    ctypedef nvtxPayloadData_v1 nvtxPayloadData_t
+
+
+    ctypedef struct nvtxSemanticsHeader_t:
+        uint32_t structSize
+        uint16_t semanticId
+        uint16_t version
+        const nvtxSemanticsHeader_t* next
+
+    ctypedef struct nvtxPayloadSchemaEntry_t:
+        uint64_t flags
+        uint64_t type
+        const char* name
+        const char* description
+        uint64_t arrayOrUnionDetail
+        uint64_t offset
+        const nvtxSemanticsHeader_t* semantics
+        const void* reserved
+
+    ctypedef struct nvtxPayloadSchemaAttr_t:
+        uint64_t fieldMask
+        const char* name
+        uint64_t type
+        uint64_t flags
+        const nvtxPayloadSchemaEntry_t* entries
+        size_t numEntries
+        size_t payloadStaticSize
+        size_t packAlign
+        uint64_t schemaId
+        void* extension
+
+    cdef uint64_t nvtxPayloadSchemaRegister(
+        nvtxDomainHandle_t domain,
+        const nvtxPayloadSchemaAttr_t* attr
+    )
 
 cdef class EventAttributes:
+    cdef object domain
     cdef object _message
     cdef object _color
     cdef uint32_t _category
     cdef object _payload
     cdef nvtxStringHandle_t string_handle
     cdef nvtxEventAttributes_t c_obj
+    cdef nvtxPayloadData_t _payload_data
+
+    # Dynamic memory allocation is required for array payloads.
+    # This pointer is used to track the memory that should be freed.
+    cdef void* _allocated_payload
+
+    cdef _set_binary_payload(self, void* payload, uint64_t schema, size_t nbytes, size_t size)
+    cdef _clear_payload(self)
 
 
 cdef class DomainHandle:

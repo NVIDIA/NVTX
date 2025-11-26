@@ -37,6 +37,9 @@ python/nvtx/_lib/**/*.c
 python/nvtx/_lib/*.c
 python/docs/_build/
 docs/python/.buildinfo.bak
+docs/python/.buildinfo
+docs/python/_sources
+docs/python/objects.inv
 .doctrees
 
 ### Nsight Systems ###

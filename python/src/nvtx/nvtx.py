@@ -20,7 +20,7 @@ import contextlib
 import os
 
 from functools import wraps, lru_cache
-from typing import Optional, Union, Tuple
+from typing import Optional, Union, Tuple, TYPE_CHECKING
 
 from nvtx._lib import (
     Domain,
@@ -33,6 +33,12 @@ from nvtx._lib import (
     end_range as libnvtx_end_range,
 )
 
+if TYPE_CHECKING:
+    import numpy as np
+
+
+PayloadTypeAlias = Union[int, float, list, tuple, range, bytes, "np.ndarray"]
+_immutable_payload_types = {int, float, tuple, range, bytes}
 _ENABLED = not os.getenv("NVTX_DISABLE", False)
 
 
@@ -69,7 +75,12 @@ class annotate:
         under which the code range is scoped. If unspecified, the code
         range is not associated with a category.
     payload
-        A numeric value to be associated with this event.
+        A value associated with this event.
+        Using payloads provides a separation between the message and the data of the event,
+        which is often useful for analysis.
+
+        .. note:: payloads of type other than ``int`` or ``float`` requires
+                  NumPy to be installed (not installed with ``nvtx`` package).
 
     Examples
     --------
@@ -88,20 +99,28 @@ class annotate:
     ...    time.sleep(10)
     """
 
-    def __init__(self, message: Optional[str] = None, color: Optional[Union[str, int]] = None,
-                 domain: Optional[str] = None, category: Optional[Union[str, int]] = None,
-                 payload: Optional[Union[int, float]] = None):
+    def __init__(
+        self, message: Optional[str] = None, color: Optional[Union[str, int]] = None,
+        domain: Optional[str] = None, category: Optional[Union[str, int]] = None,
+        payload: Optional[PayloadTypeAlias] = None):
 
         self.init_args = message, color, domain, category, payload
         self.domain = get_domain(domain)
         if self.domain is not dummy_domain:
-            self.attributes = self.domain.get_event_attributes(message, color, category, payload)
+            if payload is not None and type(payload) not in _immutable_payload_types:
+                self.mutable_payload = payload
+                self.attributes = self.domain.get_event_attributes(message, color, category)
+            else:
+                self.mutable_payload = None
+                self.attributes = self.domain.get_event_attributes(message, color, category, payload)
 
     def __reduce__(self):
         return self.__class__, self.init_args
 
     def __enter__(self):
         if self.domain is not dummy_domain:
+            if self.mutable_payload is not None:
+                self.attributes.payload = self.mutable_payload
             libnvtx_push_range(self.attributes, self.domain.handle)
         return self
 
@@ -113,11 +132,13 @@ class annotate:
     def __call__(self, func):
         if self.domain is dummy_domain:
             return func
-        if not self.attributes.message.string:
+        if self.attributes.message is None:
             self.attributes.message = self.domain.get_registered_string(func.__name__)
 
         @wraps(func)
         def inner(*args, **kwargs):
+            if self.mutable_payload is not None:
+                self.attributes.payload = self.mutable_payload
             libnvtx_push_range(self.attributes, self.domain.handle)
             try:
                 result = func(*args, **kwargs)
@@ -131,7 +152,7 @@ class annotate:
 
 def mark(message: Optional[str] = None, color: Optional[Union[str, int]] = "blue",
          domain: Optional[str] = None, category: Optional[Union[str, int]] = None,
-         payload: Optional[Union[int, float]] = None):
+         payload: Optional[PayloadTypeAlias] = None):
     """
     Mark an instantaneous event.
 
@@ -154,7 +175,12 @@ def mark(message: Optional[str] = None, color: Optional[Union[str, int]] = "blue
         under which the event is scoped. If unspecified, the event is
         not associated with a category.
     payload
-        A numeric value to be associated with this event
+        A value associated with this event.
+        Using payloads provides a separation between the message and the data of the event,
+        which is often useful for analysis.
+
+        .. note:: payloads of type other than ``int`` or ``float`` requires
+                  NumPy to be installed (not installed with ``nvtx`` package).
 
     Notes
     -----
@@ -172,7 +198,7 @@ def mark(message: Optional[str] = None, color: Optional[Union[str, int]] = "blue
 
 def push_range(message: Optional[str] = None, color: Optional[Union[str, int]] = "blue",
                domain: Optional[str] = None, category: Optional[Union[str, int]] = None,
-               payload: Optional[Union[int, float]] = None):
+               payload: Optional[PayloadTypeAlias] = None):
     """
     Mark the beginning of a code range.
 
@@ -195,7 +221,12 @@ def push_range(message: Optional[str] = None, color: Optional[Union[str, int]] =
         under which the code range is scoped. If unspecified, the code range
         is not associated with a category.
     payload
-        A numeric value to be associated with this event
+        A value associated with this event.
+        Using payloads provides a separation between the message and the data of the event,
+        which is often useful for analysis.
+
+        .. note:: payloads of type other than ``int`` or ``float`` requires
+                  NumPy to be installed (not installed with ``nvtx`` package).
 
     Notes
     -----
@@ -231,9 +262,11 @@ def pop_range(domain: Optional[str] = None):
         libnvtx_pop_range(domain.handle)
 
 
-def start_range(message: Optional[str] = None, color: Optional[Union[str, int]] = None,
-                domain: Optional[str] = None, category: Optional[Union[str, int]] = None,
-                payload: Optional[Union[int, float]] = None) -> Tuple[int, int]:
+def start_range(
+    message: Optional[str] = None, color: Optional[Union[str, int]] = None,
+    domain: Optional[str] = None, category: Optional[Union[str, int]] = None,
+    payload: Optional[PayloadTypeAlias] = None
+) -> Tuple[int, int]:
     """
     Mark the beginning of a process range.
 
@@ -256,7 +289,12 @@ def start_range(message: Optional[str] = None, color: Optional[Union[str, int]] 
         under which the range is scoped. If unspecified, the range
         is not associated with a category.
     payload
-            A numeric value to be associated with this event
+        A value associated with this event.
+        Using payloads provides a separation between the message and the data of the event,
+        which is often useful for analysis.
+
+        .. note:: payloads of type other than ``int`` or ``float`` requires
+                  NumPy to be installed (not installed with ``nvtx`` package).
 
     Returns
     -------
