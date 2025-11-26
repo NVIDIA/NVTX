@@ -37,6 +37,7 @@
 #include <nvtx3/nvToolsExtSemanticsCounters.h>
 #include <nvtx3/nvToolsExtSemanticsScope.h>
 #include <nvtx3/nvToolsExtSemanticsTime.h>
+#include <nvtx3/nvToolsExtSemanticsCorrelation.h>
 #endif
 
 #ifndef DISABLE_NVTX3_HPP
