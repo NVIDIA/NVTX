@@ -46,7 +46,7 @@ color-name = { version = "1.2.0", optional = true }
 derive_builder = "0.20"
 gettid = { version = "0.1.4", optional = true }
 nvtx-sys = { path = "crates/nvtx-sys" }
-tracing-core = { version = "0.1.34", optional = true }
+tracing-core = { version = "0.1.35", optional = true }
 tracing-subscriber = { version = "0.3.20", optional = true }
 widestring = "1.2.1"
 
