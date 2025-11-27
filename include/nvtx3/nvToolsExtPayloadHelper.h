@@ -188,5 +188,5 @@
  * @return NVTX schema ID
  */
 #define NVTX_PAYLOAD_SCHEMA_REGISTER(domain, struct_id) \
-    nvtxPayloadSchemaRegister(domain, &struct_id##Attr);
+    nvtxPayloadSchemaRegister(domain, &struct_id##Attr)
 

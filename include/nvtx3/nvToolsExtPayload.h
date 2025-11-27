@@ -1358,7 +1358,7 @@ NVTX_DECLSPEC void NVTX_API nvtxEventBatchSubmit(
 # define NVTX_POINTER_AS_PAYLOAD_ULLVALUE(p) \
     static_cast<uint64_t>(reinterpret_cast<uintptr_t>(p))
 # else
-#define NVTX_POINTER_AS_PAYLOAD_ULLVALUE(p) (NVTX_STATIC_CAST(uint64_t, NVTX_STATIC_CAST(uintptr_t, p))
+#define NVTX_POINTER_AS_PAYLOAD_ULLVALUE(p) (NVTX_STATIC_CAST(uint64_t, NVTX_STATIC_CAST(uintptr_t, p)))
 # endif
 #endif
 

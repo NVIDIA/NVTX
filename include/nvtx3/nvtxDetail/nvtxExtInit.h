@@ -329,7 +329,7 @@ NVTX_LINKONCE_DEFINE_FUNCTION int NVTX_VERSIONED_IDENTIFIER(nvtxExtLoadInjection
     return NVTX_SUCCESS;
 }
 
-/* Avoid warnings about missing prototypes. */
+/* `NVTX_LINKONCE_FWDDECL_FUNCTION` is used to avoid warnings about missing prototypes. */
 NVTX_LINKONCE_FWDDECL_FUNCTION void NVTX_VERSIONED_IDENTIFIER(nvtxExtInitOnce) (
     nvtxExtModuleInfo_t* moduleInfo, intptr_t* moduleState);
 NVTX_LINKONCE_DEFINE_FUNCTION void NVTX_VERSIONED_IDENTIFIER(nvtxExtInitOnce) (
