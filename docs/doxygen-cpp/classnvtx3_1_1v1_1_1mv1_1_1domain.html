@@ -153,10 +153,10 @@ Static Public Member Functions</h2></td></tr>
 <div class="line"><span class="comment">// For convenience, `nvtx3::scoped_range` is an alias for a range in the</span></div>
 <div class="line"><span class="comment">// global domain</span></div>
 <div class="line"><a class="code hl_typedef" href="nvtx3_8hpp.html#a0f6d5f791215ecfb507cbfa534095ab6">nvtx3::scoped_range</a> r3{};</div>
-<div class="ttc" id="aclassnvtx3_1_1v1_1_1mv1_1_1scoped__range__in_html"><div class="ttname"><a href="classnvtx3_1_1v1_1_1mv1_1_1scoped__range__in.html">nvtx3::scoped_range_in</a></div><div class="ttdoc">A RAII object for creating a NVTX range local to a thread within a domain.</div><div class="ttdef"><b>Definition</b> <a href="nvtx3_8hpp_source.html#l02450">nvtx3.hpp:2450</a></div></div>
-<div class="ttc" id="anvtx3_8hpp_html_a0f6d5f791215ecfb507cbfa534095ab6"><div class="ttname"><a href="nvtx3_8hpp.html#a0f6d5f791215ecfb507cbfa534095ab6">nvtx3::v1::mv1::scoped_range</a></div><div class="ttdeci">scoped_range_in&lt; domain::global &gt; scoped_range</div><div class="ttdoc">Alias for a scoped_range_in in the global NVTX domain.</div><div class="ttdef"><b>Definition</b> <a href="nvtx3_8hpp_source.html#l02536">nvtx3.hpp:2536</a></div></div>
+<div class="ttc" id="aclassnvtx3_1_1v1_1_1mv1_1_1scoped__range__in_html"><div class="ttname"><a href="classnvtx3_1_1v1_1_1mv1_1_1scoped__range__in.html">nvtx3::scoped_range_in</a></div><div class="ttdoc">A RAII object for creating a NVTX range local to a thread within a domain.</div><div class="ttdef"><b>Definition</b> <a href="nvtx3_8hpp_source.html#l02489">nvtx3.hpp:2489</a></div></div>
+<div class="ttc" id="anvtx3_8hpp_html_a0f6d5f791215ecfb507cbfa534095ab6"><div class="ttname"><a href="nvtx3_8hpp.html#a0f6d5f791215ecfb507cbfa534095ab6">nvtx3::v1::mv1::scoped_range</a></div><div class="ttdeci">scoped_range_in&lt; domain::global &gt; scoped_range</div><div class="ttdoc">Alias for a scoped_range_in in the global NVTX domain.</div><div class="ttdef"><b>Definition</b> <a href="nvtx3_8hpp_source.html#l02575">nvtx3.hpp:2575</a></div></div>
 </div><!-- fragment --> 
-<p class="definition">Definition at line <a class="el" href="nvtx3_8hpp_source.html#l00885">885</a> of file <a class="el" href="nvtx3_8hpp_source.html">nvtx3.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="nvtx3_8hpp_source.html#l00924">924</a> of file <a class="el" href="nvtx3_8hpp_source.html">nvtx3.hpp</a>.</p>
 </div><h2 class="groupheader">Member Function Documentation</h2>
 <a id="a4bd2baad9670eb3223603801413a7afe" name="a4bd2baad9670eb3223603801413a7afe"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a4bd2baad9670eb3223603801413a7afe">&#9670;&#160;</a></span>get() <span class="overload">[1/3]</span></h2>
@@ -205,7 +205,7 @@ template&lt;typename D  = global, typename std::enable_if&lt; detail::is_c_strin
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>Reference to the <code>domain</code> corresponding to the type <code>D</code>. </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="nvtx3_8hpp_source.html#l00955">955</a> of file <a class="el" href="nvtx3_8hpp_source.html">nvtx3.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="nvtx3_8hpp_source.html#l00994">994</a> of file <a class="el" href="nvtx3_8hpp_source.html">nvtx3.hpp</a>.</p>
 
 </div>
 </div>
@@ -236,7 +236,7 @@ template&lt;typename D  = global, typename std::enable_if&lt; !detail::is_c_stri
 
 <p>Overload of <code><a class="el" href="classnvtx3_1_1v1_1_1mv1_1_1domain.html#a4bd2baad9670eb3223603801413a7afe" title="Returns reference to an instance of a function local static domain object.">domain::get</a></code> to provide a clear compile error when <code>D</code> has a <code>name</code> member that is not directly convertible to either <code>char const*</code> or <code>wchar_t const*</code>. </p>
 
-<p class="definition">Definition at line <a class="el" href="nvtx3_8hpp_source.html#l00970">970</a> of file <a class="el" href="nvtx3_8hpp_source.html">nvtx3.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="nvtx3_8hpp_source.html#l01009">1009</a> of file <a class="el" href="nvtx3_8hpp_source.html">nvtx3.hpp</a>.</p>
 
 </div>
 </div>
@@ -267,7 +267,7 @@ template&lt;typename D  = global, typename std::enable_if&lt; !detail::has_name&
 
 <p>Overload of <code><a class="el" href="classnvtx3_1_1v1_1_1mv1_1_1domain.html#a4bd2baad9670eb3223603801413a7afe" title="Returns reference to an instance of a function local static domain object.">domain::get</a></code> to provide a clear compile error when <code>D</code> does not have a <code>name</code> member. </p>
 
-<p class="definition">Definition at line <a class="el" href="nvtx3_8hpp_source.html#l00988">988</a> of file <a class="el" href="nvtx3_8hpp_source.html">nvtx3.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="nvtx3_8hpp_source.html#l01027">1027</a> of file <a class="el" href="nvtx3_8hpp_source.html">nvtx3.hpp</a>.</p>
 
 </div>
 </div>
@@ -297,7 +297,7 @@ template&lt;typename D  = global, typename std::enable_if&lt; !detail::has_name&
 <p>Conversion operator to <code>nvtxDomainHandle_t</code>. </p>
 <p>Allows transparently passing a domain object into an API expecting a native <code>nvtxDomainHandle_t</code> object. </p>
 
-<p class="definition">Definition at line <a class="el" href="nvtx3_8hpp_source.html#l01011">1011</a> of file <a class="el" href="nvtx3_8hpp_source.html">nvtx3.hpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="nvtx3_8hpp_source.html#l01050">1050</a> of file <a class="el" href="nvtx3_8hpp_source.html">nvtx3.hpp</a>.</p>
 
 </div>
 </div>

@@ -8,6 +8,7 @@ var searchData=
   ['reserved_5',['reserved',['../structnvtx_payload_schema_entry__t.html#ae8091f5c48af11c8de5353fa4a949d84',1,'nvtxPayloadSchemaEntry_t']]],
   ['resource_20naming_6',['resource naming',['../group___r_e_s_o_u_r_c_e___n_a_m_i_n_g.html#RESOURCE_NAMING_CUDA',1,'CUDA Resource Naming'],['../group___r_e_s_o_u_r_c_e___n_a_m_i_n_g.html#RESOURCE_NAMING_CUDART',1,'CUDA Runtime Resource Naming'],['../group___r_e_s_o_u_r_c_e___n_a_m_i_n_g.html#RESOURCE_NAMING_OPENCL',1,'OpenCL Resource Naming'],['../group___r_e_s_o_u_r_c_e___n_a_m_i_n_g.html',1,'Resource Naming'],['../index.html#RESOURCE_NAMING',1,'Resource Naming'],['../index.html#RESOURCE_NAMING_OS',1,'Resource Naming']]],
   ['resource_20objects_7',['Resource Objects',['../index.html#RESOURCE_OBJECTS',1,'']]],
-  ['runtime_8',['Memory CUDA Runtime',['../group___m_e_m_o_r_y___c_u_d_a_r_t.html',1,'']]],
-  ['runtime_20resource_20naming_9',['CUDA Runtime Resource Naming',['../group___r_e_s_o_u_r_c_e___n_a_m_i_n_g.html#RESOURCE_NAMING_CUDART',1,'']]]
+  ['role_8',['role',['../structnvtx_semantics_correlation__t.html#adfa233dff15c8ba6455ec2a4122b0442',1,'nvtxSemanticsCorrelation_t']]],
+  ['runtime_9',['Memory CUDA Runtime',['../group___m_e_m_o_r_y___c_u_d_a_r_t.html',1,'']]],
+  ['runtime_20resource_20naming_10',['CUDA Runtime Resource Naming',['../group___r_e_s_o_u_r_c_e___n_a_m_i_n_g.html#RESOURCE_NAMING_CUDART',1,'']]]
 ];

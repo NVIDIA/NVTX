@@ -1,6 +1,3 @@
-add_library(payload_data-baseline PayloadData.cpp)
-target_link_libraries(payload_data-baseline PRIVATE nvtx3-cpp)
-
 function(add_should_fail_test SOURCE_FILE COMPILE_DEFINITION)
     # Creates a target given a source file and a compile definition
     # that should fail to compile
@@ -30,6 +27,13 @@ function(add_should_fail_test SOURCE_FILE COMPILE_DEFINITION)
 
     set_tests_properties(${TEST_NAME} PROPERTIES WILL_FAIL TRUE)
 endfunction()
+
+if(ENABLE_NVTX3_HPP_TESTS)
+
+if(NOT MSVC OR MSVC_TOOLSET_VERSION GREATER 140)
+
+add_library(payload_data-baseline PayloadData.cpp)
+target_link_libraries(payload_data-baseline PRIVATE nvtx3-cpp)
 
 add_test(
     NAME "ShouldFail payload_data-baseline"
@@ -82,6 +86,8 @@ add_should_fail_test(
     EVENT_ATTRIBUTES_COPY_EVENT_ATTRIBUTES_FROM_TEMPORARY_PAYLOAD_DATA
 )
 
+endif()
+
 
 add_library(message-baseline Message.cpp)
 target_link_libraries(message-baseline PRIVATE nvtx3-cpp)
@@ -92,7 +98,6 @@ add_test(
     WORKING_DIRECTORY ${CMAKE_BINARY_DIR}
 )
 
-# Add tests that should fail to compile
 add_should_fail_test(
     Message.cpp
     EVENT_ATTRIBUTES_FROM_MESSAGE_FROM_TEMPORARY_STRING
@@ -112,3 +117,5 @@ add_should_fail_test(
     Message.cpp
     START_RANGE_IN_FROM_MESSAGE_FROM_TEMPORARY_WSTRING
 )
+
+endif()

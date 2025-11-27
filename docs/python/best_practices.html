@@ -40,7 +40,7 @@
   <link rel="preload" as="script" href="_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf" />
 <link rel="preload" as="script" href="_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf" />
 
-    <script src="_static/documentation_options.js?v=ba481074"></script>
+    <script src="_static/documentation_options.js?v=d31d9382"></script>
     <script src="_static/doctools.js?v=9bcbadda"></script>
     <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
     <script>DOCUMENTATION_OPTIONS.pagename = 'best_practices';</script>
@@ -378,6 +378,14 @@ For example:</p>
 </pre></div>
 </div>
 </section>
+<section id="use-payload-for-large-data-don-t-embed-data-in-messages">
+<h2>Use payload for large data, don’t embed data in messages<a class="headerlink" href="#use-payload-for-large-data-don-t-embed-data-in-messages" title="Link to this heading">#</a></h2>
+<p>Embedding data in messages may lead to increased memory usage at measurement time,
+because messages are cached and registered.
+Furthermore, using payloads provides a separation between the message and the data of the event,
+which is often useful for analysis.
+In the Nsight Systems GUI, payloads are displayed in the description and the tooltip of the event.</p>
+</section>
 </section>
 
 
@@ -433,6 +441,7 @@ For example:</p>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#isolate-nvtx-annotations-in-a-library-using-a-domain">Isolate NVTX annotations in a library using a domain</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#use-categories-to-organize-annotations">Use categories to organize annotations</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#reduce-cache-lookups-and-object-allocations">Reduce cache lookups and object allocations</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#use-payload-for-large-data-don-t-embed-data-in-messages">Use payload for large data, don’t embed data in messages</a></li>
 </ul>
   </nav></div>
 

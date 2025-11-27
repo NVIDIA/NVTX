@@ -16,12 +16,35 @@
 # Licensed under the Apache License v2.0 with LLVM Exceptions.
 # See https://nvidia.github.io/NVTX/LICENSE.txt for license information.
 
-from functools import lru_cache
+import warnings
 
+from functools import lru_cache
+from libc.stdlib cimport malloc, free
+from libc.string cimport memcpy
 from nvtx._lib.lib cimport *
 from nvtx.colors import color_to_hex
 
 from typing import Optional
+
+try:
+    import numpy as np
+    _dtype_to_entry_type = {
+        np.int8: NVTX_PAYLOAD_ENTRY_TYPE_INT8,
+        np.int16: NVTX_PAYLOAD_ENTRY_TYPE_INT16,
+        np.int32: NVTX_PAYLOAD_ENTRY_TYPE_INT32,
+        np.int64: NVTX_PAYLOAD_ENTRY_TYPE_INT64,
+        np.uint8: NVTX_PAYLOAD_ENTRY_TYPE_UINT8,
+        np.uint16: NVTX_PAYLOAD_ENTRY_TYPE_UINT16,
+        np.uint32: NVTX_PAYLOAD_ENTRY_TYPE_UINT32,
+        np.uint64: NVTX_PAYLOAD_ENTRY_TYPE_UINT64,
+        np.float16: NVTX_PAYLOAD_ENTRY_TYPE_FLOAT16,
+        np.float32: NVTX_PAYLOAD_ENTRY_TYPE_FLOAT32,
+        np.float64: NVTX_PAYLOAD_ENTRY_TYPE_FLOAT64,
+        np.str_: NVTX_PAYLOAD_ENTRY_TYPE_CSTRING_UTF32,
+        np.bytes_: NVTX_PAYLOAD_ENTRY_TYPE_BYTE,
+    }
+except ImportError:
+    np = None
 
 
 cpdef bytes _to_bytes(object s):
@@ -29,6 +52,23 @@ cpdef bytes _to_bytes(object s):
 
 def initialize():
     nvtxInitialize(NULL)
+
+
+class NvtxWarning(UserWarning):
+    pass
+
+
+_payload_setters = {}
+
+
+def payload_setter(type):
+    """
+    A helper decorator to register a payload setter for a given type.
+    """
+    def register(func):
+        _payload_setters[type] = func
+        return func
+    return register
 
 
 cdef class EventAttributes:
@@ -49,16 +89,24 @@ cdef class EventAttributes:
         under which the event is scoped.
         If not set, the event is not associated with a category.
         Retrieved by :func:`nvtx.Domain.get_category_id`.
-    payload : int
-        A numeric value to be associated with this event.
+    payload : int, float, numpy.ndarray, list, tuple, range, or bytes
+        A value associated with this event. Using payload for large data
+        is more efficient than embedding data in messages.
+        It also produces richer information for analysis by profiling tools.
+
+        .. note:: payloads of type other than ``int`` or ``float`` requires
+                  NumPy to be installed (not installed with ``nvtx`` package).
     """
 
-    def __init__(self, object message=None, color=None, category=None, payload=None):
-        self.c_obj = nvtxEventAttributes_t(0)
+    def __dealloc__(self):
+        self._clear_payload()
+
+    def __init__(self, object domain, object message=None, color=None, category=None,
+                 payload=None):
+        self.domain = domain
         self.c_obj.version = NVTX_VERSION
         self.c_obj.size = NVTX_EVENT_ATTRIB_STRUCT_SIZE
         self.c_obj.colorType = NVTX_COLOR_ARGB
-        self.c_obj.messageType = NVTX_MESSAGE_TYPE_REGISTERED
 
         self.message = message
         self.color = color
@@ -71,8 +119,13 @@ cdef class EventAttributes:
 
     @message.setter
     def message(self, object value):
-        self._message = value
-        self.c_obj.message.registered = (<StringHandle> self._message.handle).c_obj
+        if value is None:
+            self.c_obj.messageType = NVTX_MESSAGE_UNKNOWN
+            self._message = None
+        else:
+            self.c_obj.messageType = NVTX_MESSAGE_TYPE_REGISTERED
+            self._message = value
+            self.c_obj.message.registered = (<StringHandle> self._message.handle).c_obj
 
     @property
     def color(self):
@@ -89,9 +142,10 @@ cdef class EventAttributes:
 
     @category.setter
     def category(self, value):
-        if value is not None:
-            self._category = value
-            self.c_obj.category = value
+        if value is None:
+            value = 0
+        self._category = value
+        self.c_obj.category = value
 
     @property
     def payload(self):
@@ -99,17 +153,76 @@ cdef class EventAttributes:
 
     @payload.setter
     def payload(self, value):
-        if value is not None:
-            self._payload = value
+        self._clear_payload()
+        if value is None:
+            self.c_obj.payloadType = NVTX_PAYLOAD_UNKNOWN
+            return
 
-            if isinstance(self._payload, int):
-                self.c_obj.payload.llValue = self._payload
-                self.c_obj.payloadType = NVTX_PAYLOAD_TYPE_INT64
-            elif isinstance(self._payload, float):
-                self.c_obj.payload.dValue = self._payload
-                self.c_obj.payloadType = NVTX_PAYLOAD_TYPE_DOUBLE
-            else:
-                raise RuntimeError('Payload must be int or float')
+        self._payload = value
+        setter = _payload_setters.get(type(value))
+        if setter is None:
+            msg = f"Unsupported payload type: {type(value)}."
+            if np is None:
+                msg += " Install numpy for extended payload support."
+            warnings.warn(msg, NvtxWarning)
+        setter(self, value)
+
+    @payload_setter(int)
+    def _set_payload_int(self, payload):
+        self.c_obj.payload.llValue = payload
+        self.c_obj.payloadType = NVTX_PAYLOAD_TYPE_INT64
+
+    @payload_setter(float)
+    def _set_payload_float(self, payload):
+        self.c_obj.payload.dValue = payload
+        self.c_obj.payloadType = NVTX_PAYLOAD_TYPE_DOUBLE
+
+    if np is not None:
+        @payload_setter(np.ndarray)
+        def _set_payload_numpy(self, payload):
+            schema = self.domain.get_numpy_array_schema(payload.dtype, bool(payload.ndim))
+            cdef size_t array_length = 0
+            if payload.ndim:
+                payload = np.ascontiguousarray(payload)
+                array_length = payload.size
+
+            self._set_binary_payload(
+                <void*><size_t>payload.ctypes.data,
+                <uint64_t>schema,
+                <size_t>payload.nbytes,
+                array_length)
+
+
+        @payload_setter(range)
+        @payload_setter(list)
+        @payload_setter(tuple)
+        @payload_setter(bytes)
+        def _set_payload_iterable(self, payload):
+            self._set_payload_numpy(np.array(payload))
+
+    cdef _set_binary_payload(self,
+                            void* payload, uint64_t schema, size_t nbytes, size_t array_length):
+        self.c_obj.payloadType = NVTX_PAYLOAD_TYPE_EXT
+        self.c_obj.payload.ullValue = <uint64_t>&self._payload_data
+        self.c_obj.reserved0 = 1
+        self._payload_data.schemaId = schema
+        if array_length == 0:
+            self._payload_data.size = nbytes
+            self._payload_data.payload = payload
+        else:
+            payload_size = sizeof(uint64_t) + nbytes
+            self._payload_data.size = payload_size
+            self._payload_data.payload = self._allocated_payload = malloc(payload_size)
+            if self._allocated_payload is NULL:
+                raise MemoryError("Failed to allocate memory for payload")
+            memcpy(self._allocated_payload, &array_length, sizeof(uint64_t))
+            memcpy(<char*>self._allocated_payload + sizeof(uint64_t), payload, nbytes)
+
+    cdef _clear_payload(self):
+        self._payload = None
+        if self._allocated_payload is not NULL:
+            free(self._allocated_payload)
+            self._allocated_payload = NULL
 
 
 cdef class DomainHandle:
@@ -256,7 +369,9 @@ class Domain:
         """
         if isinstance(category, str):
             category = self.get_category_id(category)
-        return EventAttributes(self.get_registered_string(message), color, category, payload)
+        if message is not None:
+            message = self.get_registered_string(message)
+        return EventAttributes(self, message, color, category, payload)
 
     def mark(self, EventAttributes attributes):
         """
@@ -342,6 +457,160 @@ class Domain:
             The value returned by :func:`Domain.start_range`.
         """
         nvtxDomainRangeEnd((<DomainHandle>self.handle).c_obj, range_id)
+
+    def _register_builtin_schema(self, dt):
+        name = dt.name.encode()
+        array_length = 0
+        flags = NVTX_PAYLOAD_ENTRY_FLAG_UNUSED
+        entry_type = _dtype_to_entry_type[dt.type]
+        if entry_type == NVTX_PAYLOAD_ENTRY_TYPE_CSTRING_UTF32:
+            array_length = dt.itemsize / 4
+        elif entry_type == NVTX_PAYLOAD_ENTRY_TYPE_BYTE:
+            array_length = dt.itemsize
+            flags = NVTX_PAYLOAD_ENTRY_FLAG_ARRAY_FIXED_SIZE
+
+        cdef nvtxPayloadSchemaEntry_t schemaEntry = nvtxPayloadSchemaEntry_t(
+            flags=flags,
+            type=entry_type,
+            name=name,
+            description=NULL,
+            arrayOrUnionDetail=array_length,
+            offset=0,
+            semantics=NULL,
+            reserved=NULL,
+        )
+
+        cdef nvtxPayloadSchemaAttr_t schemaAttr
+        schemaAttr.fieldMask = NVTX_PAYLOAD_SCHEMA_ATTR_FIELD_TYPE | \
+            NVTX_PAYLOAD_SCHEMA_ATTR_FIELD_ENTRIES | NVTX_PAYLOAD_SCHEMA_ATTR_FIELD_NUM_ENTRIES | \
+            NVTX_PAYLOAD_SCHEMA_ATTR_FIELD_STATIC_SIZE
+        schemaAttr.type = NVTX_PAYLOAD_SCHEMA_TYPE_STATIC
+        schemaAttr.entries = &schemaEntry
+        schemaAttr.numEntries = 1
+        schemaAttr.payloadStaticSize = dt.itemsize
+        return nvtxPayloadSchemaRegister((<DomainHandle>self.handle).c_obj, &schemaAttr)
+
+    @lru_cache(maxsize=None)
+    def _register_structured_schema(self, dt):
+        names = []
+        cdef nvtxPayloadSchemaAttr_t schemaAttr
+        schemaAttr.fieldMask = NVTX_PAYLOAD_SCHEMA_ATTR_FIELD_TYPE | \
+            NVTX_PAYLOAD_SCHEMA_ATTR_FIELD_ENTRIES | \
+            NVTX_PAYLOAD_SCHEMA_ATTR_FIELD_NUM_ENTRIES | \
+            NVTX_PAYLOAD_SCHEMA_ATTR_FIELD_STATIC_SIZE
+        schemaAttr.type = NVTX_PAYLOAD_SCHEMA_TYPE_STATIC
+        schemaAttr.numEntries = len(dt.fields)
+        schemaAttr.payloadStaticSize = dt.itemsize
+
+        cdef nvtxPayloadSchemaEntry_t* schemaEntries = \
+            <nvtxPayloadSchemaEntry_t*>malloc(len(dt.fields) * sizeof(nvtxPayloadSchemaEntry_t))
+        if schemaEntries is NULL:
+            raise MemoryError("Failed to allocate memory for schema entries")
+        try:
+            schemaAttr.entries = schemaEntries
+            for i, (field_name, (field_type, offset, *_)) in enumerate(dt.fields.items()):
+                array_length = 0
+                flags = NVTX_PAYLOAD_ENTRY_FLAG_UNUSED
+
+                entry_type = self._get_numpy_dtype_schema(field_type)
+
+                if entry_type == NVTX_PAYLOAD_ENTRY_TYPE_CSTRING_UTF32:
+                    array_length = field_type.itemsize / 4
+                elif entry_type == NVTX_PAYLOAD_ENTRY_TYPE_BYTE:
+                    array_length = field_type.itemsize
+                    flags = NVTX_PAYLOAD_ENTRY_FLAG_ARRAY_FIXED_SIZE
+                name = field_name.encode()
+                names.append(name)
+                schemaEntries[i] = nvtxPayloadSchemaEntry_t(
+                    flags=flags,
+                    type=entry_type,
+                    name=name,
+                    description=NULL,
+                    arrayOrUnionDetail=array_length,
+                    offset=offset,
+                    semantics=NULL,
+                    reserved=NULL,
+                )
+            return nvtxPayloadSchemaRegister((<DomainHandle>self.handle).c_obj, &schemaAttr)
+        finally:
+            free(schemaEntries)
+
+    @lru_cache(maxsize=None)
+    def _get_array_schema(self, uint64_t scalar_schema):
+        field_names = [b'size', b'data']
+
+        size_entry = nvtxPayloadSchemaEntry_t(
+            flags=NVTX_PAYLOAD_ENTRY_FLAG_UNUSED,
+            type=NVTX_PAYLOAD_ENTRY_TYPE_UINT64,
+            name=field_names[0],
+            description=NULL,
+            arrayOrUnionDetail=0,
+            offset=0,
+            semantics=NULL,
+            reserved=NULL,
+        )
+        data_entry = nvtxPayloadSchemaEntry_t(
+            flags=NVTX_PAYLOAD_ENTRY_FLAG_ARRAY_LENGTH_INDEX,
+            type=scalar_schema,
+            name=field_names[1],
+            description=NULL,
+            arrayOrUnionDetail=0,
+            offset=0,
+            semantics=NULL,
+            reserved=NULL,
+        )
+        cdef nvtxPayloadSchemaEntry_t[2] entries = [size_entry, data_entry]
+        
+        cdef nvtxPayloadSchemaAttr_t schemaAttr
+        schemaAttr.fieldMask = NVTX_PAYLOAD_SCHEMA_ATTR_FIELD_TYPE | \
+            NVTX_PAYLOAD_SCHEMA_ATTR_FIELD_ENTRIES | NVTX_PAYLOAD_SCHEMA_ATTR_FIELD_NUM_ENTRIES
+        schemaAttr.type = NVTX_PAYLOAD_SCHEMA_TYPE_DYNAMIC
+        schemaAttr.entries = entries
+        schemaAttr.numEntries = 2
+        return nvtxPayloadSchemaRegister((<DomainHandle>self.handle).c_obj, &schemaAttr)
+    
+    @lru_cache(maxsize=None)
+    def _get_fixed_size_array_schema(self, uint64_t scalar_schema, size_t array_length, size_t size):
+        cdef nvtxPayloadSchemaEntry_t entry = nvtxPayloadSchemaEntry_t(
+            flags=NVTX_PAYLOAD_ENTRY_FLAG_ARRAY_FIXED_SIZE,
+            type=scalar_schema,
+            name=NULL,
+            description=NULL,
+            arrayOrUnionDetail=array_length,
+            offset=0,
+            semantics=NULL,
+            reserved=NULL,
+        )
+
+        cdef nvtxPayloadSchemaAttr_t schemaAttr
+        schemaAttr.fieldMask = NVTX_PAYLOAD_SCHEMA_ATTR_FIELD_TYPE | \
+            NVTX_PAYLOAD_SCHEMA_ATTR_FIELD_ENTRIES | NVTX_PAYLOAD_SCHEMA_ATTR_FIELD_NUM_ENTRIES | \
+            NVTX_PAYLOAD_SCHEMA_ATTR_FIELD_STATIC_SIZE
+        schemaAttr.type = NVTX_PAYLOAD_SCHEMA_TYPE_STATIC
+        schemaAttr.payloadStaticSize = size
+        schemaAttr.entries = &entry
+        schemaAttr.numEntries = 1
+        return nvtxPayloadSchemaRegister((<DomainHandle>self.handle).c_obj, &schemaAttr)
+
+    @lru_cache(maxsize=None)
+    def _get_numpy_dtype_schema(self, dt):
+        if dt.subdtype:
+            subdtype_schema = self._get_numpy_dtype_schema(dt.subdtype[0])
+            return self._get_fixed_size_array_schema(subdtype_schema, np.prod(dt.shape), dt.itemsize)
+        if dt.type in _dtype_to_entry_type:
+            return self._register_builtin_schema(dt)
+        else:
+            return self._register_structured_schema(dt)
+
+    @lru_cache(maxsize=None)
+    def get_numpy_array_schema(self, dt, is_array):
+        scalar_schema = self._get_numpy_dtype_schema(dt)
+        if is_array:
+            return self._get_array_schema(scalar_schema)
+        else:
+            return scalar_schema
+
+
 cdef class StringHandle:
 
     def __init__(self, DomainHandle domain_handle, object string=None):

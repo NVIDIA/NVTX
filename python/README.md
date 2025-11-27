@@ -48,6 +48,12 @@ See [here](https://nvidia.github.io/NVTX/python/) for detailed docs.
 
 ## Release Notes
 
+### 0.2.14
+
+- Add support for NumPy arrays as payloads.
+- Set up support for free-threaded Python.
+- Apply `NVTX_DISABLE` environment variable to `Profile` class.
+
 ### 0.2.13
 
 - Fix tracing with tools that do not implement `nvtxDomainIsEnabled`.

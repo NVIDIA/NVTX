@@ -105,8 +105,9 @@
 {
     <span class="pl-c1">nvtx3::mark</span>(<span class="pl-s"><span class="pl-pds">"</span>Hello world!<span class="pl-pds">"</span></span>);
 }</pre></div>
+<p>On Windows, be aware that NVTX includes <code>windows.h</code>. Without intervention, this will define tokens in the global namespace such as <code>min</code>, <code>max</code>, and <code>small</code>. Take care to <code>#define</code> any desired macros such as <code>WIN32_LEAN_AND_MEAN</code>, <code>NOMINMAX</code>, etc. before including any NVTX headers.</p>
 <p>The NVTX C++ API is a set of wrappers around the C API, so the C API functions are usable from C++ as well.</p>
-<p>Since the C and C++ APIs are header-only, dependency-free, and don't require explicit initialization, they are suitable for annotating other header-only libraries.  Libraries using different versions of the NVTX headers in the same translation unit or different translation units will not have conflicts, as long as best practices are followed.</p>
+<p>Since the C and C++ APIs are header-only, dependency-free, and don't require explicit initialization, they are suitable for annotating other header-only libraries.</p>
 <p>See more details in <a href="https://github.com/NVIDIA/NVTX/tree/release-v3/c">the <code>c</code> directory</a> of the NVIDIA NVTX GitHub repo, and in the API reference guides:</p>
 <ul>
 <li><a href="https://nvidia.github.io/NVTX/doxygen/index.html" rel="nofollow">NVTX C API Reference</a></li>
@@ -114,30 +115,30 @@
 </ul>
 <div class="markdown-heading"><h3 class="heading-element">CMake</h3><a id="user-content-cmake" class="anchor" aria-label="Permalink: CMake" href="#cmake"><span aria-hidden="true" class="octicon octicon-link"></span></a></div>
 <p>For projects that use CMake, the CMake scripts included with NVTX provide targets <code>nvtx3-c</code> and <code>nvtx3-cpp</code>.  Use <code>target_link_libraries</code> to make any CMake target use <code>nvtx3-c</code> for the C API only and <code>nvtx3-cpp</code> for both the C and C++ APIs.  Since NVTX is a header-only library, these targets simply add the include search path for the NVTX headers and add the <code>-ldl</code> linker option where required.  Example usage:</p>
-<div class="highlight highlight-source-cmake"><pre><span class="pl-c">#<span class="pl-c"> Example C program</span></span>
-<span class="pl-c1">add_executable</span>(<span class="pl-s">some_c_program</span> <span class="pl-s">main.c</span>)
-<span class="pl-c1">target_link_libraries</span>(<span class="pl-s">some_c_program</span> <span class="pl-c1">PRIVATE</span> <span class="pl-s">nvtx3-c</span>)
-<span class="pl-c">#<span class="pl-c"> main.c can now do #include &lt;nvtx3/nvToolsExt.h&gt;</span></span>
+<div class="highlight highlight-source-cmake"><pre><span class="pl-c"># Example C program</span>
+<span class="pl-k">add_executable</span>(some_c_program main.c)
+<span class="pl-k">target_link_libraries</span>(some_c_program <span class="pl-e">PRIVATE</span> nvtx3-c)
+<span class="pl-c"># main.c can now do #include &lt;nvtx3/nvToolsExt.h&gt;</span>
 
-<span class="pl-c">#<span class="pl-c"> Example C++ program</span></span>
-<span class="pl-c1">add_executable</span>(<span class="pl-s">some_cpp_program</span> <span class="pl-s">main.cpp</span>)
-<span class="pl-c1">target_link_libraries</span>(<span class="pl-s">some_cpp_program</span> <span class="pl-c1">PRIVATE</span> <span class="pl-s">nvtx3-cpp</span>)
-<span class="pl-c">#<span class="pl-c"> main.cpp can now do #include &lt;nvtx3/nvtx3.hpp&gt;</span></span></pre></div>
+<span class="pl-c"># Example C++ program</span>
+<span class="pl-k">add_executable</span>(some_cpp_program main.cpp)
+<span class="pl-k">target_link_libraries</span>(some_cpp_program <span class="pl-e">PRIVATE</span> nvtx3-cpp)
+<span class="pl-c"># main.cpp can now do #include &lt;nvtx3/nvtx3.hpp&gt;</span></pre></div>
 <p>NVTX provides two different ways to define the CMake targets:</p>
 <div class="markdown-heading"><h4 class="heading-element">Normal CMake targets (non-IMPORTED)</h4><a id="user-content-normal-cmake-targets-non-imported" class="anchor" aria-label="Permalink: Normal CMake targets (non-IMPORTED)" href="#normal-cmake-targets-non-imported"><span aria-hidden="true" class="octicon octicon-link"></span></a></div>
 <p>Non-IMPORTED targets are global to the entire build.  In a typical CMake codebase, <code>add_subdirectory</code> is used to include every directory in a source tree, where each contains a <code>CMakeLists.txt</code> file that defines targets usable anywhere in the build.  The NVTX <code>CMakeLists.txt</code> file defines normal (non-IMPORTED) targets when <code>add_subdirectory</code> is called on that directory.</p>
 <p>This example code layout has a few imported third-party libraries and a separate directory for its own source.  It shows that adding the NVTX directory to CMake allows the <code>nvtx3-cpp</code> to be used elsewhere in the source tree:</p>
 <ul>
 <li>CMakeLists.txt
-<div class="highlight highlight-source-cmake"><pre><span class="pl-c1">add_subdirectory</span>(<span class="pl-s">Imports</span>)
-<span class="pl-c1">add_subdirectory</span>(<span class="pl-c1">Source</span>)</pre></div>
+<div class="highlight highlight-source-cmake"><pre><span class="pl-k">add_subdirectory</span>(Imports)
+<span class="pl-k">add_subdirectory</span>(<span class="pl-e">Source</span>)</pre></div>
 </li>
 <li>Imports/
 <ul>
 <li>CMakeLists.txt
-<div class="highlight highlight-source-cmake"><pre><span class="pl-c1">add_subdirectory</span>(<span class="pl-s">SomeLibrary</span>)
-<span class="pl-c1">add_subdirectory</span>(<span class="pl-s">NVTX</span>)
-<span class="pl-c1">add_subdirectory</span>(<span class="pl-s">SomeOtherLibrary</span>)</pre></div>
+<div class="highlight highlight-source-cmake"><pre><span class="pl-k">add_subdirectory</span>(SomeLibrary)
+<span class="pl-k">add_subdirectory</span>(NVTX)
+<span class="pl-k">add_subdirectory</span>(SomeOtherLibrary)</pre></div>
 </li>
 <li>SomeLibrary/</li>
 <li>NVTX/ <em>(this is the downloaded copy of NVTX)</em>
@@ -160,8 +161,8 @@
 <li>Source/
 <ul>
 <li>CMakeLists.txt
-<div class="highlight highlight-source-cmake"><pre><span class="pl-c1">add_executable</span>(<span class="pl-s">my_program</span> <span class="pl-s">main.cpp</span>)
-<span class="pl-c1">target_link_libraries</span>(<span class="pl-s">my_program</span> <span class="pl-c1">PRIVATE</span> <span class="pl-s">nvtx3-cpp</span>)</pre></div>
+<div class="highlight highlight-source-cmake"><pre><span class="pl-k">add_executable</span>(my_program main.cpp)
+<span class="pl-k">target_link_libraries</span>(my_program <span class="pl-e">PRIVATE</span> nvtx3-cpp)</pre></div>
 </li>
 <li>main.cpp <em>(does</em> <code>#include &lt;nvtx3/nvtx3.hpp&gt;</code><em>)</em>
 </li>
@@ -195,10 +196,10 @@
 <li>Project3/
 <ul>
 <li>CMakeLists.txt
-<div class="highlight highlight-source-cmake"><pre><span class="pl-c1">add_subdirectory</span>(<span class="pl-s">"<span class="pl-smi">${CMAKE_CURRENT_LIST_DIR}</span>/../Utils/NVTX"</span> <span class="pl-s">"ImportNVTX"</span>)
+<div class="highlight highlight-source-cmake"><pre><span class="pl-k">add_subdirectory</span>(<span class="pl-s">"<span class="pl-k">${CMAKE_CURRENT_LIST_DIR}</span>/../Utils/NVTX"</span> <span class="pl-s">"ImportNVTX"</span>)
 
-<span class="pl-c1">add_executable</span>(<span class="pl-s">my_program</span> <span class="pl-s">main.cpp</span>)
-<span class="pl-c1">target_link_libraries</span>(<span class="pl-s">my_program</span> <span class="pl-c1">PRIVATE</span> <span class="pl-s">nvtx3-cpp</span>)</pre></div>
+<span class="pl-k">add_executable</span>(my_program main.cpp)
+<span class="pl-k">target_link_libraries</span>(my_program <span class="pl-e">PRIVATE</span> nvtx3-cpp)</pre></div>
 </li>
 <li>main.cpp <em>(does</em> <code>#include &lt;nvtx3/nvtx3.hpp&gt;</code><em>)</em>
 </li>
@@ -231,16 +232,16 @@
 <li>Source/
 <ul>
 <li>CMakeLists.txt
-<div class="highlight highlight-source-cmake"><pre><span class="pl-c1">include</span>(<span class="pl-c1">path</span><span class="pl-s">/to/CPM.cmake</span>)
+<div class="highlight highlight-source-cmake"><pre><span class="pl-k">include</span>(<span class="pl-k">path</span>/to/CPM.cmake)
 
-<span class="pl-en">CPMAddPackage</span>(
-    <span class="pl-c1">NAME</span> <span class="pl-en">NVTX</span>
-    <span class="pl-s">GITHUB_REPOSITORY</span> <span class="pl-s">NVIDIA/NVTX</span>
-    <span class="pl-s">GIT_TAG</span> <span class="pl-s">v3.2.2-c-cpp</span>
-    <span class="pl-s">GIT_SHALLOW</span> <span class="pl-c1">TRUE</span>)
+CPMAddPackage(
+    <span class="pl-k">NAME</span> NVTX
+    GITHUB_REPOSITORY NVIDIA/NVTX
+    GIT_TAG v3.4.0-c-cpp
+    GIT_SHALLOW <span class="pl-k">TRUE</span>)
 
-<span class="pl-c1">add_executable</span>(<span class="pl-s">my_program</span> <span class="pl-s">main.cpp</span>)
-<span class="pl-c1">target_link_libraries</span>(<span class="pl-s">my_program</span> <span class="pl-c1">PRIVATE</span> <span class="pl-s">nvtx3-cpp</span>)</pre></div>
+<span class="pl-k">add_executable</span>(my_program main.cpp)
+<span class="pl-k">target_link_libraries</span>(my_program <span class="pl-e">PRIVATE</span> nvtx3-cpp)</pre></div>
 </li>
 <li>main.cpp <em>(does</em> <code>#include &lt;nvtx3/nvtx3.hpp&gt;</code><em>)</em>
 </li>
@@ -253,21 +254,21 @@
 <p>This example shows a program that imports multiple third-party libraries, which each import their own copy of NVTX:</p>
 <ul>
 <li>CMakeLists.txt
-<div class="highlight highlight-source-cmake"><pre><span class="pl-c1">add_subdirectory</span>(<span class="pl-s">Imports</span>)
-<span class="pl-c1">add_subdirectory</span>(<span class="pl-c1">Source</span>)</pre></div>
+<div class="highlight highlight-source-cmake"><pre><span class="pl-k">add_subdirectory</span>(Imports)
+<span class="pl-k">add_subdirectory</span>(<span class="pl-e">Source</span>)</pre></div>
 </li>
 <li>Imports/
 <ul>
 <li>CMakeLists.txt
-<div class="highlight highlight-source-cmake"><pre><span class="pl-c1">add_subdirectory</span>(<span class="pl-s">Foo</span>)
-<span class="pl-c1">add_subdirectory</span>(<span class="pl-s">Bar</span>)</pre></div>
+<div class="highlight highlight-source-cmake"><pre><span class="pl-k">add_subdirectory</span>(Foo)
+<span class="pl-k">add_subdirectory</span>(Bar)</pre></div>
 </li>
 <li>Foo/
 <ul>
 <li>CMakeLists.txt
-<div class="highlight highlight-source-cmake"><pre><span class="pl-c1">include</span>(<span class="pl-s">Detail/NVTX/nvtxImportedTargets.cmake</span>)
-<span class="pl-c1">add_library</span>(<span class="pl-s">foo</span> <span class="pl-c1">STATIC</span> <span class="pl-s">foo.cpp</span>)
-<span class="pl-c1">target_link_libraries</span>(<span class="pl-s">foo</span> <span class="pl-c1">PRIVATE</span> <span class="pl-s">nvtx3-cpp</span>)</pre></div>
+<div class="highlight highlight-source-cmake"><pre><span class="pl-k">include</span>(Detail/NVTX/nvtxImportedTargets.cmake)
+<span class="pl-k">add_library</span>(foo <span class="pl-e">STATIC</span> foo.cpp)
+<span class="pl-k">target_link_libraries</span>(foo <span class="pl-e">PRIVATE</span> nvtx3-cpp)</pre></div>
 </li>
 <li>Detail/
 <ul>
@@ -282,9 +283,9 @@
 <li>Bar/
 <ul>
 <li>CMakeLists.txt
-<div class="highlight highlight-source-cmake"><pre><span class="pl-c1">include</span>(<span class="pl-s">Detail/NVTX/nvtxImportedTargets.cmake</span>)
-<span class="pl-c1">add_library</span>(<span class="pl-s">bar</span> <span class="pl-s">SHARED</span> <span class="pl-s">bar.cpp</span>)
-<span class="pl-c1">target_link_libraries</span>(<span class="pl-s">bar</span> <span class="pl-c1">PRIVATE</span> <span class="pl-s">nvtx3-cpp</span>)</pre></div>
+<div class="highlight highlight-source-cmake"><pre><span class="pl-k">include</span>(Detail/NVTX/nvtxImportedTargets.cmake)
+<span class="pl-k">add_library</span>(bar SHARED bar.cpp)
+<span class="pl-k">target_link_libraries</span>(bar <span class="pl-e">PRIVATE</span> nvtx3-cpp)</pre></div>
 </li>
 <li>Detail/
 <ul>
@@ -301,8 +302,8 @@
 <li>Source/
 <ul>
 <li>CMakeLists.txt
-<div class="highlight highlight-source-cmake"><pre><span class="pl-c1">add_executable</span>(<span class="pl-s">my_program</span> <span class="pl-s">main.cpp</span>)
-<span class="pl-c1">target_link_libraries</span>(<span class="pl-s">my_program</span> <span class="pl-c1">PRIVATE</span> <span class="pl-s">foo</span> <span class="pl-s">bar</span>)</pre></div>
+<div class="highlight highlight-source-cmake"><pre><span class="pl-k">add_executable</span>(my_program main.cpp)
+<span class="pl-k">target_link_libraries</span>(my_program <span class="pl-e">PRIVATE</span> foo bar)</pre></div>
 </li>
 </ul>
 </li>
@@ -327,21 +328,21 @@
 <div class="markdown-heading"><h3 class="heading-element">Get NVTX using CMake Package Manager (CPM)</h3><a id="user-content-get-nvtx-using-cmake-package-manager-cpm" class="anchor" aria-label="Permalink: Get NVTX using CMake Package Manager (CPM)" href="#get-nvtx-using-cmake-package-manager-cpm"><span aria-hidden="true" class="octicon octicon-link"></span></a></div>
 <p><a href="https://github.com/cpm-cmake/CPM.cmake">CMake Package Manager (CPM)</a> is a utility that automatically downloads dependencies when CMake first runs on a project, and adds their <code>CMakeLists.txt</code> to the build.  The downloaded files can be stored in an external cache directory to avoid redownloading during clean builds, and to enable offline builds once the cache is populated.</p>
 <p>To use CPM, download <code>CPM.cmake</code> from <a href="https://github.com/cpm-cmake/CPM.cmake/blob/master/cmake/CPM.cmake">CPM's repo</a> and save it in your project.  Then you can fetch NVTX directly from GitHub with CMake code like this (CMake 3.14 or greater is required):</p>
-<div class="highlight highlight-source-cmake"><pre><span class="pl-c1">include</span>(<span class="pl-c1">path</span><span class="pl-s">/to/CPM.cmake</span>)
+<div class="highlight highlight-source-cmake"><pre><span class="pl-k">include</span>(<span class="pl-k">path</span>/to/CPM.cmake)
 
-<span class="pl-en">CPMAddPackage</span>(
-    <span class="pl-c1">NAME</span> <span class="pl-en">NVTX</span>
-    <span class="pl-s">GITHUB_REPOSITORY</span> <span class="pl-s">NVIDIA/NVTX</span>
-    <span class="pl-s">GIT_TAG</span> <span class="pl-s">v3.2.2-c-cpp</span>
-    <span class="pl-s">GIT_SHALLOW</span> <span class="pl-c1">TRUE</span>)
+CPMAddPackage(
+    <span class="pl-k">NAME</span> NVTX
+    GITHUB_REPOSITORY NVIDIA/NVTX
+    GIT_TAG v3.4.0-c-cpp
+    GIT_SHALLOW <span class="pl-k">TRUE</span>)
 
-<span class="pl-c">#<span class="pl-c"> Example C program</span></span>
-<span class="pl-c1">add_executable</span>(<span class="pl-s">some_c_program</span> <span class="pl-s">main.c</span>)
-<span class="pl-c1">target_link_libraries</span>(<span class="pl-s">some_c_program</span> <span class="pl-c1">PRIVATE</span> <span class="pl-s">nvtx3-c</span>)
+<span class="pl-c"># Example C program</span>
+<span class="pl-k">add_executable</span>(some_c_program main.c)
+<span class="pl-k">target_link_libraries</span>(some_c_program <span class="pl-e">PRIVATE</span> nvtx3-c)
 
-<span class="pl-c">#<span class="pl-c"> Example C++ program</span></span>
-<span class="pl-c1">add_executable</span>(<span class="pl-s">some_cpp_program</span> <span class="pl-s">main.cpp</span>)
-<span class="pl-c1">target_link_libraries</span>(<span class="pl-s">some_cpp_program</span> <span class="pl-c1">PRIVATE</span> <span class="pl-s">nvtx3-cpp</span>)</pre></div>
+<span class="pl-c"># Example C++ program</span>
+<span class="pl-k">add_executable</span>(some_cpp_program main.cpp)
+<span class="pl-k">target_link_libraries</span>(some_cpp_program <span class="pl-e">PRIVATE</span> nvtx3-cpp)</pre></div>
 <p>Note that this downloads from GitHub using a version tag with the suffix <code>-c-cpp</code>.  The <code>v3.x.y</code> tags points to the <code>release-v3</code> branch, which contains the entire repo.  The <code>v3.x.y-c-cpp</code> tags point to a separate branch called <code>release-v3-c-cpp</code> containing only the <code>c</code> directory of the repo, which is the bare minimum needed to use NVTX in a C or C++ project.  If you specify <code>GIT_TAG v3.x.y</code> to download the full repo, the <code>SOURCE_SUBDIR c</code> option is also needed to tell CMake where <code>CMakeLists.txt</code> is in the downloaded repo.  Also, avoid downloading the full history of the repo by using <code>GIT_SHALLOW TRUE</code> to download only the requested version.</p>
 <div class="markdown-heading"><h2 class="heading-element">Python</h2><a id="user-content-python-1" class="anchor" aria-label="Permalink: Python" href="#python-1"><span aria-hidden="true" class="octicon octicon-link"></span></a></div>
 <div class="markdown-heading"><h3 class="heading-element">Get NVTX using Conda</h3><a id="user-content-get-nvtx-using-conda" class="anchor" aria-label="Permalink: Get NVTX using Conda" href="#get-nvtx-using-conda"><span aria-hidden="true" class="octicon octicon-link"></span></a></div>
@@ -385,20 +386,20 @@
 <p>C89 support in these compilers has not changed in many years, so even very old compiler versions should work.</p>
 <p>See more details in <a href="https://github.com/NVIDIA/NVTX/tree/release-v3/c">the <code>c</code> directory</a> of the NVIDIA NVTX GitHub repo, and the <a href="https://nvidia.github.io/NVTX/doxygen/index.html" rel="nofollow">NVTX C API Reference</a>.</p>
 <div class="markdown-heading"><h2 class="heading-element">C++</h2><a id="user-content-c-1" class="anchor" aria-label="Permalink: C++" href="#c-1"><span aria-hidden="true" class="octicon octicon-link"></span></a></div>
-<p>The NVTX C++ API is a header-only library, implemented as a wrapper over the NVTX C API, using <strong>standard C++11</strong>.  The C++ headers are provided alongside the C headers.  NVTX C++ is implemented , and can be compiled with <code>-std=c++11</code> or newer using many common compilers.  Tested compilers include:</p>
+<p>The NVTX C++ API is a header-only library, implemented as a wrapper over the NVTX C API, using <strong>standard C++11</strong>.  The C++ headers are provided alongside the C headers.  NVTX C++ can be compiled with <code>-std=c++11</code> or newer using many common compilers.  Tested compilers include:</p>
 <ul>
-<li>GNU g++ (4.8.5 to 11.1)</li>
-<li>clang (3.5.2 to 12.0)</li>
-<li>Microsoft Visual C++ (VS 2015 to VS 2022)
+<li>GNU g++ (4.8.5 and newer)</li>
+<li>clang (3.5.2 and newer)</li>
+<li>Microsoft Visual C++ (VS 2015 and newer)
 <ul>
-<li>On VS 2017.7 and newer, NVTX enables better error message output</li>
+<li>On VS 2017.7 and newer, NVTX enables better error message output.</li>
 </ul>
 </li>
 <li>NVIDIA nvcc (CUDA 7.0 and newer)</li>
 </ul>
 <p>See more details in <a href="https://github.com/NVIDIA/NVTX/tree/release-v3/c">the <code>c</code> directory</a> of the NVIDIA NVTX GitHub repo, and the <a href="https://nvidia.github.io/NVTX/doxygen-cpp/index.html" rel="nofollow">NVTX C++ API Reference</a>.</p>
 <div class="markdown-heading"><h2 class="heading-element">Python</h2><a id="user-content-python-2" class="anchor" aria-label="Permalink: Python" href="#python-2"><span aria-hidden="true" class="octicon octicon-link"></span></a></div>
-<p>The NVTX Python API provides native Python wrappers for a subset of the NVTX C API.  NVTX Python requires <strong>Python 3.6 or newer</strong>.  It has been tested on Linux, with Python 3.6 to 3.9.</p>
+<p>The NVTX Python API provides native Python wrappers for a subset of the NVTX C API.  NVTX Python requires <strong>Python 3.6 or newer</strong>.  It has been tested on Linux.</p>
 <p>See more details in <a href="https://github.com/NVIDIA/NVTX/tree/release-v3/python">the <code>python</code> directory</a> of the NVIDIA NVTX GitHub repo.</p>
 <div class="markdown-heading"><h2 class="heading-element">Other languages</h2><a id="user-content-other-languages" class="anchor" aria-label="Permalink: Other languages" href="#other-languages"><span aria-hidden="true" class="octicon octicon-link"></span></a></div>
 <p>Any language that can call into C with normal calling conventions can work with the NVTX C API.  There are two general approaches to implement NVTX wrappers in other languages:</p>

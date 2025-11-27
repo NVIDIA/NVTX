@@ -148,7 +148,7 @@ _NOTE:_ Older versions of NVTX did require linking against a dynamic library.  N
 #include <nvtx3/nvtx3.hpp>
 ```
 
-Since the C and C++ APIs are header-only, dependency-free, and don't require explicit initialization, they are suitable for annotating other header-only libraries.  Libraries using different versions of the NVTX headers in the same translation unit or different translation units will not have conflicts, as long as best practices are followed.
+Since the C and C++ APIs are header-only, dependency-free, and don't require explicit initialization, they are suitable for annotating other header-only libraries.
 
 # Use NVTX with CMake
 For projects that use CMake, the included `CMakeLists.txt` provides targets `nvtx3-c` and `nvtx3-cpp` that set the include search paths and the `-ldl` linker option where required.
@@ -219,6 +219,10 @@ The NVTX C API is a header-only library, implemented using **standard C89**.  Th
 
 C89 support in these compilers has not changed in many years, so even very old compiler versions should work.
 
+### C version compatibility notes
+
+Using different versions of the NVTX headers in the same translation unit or different translation units is supported, as long as best practices are followed.
+
 ## C++
 
 The NVTX C++ API is a header-only library, implemented as a wrapper over the NVTX C API, using **standard C++11**.  The C++ headers are provided alongside the C headers.  NVTX C++ is implemented , and can be compiled with `-std=c++11` or newer using many common compilers.  Tested compilers include:
@@ -231,8 +235,12 @@ The NVTX C++ API is a header-only library, implemented as a wrapper over the NVT
 ### C++ version compatibility notes
 
 Minor versions of NVTX releases may introduce new features into the `nvtx3::v1` namespace.
-To use these features, ensure that within each compilation unit, the first inclusion of `nvtx3.hpp` is based at least on this release.
+To use these features, ensure that within each compilation unit, the first inclusion of `nvtx3.hpp` is based at least on the latest required release.
 If an older version is included first, the new features will not be available.
+
+It is supported to link together multiple minor versions of NVTX in different objects.
+
+For maximum compatibility in header-only libraries or other scenarios with complex NVTX dependencies, use symbols of a specific major version, e.g. `nvtx3::v1::domain`.
 
 ### C++ version history
 

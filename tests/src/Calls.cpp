@@ -18,7 +18,11 @@
  * See https://nvidia.github.io/NVTX/LICENSE.txt for license information.
  */
 
+#ifndef DISABLE_NVTX3_HPP
 #include <nvtx3/nvtx3.hpp>
+#else
+#include <nvtx3/nvToolsExt.h>
+#endif
 
 #include <stdlib.h>
 #include <string.h>
@@ -91,8 +95,6 @@ int RunTest(int /*argc*/, const char** argv)
     {
         if (*argv == verboseArg) verbose = true;
     }
-
-    using namespace nvtx3;
 
     //---------------------------- Tests --------------------------------------
 
@@ -171,7 +173,10 @@ int RunTest(int /*argc*/, const char** argv)
         }, verbose)) return 1;
     }
 
+#ifndef DISABLE_NVTX3_HPP
     if (verbose) std::cout << "--------- Testing C++ API\n";
+
+    using namespace nvtx3;
 
     {
         CallbackTester t;
@@ -430,6 +435,7 @@ int RunTest(int /*argc*/, const char** argv)
             CALL(CORE2, DomainRangePop,    hB),
         }, verbose)) return 1;
     }
+#endif
 
     if (verbose) std::cout << "--------- Success!\n";
     return 0;

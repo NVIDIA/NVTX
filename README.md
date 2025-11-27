@@ -99,7 +99,7 @@ On Windows, be aware that NVTX includes `windows.h`. Without intervention, this 
 
 The NVTX C++ API is a set of wrappers around the C API, so the C API functions are usable from C++ as well.
 
-Since the C and C++ APIs are header-only, dependency-free, and don't require explicit initialization, they are suitable for annotating other header-only libraries.  Libraries using different versions of the NVTX headers in the same translation unit or different translation units will not have conflicts, as long as best practices are followed.
+Since the C and C++ APIs are header-only, dependency-free, and don't require explicit initialization, they are suitable for annotating other header-only libraries.
 
 See more details in [the `c` directory](/c) of this repo, and in the API reference guides:
 - [NVTX C API Reference](https://nvidia.github.io/NVTX/doxygen/index.html)
@@ -198,7 +198,7 @@ Normal (non-IMPORTED) targets will be defined when using CPM (CMake Package Mana
         CPMAddPackage(
             NAME NVTX
             GITHUB_REPOSITORY NVIDIA/NVTX
-            GIT_TAG v3.3.0-c-cpp
+            GIT_TAG v3.4.0-c-cpp
             GIT_SHALLOW TRUE)
 
         add_executable(my_program main.cpp)
@@ -296,7 +296,7 @@ include(path/to/CPM.cmake)
 CPMAddPackage(
     NAME NVTX
     GITHUB_REPOSITORY NVIDIA/NVTX
-    GIT_TAG v3.3.0-c-cpp
+    GIT_TAG v3.4.0-c-cpp
     GIT_SHALLOW TRUE)
 
 # Example C program

@@ -1,8 +1,8 @@
 var searchData=
 [
-  ['name_0',['name',['../structnvtx_payload_enum__t.html#a66c39fea8c22778c517d4f22671fff73',1,'nvtxPayloadEnum_t::name'],['../structnvtx_counter_attr__t.html#a9bc076586c6c5627632eb1bcd70b861e',1,'nvtxCounterAttr_t::name'],['../structnvtx_payload_enum_attr__t.html#a5731ed1f823e0ff0aac3eeea68c8a6d5',1,'nvtxPayloadEnumAttr_t::name'],['../structnvtx_payload_schema_entry__t.html#a98a3b003669edb0daf1a2b4f9a71fa59',1,'nvtxPayloadSchemaEntry_t::name'],['../structnvtx_payload_schema_attr__t.html#aba69f3fad4cd1b2e5b129019b1695422',1,'nvtxPayloadSchemaAttr_t::name']]],
+  ['name_0',['name',['../structnvtx_payload_schema_attr__t.html#aba69f3fad4cd1b2e5b129019b1695422',1,'nvtxPayloadSchemaAttr_t::name'],['../structnvtx_payload_schema_entry__t.html#a98a3b003669edb0daf1a2b4f9a71fa59',1,'nvtxPayloadSchemaEntry_t::name'],['../structnvtx_payload_enum__t.html#a66c39fea8c22778c517d4f22671fff73',1,'nvtxPayloadEnum_t::name'],['../structnvtx_payload_enum_attr__t.html#a5731ed1f823e0ff0aac3eeea68c8a6d5',1,'nvtxPayloadEnumAttr_t::name'],['../structnvtx_counter_attr__t.html#a9bc076586c6c5627632eb1bcd70b861e',1,'nvtxCounterAttr_t::name']]],
   ['naming_1',['naming',['../index.html#CATEGORY_NAMING',1,'Category Naming'],['../group___r_e_s_o_u_r_c_e___n_a_m_i_n_g.html#RESOURCE_NAMING_CUDA',1,'CUDA Resource Naming'],['../group___r_e_s_o_u_r_c_e___n_a_m_i_n_g.html#RESOURCE_NAMING_CUDART',1,'CUDA Runtime Resource Naming'],['../group___r_e_s_o_u_r_c_e___n_a_m_i_n_g.html#RESOURCE_NAMING_OPENCL',1,'OpenCL Resource Naming'],['../index.html#RESOURCE_NAMING_OS',1,'Resource Naming'],['../index.html#RESOURCE_NAMING',1,'Resource Naming'],['../group___r_e_s_o_u_r_c_e___n_a_m_i_n_g.html',1,'Resource Naming']]],
-  ['numentries_2',['numentries',['../structnvtx_payload_schema_attr__t.html#afc8b55620206061decbac5eb2f3a9051',1,'nvtxPayloadSchemaAttr_t::numEntries'],['../structnvtx_payload_enum_attr__t.html#a011b55b330f17b2e64157c169fad3880',1,'nvtxPayloadEnumAttr_t::numEntries']]],
+  ['numentries_2',['numentries',['../structnvtx_payload_enum_attr__t.html#a011b55b330f17b2e64157c169fad3880',1,'nvtxPayloadEnumAttr_t::numEntries'],['../structnvtx_payload_schema_attr__t.html#afc8b55620206061decbac5eb2f3a9051',1,'nvtxPayloadSchemaAttr_t::numEntries']]],
   ['nvtoolsext_2eh_3',['nvToolsExt.h',['../nv_tools_ext_8h.html',1,'']]],
   ['nvtx_20c_20api_20reference_4',['NVTX C API Reference',['../index.html',1,'']]],
   ['nvtx_5fcolor_5fargb_5',['NVTX_COLOR_ARGB',['../group___g_e_n_e_r_a_l.html#ggad03fafe52eed68d119c1c4ea6e92a521a63a59d87ec996a2eb620e26e37bd705e',1,'nvToolsExt.h']]],
@@ -144,12 +144,13 @@ var searchData=
   ['nvtxresourcesyncposixthreadtype_5ft_141',['nvtxResourceSyncPosixThreadType_t',['../group___s_y_n_c_h_r_o_n_i_z_a_t_i_o_n.html#gad74944ded1068254043d7400a66ce887',1,'nvToolsExtSync.h']]],
   ['nvtxresourcesyncwindowstype_5ft_142',['nvtxResourceSyncWindowsType_t',['../group___s_y_n_c_h_r_o_n_i_z_a_t_i_o_n.html#gad86534581d1769a5d946a2f0d98cc8a1',1,'nvToolsExtSync.h']]],
   ['nvtxscopeattr_5ft_143',['nvtxScopeAttr_t',['../structnvtx_scope_attr__t.html',1,'']]],
-  ['nvtxsemanticscounter_5ft_144',['nvtxSemanticsCounter_t',['../structnvtx_semantics_counter__t.html',1,'']]],
-  ['nvtxsemanticsheader_5ft_145',['nvtxSemanticsHeader_t',['../structnvtx_semantics_header__t.html',1,'']]],
-  ['nvtxsemanticsscope_5ft_146',['nvtxSemanticsScope_t',['../structnvtx_semantics_scope__t.html',1,'']]],
-  ['nvtxsemanticstime_5ft_147',['nvtxSemanticsTime_t',['../structnvtx_semantics_time__t.html',1,'']]],
-  ['nvtxsyncpoint_5ft_148',['nvtxSyncPoint_t',['../structnvtx_sync_point__t.html',1,'']]],
-  ['nvtxsyncuser_5ft_149',['nvtxSyncUser_t',['../group___s_y_n_c_h_r_o_n_i_z_a_t_i_o_n.html#ga79ab2a04ba725255a14f1d2a34b92f9f',1,'nvToolsExtSync.h']]],
-  ['nvtxsyncuserattributes_5fv0_150',['nvtxSyncUserAttributes_v0',['../structnvtx_sync_user_attributes__v0.html',1,'']]],
-  ['nvtxtimedomainattr_5ft_151',['nvtxTimeDomainAttr_t',['../structnvtx_time_domain_attr__t.html',1,'']]]
+  ['nvtxsemanticscorrelation_5ft_144',['nvtxSemanticsCorrelation_t',['../structnvtx_semantics_correlation__t.html',1,'']]],
+  ['nvtxsemanticscounter_5ft_145',['nvtxSemanticsCounter_t',['../structnvtx_semantics_counter__t.html',1,'']]],
+  ['nvtxsemanticsheader_5ft_146',['nvtxSemanticsHeader_t',['../structnvtx_semantics_header__t.html',1,'']]],
+  ['nvtxsemanticsscope_5ft_147',['nvtxSemanticsScope_t',['../structnvtx_semantics_scope__t.html',1,'']]],
+  ['nvtxsemanticstime_5ft_148',['nvtxSemanticsTime_t',['../structnvtx_semantics_time__t.html',1,'']]],
+  ['nvtxsyncpoint_5ft_149',['nvtxSyncPoint_t',['../structnvtx_sync_point__t.html',1,'']]],
+  ['nvtxsyncuser_5ft_150',['nvtxSyncUser_t',['../group___s_y_n_c_h_r_o_n_i_z_a_t_i_o_n.html#ga79ab2a04ba725255a14f1d2a34b92f9f',1,'nvToolsExtSync.h']]],
+  ['nvtxsyncuserattributes_5fv0_151',['nvtxSyncUserAttributes_v0',['../structnvtx_sync_user_attributes__v0.html',1,'']]],
+  ['nvtxtimedomainattr_5ft_152',['nvtxTimeDomainAttr_t',['../structnvtx_time_domain_attr__t.html',1,'']]]
 ];

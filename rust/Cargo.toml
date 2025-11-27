@@ -1,0 +1,81 @@
+[workspace]
+members = ["crates/nvtx-sys"]
+
+[workspace.package]
+version = "0.2.1"
+authors = ["NVIDIA", "Voltron Data"]
+edition = "2021"
+rust-version = "1.77.0"
+description = "NVIDIA Tools Extension SDK"
+repository = "https://github.com/NVIDIA/NVTX"
+readme = "README.md"
+publish = false
+license = "Apache-2.0 WITH LLVM-exception"
+
+[package]
+name = "nvidia-nvtx"
+version.workspace = true
+authors.workspace = true
+edition.workspace = true
+rust-version.workspace = true
+description.workspace = true
+repository.workspace = true
+readme.workspace = true
+publish.workspace = true
+license.workspace = true
+
+[lib]
+name = "nvtx"
+
+[features]
+default = [
+    "color-name",
+    "name-current-thread",
+    "cuda",
+    "cuda_runtime",
+    "tracing",
+]
+color-name = ["dep:color-name"]
+name-current-thread = ["dep:gettid"]
+cuda = ["nvtx-sys/cuda"]
+cuda_runtime = ["nvtx-sys/cuda_runtime"]
+tracing = ["dep:tracing-core", "dep:tracing-subscriber", "dep:color-name"]
+
+[dependencies]
+color-name = { version = "1.2.0", optional = true }
+derive_builder = "0.20"
+gettid = { version = "0.1.4", optional = true }
+nvtx-sys = { path = "crates/nvtx-sys" }
+tracing-core = { version = "0.1.34", optional = true }
+tracing-subscriber = { version = "0.3.20", optional = true }
+widestring = "1.2.1"
+
+[dev-dependencies]
+tracing = { version = "0.1.41", features = ["attributes"] }
+
+[target.'cfg(unix)'.dependencies]
+libc = "0.2.177"
+
+[[example]]
+name = "domain"
+required-features = ["color-name"]
+
+[[example]]
+name = "range"
+required-features = ["color-name"]
+
+[[example]]
+name = "range_start_end"
+required-features = ["color-name"]
+
+[[example]]
+name = "threads"
+required-features = ["name-current-thread"]
+
+[[example]]
+name = "domain_threads"
+required-features = ["name-current-thread"]
+
+[[example]]
+name = "tracing"
+required-features = ["tracing"]
