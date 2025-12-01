@@ -35,12 +35,17 @@ cdef class Profile:
         self.linenos = linenos
         self.annotate_cfuncs = annotate_cfuncs
         self.__domain = nvtxDomainCreateA(b"nvtx.py")
-        self.__attrib = nvtxEventAttributes_t(0)
+        self.domain_enabled = nvtxDomainIsEnabled(self.__domain)
+        self.__attrib = nvtxEventAttributes_t()
         self.__attrib.version = NVTX_VERSION
         self.__attrib.size = NVTX_EVENT_ATTRIB_STRUCT_SIZE
         self.__attrib.colorType = NVTX_COLOR_ARGB
         self.__attrib.color = DEFAULT_COLOR
         self.__attrib.messageType = NVTX_MESSAGE_TYPE_REGISTERED
+        self.__attrib.category = 0
+        self.__attrib.payloadType = NVTX_PAYLOAD_UNKNOWN
+
+
 
     def _profile(self, frame, event, arg):
         # profile function meant to be used with sys.setprofile
@@ -72,11 +77,13 @@ cdef class Profile:
     def enable(self):
         """Start annotating function calls automatically.
         """
-        threading.setprofile(self._profile)
-        sys.setprofile(self._profile)
+        if self.domain_enabled:
+            threading.setprofile(self._profile)
+            sys.setprofile(self._profile)
 
     def disable(self):
         """Stop annotating function calls automatically.
         """
-        threading.setprofile(None)
-        sys.setprofile(None)
+        if self.domain_enabled:
+            sys.setprofile(None)
+            threading.setprofile(None)
