@@ -7,7 +7,7 @@ from nvtx.colors import _NVTX_COLORS
 
 from nvtx._lib.lib cimport *
 
-DEFAULT_COLOR = _NVTX_COLORS[None]
+DEFAULT_COLOR = _NVTX_COLORS.get(None)
 
 cdef class Profile:
     """
