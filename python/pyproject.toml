@@ -34,14 +34,13 @@ classifiers = [
     "Topic :: Scientific/Engineering",
     "License :: OSI Approved :: Apache Software License",
     "Programming Language :: Python",
-    "Programming Language :: Python :: 3.6",
-    "Programming Language :: Python :: 3.7",
     "Programming Language :: Python :: 3.8",
     "Programming Language :: Python :: 3.9",
     "Programming Language :: Python :: 3.10",
     "Programming Language :: Python :: 3.11",
     "Programming Language :: Python :: 3.12",
     "Programming Language :: Python :: 3.13",
+    "Programming Language :: Python :: 3.14",
 ]
 
 [project.urls]
@@ -64,7 +63,7 @@ addopts = [
 ]
 
 [tool.cibuildwheel]
-skip = "*musllinux* cp36-* cp37-*"
+skip = "*musllinux*"
 build = "cp*"
 test-command = "pytest {package}/tests"
 test-extras = "test"
