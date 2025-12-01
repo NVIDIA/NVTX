@@ -67,6 +67,7 @@ skip = "*musllinux*"
 build = "cp*"
 test-command = "pytest {package}/tests"
 test-extras = "test"
+enable = "cpython-freethreading"
 
 [tool.cibuildwheel.linux]
 archs = ["x86_64", "aarch64"]
