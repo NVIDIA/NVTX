@@ -14,7 +14,7 @@ jobs:
     name: Ubuntu 24.04 x64
     runs-on: ubuntu-24.04
     steps:
-    - uses: actions/checkout@v4
+    - uses: actions/checkout@v6
 
     - uses: conda-incubator/setup-miniconda@v3
       with:
@@ -88,7 +88,7 @@ jobs:
     name: Ubuntu 24.04 Arm64
     runs-on: ubuntu-24.04-arm
     steps:
-    - uses: actions/checkout@v4
+    - uses: actions/checkout@v6
 
     - name: Install Toolchain
       run: |
@@ -154,7 +154,7 @@ jobs:
     name: Ubuntu 22.04 x64
     runs-on: ubuntu-22.04
     steps:
-    - uses: actions/checkout@v4
+    - uses: actions/checkout@v6
 
     - uses: conda-incubator/setup-miniconda@v3
       with:
@@ -216,7 +216,7 @@ jobs:
     name: Ubuntu 22.04 Arm64
     runs-on: ubuntu-22.04-arm
     steps:
-    - uses: actions/checkout@v4
+    - uses: actions/checkout@v6
 
     - name: Install Toolchain
       run: |
@@ -270,7 +270,7 @@ jobs:
     name: Windows Server 2025 x64 (A)
     runs-on: windows-2025
     steps:
-    - uses: actions/checkout@v4
+    - uses: actions/checkout@v6
 
     - uses: conda-incubator/setup-miniconda@v3
       with:
@@ -301,7 +301,7 @@ jobs:
     name: Windows Server 2025 x64 (B)
     runs-on: windows-2025
     steps:
-    - uses: actions/checkout@v4
+    - uses: actions/checkout@v6
 
     - name: Build (VS 2022 x86)
       shell: cmd
@@ -337,7 +337,7 @@ jobs:
     name: Windows Server 2022 x64 (A)
     runs-on: windows-2022
     steps:
-    - uses: actions/checkout@v4
+    - uses: actions/checkout@v6
 
     - uses: conda-incubator/setup-miniconda@v3
       with:
@@ -368,7 +368,7 @@ jobs:
     name: Windows Server 2022 x64 (B)
     runs-on: windows-2022
     steps:
-    - uses: actions/checkout@v4
+    - uses: actions/checkout@v6
 
     - name: Build (VS 2022 x86)
       shell: cmd
@@ -404,7 +404,7 @@ jobs:
     name: Windows 11 Arm64
     runs-on: windows-11-arm
     steps:
-    - uses: actions/checkout@v4
+    - uses: actions/checkout@v6
 
     - name: Build (VS 2022 Arm64 Native)
       shell: cmd
@@ -446,7 +446,7 @@ jobs:
     name: macOS 26 Arm64
     runs-on: macos-26
     steps:
-    - uses: actions/checkout@v4
+    - uses: actions/checkout@v6
 
     - name: Install Toolchain
       run: brew install --force-bottle llvm lld mingw-w64
@@ -476,7 +476,7 @@ jobs:
     name: macOS 15 Arm64
     runs-on: macos-15
     steps:
-    - uses: actions/checkout@v4
+    - uses: actions/checkout@v6
 
     - name: Install Toolchain
       run: brew install --force-bottle llvm lld mingw-w64
@@ -506,7 +506,7 @@ jobs:
     name: macOS 15 x64
     runs-on: macos-15-intel
     steps:
-    - uses: actions/checkout@v4
+    - uses: actions/checkout@v6
 
     - name: Install Toolchain
       run: brew install --force-bottle llvm lld mingw-w64
@@ -536,7 +536,7 @@ jobs:
     name: macOS 14 Arm64
     runs-on: macos-14
     steps:
-    - uses: actions/checkout@v4
+    - uses: actions/checkout@v6
 
     - name: Install Toolchain
       run: brew install --force-bottle llvm lld mingw-w64
