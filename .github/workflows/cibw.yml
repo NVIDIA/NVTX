@@ -24,7 +24,7 @@ jobs:
     # due to a bug in the default setuptools installed in the ubuntu-latest image.
     # https://github.com/pypa/setuptools/issues/3269
     - name: Set up Python
-      uses: actions/setup-python@v5
+      uses: actions/setup-python@v6
       with:
         python-version: '>=3.8'
 
