@@ -48,7 +48,7 @@ jobs:
     name: Minimum supported Rust version
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
       - uses: actions/cache@v4
         with:
           path: ${{ env.CARGO_CACHE_PATH }}
@@ -61,7 +61,7 @@ jobs:
     name: Deny
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
       - uses: actions/cache@v4
         with:
           path: ${{ env.CARGO_CACHE_PATH }}
@@ -74,7 +74,7 @@ jobs:
     name: Rustfmt
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
       - run: cargo fmt --all -- --check
 
   check:
@@ -85,7 +85,7 @@ jobs:
       matrix:
         features: ["--all-features", "--no-default-features"]
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
       - uses: actions/cache@v4
         with:
           path: ${{ env.CARGO_CACHE_PATH }}
