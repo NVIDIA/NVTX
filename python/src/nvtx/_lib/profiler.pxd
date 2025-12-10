@@ -7,6 +7,7 @@ cdef class Profile:
 
     cdef bint linenos
     cdef bint annotate_cfuncs
+    cdef bint domain_enabled
 
     cdef push_range(self, message)
     cdef pop_range(self)

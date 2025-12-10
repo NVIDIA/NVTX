@@ -32,7 +32,9 @@ jobs:
       run: pip install python/dist/$(ls python/dist)[test]
 
     - name: Test sdist
-      run: pytest python/tests
+      run: |
+        pytest python/tests
+        pytest --enable-injection python/tests
 
     - name: Upload distribution
       uses: actions/upload-artifact@v5

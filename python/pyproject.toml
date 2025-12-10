@@ -51,7 +51,7 @@ License = "https://nvidia.github.io/NVTX/LICENSE.txt"
 Issues = "https://github.com/NVIDIA/NVTX/issues"
 
 [project.optional-dependencies]
-test = ["pytest", "Cython>=3.1", "setuptools"]
+test = ["pytest", "setuptools"]
 docs = ["sphinx", "nvidia_sphinx_theme"]
 
 [tool.setuptools.package-data]
@@ -65,7 +65,10 @@ addopts = [
 [tool.cibuildwheel]
 skip = "*musllinux*"
 build = "cp*"
-test-command = "pytest {package}/tests"
+test-command = """
+pytest {package}/tests
+pytest --enable-injection {package}/tests
+"""
 test-extras = "test"
 enable = "cpython-freethreading"
 
