@@ -132,6 +132,19 @@ nvtxNameCudaStreamA(graphicsStream, "Graphics");
 nvtxNameCudaStreamA(aiStream, "AI");
 ```
 
+## Thread safety
+
+NVTX is thread safe.
+All NVTX functions can be called concurrently, including initialization, both for C and C++.
+
+### Using sanitizers
+
+Sanitizers may report conflicts in `nvtxImplCore.h` / `nvtxInitDefs.h`.  This is due to optimizations to avoid memory barriers in the hot path.  The implementation ensures that all race outcomes lead to the same result.  The race condition is benign: the worst case is seeing an old initialization function pointer, which will simply trigger re-initialization that immediately detects completion.
+
+### Implementing tools
+
+Tools should be implemented in a thread-safe way.  They should assume that any function may be called concurrently.  Setting callback function pointers should be done atomically, but relaxed memory consistency is sufficient for correctness.
+
 # How do I use NVTX in my code?
 
 For C and C++, NVTX is a header-only library with no dependencies.  Simply #include the header(s) you want to use, and call NVTX functions!  NVTX initializes automatically during the first call to any NVTX function.
