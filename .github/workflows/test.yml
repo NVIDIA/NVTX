@@ -21,11 +21,15 @@ jobs:
         auto-update-conda: true
         conda-remove-defaults: true
 
-    - name: Install Toolchain
+    - name: Aptitude - Update Package Lists
+      run: sudo apt-get update
+    - name: Aptitude - Install Toolchain
+      run: sudo apt-get -y install {gcc,g++}-{9,10,11,12,13,14,mingw-w64-x86-64} {clang,lld}-{14,15,16,17,18,19} ninja-build
+
+    - name: Conda - Create Environment
+      run: conda create -y --name cuda-env
+    - name: Conda - Install CUDA Toolchain
       run: |
-        sudo apt-get update
-        sudo apt-get -y install {gcc,g++}-{9,10,11,12,13,14,mingw-w64-x86-64} {clang,lld}-{14,15,16,17,18,19} ninja-build
-        conda create -y --name cuda-env
         conda install -y --name cuda-env conda-forge::cuda-minimal-build
         rm -f "$CONDA/envs/cuda-env/bin/ld"
 
@@ -90,10 +94,10 @@ jobs:
     steps:
     - uses: actions/checkout@v6
 
-    - name: Install Toolchain
-      run: |
-        sudo apt-get update
-        sudo apt-get -y install {gcc,g++}-{9,10,11,12,13,14,mingw-w64-x86-64} {clang,lld}-{14,15,16,17,18,19} ninja-build
+    - name: Aptitude - Update Package Lists
+      run: sudo apt-get update
+    - name: Aptitude - Install Toolchain
+      run: sudo apt-get -y install {gcc,g++}-{9,10,11,12,13,14,mingw-w64-x86-64} {clang,lld}-{14,15,16,17,18,19} ninja-build
 
     - name: Build (GCC 9)
       run: tests/scripts/build-linux-gcc-9.sh
@@ -161,12 +165,16 @@ jobs:
         auto-update-conda: true
         conda-remove-defaults: true
 
-    - name: Install Toolchain
+    - name: Aptitude - Update Package Lists
+      run: sudo apt-get update
+    - name: Aptitude - Install Toolchain
+      run: sudo apt-get -y install {gcc,g++}-{9,10,11,12,mingw-w64-x86-64} {clang,lld}-{11,12,13,14,15} ninja-build
+
+    - name: Conda - Create Environment
+      run: conda create -y --name cuda-env
+    - name: Conda - Install CUDA Toolchain
       run: |
-        sudo apt-get update
-        sudo apt-get -y install {gcc,g++}-{9,10,11,12,mingw-w64-x86-64} {clang,lld}-{11,12,13,14,15} ninja-build
-        conda create -y --name cuda-env
-        conda install -y --name cuda-env cuda-minimal-build
+        conda install -y --name cuda-env conda-forge::cuda-minimal-build
         rm -f "$CONDA/envs/cuda-env/bin/ld"
 
     - name: Build (GCC 9)
@@ -218,10 +226,10 @@ jobs:
     steps:
     - uses: actions/checkout@v6
 
-    - name: Install Toolchain
-      run: |
-        sudo apt-get update
-        sudo apt-get -y install {gcc,g++}-{9,10,11,12,mingw-w64-x86-64} {clang,lld}-{11,12,13,14,15} ninja-build
+    - name: Aptitude - Update Package Lists
+      run: sudo apt-get update
+    - name: Aptitude - Install Toolchain
+      run: sudo apt-get -y install {gcc,g++}-{9,10,11,12,mingw-w64-x86-64} {clang,lld}-{11,12,13,14,15} ninja-build
 
     - name: Build (GCC 9)
       run: tests/scripts/build-linux-gcc-9.sh
@@ -280,7 +288,6 @@ jobs:
     - name: Conda - Create Environment
       shell: cmd
       run: conda create -y --name cuda-env
-
     - name: Conda - Install CUDA Toolchain
       shell: cmd
       run: conda install -y --name cuda-env conda-forge::cuda-minimal-build
@@ -347,7 +354,6 @@ jobs:
     - name: Conda - Create Environment
       shell: cmd
       run: conda create -y --name cuda-env
-
     - name: Conda - Install CUDA Toolchain
       shell: cmd
       run: conda install -y --name cuda-env conda-forge::cuda-minimal-build
@@ -448,7 +454,7 @@ jobs:
     steps:
     - uses: actions/checkout@v6
 
-    - name: Install Toolchain
+    - name: Homebrew - Install Toolchain
       run: brew install --force-bottle llvm lld mingw-w64
 
     - name: Build (Apple Clang)
@@ -478,7 +484,7 @@ jobs:
     steps:
     - uses: actions/checkout@v6
 
-    - name: Install Toolchain
+    - name: Homebrew - Install Toolchain
       run: brew install --force-bottle llvm lld mingw-w64
 
     - name: Build (Apple Clang)
@@ -508,7 +514,7 @@ jobs:
     steps:
     - uses: actions/checkout@v6
 
-    - name: Install Toolchain
+    - name: Homebrew - Install Toolchain
       run: brew install --force-bottle llvm lld mingw-w64
 
     - name: Build (Apple Clang)
@@ -538,7 +544,7 @@ jobs:
     steps:
     - uses: actions/checkout@v6
 
-    - name: Install Toolchain
+    - name: Homebrew - Install Toolchain
       run: brew install --force-bottle llvm lld mingw-w64
 
     - name: Build (Apple Clang)
