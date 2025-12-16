@@ -189,9 +189,6 @@ jobs:
       matrix:
         os: [2025, 2022]
       fail-fast: false
-    defaults:
-      run:
-        shell: cmd
     env:
       VSPATH: C:\Program Files\Microsoft Visual Studio\2022\Enterprise
     steps:
@@ -210,10 +207,10 @@ jobs:
       timeout-minutes: 10
 
     - name: Build (VS 2022 x64 Native)
-      run: call tests\scripts\build-windows-vs2022-x64.bat
+      run: tests/scripts/build-windows-vs2022-x64.ps1
 
     - name: Run (VS 2022 x64 Native)
-      run: call tests\scripts\run-windows-vs2022-x64.bat
+      run: tests/scripts/run-windows-vs2022-x64.ps1
 
   test-windows-x64-b:
     name: Windows Server ${{ matrix.os }} x64 (B)
@@ -222,57 +219,51 @@ jobs:
       matrix:
         os: [2025, 2022]
       fail-fast: false
-    defaults:
-      run:
-        shell: cmd
     env:
       VSPATH: C:\Program Files\Microsoft Visual Studio\2022\Enterprise
     steps:
     - uses: actions/checkout@v6
 
     - name: Build (VS 2022 x86)
-      run: call tests\scripts\build-windows-vs2022-x64_x86.bat
+      run: tests/scripts/build-windows-vs2022-x64_x86.ps1
 
     - name: Build (VS 2022 Arm64)
-      run: call tests\scripts\build-windows-vs2022-x64_arm64.bat
+      run: tests/scripts/build-windows-vs2022-x64_arm64.ps1
 
     - name: Build (Clang-CL)
-      run: call tests\scripts\build-windows-vs2022-x64-clang-cl.bat
+      run: tests/scripts/build-windows-vs2022-x64-clang-cl.ps1
 
     - name: Run (VS 2022 x86)
-      run: call tests\scripts\run-windows-vs2022-x64_x86.bat
+      run: tests/scripts/run-windows-vs2022-x64_x86.ps1
 
     - name: Run (Clang-CL)
-      run: call tests\scripts\run-windows-vs2022-x64-clang-cl.bat
+      run: tests/scripts/run-windows-vs2022-x64-clang-cl.ps1
 
   test-windows-11-arm64:
     name: Windows 11 Arm64
     runs-on: windows-11-arm
-    defaults:
-      run:
-        shell: cmd
     env:
       VSPATH: C:\Program Files\Microsoft Visual Studio\2022\Enterprise
     steps:
     - uses: actions/checkout@v6
 
     - name: Build (VS 2022 Arm64 Native)
-      run: call tests\scripts\build-windows-vs2022-arm64.bat
+      run: tests/scripts/build-windows-vs2022-arm64.ps1
 
     - name: Build (VS 2022 x64)
-      run: call tests\scripts\build-windows-vs2022-arm64_x64.bat
+      run: tests/scripts/build-windows-vs2022-arm64_x64.ps1
 
     - name: Build (VS 2022 x86)
-      run: call tests\scripts\build-windows-vs2022-arm64_x86.bat
+      run: tests/scripts/build-windows-vs2022-arm64_x86.ps1
 
     - name: Run (VS 2022 Arm64 Native)
-      run: call tests\scripts\run-windows-vs2022-arm64.bat
+      run: tests/scripts/run-windows-vs2022-arm64.ps1
 
     - name: Run (VS 2022 x64)
-      run: call tests\scripts\run-windows-vs2022-arm64_x64.bat
+      run: tests/scripts/run-windows-vs2022-arm64_x64.ps1
 
     - name: Run (VS 2022 x86)
-      run: call tests\scripts\run-windows-vs2022-arm64_x86.bat
+      run: tests/scripts/run-windows-vs2022-arm64_x86.ps1
 
   test-macos:
     name: macOS ${{ matrix.name }}
