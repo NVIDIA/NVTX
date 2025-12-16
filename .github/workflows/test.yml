@@ -20,6 +20,7 @@ jobs:
             runner:
           - name: Arm64
             runner: -arm
+      fail-fast: false
     steps:
     - uses: actions/checkout@v6
 
@@ -113,6 +114,7 @@ jobs:
             runner:
           - name: Arm64
             runner: -arm
+      fail-fast: false
     steps:
     - uses: actions/checkout@v6
 
@@ -186,6 +188,7 @@ jobs:
     strategy:
       matrix:
         os: [2025, 2022]
+      fail-fast: false
     defaults:
       run:
         shell: cmd
@@ -218,6 +221,7 @@ jobs:
     strategy:
       matrix:
         os: [2025, 2022]
+      fail-fast: false
     defaults:
       run:
         shell: cmd
@@ -284,6 +288,7 @@ jobs:
             runner: 15-intel
           - name: 14 Arm64
             runner: 14
+      fail-fast: false
     steps:
     - uses: actions/checkout@v6
 
