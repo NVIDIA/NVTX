@@ -32,7 +32,7 @@ jobs:
       run: sudo apt-get update
       timeout-minutes: 5
     - name: Aptitude - Install Toolchain
-      run: sudo apt-get -y install {gcc,g++}-{9,10,11,12,13,14,mingw-w64-x86-64} {clang,lld}-{14,15,16,17,18,19} ninja-build
+      run: sudo apt-get -y install {gcc,g++}-{9,10,11,12,13,14,mingw-w64-x86-64} {clang,lld}-{14,15,16,17,18,19,20} ninja-build
       timeout-minutes: 10
 
     - name: Conda - Create Environment
@@ -69,6 +69,8 @@ jobs:
       run: tests/scripts/build-linux-clang-18.sh
     - name: Build (Clang 19)
       run: tests/scripts/build-linux-clang-19.sh
+    - name: Build (Clang 20)
+      run: tests/scripts/build-linux-clang-20.sh
 
     - name: Build (MinGW-w64 GCC)
       run: tests/scripts/build-linux-mingw-w64-gcc.sh
@@ -98,6 +100,8 @@ jobs:
       run: cd tests/build-linux-clang-18 && ctest --output-on-failure
     - name: Run (Clang 19)
       run: cd tests/build-linux-clang-19 && ctest --output-on-failure
+    - name: Run (Clang 20)
+      run: cd tests/build-linux-clang-20 && ctest --output-on-failure
 
   test-ubuntu-22-04:
     name: Ubuntu 22.04 ${{ matrix.name }}
