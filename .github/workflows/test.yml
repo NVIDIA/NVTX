@@ -30,15 +30,19 @@ jobs:
 
     - name: Aptitude - Update Package Lists
       run: sudo apt-get update
+      timeout-minutes: 5
     - name: Aptitude - Install Toolchain
       run: sudo apt-get -y install {gcc,g++}-{9,10,11,12,13,14,mingw-w64-x86-64} {clang,lld}-{14,15,16,17,18,19} ninja-build
+      timeout-minutes: 10
 
     - name: Conda - Create Environment
       run: conda create -y --name cuda-env
+      timeout-minutes: 5
     - name: Conda - Install CUDA Toolchain
       run: |
         conda install -y --name cuda-env conda-forge::cuda-minimal-build
         rm -f "$CONDA/envs/cuda-env/bin/ld"
+      timeout-minutes: 10
 
     - name: Build (GCC 9)
       run: tests/scripts/build-linux-gcc-9.sh
@@ -115,15 +119,19 @@ jobs:
 
     - name: Aptitude - Update Package Lists
       run: sudo apt-get update
+      timeout-minutes: 5
     - name: Aptitude - Install Toolchain
       run: sudo apt-get -y install {gcc,g++}-{9,10,11,12,mingw-w64-x86-64} {clang,lld}-{11,12,13,14,15} ninja-build
+      timeout-minutes: 10
 
     - name: Conda - Create Environment
       run: conda create -y --name cuda-env
+      timeout-minutes: 5
     - name: Conda - Install CUDA Toolchain
       run: |
         conda install -y --name cuda-env conda-forge::cuda-minimal-build
         rm -f "$CONDA/envs/cuda-env/bin/ld"
+      timeout-minutes: 10
 
     - name: Build (GCC 9)
       run: tests/scripts/build-linux-gcc-9.sh
@@ -189,8 +197,10 @@ jobs:
 
     - name: Conda - Create Environment
       run: conda create -y --name cuda-env
+      timeout-minutes: 5
     - name: Conda - Install CUDA Toolchain
       run: conda install -y --name cuda-env conda-forge::cuda-minimal-build
+      timeout-minutes: 10
 
     - name: Build (VS 2022 x64 Native)
       run: call tests\scripts\build-windows-vs2022-x64.bat
@@ -275,6 +285,7 @@ jobs:
 
     - name: Homebrew - Install Toolchain
       run: brew install --force-bottle llvm lld mingw-w64
+      timeout-minutes: 10
 
     - name: Build (Apple Clang)
       run: tests/scripts/build-macos-appleclang.sh
