@@ -1058,8 +1058,10 @@ typedef struct nvtxEventBatch_v1
 /**
  * \brief Register a payload schema.
  *
+ * The `attr` pointer only needs to be valid during the call.
+ *
  * @param domain NVTX domain handle.
- * @param attr NVTX payload schema attributes.
+ * @param attr Pointer to the payload schema attributes.
  */
 NVTX_DECLSPEC uint64_t NVTX_API nvtxPayloadSchemaRegister(
     nvtxDomainHandle_t domain,
@@ -1068,8 +1070,10 @@ NVTX_DECLSPEC uint64_t NVTX_API nvtxPayloadSchemaRegister(
 /**
  * \brief Register an enumeration type with the payload extension.
  *
+ * The `attr` pointer only needs to be valid during the call.
+ *
  * @param domain NVTX domain handle
- * @param attr NVTX payload enumeration type attributes.
+ * @param attr Pointer to the payload enumeration type attributes.
  */
 NVTX_DECLSPEC uint64_t NVTX_API nvtxPayloadEnumRegister(
     nvtxDomainHandle_t domain,
@@ -1078,8 +1082,10 @@ NVTX_DECLSPEC uint64_t NVTX_API nvtxPayloadEnumRegister(
 /**
  * \brief Register a scope.
  *
+ * The `attr` pointer only needs to be valid during the call.
+ *
  * @param domain NVTX domain handle
- * @param attr Scope attributes.
+ * @param attr Pointer to the scope attributes.
  *
  * @return an identifier for the scope. If the operation was not successful,
  * `NVTX_SCOPE_NONE` is returned.
