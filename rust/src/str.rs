@@ -16,9 +16,31 @@ pub enum Str {
     Unicode(WideCString),
 }
 
+/// Convert an owned Rust string into [`Str`].
+///
+/// This first attempts [`WideCString::from_str`], then removes interior NUL
+/// characters and retries. If conversion still fails, debug builds trigger a
+/// `debug_assert!`; non-debug builds fall back to an empty [`Str::Ascii`].
+/// Interior NULs are removed and malformed input may be lost. Callers that need
+/// lossless conversion should use an API that reports conversion errors.
 impl From<String> for Str {
     fn from(v: String) -> Self {
-        Self::Unicode(WideCString::from_str(v.as_str()).expect("Could not convert to wide string"))
+        if let Ok(wide) = WideCString::from_str(v.as_str()) {
+            Self::Unicode(wide)
+        } else {
+            // Strip interior NULs so string conversion never panics.
+            let sanitized: String = v.chars().filter(|c| *c != '\0').collect();
+            if let Ok(wide) = WideCString::from_str(sanitized.as_str()) {
+                Self::Unicode(wide)
+            } else {
+                debug_assert!(
+                    false,
+                    "WideCString conversion failed even after NUL-stripping: {v:?}"
+                );
+                // Fallback to an empty ASCII string if wide conversion unexpectedly fails.
+                Self::Ascii(CString::default())
+            }
+        }
     }
 }
 

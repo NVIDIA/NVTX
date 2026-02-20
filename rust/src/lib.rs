@@ -3,6 +3,7 @@
 
 #![deny(missing_docs)]
 #![cfg_attr(docsrs, feature(doc_auto_cfg, doc_cfg))]
+#![cfg_attr(test, allow(clippy::expect_used, clippy::unwrap_used))]
 
 //! Crate for interfacing with NVIDIA's NVTX API
 //!

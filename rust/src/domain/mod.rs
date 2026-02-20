@@ -126,8 +126,8 @@ impl<'a> EventAttributesBuilder<'a> {
     pub fn message(mut self, message: impl Into<Message<'a>>) -> EventAttributesBuilder<'a> {
         // implementation optimization: always prefer registered strings
         let msg = match message.into() {
-            Message::Ascii(s) => self.domain.register_string(s.to_str().unwrap().to_string()),
-            Message::Unicode(s) => self.domain.register_string(s.to_string().unwrap()),
+            Message::Ascii(s) => self.domain.register_string(s.to_string_lossy().to_string()),
+            Message::Unicode(s) => self.domain.register_string(s.to_string_lossy().clone()),
             Message::Registered(r) => r,
         };
         assert!(
@@ -242,13 +242,13 @@ impl Domain {
     pub fn register_string(&self, string: impl Into<Str>) -> RegisteredString<'_> {
         let into_string: Str = string.into();
         let owned_string = match &into_string {
-            Str::Ascii(s) => s.to_str().unwrap().to_string(),
-            Str::Unicode(s) => s.to_string().unwrap(),
+            Str::Ascii(s) => s.to_string_lossy().to_string(),
+            Str::Unicode(s) => s.to_string_lossy().clone(),
         };
         let (handle, uid) = *self
             .strings
             .lock()
-            .unwrap()
+            .unwrap_or_else(std::sync::PoisonError::into_inner)
             .entry(owned_string)
             .or_insert_with(|| {
                 let id = 1 + self.registered_strings.fetch_add(1, Ordering::SeqCst);
@@ -293,14 +293,14 @@ impl Domain {
     pub fn register_category(&self, name: impl Into<Str>) -> Category<'_> {
         let into_name: Str = name.into();
         let owned_name = match &into_name {
-            Str::Ascii(s) => s.to_str().unwrap().to_string(),
-            Str::Unicode(s) => s.to_string().unwrap(),
+            Str::Ascii(s) => s.to_string_lossy().to_string(),
+            Str::Unicode(s) => s.to_string_lossy().clone(),
         };
 
         let id = *self
             .categories
             .lock()
-            .unwrap()
+            .unwrap_or_else(std::sync::PoisonError::into_inner)
             .entry(owned_name)
             .or_insert_with(|| {
                 let id = 1 + self.registered_categories.fetch_add(1, Ordering::SeqCst);

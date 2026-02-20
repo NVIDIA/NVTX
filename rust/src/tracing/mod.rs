@@ -102,7 +102,10 @@ where
 {
     fn on_event(&self, event: &Event<'_>, _ctx: Context<'_, S>) {
         let domain_name = event.metadata().target();
-        let mut lock = self.domains.lock().unwrap();
+        let mut lock = self
+            .domains
+            .lock()
+            .unwrap_or_else(std::sync::PoisonError::into_inner);
         let domain = lock
             .entry(domain_name.to_string())
             .or_insert_with(|| Domain::new(domain_name));
@@ -115,7 +118,9 @@ where
     }
 
     fn on_new_span<'a>(&'a self, attrs: &Attributes<'a>, id: &Id, ctx: Context<'a, S>) {
-        let span = ctx.span(id).unwrap();
+        let Some(span) = ctx.span(id) else {
+            return;
+        };
         let mut data = NvtxData::default();
         let mut visitor = NvtxVisitor::<'_, S>::new(&mut data);
         attrs.record(&mut visitor);
@@ -125,20 +130,27 @@ where
     }
 
     fn on_record(&self, id: &Id, values: &Record<'_>, ctx: Context<'_, S>) {
-        match ctx.span(id).unwrap().extensions_mut().get_mut::<NvtxData>() {
-            Some(data) => {
-                let mut visitor = NvtxVisitor::<'_, S>::new(data);
-                values.record(&mut visitor);
-            }
-            None => todo!(),
+        let Some(span) = ctx.span(id) else {
+            return;
+        };
+        let mut extensions = span.extensions_mut();
+        if let Some(data) = extensions.get_mut::<NvtxData>() {
+            let mut visitor = NvtxVisitor::<'_, S>::new(data);
+            values.record(&mut visitor);
         }
     }
 
     fn on_enter(&self, id: &Id, ctx: Context<'_, S>) {
+        let Some(span) = ctx.span(id) else {
+            return;
+        };
         let mut range_id: Option<u64> = None;
-        if let Some(data) = ctx.span(id).unwrap().extensions().get::<NvtxData>() {
+        if let Some(data) = span.extensions().get::<NvtxData>() {
             let domain_name = data.domain.clone();
-            let mut lock = self.domains.lock().unwrap();
+            let mut lock = self
+                .domains
+                .lock()
+                .unwrap_or_else(std::sync::PoisonError::into_inner);
             let domain = lock
                 .entry(domain_name.clone())
                 .or_insert_with(|| Domain::new(domain_name));
@@ -146,20 +158,27 @@ where
             range_id = Some(domain.range_start(data.event_attributes(domain)));
         };
         if let Some(range) = range_id {
-            ctx.span(id).unwrap().extensions_mut().insert(NvtxId(range));
+            span.extensions_mut().insert(NvtxId(range));
         }
     }
 
     fn on_exit(&self, id: &Id, ctx: Context<'_, S>) {
-        let span = ctx.span(id).unwrap();
-        let data = span.extensions_mut().remove::<NvtxData>().unwrap();
+        let Some(span) = ctx.span(id) else {
+            return;
+        };
+        let maybe_id = span.extensions_mut().remove::<NvtxId>();
+        let Some(data) = span.extensions_mut().remove::<NvtxData>() else {
+            return;
+        };
         let domain_name = data.domain;
-        let mut lock = self.domains.lock().unwrap();
+        let mut lock = self
+            .domains
+            .lock()
+            .unwrap_or_else(std::sync::PoisonError::into_inner);
         let domain = lock
             .entry(domain_name.clone())
             .or_insert_with(|| Domain::new(domain_name));
 
-        let maybe_id = span.extensions_mut().remove::<NvtxId>();
         if let Some(NvtxId(id)) = maybe_id {
             domain.range_end(id)
         }

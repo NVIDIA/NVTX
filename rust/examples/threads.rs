@@ -2,9 +2,30 @@
 // SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception
 
 use std::{
+    any::Any,
     thread::{self, sleep},
     time::Duration,
 };
+
+fn unwrap_join<T>(name: &str, result: thread::Result<T>) -> T {
+    match result {
+        Ok(value) => value,
+        Err(payload) => {
+            log_thread_panic(name, payload.as_ref());
+            std::panic::resume_unwind(payload);
+        }
+    }
+}
+
+fn log_thread_panic(name: &str, payload: &(dyn Any + Send)) {
+    if let Some(message) = payload.downcast_ref::<&str>() {
+        eprintln!("thread {name} panicked: {message}");
+    } else if let Some(message) = payload.downcast_ref::<String>() {
+        eprintln!("thread {name} panicked: {message}");
+    } else {
+        eprintln!("thread {name} panicked with non-string payload");
+    }
+}
 
 fn main() {
     nvtx::name_current_thread("Main Thread");
@@ -26,7 +47,7 @@ fn main() {
         sleep(Duration::from_millis(30))
     });
 
-    t2.join().expect("Failed to join");
-    t1.join().expect("Failed to join");
-    t3.join().expect("Failed to join");
+    unwrap_join("t2", t2.join());
+    unwrap_join("t1", t1.join());
+    unwrap_join("t3", t3.join());
 }

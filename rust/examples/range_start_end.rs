@@ -34,8 +34,9 @@ fn main() {
                     thread::sleep(time::Duration::from_millis(10));
                     drop(inner);
                     if j == i / 2 {
-                        drop(iter.unwrap());
-                        iter = None;
+                        if let Some(range) = iter.take() {
+                            drop(range);
+                        }
                     }
                 }
                 thread::sleep(time::Duration::from_millis(5));
@@ -44,8 +45,9 @@ fn main() {
 
         thread::sleep(time::Duration::from_millis(10));
         if i == 15 {
-            drop(app.unwrap());
-            app = None;
+            if let Some(range) = app.take() {
+                drop(range);
+            }
         }
     }
 }
