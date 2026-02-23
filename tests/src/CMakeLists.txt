@@ -163,6 +163,16 @@ add_nvtx_test_library(coverage-ext-payload SHARED "CoverageExtPayload.c")
 add_nvtx_test_library(coverage-ext-payload-disabled SHARED "CoverageExtPayload.c")
 target_compile_definitions(coverage-ext-payload-disabled PRIVATE NVTX_DISABLE)
 
+set(skip_payload_helper_macros_test OFF)
+# MSVC <= 19.16 cannot expand NVTX payload helper variadic selectors.
+if(MSVC AND MSVC_VERSION LESS_EQUAL 1916)
+    set(skip_payload_helper_macros_test ON)
+endif()
+
+if(NOT skip_payload_helper_macros_test)
+    add_nvtx_test_library(payload-helper-macros SHARED "PayloadEntriesHelper.c")
+endif()
+
 add_nvtx_test_library(coverage-ext-counter SHARED "CoverageExtCounter.c")
 
 add_nvtx_test_library(coverage-ext-counter-disabled SHARED "CoverageExtCounter.c")
@@ -275,6 +285,11 @@ add_test(NAME "CoverageExtPayload" COMMAND runtest -t coverage-ext-payload)
 add_test(NAME "CoverageExtPayload with PrintInjectionC" COMMAND runtest -t coverage-ext-payload -i inj-c)
 add_test(NAME "CoverageExtPayload with PrintInjectionCpp" COMMAND runtest -t coverage-ext-payload -i inj-cpp)
 add_test(NAME "CoverageExtPayload with NVTX_DISABLE" COMMAND runtest -t coverage-ext-payload-disabled)
+if(NOT skip_payload_helper_macros_test)
+    add_test(NAME "PayloadHelperMacros" COMMAND runtest -t payload-helper-macros)
+    add_test(NAME "PayloadHelperMacros with PrintInjectionC" COMMAND runtest -t payload-helper-macros -i inj-c)
+    add_test(NAME "PayloadHelperMacros with PrintInjectionCpp" COMMAND runtest -t payload-helper-macros -i inj-cpp)
+endif()
 add_test(NAME "CoverageExtCounter" COMMAND runtest -t coverage-ext-counter)
 add_test(NAME "CoverageExtCounter with PrintInjectionC" COMMAND runtest -t coverage-ext-counter -i inj-c)
 add_test(NAME "CoverageExtCounter with PrintInjectionCpp" COMMAND runtest -t coverage-ext-counter -i inj-cpp)
