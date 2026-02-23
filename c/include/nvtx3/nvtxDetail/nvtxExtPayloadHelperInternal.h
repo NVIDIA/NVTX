@@ -245,7 +245,8 @@
 /* Resolve to schema entry. `entry` is `(ctype, name, ...)`. */
 #define _NVTX_PAYLOAD_SCHEMA_INIT_ENTRY(struct_id, entry) \
     {_NVTX_PAYLOAD_SCHEMA_INIT_ENTRY_FRONT entry \
-    offsetof(struct_id, _NVTX_PAYLOAD_SCHEMA_INIT_ENTRY_END entry)},
+    offsetof(struct_id, _NVTX_PAYLOAD_SCHEMA_INIT_ENTRY_END entry), \
+    NVTX_NULLPTR, NVTX_NULLPTR},
 
 /* Handle up to 16 schema entries. */
 #define _NVTX_PAYLOAD_INIT_SME1(s, e1)       _NVTX_PAYLOAD_SCHEMA_INIT_ENTRY(s, e1)
