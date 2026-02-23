@@ -183,14 +183,26 @@ jobs:
       run: cd tests/build-linux-clang-15 && ctest --output-on-failure
 
   test-windows-x64-a:
-    name: Windows Server ${{ matrix.os }} x64 (A)
-    runs-on: windows-${{ matrix.os }}
+    name: Windows Server ${{ matrix.os }} x64 with VS ${{ matrix.vsyear }} (A)
+    runs-on: windows-${{ matrix.os }}${{ matrix.runner }}
     strategy:
       matrix:
-        os: [2025, 2022]
+        include:
+          - os: 2022
+            runner:
+            vsyear: 2022
+            vspath: 2022
+          - os: 2025
+            runner:
+            vsyear: 2022
+            vspath: 2022
+          - os: 2025
+            runner: -vs2026
+            vsyear: 2026
+            vspath: 18
       fail-fast: false
     env:
-      VSPATH: C:\Program Files\Microsoft Visual Studio\2022\Enterprise
+      VSPATH: C:\Program Files\Microsoft Visual Studio\${{ matrix.vspath }}\Enterprise
     steps:
     - uses: actions/checkout@v6
 
@@ -206,64 +218,81 @@ jobs:
       run: conda install -y --name cuda-env conda-forge::cuda-minimal-build
       timeout-minutes: 10
 
-    - name: Build (VS 2022 x64 Native)
-      run: tests/scripts/build-windows-vs2022-x64.ps1
+    - name: Build (VS ${{ matrix.vsyear }} x64 Native)
+      run: tests/scripts/build-windows-vs${{ matrix.vsyear }}-x64.ps1
 
-    - name: Run (VS 2022 x64 Native)
-      run: tests/scripts/run-windows-vs2022-x64.ps1
+    - name: Run (VS ${{ matrix.vsyear }} x64 Native)
+      run: tests/scripts/run-windows-vs${{ matrix.vsyear }}-x64.ps1
 
   test-windows-x64-b:
-    name: Windows Server ${{ matrix.os }} x64 (B)
-    runs-on: windows-${{ matrix.os }}
+    name: Windows Server ${{ matrix.os }} x64 with VS ${{ matrix.vsyear }} (B)
+    runs-on: windows-${{ matrix.os }}${{ matrix.runner }}
     strategy:
       matrix:
-        os: [2025, 2022]
+        include:
+          - os: 2022
+            runner:
+            vsyear: 2022
+            vspath: 2022
+          - os: 2025
+            runner:
+            vsyear: 2022
+            vspath: 2022
+          - os: 2025
+            runner: -vs2026
+            vsyear: 2026
+            vspath: 18
       fail-fast: false
     env:
-      VSPATH: C:\Program Files\Microsoft Visual Studio\2022\Enterprise
+      VSPATH: C:\Program Files\Microsoft Visual Studio\${{ matrix.vspath }}\Enterprise
     steps:
     - uses: actions/checkout@v6
 
-    - name: Build (VS 2022 x86)
-      run: tests/scripts/build-windows-vs2022-x64_x86.ps1
+    - name: Build (VS ${{ matrix.vsyear }} x86)
+      run: tests/scripts/build-windows-vs${{ matrix.vsyear }}-x64_x86.ps1
 
-    - name: Build (VS 2022 Arm64)
-      run: tests/scripts/build-windows-vs2022-x64_arm64.ps1
+    - name: Build (VS ${{ matrix.vsyear }} Arm64)
+      run: tests/scripts/build-windows-vs${{ matrix.vsyear }}-x64_arm64.ps1
 
     - name: Build (Clang-CL)
-      run: tests/scripts/build-windows-vs2022-x64-clang-cl.ps1
+      run: tests/scripts/build-windows-vs${{ matrix.vsyear }}-x64-clang-cl.ps1
 
-    - name: Run (VS 2022 x86)
-      run: tests/scripts/run-windows-vs2022-x64_x86.ps1
+    - name: Run (VS ${{ matrix.vsyear }} x86)
+      run: tests/scripts/run-windows-vs${{ matrix.vsyear }}-x64_x86.ps1
 
     - name: Run (Clang-CL)
-      run: tests/scripts/run-windows-vs2022-x64-clang-cl.ps1
+      run: tests/scripts/run-windows-vs${{ matrix.vsyear }}-x64-clang-cl.ps1
 
   test-windows-11-arm64:
-    name: Windows 11 Arm64
+    name: Windows 11 Arm64 with VS ${{ matrix.vsyear }}
     runs-on: windows-11-arm
+    strategy:
+      matrix:
+        include:
+          - vsyear: 2022
+            vspath: 2022
     env:
-      VSPATH: C:\Program Files\Microsoft Visual Studio\2022\Enterprise
+      VSPATH: C:\Program Files\Microsoft Visual Studio\${{ matrix.vspath }}\Enterprise
     steps:
     - uses: actions/checkout@v6
 
-    - name: Build (VS 2022 Arm64 Native)
-      run: tests/scripts/build-windows-vs2022-arm64.ps1
+    - name: Build (VS ${{ matrix.vsyear }} Arm64 Native)
+      run: tests/scripts/build-windows-vs${{ matrix.vsyear }}-arm64.ps1
 
-    - name: Build (VS 2022 x64)
-      run: tests/scripts/build-windows-vs2022-arm64_x64.ps1
+    - name: Build (VS ${{ matrix.vsyear }} x64)
+      run: tests/scripts/build-windows-vs${{ matrix.vsyear }}-arm64_x64.ps1
 
-    - name: Build (VS 2022 x86)
-      run: tests/scripts/build-windows-vs2022-arm64_x86.ps1
+    - name: Build (VS ${{ matrix.vsyear }} x86)
+      run: tests/scripts/build-windows-vs${{ matrix.vsyear }}-arm64_x86.ps1
 
-    - name: Run (VS 2022 Arm64 Native)
-      run: tests/scripts/run-windows-vs2022-arm64.ps1
+    - name: Run (VS ${{ matrix.vsyear }} Arm64 Native)
+      run: tests/scripts/run-windows-vs${{ matrix.vsyear }}-arm64.ps1
 
-    - name: Run (VS 2022 x64)
-      run: tests/scripts/run-windows-vs2022-arm64_x64.ps1
+    - name: Run (VS ${{ matrix.vsyear }} x64)
+      run: tests/scripts/run-windows-vs${{ matrix.vsyear }}-arm64_x64.ps1
 
-    - name: Run (VS 2022 x86)
-      run: tests/scripts/run-windows-vs2022-arm64_x86.ps1
+    - name: Run (VS ${{ matrix.vsyear }} x86)
+      run: tests/scripts/run-windows-vs${{ matrix.vsyear }}-arm64_x86.ps1
 
   test-macos:
     name: macOS ${{ matrix.name }}
