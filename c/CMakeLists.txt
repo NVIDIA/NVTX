@@ -53,6 +53,7 @@ option(NVTX3_INSTALL "Install NVTX3" ${NVTX3_TOP_LEVEL_PROJECT})
 
 include(nvtxImportedTargets.cmake)
 set_target_properties(nvtx3-c PROPERTIES EXPORT_PROPERTIES VERSION)
+set_target_properties(nvtx3-cpp PROPERTIES EXPORT_PROPERTIES VERSION)
 
 if(NVTX3_INSTALL)
     # Add installation rules
