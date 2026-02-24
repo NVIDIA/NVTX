@@ -78,15 +78,17 @@ where
             .as_ref()
             .map_or(M::default_encoding(), M::encode);
         nvtx_sys::EventAttributes {
+            // CAST: NVTX_VERSION is forwarded as the raw 16-bit API version field.
             version: nvtx_sys::NVTX_VERSION as u16,
+            // CAST: Size is a fixed ABI field encoded as a 16-bit value.
             size: nvtx_sys::NVTX_EVENT_ATTRIBUTES_SIZE as u16,
             category: cat,
-            colorType: color_type as i32,
+            colorType: i32::from(color_type),
             color: color_value,
-            payloadType: payload_type as i32,
+            payloadType: i32::from(payload_type),
             reserved0: 0,
             payload: payload_value,
-            messageType: message_type as i32,
+            messageType: i32::from(message_type),
             message: message_value,
         }
     }

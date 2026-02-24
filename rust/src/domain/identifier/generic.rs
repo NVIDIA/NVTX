@@ -60,7 +60,8 @@ mod tests {
     #[test]
     fn test_identifier_pointer() {
         let dummy = ();
-        let ptr = std::ptr::addr_of!(dummy) as *const std::os::raw::c_void;
+        // CAST: Raw pointer retyping has no `From`; use pointer `.cast()` for this test value.
+        let ptr = std::ptr::addr_of!(dummy).cast::<std::os::raw::c_void>();
         let x = GenericIdentifier::Pointer(ptr);
         let i = Identifier::from(x);
         assert!(matches!(i, Identifier::Generic(GenericIdentifier::Pointer(p)) if p == ptr));
@@ -93,7 +94,8 @@ mod tests {
     #[test]
     fn test_encode_pointer() {
         let dummy = ();
-        let ptr = std::ptr::addr_of!(dummy) as *const std::os::raw::c_void;
+        // CAST: Raw pointer retyping has no `From`; use pointer `.cast()` for this test value.
+        let ptr = std::ptr::addr_of!(dummy).cast::<std::os::raw::c_void>();
         let x = GenericIdentifier::Pointer(ptr);
         let (t, v) = x.encode();
         assert_eq!(t, nvtx_sys::resource_type::GENERIC_POINTER);

@@ -30,6 +30,7 @@ impl TypeValueEncodable for CudaRuntimeIdentifier {
             Self::Device(id) => (
                 CUDART_DEVICE,
                 Self::Value {
+                    // CAST: CUDA runtime device IDs are passed through as raw identifier bits for NVTX.
                     ullValue: *id as u64,
                 },
             ),
@@ -61,8 +62,7 @@ mod tests {
 
     #[test]
     fn test_identifier_event() {
-        let dummy = ();
-        let ptr = std::ptr::addr_of!(dummy) as nvtx_sys::CudaEvent;
+        let ptr: nvtx_sys::CudaEvent = std::ptr::null_mut();
         let x = CudaRuntimeIdentifier::Event(ptr);
         let i = Identifier::from(x);
         assert!(matches!(i, Identifier::CudaRuntime(CudaRuntimeIdentifier::Event(p)) if p == ptr));
@@ -70,8 +70,7 @@ mod tests {
 
     #[test]
     fn test_identifier_stream() {
-        let dummy = ();
-        let ptr = std::ptr::addr_of!(dummy) as nvtx_sys::CudaStream;
+        let ptr: nvtx_sys::CudaStream = std::ptr::null_mut();
         let x = CudaRuntimeIdentifier::Stream(ptr);
         let i = Identifier::from(x);
         assert!(matches!(i, Identifier::CudaRuntime(CudaRuntimeIdentifier::Stream(p)) if p == ptr));
@@ -84,6 +83,7 @@ mod tests {
         let (t, v) = x.encode();
         assert_eq!(t, nvtx_sys::resource_type::CUDART_DEVICE);
         unsafe {
+            // CAST: Test compares the encoded raw identifier bits exactly as NVTX stores them.
             assert!(
                 matches!(v, nvtx_sys::ResourceAttributesIdentifier { ullValue: id } if id == (device_id as u64))
             );
@@ -92,28 +92,26 @@ mod tests {
 
     #[test]
     fn test_encode_event() {
-        let dummy = ();
-        let ptr = std::ptr::addr_of!(dummy) as nvtx_sys::CudaEvent;
+        let ptr: nvtx_sys::CudaEvent = std::ptr::null_mut();
         let x = CudaRuntimeIdentifier::Event(ptr);
         let (t, v) = x.encode();
         assert_eq!(t, nvtx_sys::resource_type::CUDART_EVENT);
         unsafe {
             assert!(
-                matches!(v, nvtx_sys::ResourceAttributesIdentifier { pValue: p } if std::ptr::eq(p, ptr as *const c_void))
+                matches!(v, nvtx_sys::ResourceAttributesIdentifier { pValue: p } if std::ptr::eq(p, ptr.cast_const().cast::<c_void>()))
             );
         }
     }
 
     #[test]
     fn test_encode_stream() {
-        let dummy = ();
-        let ptr = std::ptr::addr_of!(dummy) as nvtx_sys::CudaStream;
+        let ptr: nvtx_sys::CudaStream = std::ptr::null_mut();
         let x = CudaRuntimeIdentifier::Stream(ptr);
         let (t, v) = x.encode();
         assert_eq!(t, nvtx_sys::resource_type::CUDART_STREAM);
         unsafe {
             assert!(
-                matches!(v, nvtx_sys::ResourceAttributesIdentifier { pValue: p } if std::ptr::eq(p, ptr as *const c_void))
+                matches!(v, nvtx_sys::ResourceAttributesIdentifier { pValue: p } if std::ptr::eq(p, ptr.cast_const().cast::<c_void>()))
             );
         }
     }

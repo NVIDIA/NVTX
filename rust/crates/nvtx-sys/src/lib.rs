@@ -12,6 +12,7 @@ pub mod ffi {
 }
 
 /// The NVTX version.
+// CAST: This constant cast stays `as` because `From`/`TryFrom` calls are not const on stable Rust.
 pub const NVTX_VERSION: i16 = ffi::NVTX_VERSION as i16;
 
 /// A unique range identifier.
@@ -25,8 +26,12 @@ pub const NVTX_EVENT_ATTRIBUTES_SIZE: usize = ::std::mem::size_of::<EventAttribu
 /// Struct representing all possible Resource attributes.
 pub type ResourceAttributes = ffi::nvtxResourceAttributes_t;
 
+pub const NVTX_RESOURCE_ATTRIBUTES_SIZE: usize = core::mem::size_of::<ResourceAttributes>();
+
 /// Struct representing all possible User-defined Synchronization attributes.
 pub type SyncUserAttributes = ffi::nvtxSyncUserAttributes_t;
+
+pub const NVTX_SYNC_USER_ATTRIBUTES_SIZE: usize = core::mem::size_of::<SyncUserAttributes>();
 
 /// [`ResourceAttributes`] identifier union.
 pub type ResourceAttributesIdentifier = ffi::nvtxResourceAttributes_v0_identifier_t;
@@ -40,6 +45,84 @@ pub type MessageValue = ffi::nvtxMessageValue_t;
 pub type PayloadType = ffi::nvtxPayloadType_t;
 /// [`EventAttributes`] payload value union.
 pub type PayloadValue = ffi::nvtxEventAttributes_v2_payload_t;
+
+macro_rules! impl_from_repr_u32_enum_for_i32 {
+    ($($ty:ty),+ $(,)?) => {
+        $(
+            impl From<$ty> for i32 {
+                fn from(value: $ty) -> Self {
+                    // CAST: Rust has no blanket enum->int `From`; `as` preserves the 32-bit bit pattern expected by NVTX's i32 fields.
+                    value as i32
+                }
+            }
+        )+
+    };
+}
+
+impl_from_repr_u32_enum_for_i32!(ColorType, MessageType, PayloadType);
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    fn assert_fits_nvtx_i32_field<T>(name: &str, value: T)
+    where
+        T: Into<i32>,
+    {
+        assert!(
+            value.into() >= 0,
+            "{name} must fit in NVTX's signed 32-bit type fields"
+        );
+    }
+
+    #[test]
+    fn enum_type_values_fit_nvtx_i32_fields() {
+        // `nvToolsExt.h` defines these enum values as non-negative constants in
+        // the range 0..=6 for NVTX's signed 32-bit type discriminator fields.
+        assert_fits_nvtx_i32_field("NVTX_COLOR_UNKNOWN", ColorType::NVTX_COLOR_UNKNOWN);
+        assert_fits_nvtx_i32_field("NVTX_COLOR_ARGB", ColorType::NVTX_COLOR_ARGB);
+
+        assert_fits_nvtx_i32_field("NVTX_MESSAGE_UNKNOWN", MessageType::NVTX_MESSAGE_UNKNOWN);
+        assert_fits_nvtx_i32_field(
+            "NVTX_MESSAGE_TYPE_ASCII",
+            MessageType::NVTX_MESSAGE_TYPE_ASCII,
+        );
+        assert_fits_nvtx_i32_field(
+            "NVTX_MESSAGE_TYPE_UNICODE",
+            MessageType::NVTX_MESSAGE_TYPE_UNICODE,
+        );
+        assert_fits_nvtx_i32_field(
+            "NVTX_MESSAGE_TYPE_REGISTERED",
+            MessageType::NVTX_MESSAGE_TYPE_REGISTERED,
+        );
+
+        assert_fits_nvtx_i32_field("NVTX_PAYLOAD_UNKNOWN", PayloadType::NVTX_PAYLOAD_UNKNOWN);
+        assert_fits_nvtx_i32_field(
+            "NVTX_PAYLOAD_TYPE_UNSIGNED_INT64",
+            PayloadType::NVTX_PAYLOAD_TYPE_UNSIGNED_INT64,
+        );
+        assert_fits_nvtx_i32_field(
+            "NVTX_PAYLOAD_TYPE_INT64",
+            PayloadType::NVTX_PAYLOAD_TYPE_INT64,
+        );
+        assert_fits_nvtx_i32_field(
+            "NVTX_PAYLOAD_TYPE_DOUBLE",
+            PayloadType::NVTX_PAYLOAD_TYPE_DOUBLE,
+        );
+        assert_fits_nvtx_i32_field(
+            "NVTX_PAYLOAD_TYPE_UNSIGNED_INT32",
+            PayloadType::NVTX_PAYLOAD_TYPE_UNSIGNED_INT32,
+        );
+        assert_fits_nvtx_i32_field(
+            "NVTX_PAYLOAD_TYPE_INT32",
+            PayloadType::NVTX_PAYLOAD_TYPE_INT32,
+        );
+        assert_fits_nvtx_i32_field(
+            "NVTX_PAYLOAD_TYPE_FLOAT",
+            PayloadType::NVTX_PAYLOAD_TYPE_FLOAT,
+        );
+    }
+}
 
 /// Unique handle for a registered domain.
 #[derive(Debug, Clone, Copy)]
@@ -114,6 +197,7 @@ pub mod resource_type {
     const fn resource_type_u32(value: ResourceType) -> u32 {
         #[cfg(target_os = "windows")]
         {
+            // CAST: This is in a `const fn`, where `From`/`TryFrom` are not const-callable on stable Rust.
             value as u32
         }
         #[cfg(not(target_os = "windows"))]

@@ -503,11 +503,14 @@ impl Domain {
         let (msg_type, msg_value) = materialized_name.encode();
         let (id_type, id_value) = materialized_identifier.encode();
         let attrs = nvtx_sys::ResourceAttributes {
+            // CAST: NVTX_VERSION is forwarded as the raw 16-bit API version field.
             version: nvtx_sys::NVTX_VERSION as u16,
-            size: 32,
+            // CAST: Size is a fixed ABI field encoded as a 16-bit value.
+            size: nvtx_sys::NVTX_RESOURCE_ATTRIBUTES_SIZE as u16,
+            // CAST: NVTX resource type IDs are transported as raw 32-bit patterns into an i32 field.
             identifierType: id_type as i32,
             identifier: id_value,
-            messageType: msg_type as i32,
+            messageType: i32::from(msg_type),
             message: msg_value,
         };
         Resource {
@@ -523,9 +526,11 @@ impl Domain {
         let message = name.into();
         let (msg_type, msg_value) = message.encode();
         let attrs = nvtx_sys::SyncUserAttributes {
+            // CAST: NVTX_VERSION is forwarded as the raw 16-bit API version field.
             version: nvtx_sys::NVTX_VERSION as u16,
-            size: 16,
-            messageType: msg_type as i32,
+            // CAST: Size is a fixed ABI field encoded as a 16-bit value.
+            size: nvtx_sys::NVTX_SYNC_USER_ATTRIBUTES_SIZE as u16,
+            messageType: i32::from(msg_type),
             message: msg_value,
         };
         let handle = nvtx_sys::domain_syncuser_create(self.handle, attrs);

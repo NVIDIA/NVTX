@@ -209,7 +209,12 @@ pub fn name_thread(native_tid: u32, name: impl Into<Str>) {
 /// nvtx::name_current_thread("Main thread");
 /// ```
 pub fn name_current_thread(name: impl Into<Str>) {
-    name_thread(gettid::gettid() as u32, name);
+    let raw_tid = gettid::gettid();
+    let Ok(native_tid) = u32::try_from(raw_tid) else {
+        debug_assert!(false, "OS thread id {raw_tid} does not fit into u32");
+        return;
+    };
+    name_thread(native_tid, name);
 }
 
 /// Register a new category within the default (global) scope.

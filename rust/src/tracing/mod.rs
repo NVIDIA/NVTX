@@ -223,6 +223,7 @@ where
         } else if field.name() == "color" {
             let masked_value = value & 0xFFFFFFFF;
             if value == masked_value {
+                // CAST: The mask check above constrains the value to NVTX's 32-bit color field.
                 self.data.color = Some((value as u32).into())
             }
         }
@@ -233,13 +234,14 @@ where
         } else if field.name() == "color" {
             let masked_value = value & 0xFFFFFFFF;
             if value == masked_value {
+                // CAST: The mask check above constrains the value to NVTX's 32-bit color field.
                 self.data.color = Some((value as u32).into())
             }
         }
     }
     fn record_bool(&mut self, field: &Field, value: bool) {
         if field.name() == "payload" {
-            self.data.payload = Some(Payload::Int32(value as i32));
+            self.data.payload = Some(Payload::Int32(i32::from(u8::from(value))));
         }
     }
     fn record_str(&mut self, field: &Field, value: &str) {
