@@ -85,7 +85,8 @@ if(NVTX3_INSTALL)
     )
 
     # Install the targets
-    install(TARGETS nvtx3-c nvtx3-cpp EXPORT nvtx3-targets)
+    install(TARGETS nvtx3-c nvtx3-cpp EXPORT nvtx3-targets
+        INCLUDES DESTINATION "${CMAKE_INSTALL_INCLUDEDIR}")
     install(EXPORT nvtx3-targets
         FILE nvtx3-targets.cmake
         NAMESPACE nvtx3::
