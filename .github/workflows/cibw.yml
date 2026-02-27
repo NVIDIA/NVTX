@@ -37,7 +37,7 @@ jobs:
         pytest --enable-injection python/tests
 
     - name: Upload distribution
-      uses: actions/upload-artifact@v6
+      uses: actions/upload-artifact@v7
       with:
         name: nvtx-sdist
         path: python/dist
@@ -67,7 +67,7 @@ jobs:
         package-dir: python
 
     - name: Upload distributions
-      uses: actions/upload-artifact@v6
+      uses: actions/upload-artifact@v7
       with:
         path: dist
         name: nvtx-wheels-${{ matrix.os }}
