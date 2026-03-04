@@ -329,3 +329,113 @@
       - tests/build-windows-vs2015-x64_x86/
     expire_in: 1 day
 
+'Windows x64 MSYS2 MinGW-w64-x86_64 UCRT GCC':
+  tags: [windows, x64]
+  timeout: 10m
+  script:
+    - tests/scripts/build-windows-msys2.ps1 UCRT64 gcc
+    - tests/scripts/run-windows-msys2.ps1 UCRT64 gcc
+  artifacts:
+    paths:
+      - tests/build-windows-msys2-ucrt64-gcc/
+    expire_in: 1 day
+
+'Windows x64 MSYS2 MinGW-w64-x86_64 UCRT Clang':
+  tags: [windows, x64]
+  timeout: 10m
+  script:
+    - tests/scripts/build-windows-msys2.ps1 UCRT64 clang
+    - tests/scripts/run-windows-msys2.ps1 UCRT64 clang
+  artifacts:
+    paths:
+      - tests/build-windows-msys2-ucrt64-clang/
+    expire_in: 1 day
+
+'Windows x64 MSYS2 LLVM x86_64 Clang':
+  tags: [windows, x64]
+  timeout: 10m
+  script:
+    - tests/scripts/build-windows-msys2.ps1 CLANG64 clang
+    - tests/scripts/run-windows-msys2.ps1 CLANG64 clang
+  artifacts:
+    paths:
+      - tests/build-windows-msys2-clang64-clang/
+    expire_in: 1 day
+
+'Windows x64 MSYS2 MinGW-w64-x86_64 MSVCRT GCC':
+  tags: [windows, x64]
+  timeout: 10m
+  script:
+    - tests/scripts/build-windows-msys2.ps1 MINGW64 gcc
+    - tests/scripts/run-windows-msys2.ps1 MINGW64 gcc
+  artifacts:
+    paths:
+      - tests/build-windows-msys2-mingw64-gcc/
+    expire_in: 1 day
+
+'Windows x64 MSYS2 MinGW-w64-x86_64 MSVCRT Clang':
+  tags: [windows, x64]
+  timeout: 10m
+  script:
+    - tests/scripts/build-windows-msys2.ps1 MINGW64 clang
+    - tests/scripts/run-windows-msys2.ps1 MINGW64 clang
+  artifacts:
+    paths:
+      - tests/build-windows-msys2-mingw64-clang/
+    expire_in: 1 day
+
+'Windows x64 MSYS2 MinGW-w64-i686 MSVCRT GCC':
+  tags: [windows, x64]
+  timeout: 10m
+  script:
+    - tests/scripts/build-windows-msys2.ps1 MINGW32 gcc
+    - tests/scripts/run-windows-msys2.ps1 MINGW32 gcc
+  artifacts:
+    paths:
+      - tests/build-windows-msys2-mingw32-gcc/
+    expire_in: 1 day
+
+'Windows x64 MSYS2 MinGW-w64-i686 MSVCRT Clang':
+  tags: [windows, x64]
+  timeout: 10m
+  script:
+    - tests/scripts/build-windows-msys2.ps1 MINGW32 clang
+    - tests/scripts/run-windows-msys2.ps1 MINGW32 clang
+  artifacts:
+    paths:
+      - tests/build-windows-msys2-mingw32-clang/
+    expire_in: 1 day
+
+'Windows x64 Cygwin x86_64 GCC':
+  tags: [windows, x64]
+  timeout: 10m
+  script:
+    - tests/scripts/build-windows-cygwin.ps1 x64 gcc
+    - tests/scripts/run-windows-cygwin.ps1 x64 gcc
+  artifacts:
+    paths:
+      - tests/build-windows-cygwin64-gcc/
+    expire_in: 1 day
+
+'Windows x64 Cygwin x86_64 Clang':
+  tags: [windows, x64]
+  timeout: 10m
+  script:
+    - tests/scripts/build-windows-cygwin.ps1 x64 clang
+    - tests/scripts/run-windows-cygwin.ps1 x64 clang
+  artifacts:
+    paths:
+      - tests/build-windows-cygwin64-clang/
+    expire_in: 1 day
+
+'Windows x64 Cygwin i686 GCC':
+  tags: [windows, x64]
+  timeout: 10m
+  script:
+    - tests/scripts/build-windows-cygwin.ps1 x86 gcc
+    - tests/scripts/run-windows-cygwin.ps1 x86 gcc
+  artifacts:
+    paths:
+      - tests/build-windows-cygwin32-gcc/
+    expire_in: 1 day
+
