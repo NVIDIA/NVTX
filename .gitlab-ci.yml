@@ -1,5 +1,5 @@
 
-'Linux NVHPC':
+'Linux x64 NVHPC':
   tags: [linux, x64]
   timeout: 10m
   script:
@@ -11,7 +11,7 @@
       - tests/build-linux-nvhpc/
     expire_in: 1 day
 
-'Linux GCC 9':
+'Linux x64 GCC 9':
   tags: [linux, x64]
   timeout: 10m
   script:
@@ -23,7 +23,7 @@
       - tests/build-linux-gcc-9/
     expire_in: 1 day
 
-'Linux GCC 10':
+'Linux x64 GCC 10':
   tags: [linux, x64]
   timeout: 10m
   script:
@@ -35,7 +35,7 @@
       - tests/build-linux-gcc-10/
     expire_in: 1 day
 
-'Linux GCC 11':
+'Linux x64 GCC 11':
   tags: [linux, x64]
   timeout: 10m
   script:
@@ -47,7 +47,7 @@
       - tests/build-linux-gcc-11/
     expire_in: 1 day
 
-'Linux GCC 12':
+'Linux x64 GCC 12':
   tags: [linux, x64]
   timeout: 10m
   script:
@@ -59,7 +59,7 @@
       - tests/build-linux-gcc-12/
     expire_in: 1 day
 
-'Linux GCC 13':
+'Linux x64 GCC 13':
   tags: [linux, x64]
   timeout: 10m
   script:
@@ -71,7 +71,7 @@
       - tests/build-linux-gcc-13/
     expire_in: 1 day
 
-'Linux GCC 14':
+'Linux x64 GCC 14':
   tags: [linux, x64]
   timeout: 10m
   script:
@@ -83,7 +83,7 @@
       - tests/build-linux-gcc-14/
     expire_in: 1 day
 
-'Linux Clang 14':
+'Linux x64 Clang 14':
   tags: [linux, x64]
   timeout: 10m
   script:
@@ -95,7 +95,7 @@
       - tests/build-linux-clang-14/
     expire_in: 1 day
 
-'Linux Clang 15':
+'Linux x64 Clang 15':
   tags: [linux, x64]
   timeout: 10m
   script:
@@ -107,7 +107,7 @@
       - tests/build-linux-clang-15/
     expire_in: 1 day
 
-'Linux Clang 16':
+'Linux x64 Clang 16':
   tags: [linux, x64]
   timeout: 10m
   script:
@@ -119,7 +119,7 @@
       - tests/build-linux-clang-16/
     expire_in: 1 day
 
-'Linux Clang 17':
+'Linux x64 Clang 17':
   tags: [linux, x64]
   timeout: 10m
   script:
@@ -131,7 +131,7 @@
       - tests/build-linux-clang-17/
     expire_in: 1 day
 
-'Linux Clang 18':
+'Linux x64 Clang 18':
   tags: [linux, x64]
   timeout: 10m
   script:
@@ -143,7 +143,7 @@
       - tests/build-linux-clang-18/
     expire_in: 1 day
 
-'Linux Clang 19':
+'Linux x64 Clang 19':
   tags: [linux, x64]
   timeout: 10m
   script:
@@ -155,7 +155,7 @@
       - tests/build-linux-clang-19/
     expire_in: 1 day
 
-'Linux Clang 20':
+'Linux x64 Clang 20':
   tags: [linux, x64]
   timeout: 10m
   script:
@@ -167,7 +167,7 @@
       - tests/build-linux-clang-20/
     expire_in: 1 day
 
-'Linux AOCC':
+'Linux x64 AOCC':
   tags: [linux, x64]
   timeout: 10m
   script:
@@ -179,7 +179,7 @@
       - tests/build-linux-aocc/
     expire_in: 1 day
 
-'Linux MinGW-w64 GCC (build only)':
+'Linux x64 MinGW-w64 GCC (build only)':
   tags: [linux, x64]
   timeout: 10m
   script:
@@ -189,7 +189,7 @@
       - tests/build-linux-mingw-w64-gcc/
     expire_in: 1 day
 
-'Windows VS 2026 x64':
+'Windows x64 VS 2026 x64':
   tags: [windows, x64]
   timeout: 10m
   script:
@@ -200,7 +200,7 @@
       - tests/build-windows-vs2026-x64/
     expire_in: 1 day
 
-'Windows VS 2026 x64_x86':
+'Windows x64 VS 2026 x64_x86':
   tags: [windows, x64]
   timeout: 10m
   script:
@@ -211,7 +211,7 @@
       - tests/build-windows-vs2026-x64_x86/
     expire_in: 1 day
 
-'Windows VS 2026 Arm64 (build only)':
+'Windows x64 VS 2026 Arm64 (build only)':
   tags: [windows, x64]
   timeout: 10m
   script:
@@ -221,7 +221,7 @@
       - tests/build-windows-vs2026-x64_arm64/
     expire_in: 1 day
 
-'Windows VS 2022 x64':
+'Windows x64 VS 2022 x64':
   tags: [windows, x64]
   timeout: 10m
   script:
@@ -232,7 +232,7 @@
       - tests/build-windows-vs2022-x64/
     expire_in: 1 day
 
-'Windows VS 2022 x64_x86':
+'Windows x64 VS 2022 x64_x86':
   tags: [windows, x64]
   timeout: 10m
   script:
@@ -243,7 +243,7 @@
       - tests/build-windows-vs2022-x64_x86/
     expire_in: 1 day
 
-'Windows VS 2022 Arm64 (build only)':
+'Windows x64 VS 2022 Arm64 (build only)':
   tags: [windows, x64]
   timeout: 10m
   script:
@@ -253,7 +253,7 @@
       - tests/build-windows-vs2022-x64_arm64/
     expire_in: 1 day
 
-'Windows VS 2019 x64':
+'Windows x64 VS 2019 x64':
   tags: [windows, x64]
   timeout: 10m
   script:
@@ -264,7 +264,7 @@
       - tests/build-windows-vs2019-x64/
     expire_in: 1 day
 
-'Windows VS 2019 x64_x86':
+'Windows x64 VS 2019 x64_x86':
   tags: [windows, x64]
   timeout: 10m
   script:
@@ -275,7 +275,7 @@
       - tests/build-windows-vs2019-x64_x86/
     expire_in: 1 day
 
-'Windows VS 2019 Arm64 (build only)':
+'Windows x64 VS 2019 Arm64 (build only)':
   tags: [windows, x64]
   timeout: 10m
   script:
@@ -285,7 +285,7 @@
       - tests/build-windows-vs2019-x64_arm64/
     expire_in: 1 day
 
-'Windows VS 2017 x64':
+'Windows x64 VS 2017 x64':
   tags: [windows, x64]
   timeout: 10m
   script:
@@ -296,7 +296,7 @@
       - tests/build-windows-vs2017-x64/
     expire_in: 1 day
 
-'Windows VS 2017 x64_x86':
+'Windows x64 VS 2017 x64_x86':
   tags: [windows, x64]
   timeout: 10m
   script:
@@ -307,7 +307,7 @@
       - tests/build-windows-vs2017-x64_x86/
     expire_in: 1 day
 
-'Windows VS 2015 x64':
+'Windows x64 VS 2015 x64':
   tags: [windows, x64]
   timeout: 10m
   script:
@@ -318,7 +318,7 @@
       - tests/build-windows-vs2015-x64/
     expire_in: 1 day
 
-'Windows VS 2015 x64_x86':
+'Windows x64 VS 2015 x64_x86':
   tags: [windows, x64]
   timeout: 10m
   script:
