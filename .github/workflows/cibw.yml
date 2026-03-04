@@ -56,7 +56,7 @@ jobs:
 
     - name: Set up QEMU
       if: matrix.os == 'ubuntu-latest'
-      uses: docker/setup-qemu-action@v3
+      uses: docker/setup-qemu-action@v4
       with:
         platforms: arm64
 
