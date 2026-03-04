@@ -15,7 +15,7 @@
   tags: [linux, x64]
   timeout: 10m
   script:
-    - tests/scripts/build-linux-gcc-9.sh
+    - tests/scripts/build-linux-gcc.sh 9
     - cd tests/build-linux-gcc-9
     - ctest --output-on-failure
   artifacts:
@@ -27,7 +27,7 @@
   tags: [linux, x64]
   timeout: 10m
   script:
-    - tests/scripts/build-linux-gcc-10.sh
+    - tests/scripts/build-linux-gcc.sh 10
     - cd tests/build-linux-gcc-10
     - ctest --output-on-failure
   artifacts:
@@ -39,7 +39,7 @@
   tags: [linux, x64]
   timeout: 10m
   script:
-    - tests/scripts/build-linux-gcc-11.sh
+    - tests/scripts/build-linux-gcc.sh 11
     - cd tests/build-linux-gcc-11
     - ctest --output-on-failure
   artifacts:
@@ -51,7 +51,7 @@
   tags: [linux, x64]
   timeout: 10m
   script:
-    - tests/scripts/build-linux-gcc-12.sh
+    - tests/scripts/build-linux-gcc.sh 12
     - cd tests/build-linux-gcc-12
     - ctest --output-on-failure
   artifacts:
@@ -63,7 +63,7 @@
   tags: [linux, x64]
   timeout: 10m
   script:
-    - tests/scripts/build-linux-gcc-13.sh
+    - tests/scripts/build-linux-gcc.sh 13
     - cd tests/build-linux-gcc-13
     - ctest --output-on-failure
   artifacts:
@@ -75,7 +75,7 @@
   tags: [linux, x64]
   timeout: 10m
   script:
-    - tests/scripts/build-linux-gcc-14.sh
+    - tests/scripts/build-linux-gcc.sh 14
     - cd tests/build-linux-gcc-14
     - ctest --output-on-failure
   artifacts:
@@ -87,7 +87,7 @@
   tags: [linux, x64]
   timeout: 10m
   script:
-    - tests/scripts/build-linux-clang-14.sh
+    - tests/scripts/build-linux-clang.sh 14
     - cd tests/build-linux-clang-14
     - ctest --output-on-failure
   artifacts:
@@ -99,7 +99,7 @@
   tags: [linux, x64]
   timeout: 10m
   script:
-    - tests/scripts/build-linux-clang-15.sh
+    - tests/scripts/build-linux-clang.sh 15
     - cd tests/build-linux-clang-15
     - ctest --output-on-failure
   artifacts:
@@ -111,7 +111,7 @@
   tags: [linux, x64]
   timeout: 10m
   script:
-    - tests/scripts/build-linux-clang-16.sh
+    - tests/scripts/build-linux-clang.sh 16
     - cd tests/build-linux-clang-16
     - ctest --output-on-failure
   artifacts:
@@ -123,7 +123,7 @@
   tags: [linux, x64]
   timeout: 10m
   script:
-    - tests/scripts/build-linux-clang-17.sh
+    - tests/scripts/build-linux-clang.sh 17
     - cd tests/build-linux-clang-17
     - ctest --output-on-failure
   artifacts:
@@ -135,7 +135,7 @@
   tags: [linux, x64]
   timeout: 10m
   script:
-    - tests/scripts/build-linux-clang-18.sh
+    - tests/scripts/build-linux-clang.sh 18
     - cd tests/build-linux-clang-18
     - ctest --output-on-failure
   artifacts:
@@ -147,7 +147,7 @@
   tags: [linux, x64]
   timeout: 10m
   script:
-    - tests/scripts/build-linux-clang-19.sh
+    - tests/scripts/build-linux-clang.sh 19
     - cd tests/build-linux-clang-19
     - ctest --output-on-failure
   artifacts:
@@ -159,7 +159,7 @@
   tags: [linux, x64]
   timeout: 10m
   script:
-    - tests/scripts/build-linux-clang-20.sh
+    - tests/scripts/build-linux-clang.sh 20
     - cd tests/build-linux-clang-20
     - ctest --output-on-failure
   artifacts:

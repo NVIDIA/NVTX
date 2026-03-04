@@ -46,32 +46,32 @@ jobs:
       timeout-minutes: 10
 
     - name: Build (GCC 9)
-      run: tests/scripts/build-linux-gcc-9.sh
+      run: tests/scripts/build-linux-gcc.sh 9
     - name: Build (GCC 10)
-      run: tests/scripts/build-linux-gcc-10.sh
+      run: tests/scripts/build-linux-gcc.sh 10
     - name: Build (GCC 11)
-      run: tests/scripts/build-linux-gcc-11.sh
+      run: tests/scripts/build-linux-gcc.sh 11
     - name: Build (GCC 12)
-      run: tests/scripts/build-linux-gcc-12.sh
+      run: tests/scripts/build-linux-gcc.sh 12
     - name: Build (GCC 13)
-      run: tests/scripts/build-linux-gcc-13.sh
+      run: tests/scripts/build-linux-gcc.sh 13
     - name: Build (GCC 14)
-      run: tests/scripts/build-linux-gcc-14.sh
+      run: tests/scripts/build-linux-gcc.sh 14
 
     - name: Build (Clang 14)
-      run: tests/scripts/build-linux-clang-14.sh
+      run: tests/scripts/build-linux-clang.sh 14
     - name: Build (Clang 15)
-      run: tests/scripts/build-linux-clang-15.sh
+      run: tests/scripts/build-linux-clang.sh 15
     - name: Build (Clang 16)
-      run: tests/scripts/build-linux-clang-16.sh
+      run: tests/scripts/build-linux-clang.sh 16
     - name: Build (Clang 17)
-      run: tests/scripts/build-linux-clang-17.sh
+      run: tests/scripts/build-linux-clang.sh 17
     - name: Build (Clang 18)
-      run: tests/scripts/build-linux-clang-18.sh
+      run: tests/scripts/build-linux-clang.sh 18
     - name: Build (Clang 19)
-      run: tests/scripts/build-linux-clang-19.sh
+      run: tests/scripts/build-linux-clang.sh 19
     - name: Build (Clang 20)
-      run: tests/scripts/build-linux-clang-20.sh
+      run: tests/scripts/build-linux-clang.sh 20
 
     - name: Build (MinGW-w64 GCC)
       run: tests/scripts/build-linux-mingw-w64-gcc.sh
@@ -140,24 +140,24 @@ jobs:
       timeout-minutes: 10
 
     - name: Build (GCC 9)
-      run: tests/scripts/build-linux-gcc-9.sh
+      run: tests/scripts/build-linux-gcc.sh 9
     - name: Build (GCC 10)
-      run: tests/scripts/build-linux-gcc-10.sh
+      run: tests/scripts/build-linux-gcc.sh 10
     - name: Build (GCC 11)
-      run: tests/scripts/build-linux-gcc-11.sh
+      run: tests/scripts/build-linux-gcc.sh 11
     - name: Build (GCC 12)
-      run: tests/scripts/build-linux-gcc-12.sh
+      run: tests/scripts/build-linux-gcc.sh 12
 
     - name: Build (Clang 11)
-      run: tests/scripts/build-linux-clang-11.sh
+      run: tests/scripts/build-linux-clang.sh 11
     - name: Build (Clang 12)
-      run: tests/scripts/build-linux-clang-12.sh
+      run: tests/scripts/build-linux-clang.sh 12
     - name: Build (Clang 13)
-      run: tests/scripts/build-linux-clang-13.sh
+      run: tests/scripts/build-linux-clang.sh 13
     - name: Build (Clang 14)
-      run: tests/scripts/build-linux-clang-14.sh
+      run: tests/scripts/build-linux-clang.sh 14
     - name: Build (Clang 15)
-      run: tests/scripts/build-linux-clang-15.sh
+      run: tests/scripts/build-linux-clang.sh 15
 
     - name: Build (MinGW-w64 GCC)
       run: tests/scripts/build-linux-mingw-w64-gcc.sh
