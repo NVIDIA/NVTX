@@ -1,10 +1,24 @@
+param(
+    [Parameter(Mandatory)][string]$VsYear
+)
+
 $ErrorActionPreference = "Stop"
 Set-StrictMode -Version Latest
 
+$Arch = "x64"
+
+$VcVarsVer = switch ($VsYear) {
+    "2015" { "14.0" }
+    "2017" { "14.16" }
+    "2019" { "14.29" }
+    "2022" { "14.44" }
+    "2026" { "14.50" }
+    default { throw "Unknown VS year: $VsYear" }
+}
 
 Push-Location "$env:VSPATH\VC\Auxiliary\Build"
 
-cmd /c "vcvarsall.bat arm64_x86 -vcvars_ver=14.50 & set" |
+cmd /c "vcvarsall.bat $Arch -vcvars_ver=$VcVarsVer & set" |
 foreach {
   if ($_ -match "=") {
     $v = $_.split("=", 2); set-item -force -path "ENV:\$($v[0])" -value "$($v[1])"
@@ -17,11 +31,10 @@ Pop-Location
 
 Push-Location "$PSScriptRoot\.."
 
-$NAME = "build-windows-vs2026-arm64_x86"
+$NAME = "build-windows-vs$VsYear-$Arch-clang-cl"
 Set-Location $NAME
 
 & "$env:VSPATH\Common7\IDE\CommonExtensions\Microsoft\CMake\CMake\bin\ctest.exe" --output-on-failure
 if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
 
 Pop-Location
-

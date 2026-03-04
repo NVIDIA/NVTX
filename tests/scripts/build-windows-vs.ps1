@@ -1,0 +1,58 @@
+param(
+    [Parameter(Mandatory)][string]$VsYear,
+    [Parameter(Mandatory)][string]$Arch
+)
+
+$ErrorActionPreference = "Stop"
+Set-StrictMode -Version Latest
+
+$VcVarsVer = switch ($VsYear) {
+    "2015" { "14.0" }
+    "2017" { "14.16" }
+    "2019" { "14.29" }
+    "2022" { "14.44" }
+    "2026" { "14.50" }
+    default { throw "Unknown VS year: $VsYear" }
+}
+
+$SdkArg = if ($VsYear -eq "2015" -or ($VsYear -eq "2019" -and $Arch -eq "x64_arm64")) { "10.0.22621.0 " } else { "" }
+
+Push-Location "$env:VSPATH\VC\Auxiliary\Build"
+
+cmd /c "vcvarsall.bat $Arch ${SdkArg}-vcvars_ver=$VcVarsVer & set" |
+foreach {
+  if ($_ -match "=") {
+    $v = $_.split("=", 2); set-item -force -path "ENV:\$($v[0])" -value "$($v[1])"
+  }
+}
+if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+
+Pop-Location
+
+
+Push-Location "$PSScriptRoot\.."
+
+$NAME = "build-windows-vs$VsYear-$Arch"
+New-Item -ItemType Directory -Force -Path $NAME | Out-Null
+Set-Location $NAME
+
+$CudaArgs = @("-DENABLE_CUDA=False")
+if ($Arch -eq "x64" -and [int]$VsYear -ge 2017 -and [int]$VsYear -le 2022) {
+    $CondaEnv = switch ($VsYear) {
+        "2017" { "cuda-12-9-env" }
+        default { "cuda-env" }
+    }
+    $NVCC = "$env:CONDA\envs\$CondaEnv\Library\bin\nvcc.exe"
+    if (Test-Path $NVCC) {
+        $NvccForward = $NVCC -replace '\\', '/'
+        $CudaArgs = @("-DENABLE_CUDA:BOOL=True", "-DCMAKE_CUDA_COMPILER=$NvccForward")
+    }
+}
+
+& "$env:VSPATH\Common7\IDE\CommonExtensions\Microsoft\CMake\CMake\bin\cmake.exe" .. -G Ninja -DCMAKE_BUILD_TYPE=Release @CudaArgs
+if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+
+& "$env:VSPATH\Common7\IDE\CommonExtensions\Microsoft\CMake\Ninja\ninja.exe"
+if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+
+Pop-Location

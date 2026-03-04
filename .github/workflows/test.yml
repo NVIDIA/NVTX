@@ -219,10 +219,10 @@ jobs:
       timeout-minutes: 10
 
     - name: Build (VS ${{ matrix.vsyear }} x64 Native)
-      run: tests/scripts/build-windows-vs${{ matrix.vsyear }}-x64.ps1
+      run: tests/scripts/build-windows-vs.ps1 ${{ matrix.vsyear }} x64
 
     - name: Run (VS ${{ matrix.vsyear }} x64 Native)
-      run: tests/scripts/run-windows-vs${{ matrix.vsyear }}-x64.ps1
+      run: tests/scripts/run-windows-vs.ps1 ${{ matrix.vsyear }} x64
 
   test-windows-x64-b:
     name: Windows Server ${{ matrix.os }} x64 with VS ${{ matrix.vsyear }} (B)
@@ -249,19 +249,19 @@ jobs:
     - uses: actions/checkout@v6
 
     - name: Build (VS ${{ matrix.vsyear }} x86)
-      run: tests/scripts/build-windows-vs${{ matrix.vsyear }}-x64_x86.ps1
+      run: tests/scripts/build-windows-vs.ps1 ${{ matrix.vsyear }} x64_x86
 
     - name: Build (VS ${{ matrix.vsyear }} Arm64)
-      run: tests/scripts/build-windows-vs${{ matrix.vsyear }}-x64_arm64.ps1
+      run: tests/scripts/build-windows-vs.ps1 ${{ matrix.vsyear }} x64_arm64
 
     - name: Build (Clang-CL)
-      run: tests/scripts/build-windows-vs${{ matrix.vsyear }}-x64-clang-cl.ps1
+      run: tests/scripts/build-windows-vs-clang-cl.ps1 ${{ matrix.vsyear }}
 
     - name: Run (VS ${{ matrix.vsyear }} x86)
-      run: tests/scripts/run-windows-vs${{ matrix.vsyear }}-x64_x86.ps1
+      run: tests/scripts/run-windows-vs.ps1 ${{ matrix.vsyear }} x64_x86
 
     - name: Run (Clang-CL)
-      run: tests/scripts/run-windows-vs${{ matrix.vsyear }}-x64-clang-cl.ps1
+      run: tests/scripts/run-windows-vs-clang-cl.ps1 ${{ matrix.vsyear }}
 
   test-windows-11-arm64:
     name: Windows 11 Arm64 with VS ${{ matrix.vsyear }}
@@ -277,22 +277,22 @@ jobs:
     - uses: actions/checkout@v6
 
     - name: Build (VS ${{ matrix.vsyear }} Arm64 Native)
-      run: tests/scripts/build-windows-vs${{ matrix.vsyear }}-arm64.ps1
+      run: tests/scripts/build-windows-vs.ps1 ${{ matrix.vsyear }} arm64
 
     - name: Build (VS ${{ matrix.vsyear }} x64)
-      run: tests/scripts/build-windows-vs${{ matrix.vsyear }}-arm64_x64.ps1
+      run: tests/scripts/build-windows-vs.ps1 ${{ matrix.vsyear }} arm64_x64
 
     - name: Build (VS ${{ matrix.vsyear }} x86)
-      run: tests/scripts/build-windows-vs${{ matrix.vsyear }}-arm64_x86.ps1
+      run: tests/scripts/build-windows-vs.ps1 ${{ matrix.vsyear }} arm64_x86
 
     - name: Run (VS ${{ matrix.vsyear }} Arm64 Native)
-      run: tests/scripts/run-windows-vs${{ matrix.vsyear }}-arm64.ps1
+      run: tests/scripts/run-windows-vs.ps1 ${{ matrix.vsyear }} arm64
 
     - name: Run (VS ${{ matrix.vsyear }} x64)
-      run: tests/scripts/run-windows-vs${{ matrix.vsyear }}-arm64_x64.ps1
+      run: tests/scripts/run-windows-vs.ps1 ${{ matrix.vsyear }} arm64_x64
 
     - name: Run (VS ${{ matrix.vsyear }} x86)
-      run: tests/scripts/run-windows-vs${{ matrix.vsyear }}-arm64_x86.ps1
+      run: tests/scripts/run-windows-vs.ps1 ${{ matrix.vsyear }} arm64_x86
 
   test-macos:
     name: macOS ${{ matrix.name }}

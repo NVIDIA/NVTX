@@ -193,8 +193,8 @@
   tags: [windows, x64]
   timeout: 10m
   script:
-    - tests/scripts/build-windows-vs2026-x64.ps1
-    - tests/scripts/run-windows-vs2026-x64.ps1
+    - tests/scripts/build-windows-vs.ps1 2026 x64
+    - tests/scripts/run-windows-vs.ps1 2026 x64
   artifacts:
     paths:
       - tests/build-windows-vs2026-x64/
@@ -204,8 +204,8 @@
   tags: [windows, x64]
   timeout: 10m
   script:
-    - tests/scripts/build-windows-vs2026-x64_x86.ps1
-    - tests/scripts/run-windows-vs2026-x64_x86.ps1
+    - tests/scripts/build-windows-vs.ps1 2026 x64_x86
+    - tests/scripts/run-windows-vs.ps1 2026 x64_x86
   artifacts:
     paths:
       - tests/build-windows-vs2026-x64_x86/
@@ -215,7 +215,7 @@
   tags: [windows, x64]
   timeout: 10m
   script:
-    - tests/scripts/build-windows-vs2026-x64_arm64.ps1
+    - tests/scripts/build-windows-vs.ps1 2026 x64_arm64
   artifacts:
     paths:
       - tests/build-windows-vs2026-x64_arm64/
@@ -225,8 +225,8 @@
   tags: [windows, x64]
   timeout: 10m
   script:
-    - tests/scripts/build-windows-vs2022-x64.ps1
-    - tests/scripts/run-windows-vs2022-x64.ps1
+    - tests/scripts/build-windows-vs.ps1 2022 x64
+    - tests/scripts/run-windows-vs.ps1 2022 x64
   artifacts:
     paths:
       - tests/build-windows-vs2022-x64/
@@ -236,8 +236,8 @@
   tags: [windows, x64]
   timeout: 10m
   script:
-    - tests/scripts/build-windows-vs2022-x64_x86.ps1
-    - tests/scripts/run-windows-vs2022-x64_x86.ps1
+    - tests/scripts/build-windows-vs.ps1 2022 x64_x86
+    - tests/scripts/run-windows-vs.ps1 2022 x64_x86
   artifacts:
     paths:
       - tests/build-windows-vs2022-x64_x86/
@@ -247,7 +247,7 @@
   tags: [windows, x64]
   timeout: 10m
   script:
-    - tests/scripts/build-windows-vs2022-x64_arm64.ps1
+    - tests/scripts/build-windows-vs.ps1 2022 x64_arm64
   artifacts:
     paths:
       - tests/build-windows-vs2022-x64_arm64/
@@ -257,8 +257,8 @@
   tags: [windows, x64]
   timeout: 10m
   script:
-    - tests/scripts/build-windows-vs2019-x64.ps1
-    - tests/scripts/run-windows-vs2019-x64.ps1
+    - tests/scripts/build-windows-vs.ps1 2019 x64
+    - tests/scripts/run-windows-vs.ps1 2019 x64
   artifacts:
     paths:
       - tests/build-windows-vs2019-x64/
@@ -268,8 +268,8 @@
   tags: [windows, x64]
   timeout: 10m
   script:
-    - tests/scripts/build-windows-vs2019-x64_x86.ps1
-    - tests/scripts/run-windows-vs2019-x64_x86.ps1
+    - tests/scripts/build-windows-vs.ps1 2019 x64_x86
+    - tests/scripts/run-windows-vs.ps1 2019 x64_x86
   artifacts:
     paths:
       - tests/build-windows-vs2019-x64_x86/
@@ -279,7 +279,7 @@
   tags: [windows, x64]
   timeout: 10m
   script:
-    - tests/scripts/build-windows-vs2019-x64_arm64.ps1
+    - tests/scripts/build-windows-vs.ps1 2019 x64_arm64
   artifacts:
     paths:
       - tests/build-windows-vs2019-x64_arm64/
@@ -289,8 +289,8 @@
   tags: [windows, x64]
   timeout: 10m
   script:
-    - tests/scripts/build-windows-vs2017-x64.ps1
-    - tests/scripts/run-windows-vs2017-x64.ps1
+    - tests/scripts/build-windows-vs.ps1 2017 x64
+    - tests/scripts/run-windows-vs.ps1 2017 x64
   artifacts:
     paths:
       - tests/build-windows-vs2017-x64/
@@ -300,8 +300,8 @@
   tags: [windows, x64]
   timeout: 10m
   script:
-    - tests/scripts/build-windows-vs2017-x64_x86.ps1
-    - tests/scripts/run-windows-vs2017-x64_x86.ps1
+    - tests/scripts/build-windows-vs.ps1 2017 x64_x86
+    - tests/scripts/run-windows-vs.ps1 2017 x64_x86
   artifacts:
     paths:
       - tests/build-windows-vs2017-x64_x86/
@@ -311,8 +311,8 @@
   tags: [windows, x64]
   timeout: 10m
   script:
-    - tests/scripts/build-windows-vs2015-x64.ps1
-    - tests/scripts/run-windows-vs2015-x64.ps1
+    - tests/scripts/build-windows-vs.ps1 2015 x64
+    - tests/scripts/run-windows-vs.ps1 2015 x64
   artifacts:
     paths:
       - tests/build-windows-vs2015-x64/
@@ -322,8 +322,8 @@
   tags: [windows, x64]
   timeout: 10m
   script:
-    - tests/scripts/build-windows-vs2015-x64_x86.ps1
-    - tests/scripts/run-windows-vs2015-x64_x86.ps1
+    - tests/scripts/build-windows-vs.ps1 2015 x64_x86
+    - tests/scripts/run-windows-vs.ps1 2015 x64_x86
   artifacts:
     paths:
       - tests/build-windows-vs2015-x64_x86/
