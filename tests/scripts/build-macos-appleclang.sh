@@ -1,4 +1,5 @@
 #!/usr/bin/env zsh
+set -euo pipefail
 
 NAME='build-macos-appleclang'
 LOCATION="$(cd "$(dirname "$0")/.." ; pwd)"
