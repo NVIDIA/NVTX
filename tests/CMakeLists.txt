@@ -47,6 +47,8 @@ endif()
 
 project ("NvtxTests" LANGUAGES ${NVTX_LANGUAGES})
 
+include("${CMAKE_CURRENT_SOURCE_DIR}/CompilerWarnings.cmake")
+
 if(NOT DEFINED ENABLE_NVTX3_HPP_TESTS)
     set(ENABLE_NVTX3_HPP_TESTS True)
 endif()
