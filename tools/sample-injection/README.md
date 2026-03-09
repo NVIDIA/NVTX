@@ -79,6 +79,20 @@ Build\Debug\test.exe
 NVTX_INJECTION64_PATH=$PWD/Build/libnvtx_sample_injection.so python Test/NvtxTest.py
 ```
 
+### Extended payloads API tests
+There are two test executables that exercise the payload extension:
+
+| Binary | Source | Language |
+|---|---|---|
+| `test_payloads_api` | [NvtxPayloadsApiTests.c](Test/NvtxPayloadsApiTests.c) | C (helper macros & raw API) |
+| `test_payloads_cpp_api` | [NvtxPayloadsCppApiTests.cpp](Test/NvtxPayloadsCppApiTests.cpp) | C++ (nvtx3 wrappers) |
+
+```sh
+NVTX_INJECTION64_PATH=$PWD/Build/libnvtx_sample_injection.so Build/test_payloads_api
+```
+
+Set `NVTX_PAYLOAD_FORMAT=json` to switch output from the default text format to JSON:
+
 # NVTX Extended Payloads
 
 The NVTX payload extension (`nvToolsExtPayload.h`) allows applications to attach

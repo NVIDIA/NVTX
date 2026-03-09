@@ -20,7 +20,7 @@
 
 cmake_minimum_required(VERSION 3.16)
 
-project(nvtx_sample_injection CXX)
+project(nvtx_sample_injection C CXX)
 
 set(NVTX_INCLUDE_PATH ${CMAKE_SOURCE_DIR}/Import/NVTX/include)
 
@@ -65,6 +65,24 @@ add_executable(test
 target_include_directories(test PRIVATE ${NVTX_INCLUDE_PATH})
 set_target_properties(test PROPERTIES
     C_VISIBILITY_PRESET hidden
+    CXX_VISIBILITY_PRESET hidden
+    CXX_STANDARD 17
+)
+
+add_executable(test_payloads_api
+    Test/NvtxPayloadsApiTests.c
+)
+target_include_directories(test_payloads_api PRIVATE ${NVTX_INCLUDE_PATH})
+set_target_properties(test_payloads_api PROPERTIES
+    C_VISIBILITY_PRESET hidden
+    C_STANDARD 11
+)
+
+add_executable(test_payloads_cpp_api
+    Test/NvtxPayloadsCppApiTests.cpp
+)
+target_include_directories(test_payloads_cpp_api PRIVATE ${NVTX_INCLUDE_PATH})
+set_target_properties(test_payloads_cpp_api PROPERTIES
     CXX_VISIBILITY_PRESET hidden
     CXX_STANDARD 17
 )
