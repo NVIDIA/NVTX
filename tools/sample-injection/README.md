@@ -78,3 +78,69 @@ Build\Debug\test.exe
 ```sh
 NVTX_INJECTION64_PATH=$PWD/Build/libnvtx_sample_injection.so python Test/NvtxTest.py
 ```
+
+# NVTX Extended Payloads
+
+The NVTX payload extension (`nvToolsExtPayload.h`) allows applications to attach
+structured, schema-described binary data to NVTX events (marks, push/pop ranges,
+start/end ranges). This goes far beyond the fixed `payload` union in
+`nvtxEventAttributes_t` and enables tools to decode arbitrary user-defined types.
+
+## How it works
+
+1. **Schema & enum registration**: The application registers one or more
+  `nvtxPayloadSchemaAttr_t` and/or `nvtxPayloadEnumAttr_t` descriptors before
+   emitting events. Each descriptor defines the field layout (types, offsets,
+   array shapes) and receives a schema/enum ID (unique per NVTX domain) in return.
+2. **Attaching payloads to events**: A `nvtxPayloadData_t` triple
+  `{schemaId, size, pointer}` associates a raw binary blob with its schema.
+   Multiple payloads can be attached to a single event either through the
+   dedicated `nvtx*Payload` API family or by embedding them in
+   `nvtxEventAttributes_t` via `NVTX_PAYLOAD_EVTATTR_SET_MULTIPLE`.
+3. **Tool-side decoding**: The injection library receives the schema registrations and the raw
+  payload blobs. It can either store schemas and blobs or use the registered schemas to parse
+   binary data into typed fields (integers, floats, strings, nested structs, enums, arrays) and
+   format them for display purposes.
+
+## Extension initialization
+
+The injection exports `InitializeInjectionNvtxExtension` alongside the
+standard `InitializeInjectionNvtx2`. When the NVTX payload extension is first
+used by the application, NVTX calls the extension initializer with an
+`nvtxExtModuleInfo_t` that carries the module/compat IDs and function-slot
+table. The injection fills the slots with its handler implementations:
+
+
+| Slot                                      | Handler                    |
+| ----------------------------------------- | -------------------------- |
+| `NVTX3EXT_CBID_nvtxPayloadSchemaRegister` | Registers schema layout    |
+| `NVTX3EXT_CBID_nvtxPayloadEnumRegister`   | Registers enum value table |
+| `NVTX3EXT_CBID_nvtxMarkPayload`           | Instant mark with payload  |
+| `NVTX3EXT_CBID_nvtxRangePushPayload`      | Push range with payload    |
+| `NVTX3EXT_CBID_nvtxRangePopPayload`       | Pop range with payload     |
+
+
+See `InitializePayloadExtension` in
+[NvtxSampleInjection.cpp](Source/NvtxSampleInjection.cpp) for the full
+implementation. Note that not all payload extension APIs are implemented here and
+`nvtxPayloadMark` and `nvtxPayloadRangePush` are macros that wrap `nvtxDomainMarkEx` and
+`nvtxDomainRangePushEx` respectively, embedding a single `nvtxPayloadData_t` into the event
+attributes before forwarding the call.
+
+## Output formats
+
+The injection supports two output formats, selectable at runtime:
+
+- **Text** (default): compact human-readable `name=value, ...` output implemented by
+`NvtxPayloadTextVisitor`.
+- **JSON**: enabled by setting `NVTX_PAYLOAD_FORMAT=json`.
+Produces structured JSON objects implemented by `NvtxPayloadJsonVisitor`.
+
+Both formatters implement the `PayloadStreamVisitor` interface and consume the
+same depth-first event stream from the parser.
+
+## Payload source layout
+
+The payload decoding logic lives in [Source/Payload/](Source/Payload/).
+See [Source/Payload/README.md](Source/Payload/README.md) for an architectural
+overview of the parser, schema finalization, and formatter components.

@@ -24,15 +24,38 @@ project(nvtx_sample_injection CXX)
 
 set(NVTX_INCLUDE_PATH ${CMAKE_SOURCE_DIR}/Import/NVTX/include)
 
+# NVTX Payload Parser — self-contained decode/format module, reusable for
+# post-processing (e.g. trace readers) without any injection dependencies.
+add_library(nvtx_payload_parser OBJECT
+    Source/Payload/NvtxPayloadRegistry.cpp
+    Source/Payload/NvtxPayloadParser.cpp
+    Source/Payload/NvtxPayloadSchema.cpp
+    Source/Payload/NvtxPayloadTextFormatter.cpp
+    Source/Payload/NvtxPayloadJsonFormatter.cpp
+)
+target_include_directories(nvtx_payload_parser PUBLIC
+    ${NVTX_INCLUDE_PATH}
+    ${CMAKE_CURRENT_SOURCE_DIR}/Source/Payload
+)
+set_target_properties(nvtx_payload_parser PROPERTIES
+    CXX_STANDARD 17
+    POSITION_INDEPENDENT_CODE ON
+)
+
 # NVTX Sample Injection
 add_library(nvtx_sample_injection SHARED
     Source/NvtxSampleInjection.cpp
+    Source/NvtxPayloadInjectionAdapter.cpp
 )
-target_include_directories(nvtx_sample_injection PRIVATE ${NVTX_INCLUDE_PATH})
+target_link_libraries(nvtx_sample_injection PRIVATE nvtx_payload_parser)
+target_include_directories(nvtx_sample_injection PRIVATE
+    ${NVTX_INCLUDE_PATH}
+    ${CMAKE_CURRENT_SOURCE_DIR}/Source/Payload
+)
 set_target_properties(nvtx_sample_injection PROPERTIES
     C_VISIBILITY_PRESET hidden
     CXX_VISIBILITY_PRESET hidden
-    CXX_STANDARD 11
+    CXX_STANDARD 17
 )
 
 # Test
@@ -43,5 +66,5 @@ target_include_directories(test PRIVATE ${NVTX_INCLUDE_PATH})
 set_target_properties(test PROPERTIES
     C_VISIBILITY_PRESET hidden
     CXX_VISIBILITY_PRESET hidden
-    CXX_STANDARD 11
+    CXX_STANDARD 17
 )
