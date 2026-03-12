@@ -41,7 +41,7 @@ jobs:
       timeout-minutes: 5
     - name: Conda - Install CUDA Toolchain
       run: |
-        conda install -y --name cuda-env conda-forge::cuda-minimal-build
+        conda install -y --name cuda-env -c conda-forge cuda-minimal-build
         rm -f "$CONDA/envs/cuda-env/bin/ld"
       timeout-minutes: 10
 
@@ -135,7 +135,7 @@ jobs:
       timeout-minutes: 5
     - name: Conda - Install CUDA Toolchain
       run: |
-        conda install -y --name cuda-env conda-forge::cuda-minimal-build
+        conda install -y --name cuda-env -c conda-forge cuda-minimal-build
         rm -f "$CONDA/envs/cuda-env/bin/ld"
       timeout-minutes: 10
 
@@ -215,7 +215,7 @@ jobs:
       run: conda create -y --name cuda-env
       timeout-minutes: 5
     - name: Conda - Install CUDA Toolchain
-      run: conda install -y --name cuda-env conda-forge::cuda-minimal-build
+      run: conda install -y --name cuda-env -c conda-forge cuda-minimal-build
       timeout-minutes: 10
 
     - name: Build (VS ${{ matrix.vsyear }} x64 Native)
