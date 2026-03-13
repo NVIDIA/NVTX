@@ -61,7 +61,7 @@ jobs:
         platforms: arm64
 
     - name: Build wheels
-      uses: pypa/cibuildwheel@v3.3
+      uses: pypa/cibuildwheel@v3.4
       with:
         output-dir: dist
         package-dir: python
