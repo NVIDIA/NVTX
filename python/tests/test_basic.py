@@ -121,22 +121,34 @@ def test_pickle_annotate(nvtx_events, message, color, domain, category, payload)
 
 
 def test_start_end(nvtx_events, message, color, domain, category, payload):
-    rng = nvtx.start_range(message, color, domain, category, payload)
-    nvtx.end_range(rng)
+    range_ids = []
+    range_id = nvtx.start_range(message, color, domain, category, payload)
+    nvtx.end_range(range_id)
+    range_ids.append(range_id)
 
     domain_obj = nvtx.get_domain(domain)
-    attributes = domain_obj.get_event_attributes(message, color, category, payload)
-    rng_obj = domain_obj.start_range(attributes)
-    domain_obj.end_range(rng_obj)
+    range_id = domain_obj.start_range(
+        domain_obj.get_event_attributes(
+            message=message, color=color, category=category, payload=payload))
+    domain_obj.end_range(range_id)
+    range_ids.append(range_id)
+
+    range_id = domain_obj.start_range(
+        message=message, color=color, category=category, payload=payload)
+    domain_obj.end_range(range_id)
+    range_ids.append(range_id)
+
+    range_id = domain_obj.start_range(domain_obj.get_event_attributes(),
+        message=message, color=color, category=category, payload=payload)
+    domain_obj.end_range(range_id)
+    range_ids.append(range_id)    
 
     if nvtx_events:
         verify_registration_events(nvtx_events, domain, message, category)
-        verify_start(nvtx_events, domain, message, color=color, category=category,
-                     payload=payload)
-        verify_end(nvtx_events, domain, rng)
-        verify_start(nvtx_events, domain, message, color=color, category=category,
-                     payload=payload)
-        verify_end(nvtx_events, domain, rng_obj)
+        for range_id in range_ids:
+            verify_start(nvtx_events, domain, message, color=color, category=category,
+                        payload=payload)
+            verify_end(nvtx_events, domain, range_id)
     else:
         assert domain_obj is dummy_domain
 
@@ -146,17 +158,20 @@ def test_push_pop(nvtx_events, message, color, domain, category, payload):
     nvtx.pop_range(domain)
 
     domain_obj = nvtx.get_domain(domain)
-    attributes = domain_obj.get_event_attributes(message, color, category, payload)
-    domain_obj.push_range(attributes)
+    domain_obj.push_range(domain_obj.get_event_attributes(message, color, category, payload))
     domain_obj.pop_range()
+    domain_obj.push_range(message=message, color=color, category=category, payload=payload)
+    domain_obj.pop_range()
+    domain_obj.push_range(domain_obj.get_event_attributes(),
+                          message=message, color=color, category=category, payload=payload)
+    domain_obj.pop_range()
+    push_pop_count = 4
     if nvtx_events:
         verify_registration_events(nvtx_events, domain, message, category)
-        verify_push(nvtx_events, domain, message, color=color, category=category,
-                    payload=payload)
-        verify_pop(nvtx_events, domain)
-        verify_push(nvtx_events, domain, message, color=color, category=category,
-                    payload=payload)
-        verify_pop(nvtx_events, domain)
+        for _ in range(push_pop_count):
+            verify_push(nvtx_events, domain, message, color=color, category=category,
+                        payload=payload)
+            verify_pop(nvtx_events, domain)
     else:
         assert domain_obj is dummy_domain
 
@@ -171,6 +186,20 @@ def test_mark(nvtx_events, message, color, domain, category, payload):
         verify_registration_events(nvtx_events, domain, message, category)
         verify_mark(nvtx_events, domain, message, color=color, category=category,
                     payload=payload)
+        verify_mark(nvtx_events, domain, message, color=color, category=category,
+                    payload=payload)
+    else:
+        assert domain_obj is dummy_domain
+
+
+def test_set_event_attributes(nvtx_events, message, color, domain, category, payload):
+    domain_obj = nvtx.get_domain(domain)
+    attributes = domain_obj.get_event_attributes()
+    domain_obj.set_event_attributes(
+        attributes, message=message, color=color, category=category, payload=payload)
+    domain_obj.mark(attributes)
+    if nvtx_events:
+        verify_registration_events(nvtx_events, domain, message, category)
         verify_mark(nvtx_events, domain, message, color=color, category=category,
                     payload=payload)
     else:
