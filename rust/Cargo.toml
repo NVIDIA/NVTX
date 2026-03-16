@@ -51,7 +51,7 @@ tracing-subscriber = { version = "0.3.23", optional = true }
 widestring = "1.2.1"
 
 [dev-dependencies]
-tracing = { version = "0.1.41", features = ["attributes"] }
+tracing = { version = "0.1.44", features = ["attributes"] }
 
 [target.'cfg(unix)'.dependencies]
 libc = "0.2.183"
