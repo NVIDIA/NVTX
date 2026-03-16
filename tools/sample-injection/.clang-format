@@ -1,0 +1,38 @@
+---
+Language:        Cpp
+AllowShortFunctionsOnASingleLine: Empty
+AlignAfterOpenBracket: AlwaysBreak
+AlignOperands: true
+AlwaysBreakAfterDefinitionReturnType: None
+AlwaysBreakAfterReturnType: None
+AlwaysBreakBeforeMultilineStrings: false
+AlwaysBreakTemplateDeclarations: true
+BraceWrapping:
+  AfterCaseLabel:  true
+  AfterClass:      true
+  AfterControlStatement: true
+  AfterEnum:       true
+  AfterFunction:   true
+  AfterNamespace:  false
+  AfterObjCDeclaration: true
+  AfterStruct:     true
+  AfterUnion:      true
+  BeforeElse:      true
+  IndentBraces:    false
+  SplitEmptyFunction: false
+  SplitEmptyRecord: true
+BreakAdjacentStringLiterals: true
+BreakBeforeBinaryOperators: None
+BreakBeforeBraces: Custom
+BreakBeforeInheritanceComma: true
+BreakBeforeTernaryOperators: true
+BreakStringLiterals: true
+
+BinPackArguments: false
+BinPackParameters: false
+ColumnLimit: 100
+IndentWidth: 4
+PointerAlignment: Left
+DisableFormat: false
+ReflowComments: false
+...
