@@ -109,7 +109,7 @@ Data Structures</h2></td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="define-members" name="define-members"></a>
 Macros</h2></td></tr>
-<tr class="memitem:ga1abeb15def646b97b7df002f48c77131" id="r_ga1abeb15def646b97b7df002f48c77131"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___m_e_m_o_r_y.html#ga1abeb15def646b97b7df002f48c77131">NVTX_MEM_HEAP_HANDLE_PROCESS_WIDE</a>&#160;&#160;&#160;(NVTX_STATIC_CAST(<a class="el" href="group___m_e_m_o_r_y.html#ga7fc8355410f6b30baebc184d29fa21f4">nvtxMemHeapHandle_t</a>, 0))</td></tr>
+<tr class="memitem:ga1abeb15def646b97b7df002f48c77131" id="r_ga1abeb15def646b97b7df002f48c77131"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___m_e_m_o_r_y.html#ga1abeb15def646b97b7df002f48c77131">NVTX_MEM_HEAP_HANDLE_PROCESS_WIDE</a>&#160;&#160;&#160;(NVTX_REINTERPRET_CAST(<a class="el" href="group___m_e_m_o_r_y.html#ga7fc8355410f6b30baebc184d29fa21f4">nvtxMemHeapHandle_t</a>, 0))</td></tr>
 <tr class="memdesc:ga1abeb15def646b97b7df002f48c77131"><td class="mdescLeft">&#160;</td><td class="mdescRight">To indicate the full process virtual address space as a heap for functions where a nvtxMemHeapHandle_t is accepted.  <br /></td></tr>
 <tr class="separator:ga1abeb15def646b97b7df002f48c77131"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:gabfc4a973ce7aae0f6bc85758491dffb2" id="r_gabfc4a973ce7aae0f6bc85758491dffb2"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___m_e_m_o_r_y.html#gabfc4a973ce7aae0f6bc85758491dffb2">NVTX_MEM_HEAP_USAGE_TYPE_SUB_ALLOCATOR</a>&#160;&#160;&#160;0x1</td></tr>
@@ -121,7 +121,7 @@ Macros</h2></td></tr>
 <tr class="memitem:gac19a1d873ae0892b29100597a31d1255" id="r_gac19a1d873ae0892b29100597a31d1255"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___m_e_m_o_r_y.html#gac19a1d873ae0892b29100597a31d1255">NVTX_MEM_TYPE_VIRTUAL_ADDRESS</a>&#160;&#160;&#160;0x1</td></tr>
 <tr class="memdesc:gac19a1d873ae0892b29100597a31d1255"><td class="mdescLeft">&#160;</td><td class="mdescRight">Standard process userspace virtual addresses for linear allocations.  <br /></td></tr>
 <tr class="separator:gac19a1d873ae0892b29100597a31d1255"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ga529a4119f1d3993b26475d561dfffb8d" id="r_ga529a4119f1d3993b26475d561dfffb8d"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___m_e_m_o_r_y.html#ga529a4119f1d3993b26475d561dfffb8d">NVTX_MEM_PERMISSIONS_HANDLE_PROCESS_WIDE</a>&#160;&#160;&#160;(NVTX_STATIC_CAST(<a class="el" href="group___m_e_m_o_r_y.html#ga421ec4c6d96c342008aa3d04906643f0">nvtxMemPermissionsHandle_t</a>, 0))</td></tr>
+<tr class="memitem:ga529a4119f1d3993b26475d561dfffb8d" id="r_ga529a4119f1d3993b26475d561dfffb8d"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___m_e_m_o_r_y.html#ga529a4119f1d3993b26475d561dfffb8d">NVTX_MEM_PERMISSIONS_HANDLE_PROCESS_WIDE</a>&#160;&#160;&#160;(NVTX_REINTERPRET_CAST(<a class="el" href="group___m_e_m_o_r_y.html#ga421ec4c6d96c342008aa3d04906643f0">nvtxMemPermissionsHandle_t</a>, 0))</td></tr>
 <tr class="memdesc:ga529a4119f1d3993b26475d561dfffb8d"><td class="mdescLeft">&#160;</td><td class="mdescRight">To indicate you are modifying permissions to the process-wide full virtual address space.  <br /></td></tr>
 <tr class="separator:ga529a4119f1d3993b26475d561dfffb8d"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ga2837d09d1024664ac71218155c7ee405" id="r_ga2837d09d1024664ac71218155c7ee405"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___m_e_m_o_r_y.html#ga2837d09d1024664ac71218155c7ee405">NVTX_MEM_PERMISSIONS_CREATE_FLAGS_NONE</a>&#160;&#160;&#160;0x0</td></tr>
@@ -261,7 +261,7 @@ NVTX_DECLSPEC void NVTX_API&#160;</td><td class="memItemRight" valign="bottom"><
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">#define NVTX_MEM_HEAP_HANDLE_PROCESS_WIDE&#160;&#160;&#160;(NVTX_STATIC_CAST(<a class="el" href="group___m_e_m_o_r_y.html#ga7fc8355410f6b30baebc184d29fa21f4">nvtxMemHeapHandle_t</a>, 0))</td>
+          <td class="memname">#define NVTX_MEM_HEAP_HANDLE_PROCESS_WIDE&#160;&#160;&#160;(NVTX_REINTERPRET_CAST(<a class="el" href="group___m_e_m_o_r_y.html#ga7fc8355410f6b30baebc184d29fa21f4">nvtxMemHeapHandle_t</a>, 0))</td>
         </tr>
       </table>
 </div><div class="memdoc">
@@ -513,7 +513,7 @@ NVTX_DECLSPEC void NVTX_API&#160;</td><td class="memItemRight" valign="bottom"><
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">#define NVTX_MEM_PERMISSIONS_HANDLE_PROCESS_WIDE&#160;&#160;&#160;(NVTX_STATIC_CAST(<a class="el" href="group___m_e_m_o_r_y.html#ga421ec4c6d96c342008aa3d04906643f0">nvtxMemPermissionsHandle_t</a>, 0))</td>
+          <td class="memname">#define NVTX_MEM_PERMISSIONS_HANDLE_PROCESS_WIDE&#160;&#160;&#160;(NVTX_REINTERPRET_CAST(<a class="el" href="group___m_e_m_o_r_y.html#ga421ec4c6d96c342008aa3d04906643f0">nvtxMemPermissionsHandle_t</a>, 0))</td>
         </tr>
       </table>
 </div><div class="memdoc">

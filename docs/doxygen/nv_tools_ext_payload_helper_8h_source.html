@@ -82,8 +82,8 @@ $(document).ready(function() { init_codefold(0); });
   <div class="headertitle"><div class="title">nvToolsExtPayloadHelper.h</div></div>
 </div><!--header-->
 <div class="contents">
-<div class="fragment"><div class="line"><a id="l00001" name="l00001"></a><span class="lineno">    1</span><span class="comment">/*</span></div>
-<div class="line"><a id="l00002" name="l00002"></a><span class="lineno">    2</span><span class="comment"> * SPDX-FileCopyrightText: Copyright (c) 2023-2025 NVIDIA CORPORATION &amp; AFFILIATES. All rights reserved.</span></div>
+<a href="nv_tools_ext_payload_helper_8h.html">Go to the documentation of this file.</a><div class="fragment"><div class="line"><a id="l00001" name="l00001"></a><span class="lineno">    1</span><span class="comment">/*</span></div>
+<div class="line"><a id="l00002" name="l00002"></a><span class="lineno">    2</span><span class="comment"> * SPDX-FileCopyrightText: Copyright (c) 2023-2026 NVIDIA CORPORATION &amp; AFFILIATES. All rights reserved.</span></div>
 <div class="line"><a id="l00003" name="l00003"></a><span class="lineno">    3</span><span class="comment"> * SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception</span></div>
 <div class="line"><a id="l00004" name="l00004"></a><span class="lineno">    4</span><span class="comment"> *</span></div>
 <div class="line"><a id="l00005" name="l00005"></a><span class="lineno">    5</span><span class="comment"> * Licensed under the Apache License, Version 2.0 (the &quot;License&quot;);</span></div>
@@ -114,36 +114,47 @@ $(document).ready(function() { init_codefold(0); });
 <div class="line"><a id="l00030" name="l00030"></a><span class="lineno">   30</span> </div>
 <div class="line"><a id="l00031" name="l00031"></a><span class="lineno">   31</span><span class="preprocessor">#include &quot;nvtxDetail/nvtxExtPayloadHelperInternal.h&quot;</span></div>
 <div class="line"><a id="l00032" name="l00032"></a><span class="lineno">   32</span> </div>
-<div class="line"><a id="l00033" name="l00033"></a><span class="lineno">   33</span> </div>
-<div class="line"><a id="l00034" name="l00034"></a><span class="lineno">   34</span><span class="comment">/* This is just an empty marker (for readability), which can be omitted. */</span></div>
-<div class="line"><a id="l00035" name="l00035"></a><span class="lineno">   35</span><span class="comment">/* TODO: Fix issue with trailing comma at end of entry list. */</span></div>
-<div class="line"><a id="l00036" name="l00036"></a><span class="lineno">   36</span><span class="preprocessor">#define NVTX_PAYLOAD_ENTRIES</span></div>
-<div class="line"><a id="l00037" name="l00037"></a><span class="lineno">   37</span> </div>
-<div class="line"><a id="l00038" name="l00038"></a><span class="lineno">   38</span> </div>
-<div class="line"><a id="l00043" name="l00043"></a><span class="lineno">   43</span><span class="preprocessor">#define NVTX_PAYLOAD_NESTED(schemaId) _NVTX_PAYLOAD_NESTED(schemaId)</span></div>
-<div class="line"><a id="l00044" name="l00044"></a><span class="lineno">   44</span> </div>
-<div class="line"><a id="l00045" name="l00045"></a><span class="lineno">   45</span> </div>
-<div class="line"><a id="l00086" name="l00086"></a><span class="lineno">   86</span><span class="preprocessor">#define NVTX_DEFINE_SCHEMA_FOR_STRUCT(struct_id, ...) \</span></div>
-<div class="line"><a id="l00087" name="l00087"></a><span class="lineno">   87</span><span class="preprocessor">    _NVTX_DEFINE_SCHEMA_FOR_STRUCT(struct_id, __VA_ARGS__)</span></div>
-<div class="line"><a id="l00088" name="l00088"></a><span class="lineno">   88</span> </div>
-<div class="line"><a id="l00089" name="l00089"></a><span class="lineno">   89</span> </div>
-<div class="line"><a id="l00130" name="l00130"></a><span class="lineno">  130</span><span class="preprocessor">#define NVTX_DEFINE_STRUCT_WITH_SCHEMA(struct_id, ...) \</span></div>
-<div class="line"><a id="l00131" name="l00131"></a><span class="lineno">  131</span><span class="preprocessor">    _NVTX_DEFINE_STRUCT_WITH_SCHEMA(struct_id, __VA_ARGS__)</span></div>
-<div class="line"><a id="l00132" name="l00132"></a><span class="lineno">  132</span> </div>
-<div class="line"><a id="l00143" name="l00143"></a><span class="lineno">  143</span><span class="preprocessor">#define NVTX_DEFINE_STRUCT_WITH_SCHEMA_AND_REGISTER(domain, struct_id, ...) \</span></div>
-<div class="line"><a id="l00144" name="l00144"></a><span class="lineno">  144</span><span class="preprocessor">    _NVTX_DEFINE_STRUCT_WITH_SCHEMA(struct_id, __VA_ARGS__) \</span></div>
-<div class="line"><a id="l00145" name="l00145"></a><span class="lineno">  145</span><span class="preprocessor">    const uint64_t struct_id##_schemaId = nvtxPayloadSchemaRegister(domain, &amp;struct_id##Attr);</span></div>
-<div class="line"><a id="l00146" name="l00146"></a><span class="lineno">  146</span> </div>
-<div class="line"><a id="l00156" name="l00156"></a><span class="lineno">  156</span><span class="preprocessor">#define NVTX_DEFINE_SCHEMA_FOR_STRUCT_AND_REGISTER(domain, struct_id, ...) \</span></div>
-<div class="line"><a id="l00157" name="l00157"></a><span class="lineno">  157</span><span class="preprocessor">    _NVTX_DEFINE_SCHEMA_FOR_STRUCT(struct_id, __VA_ARGS__) \</span></div>
-<div class="line"><a id="l00158" name="l00158"></a><span class="lineno">  158</span><span class="preprocessor">    const uint64_t struct_id##_schemaId = nvtxPayloadSchemaRegister(domain, &amp;struct_id##Attr);</span></div>
-<div class="line"><a id="l00159" name="l00159"></a><span class="lineno">  159</span> </div>
-<div class="line"><a id="l00175" name="l00175"></a><span class="lineno">  175</span><span class="preprocessor">#define NVTX_DEFINE_STRUCT(struct_id, ...) \</span></div>
-<div class="line"><a id="l00176" name="l00176"></a><span class="lineno">  176</span><span class="preprocessor">    _NVTX_PAYLOAD_TYPEDEF_STRUCT(struct_id, __VA_ARGS__)</span></div>
-<div class="line"><a id="l00177" name="l00177"></a><span class="lineno">  177</span> </div>
-<div class="line"><a id="l00190" name="l00190"></a><span class="lineno">  190</span><span class="preprocessor">#define NVTX_PAYLOAD_SCHEMA_REGISTER(domain, struct_id) \</span></div>
-<div class="line"><a id="l00191" name="l00191"></a><span class="lineno">  191</span><span class="preprocessor">    nvtxPayloadSchemaRegister(domain, &amp;struct_id##Attr)</span></div>
-<div class="line"><a id="l00192" name="l00192"></a><span class="lineno">  192</span> </div>
+<div class="line"><a id="l00060" name="l00060"></a><span class="lineno">   60</span><span class="comment">/* This is just an empty marker (for readability), which can be omitted. */</span></div>
+<div class="line"><a id="l00061" name="l00061"></a><span class="lineno">   61</span><span class="comment">/* TODO: Fix issue with trailing comma at end of entry list. */</span></div>
+<div class="line"><a id="l00062" name="l00062"></a><span class="lineno">   62</span><span class="preprocessor">#define NVTX_PAYLOAD_ENTRIES</span></div>
+<div class="line"><a id="l00063" name="l00063"></a><span class="lineno">   63</span> </div>
+<div class="line"><a id="l00064" name="l00064"></a><span class="lineno">   64</span> </div>
+<div class="line"><a id="l00069" name="l00069"></a><span class="lineno"><a class="line" href="nv_tools_ext_payload_helper_8h.html#a1b8ef70c6eef9b78d6be4f32dc6cc0d5">   69</a></span><span class="preprocessor">#define NVTX_PAYLOAD_NESTED(schemaId) _NVTX_PAYLOAD_NESTED(schemaId)</span></div>
+<div class="line"><a id="l00070" name="l00070"></a><span class="lineno">   70</span> </div>
+<div class="line"><a id="l00071" name="l00071"></a><span class="lineno">   71</span> </div>
+<div class="foldopen" id="foldopen00116" data-start="" data-end="">
+<div class="line"><a id="l00116" name="l00116"></a><span class="lineno"><a class="line" href="nv_tools_ext_payload_helper_8h.html#a6b3abfc3e694853cc67c943c8881a254">  116</a></span><span class="preprocessor">#define NVTX_DEFINE_SCHEMA_FOR_STRUCT(struct_id, ...) \</span></div>
+<div class="line"><a id="l00117" name="l00117"></a><span class="lineno">  117</span><span class="preprocessor">    _NVTX_DEFINE_SCHEMA_FOR_STRUCT(struct_id, __VA_ARGS__)</span></div>
+</div>
+<div class="line"><a id="l00118" name="l00118"></a><span class="lineno">  118</span> </div>
+<div class="line"><a id="l00119" name="l00119"></a><span class="lineno">  119</span> </div>
+<div class="foldopen" id="foldopen00164" data-start="" data-end="">
+<div class="line"><a id="l00164" name="l00164"></a><span class="lineno"><a class="line" href="nv_tools_ext_payload_helper_8h.html#aa21421255a3472c694d891e6945f1af0">  164</a></span><span class="preprocessor">#define NVTX_DEFINE_STRUCT_WITH_SCHEMA(struct_id, ...) \</span></div>
+<div class="line"><a id="l00165" name="l00165"></a><span class="lineno">  165</span><span class="preprocessor">    _NVTX_DEFINE_STRUCT_WITH_SCHEMA(struct_id, __VA_ARGS__)</span></div>
+</div>
+<div class="line"><a id="l00166" name="l00166"></a><span class="lineno">  166</span> </div>
+<div class="foldopen" id="foldopen00181" data-start="" data-end="">
+<div class="line"><a id="l00181" name="l00181"></a><span class="lineno"><a class="line" href="nv_tools_ext_payload_helper_8h.html#aa6bb751007af478aaf81dbe73899486c">  181</a></span><span class="preprocessor">#define NVTX_DEFINE_STRUCT_WITH_SCHEMA_AND_REGISTER(domain, struct_id, ...) \</span></div>
+<div class="line"><a id="l00182" name="l00182"></a><span class="lineno">  182</span><span class="preprocessor">    _NVTX_DEFINE_STRUCT_WITH_SCHEMA(struct_id, __VA_ARGS__) \</span></div>
+<div class="line"><a id="l00183" name="l00183"></a><span class="lineno">  183</span><span class="preprocessor">    const uint64_t struct_id##_schemaId = nvtxPayloadSchemaRegister(domain, &amp;struct_id##Attr);</span></div>
+</div>
+<div class="line"><a id="l00184" name="l00184"></a><span class="lineno">  184</span> </div>
+<div class="foldopen" id="foldopen00198" data-start="" data-end="">
+<div class="line"><a id="l00198" name="l00198"></a><span class="lineno"><a class="line" href="nv_tools_ext_payload_helper_8h.html#a5253763db5bea84f75686b379b55d477">  198</a></span><span class="preprocessor">#define NVTX_DEFINE_SCHEMA_FOR_STRUCT_AND_REGISTER(domain, struct_id, ...) \</span></div>
+<div class="line"><a id="l00199" name="l00199"></a><span class="lineno">  199</span><span class="preprocessor">    _NVTX_DEFINE_SCHEMA_FOR_STRUCT(struct_id, __VA_ARGS__) \</span></div>
+<div class="line"><a id="l00200" name="l00200"></a><span class="lineno">  200</span><span class="preprocessor">    const uint64_t struct_id##_schemaId = nvtxPayloadSchemaRegister(domain, &amp;struct_id##Attr);</span></div>
+</div>
+<div class="line"><a id="l00201" name="l00201"></a><span class="lineno">  201</span> </div>
+<div class="foldopen" id="foldopen00221" data-start="" data-end="">
+<div class="line"><a id="l00221" name="l00221"></a><span class="lineno"><a class="line" href="nv_tools_ext_payload_helper_8h.html#a9920df0c0458522c3216bace6e607b3d">  221</a></span><span class="preprocessor">#define NVTX_DEFINE_STRUCT(struct_id, ...) \</span></div>
+<div class="line"><a id="l00222" name="l00222"></a><span class="lineno">  222</span><span class="preprocessor">    _NVTX_PAYLOAD_TYPEDEF_STRUCT(struct_id, __VA_ARGS__)</span></div>
+</div>
+<div class="line"><a id="l00223" name="l00223"></a><span class="lineno">  223</span> </div>
+<div class="foldopen" id="foldopen00236" data-start="" data-end="">
+<div class="line"><a id="l00236" name="l00236"></a><span class="lineno"><a class="line" href="nv_tools_ext_payload_helper_8h.html#aeca862f839f536316e52992526174343">  236</a></span><span class="preprocessor">#define NVTX_PAYLOAD_SCHEMA_REGISTER(domain, struct_id) \</span></div>
+<div class="line"><a id="l00237" name="l00237"></a><span class="lineno">  237</span><span class="preprocessor">    nvtxPayloadSchemaRegister(domain, &amp;struct_id##Attr)</span></div>
+</div>
+<div class="line"><a id="l00238" name="l00238"></a><span class="lineno">  238</span> </div>
 </div><!-- fragment --></div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>
