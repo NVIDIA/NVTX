@@ -48,6 +48,11 @@ See [here](https://nvidia.github.io/NVTX/python/) for detailed docs.
 
 ## Release Notes
 
+### 0.2.15
+
+- Extend Domain API to accept keyword arguments for event attributes.
+- Implement testing improvements.
+
 ### 0.2.14
 
 - Add support for NumPy arrays as payloads.

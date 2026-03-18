@@ -37,7 +37,7 @@ New-Item -ItemType Directory -Force -Path $NAME | Out-Null
 Set-Location $NAME
 
 $CudaArgs = @("-DENABLE_CUDA=False")
-if ($Arch -eq "x64" -and [int]$VsYear -ge 2017 -and [int]$VsYear -le 2022) {
+if ($Arch -eq "x64" -and [int]$VsYear -ge 2017 -and [int]$VsYear -le 2026) {
     $CondaEnv = switch ($VsYear) {
         "2017" { "cuda-12-9-env" }
         default { "cuda-env" }

@@ -236,6 +236,16 @@ C89 support in these compilers has not changed in many years, so even very old c
 
 Using different versions of the NVTX headers in the same translation unit or different translation units is supported, as long as best practices are followed.
 
+### Payload helper macros and MSVC
+
+The convenience macros in `nvToolsExtPayloadHelper.h` (`NVTX_DEFINE_SCHEMA_FOR_STRUCT`, `NVTX_DEFINE_STRUCT_WITH_SCHEMA`, `NVTX_DEFINE_STRUCT_WITH_SCHEMA_AND_REGISTER`, `NVTX_DEFINE_SCHEMA_FOR_STRUCT_AND_REGISTER`, and `NVTX_DEFINE_STRUCT`) rely on variadic macro argument counting, which requires a standards-conforming preprocessor.  Microsoft Visual C++'s traditional preprocessor does not expand `__VA_ARGS__` correctly for these patterns.
+
+To use these macros with MSVC, enable the conforming preprocessor:
+- **Visual Studio 2019 and newer:** `/Zc:preprocessor`
+- **Visual Studio 2017 (v15.5+):** `/experimental:preprocessor`
+
+Visual Studio versions older than 2017 do not support the conforming preprocessor and cannot use these macros.  GCC, Clang, and other compilers with conforming preprocessors work without any additional flags.
+
 ## C++
 
 The NVTX C++ API is a header-only library, implemented as a wrapper over the NVTX C API, using **standard C++11**.  The C++ headers are provided alongside the C headers.  NVTX C++ is implemented , and can be compiled with `-std=c++11` or newer using many common compilers.  Tested compilers include:

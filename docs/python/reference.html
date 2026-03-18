@@ -40,9 +40,9 @@
   <link rel="preload" as="script" href="_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf" />
 <link rel="preload" as="script" href="_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf" />
 
-    <script src="_static/documentation_options.js?v=d31d9382"></script>
-    <script src="_static/doctools.js?v=9bcbadda"></script>
-    <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="_static/documentation_options.js?v=71c180b9"></script>
+    <script src="_static/doctools.js?v=fd6eb6e6"></script>
+    <script src="_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script>DOCUMENTATION_OPTIONS.pagename = 'reference';</script>
     <link rel="icon" href="_static/favicon.png"/>
     <link rel="index" title="Index" href="genindex.html" />
@@ -315,7 +315,7 @@
 <span id="api-reference"></span><h1>API Reference<a class="headerlink" href="#module-nvtx" title="Link to this heading">#</a></h1>
 <dl class="py class">
 <dt class="sig sig-object py" id="nvtx.annotate">
-<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">nvtx.</span></span><span class="sig-name descname"><span class="pre">annotate</span></span><span class="sig-paren">(</span>
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">nvtx.</span></span><span class="sig-name descname"><span class="pre">annotate</span></span><span class="sig-paren">(</span>
 
 <dl>
 <dd><em class="sig-param"><span class="n"><span class="pre">message</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>,</dd>
@@ -571,7 +571,7 @@ NumPy to be installed (not installed with <code class="docutils literal notransl
 
 <dl class="py class">
 <dt class="sig sig-object py" id="nvtx.Domain">
-<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">nvtx.</span></span><span class="sig-name descname"><span class="pre">Domain</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#nvtx.Domain" title="Link to this definition">#</a></dt>
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">nvtx.</span></span><span class="sig-name descname"><span class="pre">Domain</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#nvtx.Domain" title="Link to this definition">#</a></dt>
 <dd><p>A class that provides an interface to NVTX API per domain,
 and produces less overhead than using the global functions from <code class="docutils literal notranslate"><span class="pre">nvtx</span></code> module.</p>
 <p class="rubric">Notes</p>
@@ -581,83 +581,24 @@ and produces less overhead than using the global functions from <code class="doc
 the instance returned is a <a class="reference internal" href="#nvtx._lib.lib.DummyDomain" title="nvtx._lib.lib.DummyDomain"><code class="xref py py-class docutils literal notranslate"><span class="pre">nvtx._lib.lib.DummyDomain</span></code></a>.</p></li>
 </ul>
 <dl class="py method">
-<dt class="sig sig-object py" id="nvtx.Domain.mark">
-<span class="sig-name descname"><span class="pre">mark</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">self</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">EventAttributes</span> <span class="pre">attributes</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#nvtx.Domain.mark" title="Link to this definition">#</a></dt>
-<dd><p>Mark an instantaneous event.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>attributes</strong> (<a class="reference internal" href="#nvtx._lib.lib.EventAttributes" title="nvtx._lib.lib.EventAttributes"><em>EventAttributes</em></a>) – The event attributes to be associated with the event.</p>
-</dd>
-</dl>
-<p class="rubric">Examples</p>
-<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span><span class="w"> </span><span class="nn">nvtx</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">domain</span> <span class="o">=</span> <span class="n">nvtx</span><span class="o">.</span><span class="n">Domain</span><span class="p">(</span><span class="s1">&#39;my_domain&#39;</span><span class="p">)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">attributes</span> <span class="o">=</span> <span class="n">domain</span><span class="o">.</span><span class="n">get_event_attributes</span><span class="p">(</span><span class="n">message</span><span class="o">=</span><span class="s1">&#39;my_marker&#39;</span><span class="p">)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">domain</span><span class="o">.</span><span class="n">mark</span><span class="p">(</span><span class="n">attributes</span><span class="p">)</span>
-</pre></div>
-</div>
-</dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="nvtx.Domain.push_range">
-<span class="sig-name descname"><span class="pre">push_range</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">self</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">EventAttributes</span> <span class="pre">attributes</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#nvtx.Domain.push_range" title="Link to this definition">#</a></dt>
-<dd><p>Mark the beginning of a code range.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>attributes</strong> (<a class="reference internal" href="#nvtx._lib.lib.EventAttributes" title="nvtx._lib.lib.EventAttributes"><em>EventAttributes</em></a>) – The event attributes to be associated with the range.</p>
-</dd>
-</dl>
-<p class="rubric">Notes</p>
-<p>When applicable, prefer to use <a class="reference internal" href="#nvtx.annotate" title="nvtx.annotate"><code class="xref py py-class docutils literal notranslate"><span class="pre">annotate</span></code></a>.</p>
-<p class="rubric">Examples</p>
-<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span><span class="w"> </span><span class="nn">time</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span><span class="w"> </span><span class="nn">nvtx</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">domain</span> <span class="o">=</span> <span class="n">nvtx</span><span class="o">.</span><span class="n">Domain</span><span class="p">(</span><span class="s1">&#39;my_domain&#39;</span><span class="p">)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">attributes</span> <span class="o">=</span> <span class="n">domain</span><span class="o">.</span><span class="n">get_event_attributes</span><span class="p">(</span><span class="n">message</span><span class="o">=</span><span class="s1">&#39;my_code_range&#39;</span><span class="p">)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">domain</span><span class="o">.</span><span class="n">push_range</span><span class="p">(</span><span class="n">attributes</span><span class="p">)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">time</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">domain</span><span class="o">.</span><span class="n">pop_range</span><span class="p">()</span>
-</pre></div>
-</div>
-</dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="nvtx.Domain.pop_range">
-<span class="sig-name descname"><span class="pre">pop_range</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">self</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#nvtx.Domain.pop_range" title="Link to this definition">#</a></dt>
-<dd><p>Mark the end of a code range that was started with <a class="reference internal" href="#nvtx.Domain.push_range" title="nvtx.Domain.push_range"><code class="xref py py-func docutils literal notranslate"><span class="pre">Domain.push_range()</span></code></a>.</p>
-</dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="nvtx.Domain.start_range">
-<span class="sig-name descname"><span class="pre">start_range</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">self</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">EventAttributes</span> <span class="pre">attributes</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">int</span></span></span><a class="headerlink" href="#nvtx.Domain.start_range" title="Link to this definition">#</a></dt>
-<dd><p>Mark the beginning of a process range.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>attributes</strong> (<a class="reference internal" href="#nvtx._lib.lib.EventAttributes" title="nvtx._lib.lib.EventAttributes"><em>EventAttributes</em></a>) – The event attributes to be associated with the range.</p>
-</dd>
-<dt class="field-even">Return type<span class="colon">:</span></dt>
-<dd class="field-even"><p>A numeric value that must be passed to <a class="reference internal" href="#nvtx.Domain.end_range" title="nvtx.Domain.end_range"><code class="xref py py-func docutils literal notranslate"><span class="pre">Domain.end_range()</span></code></a>.</p>
-</dd>
-</dl>
-<p class="rubric">Examples</p>
-<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span><span class="w"> </span><span class="nn">time</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span><span class="w"> </span><span class="nn">nvtx</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">domain</span> <span class="o">=</span> <span class="n">nvtx</span><span class="o">.</span><span class="n">Domain</span><span class="p">(</span><span class="s1">&#39;my_domain&#39;</span><span class="p">)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">attributes</span> <span class="o">=</span> <span class="n">domain</span><span class="o">.</span><span class="n">get_event_attributes</span><span class="p">(</span><span class="n">message</span><span class="o">=</span><span class="s1">&#39;my_code_range&#39;</span><span class="p">)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">range_id</span> <span class="o">=</span> <span class="n">domain</span><span class="o">.</span><span class="n">start_range</span><span class="p">(</span><span class="n">attributes</span><span class="p">)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">time</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">domain</span><span class="o">.</span><span class="n">end_range</span><span class="p">(</span><span class="n">range_id</span><span class="p">)</span>
-</pre></div>
-</div>
-</dd></dl>
-
-<dl class="py method">
 <dt class="sig sig-object py" id="nvtx.Domain.end_range">
 <span class="sig-name descname"><span class="pre">end_range</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">self</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">nvtxRangeId_t</span> <span class="pre">range_id</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#nvtx.Domain.end_range" title="Link to this definition">#</a></dt>
 <dd><p>Mark the end of a process range that was started with <a class="reference internal" href="#nvtx.Domain.start_range" title="nvtx.Domain.start_range"><code class="xref py py-func docutils literal notranslate"><span class="pre">Domain.start_range()</span></code></a>.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><p><strong>range_id</strong> (<em>int</em>) – The value returned by <a class="reference internal" href="#nvtx.Domain.start_range" title="nvtx.Domain.start_range"><code class="xref py py-func docutils literal notranslate"><span class="pre">Domain.start_range()</span></code></a>.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="nvtx.Domain.get_category_id">
+<span class="sig-name descname"><span class="pre">get_category_id</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">self</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">name</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">int</span></span></span><a class="headerlink" href="#nvtx.Domain.get_category_id" title="Link to this definition">#</a></dt>
+<dd><p>Returns the category ID corresponding to the category <cite>name</cite>.
+On first use with a specific <cite>name</cite>, a new ID is assigned with the given name.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>name</strong> (<em>str</em>) – The name of the category.</p>
 </dd>
 </dl>
 </dd></dl>
@@ -680,12 +621,14 @@ the instance returned is a <a class="reference internal" href="#nvtx._lib.lib.Du
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>message</strong> (<em>str</em>) – A message associated with the event.
-If the given message is not registered, it is registered under this domain.</p></li>
+If the given message was not registered then it will be registered under this domain.</p></li>
 <li><p><strong>color</strong> (<em>str</em><em>, </em><em>int</em><em>, </em><em>optional</em>) – A color associated with the event.
 Supports <cite>matplotlib</cite> colors if it is available.</p></li>
 <li><p><strong>category</strong> (<em>str</em><em>, </em><em>int</em><em>, </em><em>optional</em>) – A string or an integer specifying the category within the domain under which the event
 is scoped. If unspecified, the event is not associated with a category.</p></li>
-<li><p><strong>payload</strong> (<em>int</em><em>, </em><em>float</em><em>, </em><em>optional</em>) – A numeric value to be associated with this event.</p></li>
+<li><p><strong>payload</strong> (<em>int</em><em>, </em><em>float</em><em>, </em><em>list</em><em>, </em><em>tuple</em><em>, </em><em>range</em><em>, </em><em>bytes</em><em>, </em><em>numpy.ndarray</em><em>, </em><em>optional</em>) – A value associated with the event.
+Using payloads provides a separation between the message and the data of the event,
+which is often useful for analysis.</p></li>
 </ul>
 </dd>
 </dl>
@@ -703,22 +646,187 @@ is scoped. If unspecified, the event is not associated with a category.</p></li>
 </dd></dl>
 
 <dl class="py method">
-<dt class="sig sig-object py" id="nvtx.Domain.get_category_id">
-<span class="sig-name descname"><span class="pre">get_category_id</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">self</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">name</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">int</span></span></span><a class="headerlink" href="#nvtx.Domain.get_category_id" title="Link to this definition">#</a></dt>
-<dd><p>Returns the category ID corresponding to the category <cite>name</cite>.
-On first use with a specific <cite>name</cite>, a new ID is assigned with the given name.</p>
+<dt class="sig sig-object py" id="nvtx.Domain.mark">
+<span class="sig-name descname"><span class="pre">mark</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">self</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">EventAttributes</span> <span class="pre">attributes</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">**kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#nvtx.Domain.mark" title="Link to this definition">#</a></dt>
+<dd><p>Mark an instantaneous event.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>name</strong> (<em>str</em>) – The name of the category.</p>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>attributes</strong> (<a class="reference internal" href="#nvtx._lib.lib.EventAttributes" title="nvtx._lib.lib.EventAttributes"><em>EventAttributes</em></a><em>, </em><em>optional</em>) – The event attributes to be associated with the event.
+If not provided, a new <code class="xref py py-class docutils literal notranslate"><span class="pre">EventAttributes</span></code> object is created
+with the given keyword arguments.
+Otherwise, this method mutates the attributes object if <cite>kwargs</cite> are provided.</p></li>
+<li><p><strong>message</strong> (<em>str</em><em>, </em><em>optional</em>) – A message associated with the event.
+If the given message was not registered then it will be registered under this domain.</p></li>
+<li><p><strong>color</strong> (<em>str</em><em>, </em><em>int</em><em>, </em><em>optional</em>) – A color associated with the event.
+Supports <cite>matplotlib</cite> colors if it is available.</p></li>
+<li><p><strong>category</strong> (<em>str</em><em>, </em><em>int</em><em>, </em><em>optional</em>) – A string or an integer specifying the category within the domain under which the event
+is scoped. If unspecified, the event is not associated with a category.</p></li>
+<li><p><strong>payload</strong> (<em>int</em><em>, </em><em>float</em><em>, </em><em>list</em><em>, </em><em>tuple</em><em>, </em><em>range</em><em>, </em><em>bytes</em><em>, </em><em>numpy.ndarray</em><em>, </em><em>optional</em>) – A value associated with the event.
+Using payloads provides a separation between the message and the data of the event,
+which is often useful for analysis.</p></li>
+</ul>
 </dd>
 </dl>
+<p class="rubric">Examples</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span><span class="w"> </span><span class="nn">nvtx</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">domain</span> <span class="o">=</span> <span class="n">nvtx</span><span class="o">.</span><span class="n">Domain</span><span class="p">(</span><span class="s1">&#39;my_domain&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">domain</span><span class="o">.</span><span class="n">mark</span><span class="p">(</span><span class="n">message</span><span class="o">=</span><span class="s1">&#39;my_marker&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Alternatively, an EventAttributes object can be reused:</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">attributes</span> <span class="o">=</span> <span class="n">domain</span><span class="o">.</span><span class="n">get_event_attributes</span><span class="p">(</span><span class="n">message</span><span class="o">=</span><span class="s1">&#39;my_marker&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">domain</span><span class="o">.</span><span class="n">mark</span><span class="p">(</span><span class="n">attributes</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">domain</span><span class="o">.</span><span class="n">mark</span><span class="p">(</span><span class="n">attributes</span><span class="p">,</span> <span class="n">message</span><span class="o">=</span><span class="s1">&#39;my_marker_2&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="nvtx.Domain.pop_range">
+<span class="sig-name descname"><span class="pre">pop_range</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">self</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#nvtx.Domain.pop_range" title="Link to this definition">#</a></dt>
+<dd><p>Mark the end of a code range that was started with <a class="reference internal" href="#nvtx.Domain.push_range" title="nvtx.Domain.push_range"><code class="xref py py-func docutils literal notranslate"><span class="pre">Domain.push_range()</span></code></a>.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="nvtx.Domain.push_range">
+<span class="sig-name descname"><span class="pre">push_range</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">self</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">EventAttributes</span> <span class="pre">attributes</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">**kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#nvtx.Domain.push_range" title="Link to this definition">#</a></dt>
+<dd><p>Mark the beginning of a code range.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>attributes</strong> (<a class="reference internal" href="#nvtx._lib.lib.EventAttributes" title="nvtx._lib.lib.EventAttributes"><em>EventAttributes</em></a><em>, </em><em>optional</em>) – The event attributes to be associated with the event.
+If not provided, a new <code class="xref py py-class docutils literal notranslate"><span class="pre">EventAttributes</span></code> object is created
+with the given keyword arguments.
+Otherwise, this method mutates the attributes object if <cite>kwargs</cite> are provided.</p></li>
+<li><p><strong>message</strong> (<em>str</em><em>, </em><em>optional</em>) – A message associated with the event.
+If the given message was not registered then it will be registered under this domain.</p></li>
+<li><p><strong>color</strong> (<em>str</em><em>, </em><em>int</em><em>, </em><em>optional</em>) – A color associated with the event.
+Supports <cite>matplotlib</cite> colors if it is available.</p></li>
+<li><p><strong>category</strong> (<em>str</em><em>, </em><em>int</em><em>, </em><em>optional</em>) – A string or an integer specifying the category within the domain under which the event
+is scoped. If unspecified, the event is not associated with a category.</p></li>
+<li><p><strong>payload</strong> (<em>int</em><em>, </em><em>float</em><em>, </em><em>list</em><em>, </em><em>tuple</em><em>, </em><em>range</em><em>, </em><em>bytes</em><em>, </em><em>numpy.ndarray</em><em>, </em><em>optional</em>) – A value associated with the event.
+Using payloads provides a separation between the message and the data of the event,
+which is often useful for analysis.</p></li>
+</ul>
+</dd>
+</dl>
+<p class="rubric">Notes</p>
+<p>When applicable, prefer to use <a class="reference internal" href="#nvtx.annotate" title="nvtx.annotate"><code class="xref py py-class docutils literal notranslate"><span class="pre">annotate</span></code></a>.</p>
+<p class="rubric">Examples</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span><span class="w"> </span><span class="nn">time</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span><span class="w"> </span><span class="nn">nvtx</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">domain</span> <span class="o">=</span> <span class="n">nvtx</span><span class="o">.</span><span class="n">Domain</span><span class="p">(</span><span class="s1">&#39;my_domain&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">domain</span><span class="o">.</span><span class="n">push_range</span><span class="p">(</span><span class="n">message</span><span class="o">=</span><span class="s1">&#39;my_code_range&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">time</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">domain</span><span class="o">.</span><span class="n">pop_range</span><span class="p">()</span>
+</pre></div>
+</div>
+<p>Alternatively, an EventAttributes object can be reused:</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">attributes</span> <span class="o">=</span> <span class="n">domain</span><span class="o">.</span><span class="n">get_event_attributes</span><span class="p">(</span><span class="n">message</span><span class="o">=</span><span class="s1">&#39;my_code_range&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">domain</span><span class="o">.</span><span class="n">push_range</span><span class="p">(</span><span class="n">attributes</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">domain</span><span class="o">.</span><span class="n">push_range</span><span class="p">(</span><span class="n">attributes</span><span class="p">,</span> <span class="n">message</span><span class="o">=</span><span class="s1">&#39;my_code_range_2&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">time</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">domain</span><span class="o">.</span><span class="n">pop_range</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">domain</span><span class="o">.</span><span class="n">pop_range</span><span class="p">()</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="nvtx.Domain.set_event_attributes">
+<span class="sig-name descname"><span class="pre">set_event_attributes</span></span><span class="sig-paren">(</span>
+
+<dl>
+<dd><em class="sig-param"><span class="n"><span class="pre">self</span></span></em>,</dd>
+<dd><em class="sig-param"><span class="n"><span class="pre">EventAttributes</span> <span class="pre">attributes</span></span></em>,</dd>
+<dd><em class="sig-param"><span class="n"><span class="pre">*</span></span></em>,</dd>
+<dd><em class="sig-param"><span class="n"><span class="pre">message</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">DONT_SET</span></span></em>,</dd>
+<dd><em class="sig-param"><span class="n"><span class="pre">color</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">DONT_SET</span></span></em>,</dd>
+<dd><em class="sig-param"><span class="n"><span class="pre">category</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">DONT_SET</span></span></em>,</dd>
+<dd><em class="sig-param"><span class="n"><span class="pre">payload</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">DONT_SET</span></span></em>,</dd>
+</dl>
+
+<span class="sig-paren">)</span><a class="headerlink" href="#nvtx.Domain.set_event_attributes" title="Link to this definition">#</a></dt>
+<dd><p>Set the attributes of an <a class="reference internal" href="#nvtx._lib.lib.EventAttributes" title="nvtx._lib.lib.EventAttributes"><code class="xref py py-class docutils literal notranslate"><span class="pre">nvtx._lib.lib.EventAttributes</span></code></a> object.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>attributes</strong> (<a class="reference internal" href="#nvtx._lib.lib.EventAttributes" title="nvtx._lib.lib.EventAttributes"><em>EventAttributes</em></a><em>, </em><em>optional</em>) – The event attributes to be set.</p></li>
+<li><p><strong>message</strong> (<em>str</em><em>, </em><a class="reference internal" href="#nvtx._lib.lib.RegisteredString" title="nvtx._lib.lib.RegisteredString"><em>RegisteredString</em></a><em>, </em><em>optional</em>) – A message associated with the event.
+If the given message was not registered then it will be registered under this domain.</p></li>
+<li><p><strong>color</strong> (<em>str</em><em>, </em><em>int</em><em>, </em><em>optional</em>) – A color associated with the event.
+Supports <cite>matplotlib</cite> colors if it is available.</p></li>
+<li><p><strong>category</strong> (<em>str</em><em>, </em><em>int</em><em>, </em><em>optional</em>) – A string or an integer specifying the category within the domain under which the event
+is scoped. If unspecified, the event is not associated with a category.</p></li>
+<li><p><strong>payload</strong> (<em>int</em><em>, </em><em>float</em><em>, </em><em>list</em><em>, </em><em>tuple</em><em>, </em><em>range</em><em>, </em><em>bytes</em><em>, </em><em>numpy.ndarray</em><em>, </em><em>optional</em>) – A value associated with the event.
+Using payloads provides a separation between the message and the data of the event,
+which is often useful for analysis.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="nvtx.Domain.start_range">
+<span class="sig-name descname"><span class="pre">start_range</span></span><span class="sig-paren">(</span>
+
+<dl>
+<dd><em class="sig-param"><span class="n"><span class="pre">self</span></span></em>,</dd>
+<dd><em class="sig-param"><span class="n"><span class="pre">EventAttributes</span> <span class="pre">attributes</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>,</dd>
+<dd><em class="sig-param"><span class="n"><span class="pre">**kwargs</span></span></em>,</dd>
+</dl>
+
+<span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">int</span></span></span><a class="headerlink" href="#nvtx.Domain.start_range" title="Link to this definition">#</a></dt>
+<dd><p>Mark the beginning of a process range.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>attributes</strong> (<a class="reference internal" href="#nvtx._lib.lib.EventAttributes" title="nvtx._lib.lib.EventAttributes"><em>EventAttributes</em></a><em>, </em><em>optional</em>) – The event attributes to be associated with the event.
+If not provided, a new <code class="xref py py-class docutils literal notranslate"><span class="pre">EventAttributes</span></code> object is created
+with the given keyword arguments.
+Otherwise, this method mutates the attributes object if <cite>kwargs</cite> are provided.</p></li>
+<li><p><strong>message</strong> (<em>str</em><em>, </em><em>optional</em>) – A message associated with the event.
+If the given message was not registered then it will be registered under this domain.</p></li>
+<li><p><strong>color</strong> (<em>str</em><em>, </em><em>int</em><em>, </em><em>optional</em>) – A color associated with the event.
+Supports <cite>matplotlib</cite> colors if it is available.</p></li>
+<li><p><strong>category</strong> (<em>str</em><em>, </em><em>int</em><em>, </em><em>optional</em>) – A string or an integer specifying the category within the domain under which the event
+is scoped. If unspecified, the event is not associated with a category.</p></li>
+<li><p><strong>payload</strong> (<em>int</em><em>, </em><em>float</em><em>, </em><em>list</em><em>, </em><em>tuple</em><em>, </em><em>range</em><em>, </em><em>bytes</em><em>, </em><em>numpy.ndarray</em><em>, </em><em>optional</em>) – A value associated with the event.
+Using payloads provides a separation between the message and the data of the event,
+which is often useful for analysis.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>A numeric value that must be passed to <a class="reference internal" href="#nvtx.Domain.end_range" title="nvtx.Domain.end_range"><code class="xref py py-func docutils literal notranslate"><span class="pre">Domain.end_range()</span></code></a>.</p>
+</dd>
+</dl>
+<p class="rubric">Examples</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span><span class="w"> </span><span class="nn">time</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span><span class="w"> </span><span class="nn">nvtx</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">domain</span> <span class="o">=</span> <span class="n">nvtx</span><span class="o">.</span><span class="n">Domain</span><span class="p">(</span><span class="s1">&#39;my_domain&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">range_id</span> <span class="o">=</span> <span class="n">domain</span><span class="o">.</span><span class="n">start_range</span><span class="p">(</span><span class="n">message</span><span class="o">=</span><span class="s1">&#39;my_code_range&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">time</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">domain</span><span class="o">.</span><span class="n">end_range</span><span class="p">(</span><span class="n">range_id</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Alternatively, an EventAttributes object can be reused:</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">attributes</span> <span class="o">=</span> <span class="n">domain</span><span class="o">.</span><span class="n">get_event_attributes</span><span class="p">(</span><span class="n">message</span><span class="o">=</span><span class="s1">&#39;my_code_range&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">range_id</span> <span class="o">=</span> <span class="n">domain</span><span class="o">.</span><span class="n">start_range</span><span class="p">(</span><span class="n">attributes</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">time</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">domain</span><span class="o">.</span><span class="n">end_range</span><span class="p">(</span><span class="n">range_id</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">range_id</span> <span class="o">=</span> <span class="n">domain</span><span class="o">.</span><span class="n">start_range</span><span class="p">(</span><span class="n">attributes</span><span class="p">,</span> <span class="n">message</span><span class="o">=</span><span class="s1">&#39;my_code_range_2&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">time</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">domain</span><span class="o">.</span><span class="n">end_range</span><span class="p">(</span><span class="n">range_id</span><span class="p">)</span>
+</pre></div>
+</div>
 </dd></dl>
 
 </dd></dl>
 
 <dl class="py class">
 <dt class="sig sig-object py" id="nvtx._lib.lib.EventAttributes">
-<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">nvtx._lib.lib.</span></span><span class="sig-name descname"><span class="pre">EventAttributes</span></span><span class="sig-paren">(</span>
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">nvtx._lib.lib.</span></span><span class="sig-name descname"><span class="pre">EventAttributes</span></span><span class="sig-paren">(</span>
 
 <dl>
 <dd><em class="sig-param"><span class="n"><span class="pre">domain</span></span></em>,</dd>
@@ -791,21 +899,21 @@ NumPy to be installed (not installed with <code class="docutils literal notransl
 
 <dl class="py class">
 <dt class="sig sig-object py" id="nvtx._lib.lib.RegisteredString">
-<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">nvtx._lib.lib.</span></span><span class="sig-name descname"><span class="pre">RegisteredString</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">domain</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">string</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#nvtx._lib.lib.RegisteredString" title="Link to this definition">#</a></dt>
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">nvtx._lib.lib.</span></span><span class="sig-name descname"><span class="pre">RegisteredString</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">domain</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">string</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#nvtx._lib.lib.RegisteredString" title="Link to this definition">#</a></dt>
 <dd><p>A wrapper class for <code class="docutils literal notranslate"><span class="pre">nvtxStringHandle_t</span></code> C struct.
 Use <a class="reference internal" href="#nvtx.Domain.get_registered_string" title="nvtx.Domain.get_registered_string"><code class="xref py py-func docutils literal notranslate"><span class="pre">nvtx.Domain.get_registered_string()</span></code></a> to create an instance.</p>
 </dd></dl>
 
 <dl class="py class">
 <dt class="sig sig-object py" id="nvtx._lib.lib.DummyDomain">
-<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">nvtx._lib.lib.</span></span><span class="sig-name descname"><span class="pre">DummyDomain</span></span><a class="headerlink" href="#nvtx._lib.lib.DummyDomain" title="Link to this definition">#</a></dt>
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">nvtx._lib.lib.</span></span><span class="sig-name descname"><span class="pre">DummyDomain</span></span><a class="headerlink" href="#nvtx._lib.lib.DummyDomain" title="Link to this definition">#</a></dt>
 <dd><p>A replacement for <a class="reference internal" href="#nvtx.Domain" title="nvtx.Domain"><code class="xref py py-class docutils literal notranslate"><span class="pre">nvtx.Domain</span></code></a> when the domain is disabled.
 (e.g., when no tool is attached).</p>
 </dd></dl>
 
 <dl class="py class">
 <dt class="sig sig-object py" id="nvtx.Profile">
-<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">nvtx.</span></span><span class="sig-name descname"><span class="pre">Profile</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">linenos</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">annotate_cfuncs</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#nvtx.Profile" title="Link to this definition">#</a></dt>
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">nvtx.</span></span><span class="sig-name descname"><span class="pre">Profile</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">bool</span> <span class="pre">linenos</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">bool</span> <span class="pre">annotate_cfuncs</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#nvtx.Profile" title="Link to this definition">#</a></dt>
 <dd><p>Class for programmatically controlling NVTX automatic annotations.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
@@ -877,14 +985,15 @@ Use <a class="reference internal" href="#nvtx.Domain.get_registered_string" titl
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#nvtx.mark"><code class="docutils literal notranslate"><span class="pre">mark()</span></code></a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#nvtx.get_domain"><code class="docutils literal notranslate"><span class="pre">get_domain()</span></code></a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#nvtx.Domain"><code class="docutils literal notranslate"><span class="pre">Domain</span></code></a><ul class="nav section-nav flex-column">
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#nvtx.Domain.mark"><code class="docutils literal notranslate"><span class="pre">mark()</span></code></a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#nvtx.Domain.push_range"><code class="docutils literal notranslate"><span class="pre">push_range()</span></code></a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#nvtx.Domain.pop_range"><code class="docutils literal notranslate"><span class="pre">pop_range()</span></code></a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#nvtx.Domain.start_range"><code class="docutils literal notranslate"><span class="pre">start_range()</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#nvtx.Domain.end_range"><code class="docutils literal notranslate"><span class="pre">end_range()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#nvtx.Domain.get_category_id"><code class="docutils literal notranslate"><span class="pre">get_category_id()</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#nvtx.Domain.get_event_attributes"><code class="docutils literal notranslate"><span class="pre">get_event_attributes()</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#nvtx.Domain.get_registered_string"><code class="docutils literal notranslate"><span class="pre">get_registered_string()</span></code></a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#nvtx.Domain.get_category_id"><code class="docutils literal notranslate"><span class="pre">get_category_id()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#nvtx.Domain.mark"><code class="docutils literal notranslate"><span class="pre">mark()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#nvtx.Domain.pop_range"><code class="docutils literal notranslate"><span class="pre">pop_range()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#nvtx.Domain.push_range"><code class="docutils literal notranslate"><span class="pre">push_range()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#nvtx.Domain.set_event_attributes"><code class="docutils literal notranslate"><span class="pre">set_event_attributes()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#nvtx.Domain.start_range"><code class="docutils literal notranslate"><span class="pre">start_range()</span></code></a></li>
 </ul>
 </li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#nvtx._lib.lib.EventAttributes"><code class="docutils literal notranslate"><span class="pre">EventAttributes</span></code></a><ul class="nav section-nav flex-column">

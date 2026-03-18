@@ -2,7 +2,7 @@
 members = ["crates/nvtx-sys"]
 
 [workspace.package]
-version = "0.2.1"
+version = "0.2.2"
 authors = ["NVIDIA", "Voltron Data"]
 edition = "2021"
 rust-version = "1.77.0"

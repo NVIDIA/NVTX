@@ -1,5 +1,5 @@
 /*
- * SPDX-FileCopyrightText: Copyright (c) 2023-2025 NVIDIA CORPORATION & AFFILIATES. All rights reserved.
+ * SPDX-FileCopyrightText: Copyright (c) 2023-2026 NVIDIA CORPORATION & AFFILIATES. All rights reserved.
  * SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -30,6 +30,32 @@
 
 #include "nvtxDetail/nvtxExtPayloadHelperInternal.h"
 
+/**
+ * @file
+ * \brief Helper macros for defining NVTX binary payload schemas.
+ *
+ * \par MSVC Preprocessor Requirement
+ * Several macros in this header rely on variadic macro argument counting and
+ * dispatch, which requires a standards-conforming preprocessor.  On Microsoft
+ * Visual C++, the traditional preprocessor does not expand \c __VA_ARGS__
+ * correctly for these patterns.  To use the affected macros (listed below) with
+ * MSVC, enable the modern conforming preprocessor:
+ *  - Visual Studio 2019 and newer: \c /Zc:preprocessor
+ *  - Visual Studio 2017 (v15.5+): \c /experimental:preprocessor
+ *
+ * Visual Studio versions older than 2017 do not support the conforming
+ * preprocessor and cannot use these macros.
+ *
+ * Affected macros:
+ *  - \ref NVTX_DEFINE_SCHEMA_FOR_STRUCT
+ *  - \ref NVTX_DEFINE_STRUCT_WITH_SCHEMA
+ *  - \ref NVTX_DEFINE_STRUCT_WITH_SCHEMA_AND_REGISTER
+ *  - \ref NVTX_DEFINE_SCHEMA_FOR_STRUCT_AND_REGISTER
+ *  - \ref NVTX_DEFINE_STRUCT
+ *
+ * GCC, Clang, and other compilers with conforming preprocessors work without
+ * any additional flags.
+ */
 
 /* This is just an empty marker (for readability), which can be omitted. */
 /* TODO: Fix issue with trailing comma at end of entry list. */
@@ -82,6 +108,10 @@
  * @param schema_id (Optional 4) User-defined payload schema ID.
  * @param entries (Mandatory) Payload schema entries. This is always the last
  *                parameter to the macro.
+ *
+ * @note On MSVC, this macro requires the conforming preprocessor:
+ *       \c /Zc:preprocessor (VS 2019+) or \c /experimental:preprocessor
+ *       (VS 2017 v15.5+).  Not supported on older MSVC versions.
  */
 #define NVTX_DEFINE_SCHEMA_FOR_STRUCT(struct_id, ...) \
     _NVTX_DEFINE_SCHEMA_FOR_STRUCT(struct_id, __VA_ARGS__)
@@ -126,6 +156,10 @@
  * @param schema_id (Optional 4) User-defined payload schema ID.
  * @param entries (Mandatory) The schema entries. This is always the last
  *                parameter to the macro.
+ *
+ * @note On MSVC, this macro requires the conforming preprocessor:
+ *       \c /Zc:preprocessor (VS 2019+) or \c /experimental:preprocessor
+ *       (VS 2017 v15.5+).  Not supported on older MSVC versions.
  */
 #define NVTX_DEFINE_STRUCT_WITH_SCHEMA(struct_id, ...) \
     _NVTX_DEFINE_STRUCT_WITH_SCHEMA(struct_id, __VA_ARGS__)
@@ -139,6 +173,10 @@
  *
  * @param domain The NVTX domain handle.
  * All other parameters are similar to `NVTX_DEFINE_STRUCT_WITH_SCHEMA`.
+ *
+ * @note On MSVC, this macro requires the conforming preprocessor:
+ *       \c /Zc:preprocessor (VS 2019+) or \c /experimental:preprocessor
+ *       (VS 2017 v15.5+).  Not supported on older MSVC versions.
  */
 #define NVTX_DEFINE_STRUCT_WITH_SCHEMA_AND_REGISTER(domain, struct_id, ...) \
     _NVTX_DEFINE_STRUCT_WITH_SCHEMA(struct_id, __VA_ARGS__) \
@@ -152,6 +190,10 @@
  *
  * @param domain The NVTX domain handle.
  * All other parameters are similar to `NVTX_PAYLOAD_STATIC_SCHEMA_DEFINE`.
+ *
+ * @note On MSVC, this macro requires the conforming preprocessor:
+ *       \c /Zc:preprocessor (VS 2019+) or \c /experimental:preprocessor
+ *       (VS 2017 v15.5+).  Not supported on older MSVC versions.
  */
 #define NVTX_DEFINE_SCHEMA_FOR_STRUCT_AND_REGISTER(domain, struct_id, ...) \
     _NVTX_DEFINE_SCHEMA_FOR_STRUCT(struct_id, __VA_ARGS__) \
@@ -171,6 +213,10 @@
  *
  * @param struct_id The name of the struct.
  * @param members The members of the struct.
+ *
+ * @note On MSVC, this macro requires the conforming preprocessor:
+ *       \c /Zc:preprocessor (VS 2019+) or \c /experimental:preprocessor
+ *       (VS 2017 v15.5+).  Not supported on older MSVC versions.
  */
 #define NVTX_DEFINE_STRUCT(struct_id, ...) \
     _NVTX_PAYLOAD_TYPEDEF_STRUCT(struct_id, __VA_ARGS__)

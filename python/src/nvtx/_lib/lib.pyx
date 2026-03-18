@@ -1,4 +1,4 @@
-# SPDX-FileCopyrightText: Copyright (c) 2020-2025 NVIDIA CORPORATION & AFFILIATES. All rights reserved.
+# SPDX-FileCopyrightText: Copyright (c) 2020-2026 NVIDIA CORPORATION & AFFILIATES. All rights reserved.
 # SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -272,16 +272,23 @@ class DummyDomain:
     def get_event_attributes(self, message=None, color=None, category=None, payload=None):
         pass
 
-    def mark(self, EventAttributes attributes):
+    def set_event_attributes(self, EventAttributes attributes, *,
+                             message=None, color=None, category=None, payload=None):
         pass
 
-    def push_range(self, EventAttributes attributes):
+    def mark(self, EventAttributes attributes=None, *, message=None, color=None, category=None,
+             payload=None):
+        pass
+
+    def push_range(self, EventAttributes attributes=None, *, message=None, color=None,
+                   category=None, payload=None):
         pass
 
     def pop_range(self):
         pass
 
-    def start_range(self, EventAttributes attributes):
+    def start_range(self, EventAttributes attributes=None, *, message=None, color=None,
+                    category=None, payload=None):
         return 0
 
     def end_range(self, nvtxRangeId_t range_id):
@@ -289,6 +296,10 @@ class DummyDomain:
 
 
 dummy_domain = DummyDomain()
+
+# A sentinel value to indicate that the argument should not be set.
+# Used in `Domain.set_event_attributes` to allow setting fields to None.
+DONT_SET = object()
 
 class Domain:
     """
@@ -357,48 +368,127 @@ class Domain:
         ----------
         message : str
             A message associated with the event.
-            If the given message is not registered, it is registered under this domain.
+            If the given message was not registered then it will be registered under this domain.
         color : str, int, optional
             A color associated with the event.
             Supports `matplotlib` colors if it is available.
         category : str, int, optional
             A string or an integer specifying the category within the domain under which the event
             is scoped. If unspecified, the event is not associated with a category.
-        payload : int, float, optional
-            A numeric value to be associated with this event.
+        payload : int, float, list, tuple, range, bytes, numpy.ndarray, optional
+            A value associated with the event.
+            Using payloads provides a separation between the message and the data of the event,
+            which is often useful for analysis.
         """
         if isinstance(category, str):
             category = self.get_category_id(category)
         if message is not None:
             message = self.get_registered_string(message)
         return EventAttributes(self, message, color, category, payload)
+    
+    def set_event_attributes(self, EventAttributes attributes, *,
+                             message=DONT_SET, color=DONT_SET, category=DONT_SET, payload=DONT_SET):
+        """
+        Set the attributes of an :class:`nvtx._lib.lib.EventAttributes` object.
 
-    def mark(self, EventAttributes attributes):
+        Parameters
+        ----------
+        attributes : EventAttributes, optional
+            The event attributes to be set.
+        message : str, RegisteredString, optional
+            A message associated with the event.
+            If the given message was not registered then it will be registered under this domain.
+        color : str, int, optional
+            A color associated with the event.
+            Supports `matplotlib` colors if it is available.
+        category : str, int, optional
+            A string or an integer specifying the category within the domain under which the event
+            is scoped. If unspecified, the event is not associated with a category.
+        payload : int, float, list, tuple, range, bytes, numpy.ndarray, optional
+            A value associated with the event.
+            Using payloads provides a separation between the message and the data of the event,
+            which is often useful for analysis.
+        """
+        if message is not DONT_SET:
+            if isinstance(message, str):
+                message = self.get_registered_string(message)
+            attributes.message = message
+        if color is not DONT_SET:
+            attributes.color = color
+        if category is not DONT_SET:
+            if isinstance(category, str):
+                category = self.get_category_id(category)
+            attributes.category = category
+        if payload is not DONT_SET:
+            attributes.payload = payload
+
+    def mark(self, EventAttributes attributes=None, *, **kwargs):
         """
         Mark an instantaneous event.
 
         Parameters
         ----------
-        attributes : EventAttributes
+        attributes : EventAttributes, optional
             The event attributes to be associated with the event.
+            If not provided, a new :class:`EventAttributes` object is created
+            with the given keyword arguments.
+            Otherwise, this method mutates the attributes object if `kwargs` are provided.
+        message : str, optional
+            A message associated with the event.
+            If the given message was not registered then it will be registered under this domain.
+        color : str, int, optional
+            A color associated with the event.
+            Supports `matplotlib` colors if it is available.
+        category : str, int, optional
+            A string or an integer specifying the category within the domain under which the event
+            is scoped. If unspecified, the event is not associated with a category.
+        payload : int, float, list, tuple, range, bytes, numpy.ndarray, optional
+            A value associated with the event.
+            Using payloads provides a separation between the message and the data of the event,
+            which is often useful for analysis.
 
         Examples
         --------
         >>> import nvtx
         >>> domain = nvtx.Domain('my_domain')
+        >>> domain.mark(message='my_marker')
+
+        Alternatively, an EventAttributes object can be reused:
+
         >>> attributes = domain.get_event_attributes(message='my_marker')
         >>> domain.mark(attributes)
+        >>> domain.mark(attributes, message='my_marker_2')
         """
+        if attributes is None:
+            attributes = self.get_event_attributes(**kwargs)
+        elif kwargs:
+            self.set_event_attributes(attributes, **kwargs)
         nvtxDomainMarkEx((<DomainHandle>self.handle).c_obj, &attributes.c_obj)
 
-    def push_range(self, EventAttributes attributes):
+    def push_range(self, EventAttributes attributes=None, *, **kwargs):
         """
         Mark the beginning of a code range.
 
         Parameters
         ----------
-        attributes: EventAttributes
-            The event attributes to be associated with the range.
+        attributes : EventAttributes, optional
+            The event attributes to be associated with the event.
+            If not provided, a new :class:`EventAttributes` object is created
+            with the given keyword arguments.
+            Otherwise, this method mutates the attributes object if `kwargs` are provided.
+        message : str, optional
+            A message associated with the event.
+            If the given message was not registered then it will be registered under this domain.
+        color : str, int, optional
+            A color associated with the event.
+            Supports `matplotlib` colors if it is available.
+        category : str, int, optional
+            A string or an integer specifying the category within the domain under which the event
+            is scoped. If unspecified, the event is not associated with a category.
+        payload : int, float, list, tuple, range, bytes, numpy.ndarray, optional
+            A value associated with the event.
+            Using payloads provides a separation between the message and the data of the event,
+            which is often useful for analysis.
         
         Notes
         -----
@@ -409,11 +499,23 @@ class Domain:
         >>> import time
         >>> import nvtx
         >>> domain = nvtx.Domain('my_domain')
-        >>> attributes = domain.get_event_attributes(message='my_code_range')
-        >>> domain.push_range(attributes)
+        >>> domain.push_range(message='my_code_range')
         >>> time.sleep(1)
         >>> domain.pop_range()
+
+        Alternatively, an EventAttributes object can be reused:
+
+        >>> attributes = domain.get_event_attributes(message='my_code_range')
+        >>> domain.push_range(attributes)
+        >>> domain.push_range(attributes, message='my_code_range_2')
+        >>> time.sleep(1)
+        >>> domain.pop_range()
+        >>> domain.pop_range()
         """
+        if attributes is None:
+            attributes = self.get_event_attributes(**kwargs)
+        elif kwargs:
+            self.set_event_attributes(attributes, **kwargs)
         nvtxDomainRangePushEx((<DomainHandle>self.handle).c_obj, &attributes.c_obj)
 
     def pop_range(self):
@@ -422,14 +524,30 @@ class Domain:
         """
         nvtxDomainRangePop((<DomainHandle>self.handle).c_obj)
 
-    def start_range(self, EventAttributes attributes) -> int:
+    def start_range(self, EventAttributes attributes=None, *, **kwargs) -> int:
         """
         Mark the beginning of a process range.
 
         Parameters
         ----------
-        attributes : EventAttributes
-            The event attributes to be associated with the range.
+        attributes : EventAttributes, optional
+            The event attributes to be associated with the event.
+            If not provided, a new :class:`EventAttributes` object is created
+            with the given keyword arguments.
+            Otherwise, this method mutates the attributes object if `kwargs` are provided.
+        message : str, optional
+            A message associated with the event.
+            If the given message was not registered then it will be registered under this domain.
+        color : str, int, optional
+            A color associated with the event.
+            Supports `matplotlib` colors if it is available.
+        category : str, int, optional
+            A string or an integer specifying the category within the domain under which the event
+            is scoped. If unspecified, the event is not associated with a category.
+        payload : int, float, list, tuple, range, bytes, numpy.ndarray, optional
+            A value associated with the event.
+            Using payloads provides a separation between the message and the data of the event,
+            which is often useful for analysis.
 
         Returns
         -------
@@ -440,11 +558,24 @@ class Domain:
         >>> import time
         >>> import nvtx
         >>> domain = nvtx.Domain('my_domain')
+        >>> range_id = domain.start_range(message='my_code_range')
+        >>> time.sleep(1)
+        >>> domain.end_range(range_id)
+
+        Alternatively, an EventAttributes object can be reused:
+
         >>> attributes = domain.get_event_attributes(message='my_code_range')
         >>> range_id = domain.start_range(attributes)
         >>> time.sleep(1)
         >>> domain.end_range(range_id)
+        >>> range_id = domain.start_range(attributes, message='my_code_range_2')
+        >>> time.sleep(1)
+        >>> domain.end_range(range_id)
         """
+        if attributes is None:
+            attributes = self.get_event_attributes(**kwargs)
+        elif kwargs:
+            self.set_event_attributes(attributes, **kwargs)
         return nvtxDomainRangeStartEx((<DomainHandle>self.handle).c_obj, &attributes.c_obj)
 
     def end_range(self, nvtxRangeId_t range_id):
