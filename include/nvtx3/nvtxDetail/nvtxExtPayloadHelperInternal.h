@@ -1,5 +1,5 @@
 /*
- * SPDX-FileCopyrightText: Copyright (c) 2023-2025 NVIDIA CORPORATION & AFFILIATES. All rights reserved.
+ * SPDX-FileCopyrightText: Copyright (c) 2023-2026 NVIDIA CORPORATION & AFFILIATES. All rights reserved.
  * SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -153,10 +153,13 @@
         NVTX_PAYLOAD_SCHEMA_ATTR_FIELD_NAME |, \
         NVTX_EXT_NUM_ARGS(_NVTX_PAYLOAD_PASS_THROUGH entries))
 #define _NVTX_DEFINE_S4S_3(struct_id, schema_name, entries) \
-    _NVTX_DEFINE_S4S_4(struct_id, schema_name, /*prefix*/, entries)
+    _NVTX_PAYLOAD_SCHEMA_ENTRIES(struct_id, _NVTX_PAYLOAD_PASS_THROUGH entries) \
+    NVTX_PAYLOAD_SCHEMA_ATTR(struct_id, schema_name, NVTX_PAYLOAD_SCHEMA_FLAG_NONE, 0, \
+        NVTX_PAYLOAD_SCHEMA_ATTR_FIELD_NAME |, \
+        NVTX_EXT_NUM_ARGS(_NVTX_PAYLOAD_PASS_THROUGH entries))
 #define _NVTX_DEFINE_S4S_2(struct_id, entries) \
     _NVTX_PAYLOAD_SCHEMA_ENTRIES(struct_id, _NVTX_PAYLOAD_PASS_THROUGH entries) \
-    NVTX_PAYLOAD_SCHEMA_ATTR(struct_id, NVTX_NULLPTR, NVTX_PAYLOAD_SCHEMA_FLAG_NONE, 0, ,\
+    NVTX_PAYLOAD_SCHEMA_ATTR(struct_id, NVTX_NULLPTR, NVTX_PAYLOAD_SCHEMA_FLAG_NONE, 0, 0 |, \
         NVTX_EXT_NUM_ARGS(_NVTX_PAYLOAD_PASS_THROUGH entries))
 
 #define _NVTX_DEFINE_SCHEMA_FOR_STRUCT(struct_id, ...) \
@@ -245,7 +248,8 @@
 /* Resolve to schema entry. `entry` is `(ctype, name, ...)`. */
 #define _NVTX_PAYLOAD_SCHEMA_INIT_ENTRY(struct_id, entry) \
     {_NVTX_PAYLOAD_SCHEMA_INIT_ENTRY_FRONT entry \
-    offsetof(struct_id, _NVTX_PAYLOAD_SCHEMA_INIT_ENTRY_END entry)},
+    offsetof(struct_id, _NVTX_PAYLOAD_SCHEMA_INIT_ENTRY_END entry), \
+    NVTX_NULLPTR, NVTX_NULLPTR},
 
 /* Handle up to 16 schema entries. */
 #define _NVTX_PAYLOAD_INIT_SME1(s, e1)       _NVTX_PAYLOAD_SCHEMA_INIT_ENTRY(s, e1)
@@ -294,11 +298,15 @@
       NVTX_PAYLOAD_SCHEMA_ATTR_FIELD_NAME |, \
       NVTX_EXT_NUM_ARGS(_NVTX_PAYLOAD_PASS_THROUGH entries))
 #define _NVTX_DEFINE_SWS_3(struct_id, schema_name, entries) \
-  _NVTX_DEFINE_SWS_4(struct_id, schema_name, /* no prefix */, entries)
+  _NVTX_PAYLOAD_TYPEDEF_STRUCT(struct_id, _NVTX_PAYLOAD_PASS_THROUGH entries) \
+  _NVTX_PAYLOAD_SCHEMA_INIT_ENTRIES(struct_id, _NVTX_PAYLOAD_PASS_THROUGH entries) \
+  NVTX_PAYLOAD_SCHEMA_ATTR(struct_id, schema_name, NVTX_PAYLOAD_SCHEMA_FLAG_NONE, 0, \
+      NVTX_PAYLOAD_SCHEMA_ATTR_FIELD_NAME |, \
+      NVTX_EXT_NUM_ARGS(_NVTX_PAYLOAD_PASS_THROUGH entries))
 #define _NVTX_DEFINE_SWS_2(struct_id, entries) \
   _NVTX_PAYLOAD_TYPEDEF_STRUCT(struct_id, _NVTX_PAYLOAD_PASS_THROUGH entries) \
   _NVTX_PAYLOAD_SCHEMA_INIT_ENTRIES(struct_id, _NVTX_PAYLOAD_PASS_THROUGH entries) \
-  NVTX_PAYLOAD_SCHEMA_ATTR(struct_id, NVTX_NULLPTR, NVTX_PAYLOAD_SCHEMA_FLAG_NONE, 0, , \
+  NVTX_PAYLOAD_SCHEMA_ATTR(struct_id, NVTX_NULLPTR, NVTX_PAYLOAD_SCHEMA_FLAG_NONE, 0, 0 |, \
       NVTX_EXT_NUM_ARGS(_NVTX_PAYLOAD_PASS_THROUGH entries))
 
 #define _NVTX_DEFINE_STRUCT_WITH_SCHEMA(struct_id, ...) \

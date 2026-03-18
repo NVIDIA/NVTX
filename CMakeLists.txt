@@ -1,5 +1,5 @@
 #=============================================================================
-# SPDX-FileCopyrightText: Copyright (c) 2022-2025 NVIDIA CORPORATION & AFFILIATES. All rights reserved.
+# SPDX-FileCopyrightText: Copyright (c) 2022-2026 NVIDIA CORPORATION & AFFILIATES. All rights reserved.
 # SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -34,7 +34,7 @@ cmake_minimum_required(VERSION 3.19)
 # This allows the same target name to be used for different NVTX versions.
 
 # Project declaration needs to be before the configuration
-project(nvtx3 VERSION 3.4.0)
+project(nvtx3 VERSION 3.5.0)
 
 # Check if standalone or part of another project:
 set(NVTX3_C_ROOT "${CMAKE_CURRENT_SOURCE_DIR}")
@@ -53,6 +53,7 @@ option(NVTX3_INSTALL "Install NVTX3" ${NVTX3_TOP_LEVEL_PROJECT})
 
 include(nvtxImportedTargets.cmake)
 set_target_properties(nvtx3-c PROPERTIES EXPORT_PROPERTIES VERSION)
+set_target_properties(nvtx3-cpp PROPERTIES EXPORT_PROPERTIES VERSION)
 
 if(NVTX3_INSTALL)
     # Add installation rules
@@ -85,7 +86,8 @@ if(NVTX3_INSTALL)
     )
 
     # Install the targets
-    install(TARGETS nvtx3-c nvtx3-cpp EXPORT nvtx3-targets)
+    install(TARGETS nvtx3-c nvtx3-cpp EXPORT nvtx3-targets
+        INCLUDES DESTINATION "${CMAKE_INSTALL_INCLUDEDIR}")
     install(EXPORT nvtx3-targets
         FILE nvtx3-targets.cmake
         NAMESPACE nvtx3::

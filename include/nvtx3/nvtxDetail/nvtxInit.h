@@ -1,5 +1,5 @@
 /*
- * SPDX-FileCopyrightText: Copyright (c) 2009-2025 NVIDIA CORPORATION & AFFILIATES. All rights reserved.
+ * SPDX-FileCopyrightText: Copyright (c) 2009-2026 NVIDIA CORPORATION & AFFILIATES. All rights reserved.
  * SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -426,11 +426,40 @@ NVTX_LINKONCE_DEFINE_FUNCTION int NVTX_VERSIONED_IDENTIFIER(nvtxInitializeInject
     return NVTX_SUCCESS;
 }
 
+/*
+ * This function can either be called by the application directly, or it is called lazily by the first
+ * NVTX function call. All nvtx function pointers in `nvtxGlobals` are initially set to the
+ * respective init function (`nvtx<Name>_impl_init`). These init functions call `nvtxInitOnce` and
+ * then the entry function, which calls the function pointers, etc.. `nvtxInitOnce` itself is
+ * protected with `nvtxGlobals.initState`: It is initialized to `NVTX_INIT_STATE_FRESH`. The first
+ * thread that can atomically swap it with `NVTX_INIT_STATE_STARTED` will start the initialization.
+ * All others will wait until it is `NVTX_INIT_STATE_COMPLETE` one way or another.
+ *
+ * The `nvtxGlobals.nvtx<Name>_impl_fnptr` are either
+ * - set by the injection library
+ * - all the ones that are left on their respective `nvtx<Name>_impl_init` pointers, are reset to
+ *   `NVTX_NULL`.
+ * - if there is a failure in the injection library initialization, all the function pointers are set
+ *   to `NVTX_NULL`.
+ *
+ * Function pointer writes occur before `initState` is atomically set to `NVTX_INIT_STATE_COMPLETE`
+ * with a memory barrier. In the nvtx implementation functions, the function pointers are read
+ * without any memory barriers to avoid performance overhead. This is technically a race condition,
+ * but the worst-case is that an old `nvtx<Name>_impl_init` value is visible. This is not a real
+ * problem, because it will just call `nvtxInitOnce` again, which introduces a barrier and sees
+ * that it is already initialized. However, this can cause reports from thread sanitizers.
+ *
+ * Technically, the pointers should be read and written atomically to avoid torn pointers being
+ * read. Practically, on common architectures this is not an issue because pointer writes are
+ * naturally atomic (pointer size matches word size), so torn reads cannot occur.
+ */
 NVTX_LINKONCE_DEFINE_FUNCTION void NVTX_VERSIONED_IDENTIFIER(nvtxInitOnce)(void)
 {
     unsigned int old;
     if (NVTX_VERSIONED_IDENTIFIER(nvtxGlobals).initState == NVTX_INIT_STATE_COMPLETE)
     {
+        /* Ensure that _all_ writes from initialization are visible to this thread */
+        NVTX_MEMBAR();
         return;
     }
 
@@ -464,5 +493,7 @@ NVTX_LINKONCE_DEFINE_FUNCTION void NVTX_VERSIONED_IDENTIFIER(nvtxInitOnce)(void)
             NVTX_YIELD();
             NVTX_MEMBAR();
         }
+        /* Ensure that _all_ writes from initialization are visible to this thread */
+        NVTX_MEMBAR();
     }
 }

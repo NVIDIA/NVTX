@@ -1,5 +1,5 @@
 #=============================================================================
-# SPDX-FileCopyrightText: Copyright (c) 2022-2025 NVIDIA CORPORATION & AFFILIATES. All rights reserved.
+# SPDX-FileCopyrightText: Copyright (c) 2022-2026 NVIDIA CORPORATION & AFFILIATES. All rights reserved.
 # SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -19,7 +19,7 @@
 #=============================================================================
 cmake_minimum_required(VERSION 3.19)
 
-set(NVTX3_VERSION 3.4.0)
+set(NVTX3_VERSION 3.5.0)
 
 # This CMake script defines targets the NVTX C and C++ APIs.
 # By default, these targets are defined as IMPORTED, so libraries can include

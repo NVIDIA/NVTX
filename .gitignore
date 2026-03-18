@@ -35,6 +35,8 @@ share/python-wheels/
 MANIFEST
 python/nvtx/_lib/**/*.c
 python/nvtx/_lib/*.c
+python/src/nvtx/_lib/**/*.c
+python/src/nvtx/_lib/*.c
 python/docs/_build/
 docs/python/.buildinfo.bak
 docs/python/.buildinfo
