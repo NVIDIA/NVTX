@@ -47,6 +47,9 @@ jobs:
         with:
           python-version: ${{ matrix.pyver }}
       - run: pipx run build --sdist python
-      - run: pip install ./python[test]
+      - run: pip install ./python[test] numpy
+      - run: pytest python/tests
+      - run: pytest --enable-injection python/tests
+      - run: pip uninstall -y numpy
       - run: pytest python/tests
       - run: pytest --enable-injection python/tests

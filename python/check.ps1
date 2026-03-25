@@ -13,7 +13,16 @@ function Exit-IfFailed {
     }
 }
 
-& $Python -m pip install ".[test]"
+& $Python -m pip install ".[test]" numpy
+Exit-IfFailed
+
+& $Python -m pytest tests
+Exit-IfFailed
+
+& $Python -m pytest --enable-injection tests
+Exit-IfFailed
+
+& $Python -m pip uninstall -y numpy
 Exit-IfFailed
 
 & $Python -m pytest tests

@@ -65,6 +65,10 @@ addopts = [
 skip = ["*musllinux*", "cp38-*"]
 build = "cp*"
 test-command = """
+pip install numpy
+pytest {package}/tests
+pytest --enable-injection {package}/tests
+pip uninstall -y numpy
 pytest {package}/tests
 pytest --enable-injection {package}/tests
 """

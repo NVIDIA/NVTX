@@ -10,6 +10,11 @@ from typing import Dict, Optional, Set, Union
 from nvtx.colors import _NVTX_COLORS
 from nvtx.nvtx import PayloadTypeAlias
 
+try:
+    import numpy as np
+except ImportError:
+    np = None
+
 
 TESTS_DIR = Path(__file__).parent
 INCLUDE_DIR = TESTS_DIR.parent.parent / "c" / "include"
@@ -105,6 +110,7 @@ class EventKind(enum.IntEnum):
     RANGE_POP = 6
     RANGE_START = 7
     RANGE_END = 8
+    PAYLOAD_SCHEMA_REGISTER = 9
 
 
 class PayloadType(enum.IntEnum):
@@ -112,6 +118,7 @@ class PayloadType(enum.IntEnum):
     UNKNOWN = 0
     INT64 = 2
     DOUBLE = 3
+    EXT = ctypes.c_int32(0xDFBD0009).value
 
 
 @dataclass(frozen=True)
@@ -126,12 +133,16 @@ class RecordedEvent:
     payload_type: int
     payload_i64: int
     payload_f64: float
+    payload_ext_schema_id: int
+    payload_ext_data: bytes
 
 
 class DomainData:
     def __init__(self):
         self.registered_strings: Set[str] = set()
         self.registered_categories: Dict[str, int] = {}
+        if np is not None:
+            self.registered_schemas: Dict[tuple[np.dtype, bool], int] = {}
 
 
 registered_domains: Dict[str, DomainData] = {}
@@ -151,6 +162,9 @@ class NvtxEventsReader:
             ("payload_type", ctypes.c_int32),
             ("payload_i64", ctypes.c_int64),
             ("payload_f64", ctypes.c_double),
+            ("payload_ext_schema_id", ctypes.c_uint64),
+            ("payload_ext_size", ctypes.c_uint64),
+            ("payload_ext_data", ctypes.c_uint8 * 256),
         ]
 
     def __init__(self, injection_path: Path):
@@ -181,6 +195,8 @@ class NvtxEventsReader:
             payload_type=buffer.payload_type,
             payload_i64=buffer.payload_i64,
             payload_f64=buffer.payload_f64,
+            payload_ext_schema_id=buffer.payload_ext_schema_id,
+            payload_ext_data=bytes(buffer.payload_ext_data[: buffer.payload_ext_size]),
         )
 
 
@@ -189,6 +205,7 @@ def verify_registration_events(
     domain: Optional[str],
     message: Optional[str] = None,
     category: Optional[Union[str, int]] = None,
+    payload: Optional[PayloadTypeAlias] = None,
 ):
     if domain is None:
         domain = DEFAULT_DOMAIN
@@ -217,6 +234,59 @@ def verify_registration_events(
             assert event.domain == domain
             assert event.message == message
             domain_data.registered_strings.add(message)
+
+    if payload is not None and np is not None:
+        verify_payload_schema_registration(events, domain, np.array(payload))
+
+
+if np is not None:
+
+    def verify_payload_schema_registration(
+        events: NvtxEventsReader, domain: str, payload: np.ndarray
+    ):
+        def handle_event(dtype, is_array):
+            if dtype.metadata is not None:
+                for inner_dtype in dtype.metadata.get("inner_dtypes", ()):
+                    inner_key = inner_dtype, False
+                    if inner_key not in registered_schemas:
+                        handle_event(*inner_key)
+            event = next(events)
+            assert event.kind == EventKind.PAYLOAD_SCHEMA_REGISTER
+            assert event.domain == domain
+            registered_schemas[(dtype, is_array)] = event.payload_ext_schema_id
+
+        dtype = payload.dtype
+        is_array = bool(payload.ndim)
+        schema_key = dtype, is_array
+        registered_schemas = registered_domains.get(domain).registered_schemas
+        if schema_key in registered_schemas:
+            return
+        if is_array:
+            scalar_key = dtype, False
+            if scalar_key not in registered_schemas:
+                handle_event(*scalar_key)
+        handle_event(*schema_key)
+
+    def verify_ext_payload(event: RecordedEvent, payload, domain: str):
+        if not isinstance(payload, np.ndarray):
+            payload = np.array(payload)
+
+        if payload.nbytes == 0:
+            assert event.payload_type == PayloadType.UNKNOWN
+            return
+
+        assert event.payload_type == PayloadType.EXT
+
+        is_array = bool(payload.ndim)
+        expected_schema_id = registered_domains[domain].registered_schemas[
+            (payload.dtype, is_array)
+        ]
+        assert event.payload_ext_schema_id == expected_schema_id
+
+        expected_bytes = payload.tobytes()
+        if is_array:
+            expected_bytes = payload.size.to_bytes(8, "little") + expected_bytes
+        assert event.payload_ext_data == expected_bytes
 
 
 def _verify_attributes(
@@ -249,6 +319,8 @@ def _verify_attributes(
     elif isinstance(payload, float):
         assert event.payload_type == PayloadType.DOUBLE
         assert event.payload_f64 == payload
+    elif np is not None:
+        verify_ext_payload(event, payload, domain)
 
 
 def verify_mark(
