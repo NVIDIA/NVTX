@@ -10,6 +10,8 @@ on:
       - ".github/workflows/rust.yml"
       - "**/Cargo.*"
       - "c/include/**"
+      - "rust/*.sh"
+      - "rust/*.toml"
       - "rust/crates/**"
       - "rust/examples/**"
       - "rust/src/**"
@@ -20,6 +22,8 @@ on:
       - ".github/workflows/rust.yml"
       - "**/Cargo.*"
       - "c/include/**"
+      - "rust/*.sh"
+      - "rust/*.toml"
       - "rust/crates/**"
       - "rust/examples/**"
       - "rust/src/**"
@@ -46,7 +50,15 @@ env:
 jobs:
   msrv:
     name: Minimum supported Rust version
-    runs-on: ubuntu-latest
+    runs-on: ${{ matrix.runner }}
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - runner: ubuntu-latest
+            rustver: 1.77.0
+          - runner: windows-latest
+            rustver: 1.82.0
     steps:
       - uses: actions/checkout@v6
       - uses: actions/cache@v5
@@ -54,12 +66,16 @@ jobs:
           path: ${{ env.CARGO_CACHE_PATH }}
           key: ${{ runner.os }}-cargo-${{ steps.toolchain.outputs.cachekey }}-${{ hashFiles('**/Cargo.lock') }}
           restore-keys: ${{ runner.os }}-cargo-${{ steps.toolchain.outputs.cachekey }}-
-      - run: rustup install 1.77.0
-      - run: cargo +1.77.0 check --workspace --all-targets --all-features
+      - run: rustup install ${{ matrix.rustver }}
+      - run: cargo +${{ matrix.rustver }} check --workspace --all-targets --all-features
 
   deny:
     name: Deny
-    runs-on: ubuntu-latest
+    runs-on: ${{ matrix.runner }}
+    strategy:
+      fail-fast: false
+      matrix:
+        runner: ["ubuntu-latest", "windows-latest"]
     steps:
       - uses: actions/checkout@v6
       - uses: actions/cache@v5
@@ -72,17 +88,22 @@ jobs:
 
   rustfmt:
     name: Rustfmt
-    runs-on: ubuntu-latest
+    runs-on: ${{ matrix.runner }}
+    strategy:
+      fail-fast: false
+      matrix:
+        runner: ["ubuntu-latest", "windows-latest"]
     steps:
       - uses: actions/checkout@v6
       - run: cargo fmt --all -- --check
 
   check:
     name: Check
-    runs-on: ubuntu-latest
+    runs-on: ${{ matrix.runner }}
     strategy:
       fail-fast: false
       matrix:
+        runner: ["ubuntu-latest", "windows-latest"]
         features: ["--all-features", "--no-default-features"]
     steps:
       - uses: actions/checkout@v6
