@@ -165,6 +165,7 @@ cdef class EventAttributes:
             if np is None:
                 msg += " Install numpy for extended payload support."
             warnings.warn(msg, NvtxWarning)
+            return
         setter(self, value)
 
     @payload_setter(int)
