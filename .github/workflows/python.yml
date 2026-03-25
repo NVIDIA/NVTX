@@ -1,0 +1,61 @@
+name: Python
+
+on:
+  push:
+    branches:
+      - dev
+      - release-v3
+      - test-*
+    paths:
+      - ".github/workflows/python.yml"
+      - "c/include/**"
+      - "python/*.cfg"
+      - "python/*.in"
+      - "python/*.py"
+      - "python/*.toml"
+      - "python/src/**"
+      - "python/tests/**"
+    tags:
+      - "v*"
+  pull_request:
+    paths:
+      - ".github/workflows/python.yml"
+      - "c/include/**"
+      - "python/*.cfg"
+      - "python/*.in"
+      - "python/*.py"
+      - "python/*.toml"
+      - "python/src/**"
+      - "python/tests/**"
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ${{ github.ref }}-python
+  cancel-in-progress: true
+
+jobs:
+  pytest:
+    name: Test
+    runs-on: ${{ matrix.runner }}
+    strategy:
+      fail-fast: false
+      matrix:
+        runner: ["ubuntu-latest", "windows-latest"]
+        pyver: ["3.9", "3.10", "3.11", "3.12", "3.13", "3.13t", "3.14", "3.14t"]
+    steps:
+    - uses: actions/checkout@v6
+
+    - uses: actions/setup-python@v6
+      with:
+        python-version: ${{ matrix.pyver }}
+
+    - run: pipx run build --sdist python
+
+    - run: pip install ./python[test]
+
+    - run: pytest python/tests
+    - run: pytest --enable-injection python/tests
+
+
