@@ -1,24 +1,24 @@
-name: Test
+name: Core
 
 on:
   push:
     branches:
-    - dev
-    - release-v3
-    - test-*
+      - dev
+      - release-v3
+      - test-*
   pull_request: {}
   merge_group: {}
 
 jobs:
   test-ubuntu-24-04:
-    name: Ubuntu 24.04 ${{ matrix.name }}
+    name: Test (Ubuntu 24.04, ${{ matrix.arch }})
     runs-on: ubuntu-24.04${{ matrix.runner }}
     strategy:
       matrix:
         include:
-          - name: x64
+          - arch: x64
             runner:
-          - name: Arm64
+          - arch: Arm64
             runner: -arm
       fail-fast: false
     steps:
@@ -105,14 +105,14 @@ jobs:
       run: cd tests/build-linux-clang-20 && ctest --output-on-failure
 
   test-ubuntu-22-04:
-    name: Ubuntu 22.04 ${{ matrix.name }}
+    name: Test (Ubuntu 22.04, ${{ matrix.arch }})
     runs-on: ubuntu-22.04${{ matrix.runner }}
     strategy:
       matrix:
         include:
-          - name: x64
+          - arch: x64
             runner:
-          - name: Arm64
+          - arch: Arm64
             runner: -arm
       fail-fast: false
     steps:
@@ -183,7 +183,7 @@ jobs:
       run: cd tests/build-linux-clang-15 && ctest --output-on-failure
 
   test-windows-x64-a:
-    name: Windows Server ${{ matrix.os }} x64 with VS ${{ matrix.vsyear }} (A)
+    name: Test (Windows Server ${{ matrix.os }}, x64, VS ${{ matrix.vsyear }}) (A)
     runs-on: windows-${{ matrix.os }}${{ matrix.runner }}
     strategy:
       matrix:
@@ -218,14 +218,14 @@ jobs:
       run: conda install -y --name cuda-env -c conda-forge cuda-minimal-build
       timeout-minutes: 10
 
-    - name: Build (VS ${{ matrix.vsyear }} x64 Native)
+    - name: Build (VS ${{ matrix.vsyear }}, x64) (Native)
       run: tests/scripts/build-windows-vs.ps1 ${{ matrix.vsyear }} x64
 
-    - name: Run (VS ${{ matrix.vsyear }} x64 Native)
+    - name: Run (VS ${{ matrix.vsyear }}, x64) (Native)
       run: tests/scripts/run-windows-vs.ps1 ${{ matrix.vsyear }} x64
 
   test-windows-x64-b:
-    name: Windows Server ${{ matrix.os }} x64 with VS ${{ matrix.vsyear }} (B)
+    name: Test (Windows Server ${{ matrix.os }}, x64, VS ${{ matrix.vsyear }}) (B)
     runs-on: windows-${{ matrix.os }}${{ matrix.runner }}
     strategy:
       matrix:
@@ -248,23 +248,23 @@ jobs:
     steps:
     - uses: actions/checkout@v6
 
-    - name: Build (VS ${{ matrix.vsyear }} x86)
+    - name: Build (VS ${{ matrix.vsyear }}, x86)
       run: tests/scripts/build-windows-vs.ps1 ${{ matrix.vsyear }} x64_x86
 
-    - name: Build (VS ${{ matrix.vsyear }} Arm64)
+    - name: Build (VS ${{ matrix.vsyear }}, Arm64)
       run: tests/scripts/build-windows-vs.ps1 ${{ matrix.vsyear }} x64_arm64
 
     - name: Build (Clang-CL)
       run: tests/scripts/build-windows-vs-clang-cl.ps1 ${{ matrix.vsyear }}
 
-    - name: Run (VS ${{ matrix.vsyear }} x86)
+    - name: Run (VS ${{ matrix.vsyear }}, x86)
       run: tests/scripts/run-windows-vs.ps1 ${{ matrix.vsyear }} x64_x86
 
     - name: Run (Clang-CL)
       run: tests/scripts/run-windows-vs-clang-cl.ps1 ${{ matrix.vsyear }}
 
   test-windows-11-arm64:
-    name: Windows 11 Arm64 with VS ${{ matrix.vsyear }}
+    name: Test (Windows 11, Arm64, VS ${{ matrix.vsyear }})
     runs-on: windows-11-arm
     strategy:
       matrix:
@@ -276,37 +276,41 @@ jobs:
     steps:
     - uses: actions/checkout@v6
 
-    - name: Build (VS ${{ matrix.vsyear }} Arm64 Native)
+    - name: Build (VS ${{ matrix.vsyear }}, Arm64) (Native)
       run: tests/scripts/build-windows-vs.ps1 ${{ matrix.vsyear }} arm64
 
-    - name: Build (VS ${{ matrix.vsyear }} x64)
+    - name: Build (VS ${{ matrix.vsyear }}, x64)
       run: tests/scripts/build-windows-vs.ps1 ${{ matrix.vsyear }} arm64_x64
 
-    - name: Build (VS ${{ matrix.vsyear }} x86)
+    - name: Build (VS ${{ matrix.vsyear }}, x86)
       run: tests/scripts/build-windows-vs.ps1 ${{ matrix.vsyear }} arm64_x86
 
-    - name: Run (VS ${{ matrix.vsyear }} Arm64 Native)
+    - name: Run (VS ${{ matrix.vsyear }}, Arm64) (Native)
       run: tests/scripts/run-windows-vs.ps1 ${{ matrix.vsyear }} arm64
 
-    - name: Run (VS ${{ matrix.vsyear }} x64)
+    - name: Run (VS ${{ matrix.vsyear }}, x64)
       run: tests/scripts/run-windows-vs.ps1 ${{ matrix.vsyear }} arm64_x64
 
-    - name: Run (VS ${{ matrix.vsyear }} x86)
+    - name: Run (VS ${{ matrix.vsyear }}, x86)
       run: tests/scripts/run-windows-vs.ps1 ${{ matrix.vsyear }} arm64_x86
 
   test-macos:
-    name: macOS ${{ matrix.name }}
+    name: Test (macOS ${{ matrix.osver }}, ${{ matrix.arch }})
     runs-on: macos-${{ matrix.runner }}
     strategy:
       matrix:
         include:
-          - name: 26 Arm64
+          - osver: 26
+            arch: Arm64
             runner: 26
-          - name: 15 Arm64
+          - osver: 15
+            arch: Arm64
             runner: 15
-          - name: 15 x64
+          - osver: 15
+            arch: x64
             runner: 15-intel
-          - name: 14 Arm64
+          - osver: 14
+            arch: Arm64
             runner: 14
       fail-fast: false
     steps:
