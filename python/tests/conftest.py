@@ -12,7 +12,7 @@ from nvtx.nvtx import PayloadTypeAlias
 
 
 TESTS_DIR = Path(__file__).parent
-INCLUDE_DIR = TESTS_DIR.parent.parent / 'c' / 'include'
+INCLUDE_DIR = TESTS_DIR.parent.parent / "c" / "include"
 INJECTION_DIR = TESTS_DIR / "injection"
 INJECTION_MODULE_NAME = "nvtx_test_injection"
 
@@ -25,12 +25,15 @@ def build_injection():
     try:
         os.chdir(INJECTION_DIR)
         setuptools.setup(
-                script_args=['build_ext', '-i'],
-                ext_modules=[
-                    setuptools.Extension(INJECTION_MODULE_NAME,
-                                         sources=[str(INJECTION_DIR / "NvtxTestInjection.cpp")],
-                                         include_dirs=[str(INCLUDE_DIR)])],
-            )
+            script_args=["build_ext", "-i"],
+            ext_modules=[
+                setuptools.Extension(
+                    INJECTION_MODULE_NAME,
+                    sources=[str(INJECTION_DIR / "NvtxTestInjection.cpp")],
+                    include_dirs=[str(INCLUDE_DIR)],
+                )
+            ],
+        )
     finally:
         os.chdir(owd)
     return str(next(INJECTION_DIR.glob(f"{INJECTION_MODULE_NAME}.*")))
@@ -85,6 +88,7 @@ def payload(request):
 
 DEFAULT_DOMAIN = "Default"
 
+
 class MessageType(enum.IntEnum):
     # Subset of nvtxMessageType_t (nvToolsExt.h)
     UNKNOWN = 0
@@ -109,6 +113,7 @@ class PayloadType(enum.IntEnum):
     INT64 = 2
     DOUBLE = 3
 
+
 @dataclass(frozen=True)
 class RecordedEvent:
     kind: EventKind
@@ -130,6 +135,7 @@ class DomainData:
 
 
 registered_domains: Dict[str, DomainData] = {}
+
 
 class NvtxEventsReader:
     class Buffer(ctypes.Structure):
@@ -166,8 +172,9 @@ class NvtxEventsReader:
             kind=EventKind(buffer.kind),
             domain=buffer.domain.decode(),
             message_type=buffer.message_type,
-            message=buffer.message.decode() if buffer.message_type == MessageType.REGISTERED
-                else "",
+            message=buffer.message.decode()
+            if buffer.message_type == MessageType.REGISTERED
+            else "",
             category=buffer.category,
             range_id=buffer.range_id,
             color=buffer.color,
@@ -177,9 +184,12 @@ class NvtxEventsReader:
         )
 
 
-def verify_registration_events(events: NvtxEventsReader,
-                               domain: Optional[str], message: Optional[str] = None,
-                               category: Optional[Union[str, int]] = None):
+def verify_registration_events(
+    events: NvtxEventsReader,
+    domain: Optional[str],
+    message: Optional[str] = None,
+    category: Optional[Union[str, int]] = None,
+):
     if domain is None:
         domain = DEFAULT_DOMAIN
 
@@ -209,9 +219,14 @@ def verify_registration_events(events: NvtxEventsReader,
             domain_data.registered_strings.add(message)
 
 
-def _verify_attributes(event: RecordedEvent, domain: Optional[str], message: Optional[str],
-                       color: Optional[int], category: Optional[Union[str, int]],
-                       payload: Optional[PayloadTypeAlias]):
+def _verify_attributes(
+    event: RecordedEvent,
+    domain: Optional[str],
+    message: Optional[str],
+    color: Optional[int],
+    category: Optional[Union[str, int]],
+    payload: Optional[PayloadTypeAlias],
+):
     if domain is None:
         domain = DEFAULT_DOMAIN
     assert event.domain == domain
@@ -236,17 +251,27 @@ def _verify_attributes(event: RecordedEvent, domain: Optional[str], message: Opt
         assert event.payload_f64 == payload
 
 
-def verify_mark(events: NvtxEventsReader, domain: Optional[str], message: Optional[str],
-                color: Optional[int], category: Optional[Union[str, int]],
-                payload: Optional[PayloadTypeAlias]):
+def verify_mark(
+    events: NvtxEventsReader,
+    domain: Optional[str],
+    message: Optional[str],
+    color: Optional[int],
+    category: Optional[Union[str, int]],
+    payload: Optional[PayloadTypeAlias],
+):
     mark = next(events)
     assert mark.kind == EventKind.MARK
     _verify_attributes(mark, domain, message, color, category, payload)
 
 
-def verify_push(events: NvtxEventsReader, domain: Optional[str], message: Optional[str],
-                color: Optional[int], category: Optional[Union[str, int]],
-                payload: Optional[PayloadTypeAlias]):
+def verify_push(
+    events: NvtxEventsReader,
+    domain: Optional[str],
+    message: Optional[str],
+    color: Optional[int],
+    category: Optional[Union[str, int]],
+    payload: Optional[PayloadTypeAlias],
+):
     push = next(events)
     assert push.kind == EventKind.RANGE_PUSH
     _verify_attributes(push, domain, message, color, category, payload)
@@ -260,9 +285,14 @@ def verify_pop(events: NvtxEventsReader, domain: Optional[str]):
     assert pop.domain == domain
 
 
-def verify_start(events: NvtxEventsReader, domain: Optional[str], message: Optional[str],
-                 color: Optional[int], category: Optional[Union[str, int]],
-                 payload: Optional[PayloadTypeAlias]):
+def verify_start(
+    events: NvtxEventsReader,
+    domain: Optional[str],
+    message: Optional[str],
+    color: Optional[int],
+    category: Optional[Union[str, int]],
+    payload: Optional[PayloadTypeAlias],
+):
     start = next(events)
     assert start.kind == EventKind.RANGE_START
     _verify_attributes(start, domain, message, color, category, payload)
