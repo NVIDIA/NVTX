@@ -181,6 +181,8 @@ cdef class EventAttributes:
     if np is not None:
         @payload_setter(np.ndarray)
         def _set_payload_numpy(self, payload):
+            if payload.nbytes == 0:
+                return
             schema = self.domain.get_numpy_array_schema(payload.dtype, bool(payload.ndim))
             cdef size_t array_length = 0
             if payload.ndim:
