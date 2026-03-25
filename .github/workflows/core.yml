@@ -6,8 +6,25 @@ on:
       - dev
       - release-v3
       - test-*
-  pull_request: {}
-  merge_group: {}
+    tags:
+      - "v*"
+    paths:
+      - ".github/workflows/core.yml"
+      - "CMakeLists.txt"
+      - "c/CMakeLists.txt"
+      - "c/*.cmake"
+      - "c/*.in"
+      - "c/include/**"
+      - "tests/**"
+  pull_request:
+    paths:
+      - ".github/workflows/core.yml"
+      - "CMakeLists.txt"
+      - "c/CMakeLists.txt"
+      - "c/*.cmake"
+      - "c/*.in"
+      - "c/include/**"
+      - "tests/**"
 
 jobs:
   test-ubuntu-24-04:
