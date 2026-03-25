@@ -43,11 +43,15 @@ _ENABLED = not os.getenv("NVTX_DISABLE", False)
 
 
 @lru_cache(maxsize=None)
+def _get_domain_cached(name):
+    return Domain(name)
+
+
 def get_domain(name: Optional[str] = None) -> Union[Domain, DummyDomain]:
     """
     Get or create a :class:`Domain` object for a domain name.
     """
-    return Domain(name)
+    return _get_domain_cached(name)
 
 
 class annotate:
