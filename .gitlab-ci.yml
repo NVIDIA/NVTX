@@ -1,7 +1,63 @@
 ---
-'Linux x64 NVHPC':
-  tags: [linux, x64]
+.core-template:
   timeout: 10m
+  rules:
+    - changes:
+        - .gitlab-ci.yml
+        - CMakeLists.txt
+        - c/CMakeLists.txt
+        - c/*.cmake
+        - c/*.in
+        - c/include/*
+        - c/include/**/*
+        - tests/*
+        - tests/**/*
+      when: always
+    - when: never
+
+.python-template:
+  timeout: 10m
+  rules:
+    - changes:
+        - .gitlab-ci.yml
+        - c/include/*
+        - c/include/**/*
+        - python/*.cfg
+        - python/*.in
+        - python/*.ps1
+        - python/*.py
+        - python/*.sh
+        - python/*.toml
+        - python/src/*
+        - python/src/**/*
+        - python/tests/*
+        - python/tests/**/*
+      when: always
+    - when: never
+
+.rust-template:
+  timeout: 10m
+  rules:
+    - changes:
+        - .gitlab-ci.yml
+        - '**/Cargo.*'
+        - c/include/*
+        - c/include/**/*
+        - rust/*.ps1
+        - rust/*.sh
+        - rust/*.toml
+        - rust/crates/*
+        - rust/crates/**/*
+        - rust/examples/*
+        - rust/examples/**/*
+        - rust/src/*
+        - rust/src/**/*
+      when: always
+    - when: never
+
+'Core (Linux, x64, NVHPC)':
+  tags: [linux, x64]
+  extends: .core-template
   script:
     - tests/scripts/build-linux-nvhpc.sh
     - cd tests/build-linux-nvhpc
@@ -10,9 +66,9 @@
     paths: [tests/build-linux-nvhpc/]
     expire_in: 1 day
 
-'Linux x64 GCC 9':
+'Core (Linux, x64, GCC 9)':
   tags: [linux, x64]
-  timeout: 10m
+  extends: .core-template
   script:
     - tests/scripts/build-linux-gcc.sh 9
     - cd tests/build-linux-gcc-9
@@ -21,9 +77,9 @@
     paths: [tests/build-linux-gcc-9/]
     expire_in: 1 day
 
-'Linux x64 GCC 10':
+'Core (Linux, x64, GCC 10)':
   tags: [linux, x64]
-  timeout: 10m
+  extends: .core-template
   script:
     - tests/scripts/build-linux-gcc.sh 10
     - cd tests/build-linux-gcc-10
@@ -32,9 +88,9 @@
     paths: [tests/build-linux-gcc-10/]
     expire_in: 1 day
 
-'Linux x64 GCC 11':
+'Core (Linux, x64, GCC 11)':
   tags: [linux, x64]
-  timeout: 10m
+  extends: .core-template
   script:
     - tests/scripts/build-linux-gcc.sh 11
     - cd tests/build-linux-gcc-11
@@ -43,9 +99,9 @@
     paths: [tests/build-linux-gcc-11/]
     expire_in: 1 day
 
-'Linux x64 GCC 12':
+'Core (Linux, x64, GCC 12)':
   tags: [linux, x64]
-  timeout: 10m
+  extends: .core-template
   script:
     - tests/scripts/build-linux-gcc.sh 12
     - cd tests/build-linux-gcc-12
@@ -54,9 +110,9 @@
     paths: [tests/build-linux-gcc-12/]
     expire_in: 1 day
 
-'Linux x64 GCC 13':
+'Core (Linux, x64, GCC 13)':
   tags: [linux, x64]
-  timeout: 10m
+  extends: .core-template
   script:
     - tests/scripts/build-linux-gcc.sh 13
     - cd tests/build-linux-gcc-13
@@ -65,9 +121,9 @@
     paths: [tests/build-linux-gcc-13/]
     expire_in: 1 day
 
-'Linux x64 GCC 14':
+'Core (Linux, x64, GCC 14)':
   tags: [linux, x64]
-  timeout: 10m
+  extends: .core-template
   script:
     - tests/scripts/build-linux-gcc.sh 14
     - cd tests/build-linux-gcc-14
@@ -76,9 +132,9 @@
     paths: [tests/build-linux-gcc-14/]
     expire_in: 1 day
 
-'Linux x64 Clang 14':
+'Core (Linux, x64, Clang 14)':
   tags: [linux, x64]
-  timeout: 10m
+  extends: .core-template
   script:
     - tests/scripts/build-linux-clang.sh 14
     - cd tests/build-linux-clang-14
@@ -87,9 +143,9 @@
     paths: [tests/build-linux-clang-14/]
     expire_in: 1 day
 
-'Linux x64 Clang 15':
+'Core (Linux, x64, Clang 15)':
   tags: [linux, x64]
-  timeout: 10m
+  extends: .core-template
   script:
     - tests/scripts/build-linux-clang.sh 15
     - cd tests/build-linux-clang-15
@@ -98,9 +154,9 @@
     paths: [tests/build-linux-clang-15/]
     expire_in: 1 day
 
-'Linux x64 Clang 16':
+'Core (Linux, x64, Clang 16)':
   tags: [linux, x64]
-  timeout: 10m
+  extends: .core-template
   script:
     - tests/scripts/build-linux-clang.sh 16
     - cd tests/build-linux-clang-16
@@ -109,9 +165,9 @@
     paths: [tests/build-linux-clang-16/]
     expire_in: 1 day
 
-'Linux x64 Clang 17':
+'Core (Linux, x64, Clang 17)':
   tags: [linux, x64]
-  timeout: 10m
+  extends: .core-template
   script:
     - tests/scripts/build-linux-clang.sh 17
     - cd tests/build-linux-clang-17
@@ -120,9 +176,9 @@
     paths: [tests/build-linux-clang-17/]
     expire_in: 1 day
 
-'Linux x64 Clang 18':
+'Core (Linux, x64, Clang 18)':
   tags: [linux, x64]
-  timeout: 10m
+  extends: .core-template
   script:
     - tests/scripts/build-linux-clang.sh 18
     - cd tests/build-linux-clang-18
@@ -131,9 +187,9 @@
     paths: [tests/build-linux-clang-18/]
     expire_in: 1 day
 
-'Linux x64 Clang 19':
+'Core (Linux, x64, Clang 19)':
   tags: [linux, x64]
-  timeout: 10m
+  extends: .core-template
   script:
     - tests/scripts/build-linux-clang.sh 19
     - cd tests/build-linux-clang-19
@@ -142,9 +198,9 @@
     paths: [tests/build-linux-clang-19/]
     expire_in: 1 day
 
-'Linux x64 Clang 20':
+'Core (Linux, x64, Clang 20)':
   tags: [linux, x64]
-  timeout: 10m
+  extends: .core-template
   script:
     - tests/scripts/build-linux-clang.sh 20
     - cd tests/build-linux-clang-20
@@ -153,9 +209,9 @@
     paths: [tests/build-linux-clang-20/]
     expire_in: 1 day
 
-'Linux x64 AOCC':
+'Core (Linux, x64, AOCC)':
   tags: [linux, x64]
-  timeout: 10m
+  extends: .core-template
   script:
     - tests/scripts/build-linux-aocc.sh
     - cd tests/build-linux-aocc
@@ -164,17 +220,17 @@
     paths: [tests/build-linux-aocc/]
     expire_in: 1 day
 
-'Linux x64 MinGW-w64 GCC (build only)':
+'Core (Linux, x64, MinGW-w64 GCC) (build only)':
   tags: [linux, x64]
-  timeout: 10m
+  extends: .core-template
   script: [tests/scripts/build-linux-mingw-w64-gcc.sh]
   artifacts:
     paths: [tests/build-linux-mingw-w64-gcc/]
     expire_in: 1 day
 
-'Windows x64 VS 2026 x64':
+'Core (Windows, x64, VS 2026, x64)':
   tags: [windows, x64]
-  timeout: 10m
+  extends: .core-template
   script:
     - tests/scripts/build-windows-vs.ps1 2026 x64
     - tests/scripts/run-windows-vs.ps1 2026 x64
@@ -182,9 +238,9 @@
     paths: [tests/build-windows-vs2026-x64/]
     expire_in: 1 day
 
-'Windows x64 VS 2026 x64_x86':
+'Core (Windows, x64, VS 2026, x64_x86)':
   tags: [windows, x64]
-  timeout: 10m
+  extends: .core-template
   script:
     - tests/scripts/build-windows-vs.ps1 2026 x64_x86
     - tests/scripts/run-windows-vs.ps1 2026 x64_x86
@@ -192,17 +248,17 @@
     paths: [tests/build-windows-vs2026-x64_x86/]
     expire_in: 1 day
 
-'Windows x64 VS 2026 Arm64 (build only)':
+'Core (Windows, x64, VS 2026, Arm64) (build only)':
   tags: [windows, x64]
-  timeout: 10m
+  extends: .core-template
   script: [tests/scripts/build-windows-vs.ps1 2026 x64_arm64]
   artifacts:
     paths: [tests/build-windows-vs2026-x64_arm64/]
     expire_in: 1 day
 
-'Windows x64 VS 2022 x64':
+'Core (Windows, x64, VS 2022, x64)':
   tags: [windows, x64]
-  timeout: 10m
+  extends: .core-template
   script:
     - tests/scripts/build-windows-vs.ps1 2022 x64
     - tests/scripts/run-windows-vs.ps1 2022 x64
@@ -210,9 +266,9 @@
     paths: [tests/build-windows-vs2022-x64/]
     expire_in: 1 day
 
-'Windows x64 VS 2022 x64_x86':
+'Core (Windows, x64, VS 2022, x64_x86)':
   tags: [windows, x64]
-  timeout: 10m
+  extends: .core-template
   script:
     - tests/scripts/build-windows-vs.ps1 2022 x64_x86
     - tests/scripts/run-windows-vs.ps1 2022 x64_x86
@@ -220,17 +276,17 @@
     paths: [tests/build-windows-vs2022-x64_x86/]
     expire_in: 1 day
 
-'Windows x64 VS 2022 Arm64 (build only)':
+'Core (Windows, x64, VS 2022, Arm64) (build only)':
   tags: [windows, x64]
-  timeout: 10m
+  extends: .core-template
   script: [tests/scripts/build-windows-vs.ps1 2022 x64_arm64]
   artifacts:
     paths: [tests/build-windows-vs2022-x64_arm64/]
     expire_in: 1 day
 
-'Windows x64 VS 2019 x64':
+'Core (Windows, x64, VS 2019, x64)':
   tags: [windows, x64]
-  timeout: 10m
+  extends: .core-template
   script:
     - tests/scripts/build-windows-vs.ps1 2019 x64
     - tests/scripts/run-windows-vs.ps1 2019 x64
@@ -238,9 +294,9 @@
     paths: [tests/build-windows-vs2019-x64/]
     expire_in: 1 day
 
-'Windows x64 VS 2019 x64_x86':
+'Core (Windows, x64, VS 2019, x64_x86)':
   tags: [windows, x64]
-  timeout: 10m
+  extends: .core-template
   script:
     - tests/scripts/build-windows-vs.ps1 2019 x64_x86
     - tests/scripts/run-windows-vs.ps1 2019 x64_x86
@@ -248,17 +304,17 @@
     paths: [tests/build-windows-vs2019-x64_x86/]
     expire_in: 1 day
 
-'Windows x64 VS 2019 Arm64 (build only)':
+'Core (Windows, x64, VS 2019, Arm64) (build only)':
   tags: [windows, x64]
-  timeout: 10m
+  extends: .core-template
   script: [tests/scripts/build-windows-vs.ps1 2019 x64_arm64]
   artifacts:
     paths: [tests/build-windows-vs2019-x64_arm64/]
     expire_in: 1 day
 
-'Windows x64 VS 2017 x64':
+'Core (Windows, x64, VS 2017, x64)':
   tags: [windows, x64]
-  timeout: 10m
+  extends: .core-template
   script:
     - tests/scripts/build-windows-vs.ps1 2017 x64
     - tests/scripts/run-windows-vs.ps1 2017 x64
@@ -266,9 +322,9 @@
     paths: [tests/build-windows-vs2017-x64/]
     expire_in: 1 day
 
-'Windows x64 VS 2017 x64_x86':
+'Core (Windows, x64, VS 2017, x64_x86)':
   tags: [windows, x64]
-  timeout: 10m
+  extends: .core-template
   script:
     - tests/scripts/build-windows-vs.ps1 2017 x64_x86
     - tests/scripts/run-windows-vs.ps1 2017 x64_x86
@@ -276,9 +332,9 @@
     paths: [tests/build-windows-vs2017-x64_x86/]
     expire_in: 1 day
 
-'Windows x64 VS 2015 x64':
+'Core (Windows, x64, VS 2015, x64)':
   tags: [windows, x64]
-  timeout: 10m
+  extends: .core-template
   script:
     - tests/scripts/build-windows-vs.ps1 2015 x64
     - tests/scripts/run-windows-vs.ps1 2015 x64
@@ -286,9 +342,9 @@
     paths: [tests/build-windows-vs2015-x64/]
     expire_in: 1 day
 
-'Windows x64 VS 2015 x64_x86':
+'Core (Windows, x64, VS 2015, x64_x86)':
   tags: [windows, x64]
-  timeout: 10m
+  extends: .core-template
   script:
     - tests/scripts/build-windows-vs.ps1 2015 x64_x86
     - tests/scripts/run-windows-vs.ps1 2015 x64_x86
@@ -296,9 +352,9 @@
     paths: [tests/build-windows-vs2015-x64_x86/]
     expire_in: 1 day
 
-'Windows x64 MSYS2 MinGW-w64-x86_64 UCRT GCC':
+'Core (Windows, x64, MSYS2, MinGW-w64-x86_64, UCRT, GCC)':
   tags: [windows, x64]
-  timeout: 10m
+  extends: .core-template
   script:
     - tests/scripts/build-windows-msys2.ps1 UCRT64 gcc
     - tests/scripts/run-windows-msys2.ps1 UCRT64 gcc
@@ -306,9 +362,9 @@
     paths: [tests/build-windows-msys2-ucrt64-gcc/]
     expire_in: 1 day
 
-'Windows x64 MSYS2 MinGW-w64-x86_64 UCRT Clang':
+'Core (Windows, x64, MSYS2, MinGW-w64-x86_64, UCRT, Clang)':
   tags: [windows, x64]
-  timeout: 10m
+  extends: .core-template
   script:
     - tests/scripts/build-windows-msys2.ps1 UCRT64 clang
     - tests/scripts/run-windows-msys2.ps1 UCRT64 clang
@@ -316,9 +372,9 @@
     paths: [tests/build-windows-msys2-ucrt64-clang/]
     expire_in: 1 day
 
-'Windows x64 MSYS2 LLVM x86_64 Clang':
+'Core (Windows, x64, MSYS2, LLVM, x86_64, Clang)':
   tags: [windows, x64]
-  timeout: 10m
+  extends: .core-template
   script:
     - tests/scripts/build-windows-msys2.ps1 CLANG64 clang
     - tests/scripts/run-windows-msys2.ps1 CLANG64 clang
@@ -326,9 +382,9 @@
     paths: [tests/build-windows-msys2-clang64-clang/]
     expire_in: 1 day
 
-'Windows x64 MSYS2 MinGW-w64-x86_64 MSVCRT GCC':
+'Core (Windows, x64, MSYS2, MinGW-w64-x86_64, MSVCRT, GCC)':
   tags: [windows, x64]
-  timeout: 10m
+  extends: .core-template
   script:
     - tests/scripts/build-windows-msys2.ps1 MINGW64 gcc
     - tests/scripts/run-windows-msys2.ps1 MINGW64 gcc
@@ -336,9 +392,9 @@
     paths: [tests/build-windows-msys2-mingw64-gcc/]
     expire_in: 1 day
 
-'Windows x64 MSYS2 MinGW-w64-x86_64 MSVCRT Clang':
+'Core (Windows, x64, MSYS2, MinGW-w64-x86_64, MSVCRT, Clang)':
   tags: [windows, x64]
-  timeout: 10m
+  extends: .core-template
   script:
     - tests/scripts/build-windows-msys2.ps1 MINGW64 clang
     - tests/scripts/run-windows-msys2.ps1 MINGW64 clang
@@ -346,9 +402,9 @@
     paths: [tests/build-windows-msys2-mingw64-clang/]
     expire_in: 1 day
 
-'Windows x64 MSYS2 MinGW-w64-i686 MSVCRT GCC':
+'Core (Windows, x64, MSYS2, MinGW-w64-i686, MSVCRT, GCC)':
   tags: [windows, x64]
-  timeout: 10m
+  extends: .core-template
   script:
     - tests/scripts/build-windows-msys2.ps1 MINGW32 gcc
     - tests/scripts/run-windows-msys2.ps1 MINGW32 gcc
@@ -356,9 +412,9 @@
     paths: [tests/build-windows-msys2-mingw32-gcc/]
     expire_in: 1 day
 
-'Windows x64 MSYS2 MinGW-w64-i686 MSVCRT Clang':
+'Core (Windows, x64, MSYS2, MinGW-w64-i686, MSVCRT, Clang)':
   tags: [windows, x64]
-  timeout: 10m
+  extends: .core-template
   script:
     - tests/scripts/build-windows-msys2.ps1 MINGW32 clang
     - tests/scripts/run-windows-msys2.ps1 MINGW32 clang
@@ -366,9 +422,9 @@
     paths: [tests/build-windows-msys2-mingw32-clang/]
     expire_in: 1 day
 
-'Windows x64 Cygwin x86_64 GCC':
+'Core (Windows, x64, Cygwin, x86_64, GCC)':
   tags: [windows, x64]
-  timeout: 10m
+  extends: .core-template
   script:
     - tests/scripts/build-windows-cygwin.ps1 x64 gcc
     - tests/scripts/run-windows-cygwin.ps1 x64 gcc
@@ -376,9 +432,9 @@
     paths: [tests/build-windows-cygwin64-gcc/]
     expire_in: 1 day
 
-'Windows x64 Cygwin x86_64 Clang':
+'Core (Windows, x64, Cygwin, x86_64, Clang)':
   tags: [windows, x64]
-  timeout: 10m
+  extends: .core-template
   script:
     - tests/scripts/build-windows-cygwin.ps1 x64 clang
     - tests/scripts/run-windows-cygwin.ps1 x64 clang
@@ -386,12 +442,92 @@
     paths: [tests/build-windows-cygwin64-clang/]
     expire_in: 1 day
 
-'Windows x64 Cygwin i686 GCC':
+'Core (Windows, x64, Cygwin, i686, GCC)':
   tags: [windows, x64]
-  timeout: 10m
+  extends: .core-template
   script:
     - tests/scripts/build-windows-cygwin.ps1 x86 gcc
     - tests/scripts/run-windows-cygwin.ps1 x86 gcc
   artifacts:
     paths: [tests/build-windows-cygwin32-gcc/]
     expire_in: 1 day
+
+'Python (3.12, Linux, x64)':
+  tags: [linux, x64]
+  extends: .python-template
+  script:
+    - source "$NVTX_VENV/bin/activate"
+    - cd python
+    - Python='python3.12' ./check.sh
+
+'Python (3.9, Windows, x64)':
+  tags: [windows, x64]
+  extends: .python-template
+  script:
+    - cd python
+    - ./check.ps1 -Python "$env:PYTHONPATH\3.9\python.exe"
+
+'Python (3.10, Windows, x64)':
+  tags: [windows, x64]
+  extends: .python-template
+  script:
+    - cd python
+    - ./check.ps1 -Python "$env:PYTHONPATH\3.10\python.exe"
+
+'Python (3.11, Windows, x64)':
+  tags: [windows, x64]
+  extends: .python-template
+  script:
+    - cd python
+    - ./check.ps1 -Python "$env:PYTHONPATH\3.11\python.exe"
+
+'Python (3.12, Windows, x64)':
+  tags: [windows, x64]
+  extends: .python-template
+  script:
+    - cd python
+    - ./check.ps1 -Python "$env:PYTHONPATH\3.12\python.exe"
+
+'Python (3.13, Windows, x64)':
+  tags: [windows, x64]
+  extends: .python-template
+  script:
+    - cd python
+    - ./check.ps1 -Python "$env:PYTHONPATH\3.13\python.exe"
+
+'Python (3.13t, Windows, x64)':
+  tags: [windows, x64]
+  extends: .python-template
+  script:
+    - cd python
+    - ./check.ps1 -Python "$env:PYTHONPATH\3.13t\python3.13t.exe"
+
+'Python (3.14, Windows, x64)':
+  tags: [windows, x64]
+  extends: .python-template
+  script:
+    - cd python
+    - ./check.ps1 -Python "$env:PYTHONPATH\3.14\python.exe"
+
+'Python (3.14t, Windows, x64)':
+  tags: [windows, x64]
+  extends: .python-template
+  script:
+    - cd python
+    - ./check.ps1 -Python "$env:PYTHONPATH\3.14t\python3.14t.exe"
+
+'Rust (Linux, x64)':
+  tags: [linux, x64]
+  extends: .rust-template
+  script:
+    - cd rust
+    - ./check.sh
+
+'Rust (Windows, x64)':
+  tags: [windows, x64]
+  extends: .rust-template
+  script:
+    - $env:PATH = "$env:RUSTPATH\bin;$env:PATH"
+    - $env:LIBCLANG_PATH = "$env:VSPATH\VC\Tools\Llvm\x64\bin"
+    - cd rust
+    - ./check.ps1

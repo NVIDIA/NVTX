@@ -13,3 +13,5 @@ done
 
 cargo install --locked cargo-deny || true
 cargo deny --workspace --all-features check --show-stats
+
+cargo +1.77.0 check --workspace --all-targets --all-features
