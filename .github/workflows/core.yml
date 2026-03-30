@@ -330,15 +330,21 @@ jobs:
           - osver: 26
             arch: Arm64
             runner: 26
+          - osver: 26
+            arch: x64
+            runner: 26-intel
           - osver: 15
             arch: Arm64
             runner: 15
           - osver: 15
             arch: x64
-            runner: 15-intel
+            runner: 15-large
           - osver: 14
             arch: Arm64
             runner: 14
+          - osver: 14
+            arch: x64
+            runner: 14-large
       fail-fast: false
     steps:
       - uses: actions/checkout@v6
