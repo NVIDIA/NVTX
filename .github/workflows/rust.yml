@@ -54,6 +54,8 @@ jobs:
             rv: 1.77.0
           - runner: windows-latest
             rv: 1.82.0
+          - runner: macos-latest
+            rv: 1.77.0
     steps:
       - uses: actions/checkout@v6
       - uses: actions/cache@v5
@@ -76,7 +78,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        runner: [ubuntu-latest, windows-latest]
+        runner: [ubuntu-latest, windows-latest, macos-latest]
     steps:
       - uses: actions/checkout@v6
       - uses: actions/cache@v5
@@ -96,7 +98,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        runner: [ubuntu-latest, windows-latest]
+        runner: [ubuntu-latest, windows-latest, macos-latest]
     steps:
       - uses: actions/checkout@v6
       - run: cargo fmt --all -- --check
@@ -107,7 +109,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        runner: [ubuntu-latest, windows-latest]
+        runner: [ubuntu-latest, windows-latest, macos-latest]
         f: [--all-features, --no-default-features]
     steps:
       - uses: actions/checkout@v6
