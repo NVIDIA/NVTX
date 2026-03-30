@@ -51,7 +51,7 @@
 #endif
 
 #if defined(__APPLE__)
-#include <libproc.h>
+#include "AppleHelper.h"
 #endif
 
 #include <stdio.h>
@@ -97,12 +97,12 @@ static std::string GetCurrentProcessPath(void)
     {
         int ret;
         pid_t pid = getpid();
-        buf = static_cast<char*>(malloc(PROC_PIDPATHINFO_MAXSIZE));
+        buf = static_cast<char*>(malloc(NVTX_PROC_PIDPATHINFO_MAXSIZE));
         if (!buf)
         {
             return std::string{};
         }
-        ret = proc_pidpath(pid, buf, PROC_PIDPATHINFO_MAXSIZE);
+        ret = nvtx_proc_pidpath(pid, buf, NVTX_PROC_PIDPATHINFO_MAXSIZE);
         if (ret == 0)
         {
             free(buf);

@@ -52,6 +52,9 @@ endif()
 
 add_executable(runtest "RunTest.cpp")
 target_link_libraries(runtest PRIVATE nvtx3-cpp)
+if(APPLE)
+    target_sources(runtest PRIVATE "AppleHelper.c" "AppleHelper.h")
+endif()
 
 add_nvtx_test_library(inj-c SHARED "PrintInjectionC.c" "PrintInjectionImpl.cpp")
 target_compile_definitions(inj-c PRIVATE SUPPORT_STATIC_INJECTION SUPPORT_DYNAMIC_INJECTION SUPPORT_PREINJECTION INJECTION_PRINT_PREFIX="inj-c")
@@ -212,10 +215,16 @@ target_link_options(export-api-ext PRIVATE
 
 add_nvtx_test_library(use-exported-api SHARED "UseExportedApi.cpp")
 target_include_directories(use-exported-api PRIVATE "Imports/cuda_lite" "Imports/opencl_lite")
+if(APPLE)
+    target_sources(use-exported-api PRIVATE "AppleHelper.c" "AppleHelper.h")
+endif()
 
 add_nvtx_test_library(use-exported-api-ext SHARED "UseExportedApi.cpp")
 target_compile_definitions(use-exported-api-ext PRIVATE SUPPORT_EXTENSIONS)
 target_include_directories(use-exported-api-ext PRIVATE "Imports/cuda_lite" "Imports/opencl_lite")
+if(APPLE)
+    target_sources(use-exported-api-ext PRIVATE "AppleHelper.c" "AppleHelper.h")
+endif()
 
 add_test(NAME "Self" COMMAND runtest -t self)
 add_test(NAME "Self with SelfInjection" COMMAND runtest -t self -i self)
