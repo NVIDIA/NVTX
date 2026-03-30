@@ -102,28 +102,46 @@ pub type CuStream = ffi::CUstream;
 /// Resource types for use within [`crate::ResourceAttributes`].
 pub mod resource_type {
     use crate::ffi::nvtxResourceGenericType_t::*;
+    #[cfg(target_os = "windows")]
+    type ResourceType = i32;
+    #[cfg(not(target_os = "windows"))]
+    type ResourceType = u32;
+
+    const fn resource_type_u32(value: ResourceType) -> u32 {
+        #[cfg(target_os = "windows")]
+        {
+            value as u32
+        }
+        #[cfg(not(target_os = "windows"))]
+        {
+            value
+        }
+    }
+
     /// An unknown resource type.
-    pub const UNKNOWN: u32 = NVTX_RESOURCE_TYPE_UNKNOWN;
+    pub const UNKNOWN: u32 = resource_type_u32(NVTX_RESOURCE_TYPE_UNKNOWN);
     /// A handle to a generic resource.
-    pub const GENERIC_HANDLE: u32 = NVTX_RESOURCE_TYPE_GENERIC_HANDLE;
+    pub const GENERIC_HANDLE: u32 = resource_type_u32(NVTX_RESOURCE_TYPE_GENERIC_HANDLE);
     /// A pointer to a generic resource.
-    pub const GENERIC_POINTER: u32 = NVTX_RESOURCE_TYPE_GENERIC_POINTER;
+    pub const GENERIC_POINTER: u32 = resource_type_u32(NVTX_RESOURCE_TYPE_GENERIC_POINTER);
     /// A handle to a native thread.
-    pub const GENERIC_THREAD_NATIVE: u32 = NVTX_RESOURCE_TYPE_GENERIC_THREAD_NATIVE;
+    pub const GENERIC_THREAD_NATIVE: u32 =
+        resource_type_u32(NVTX_RESOURCE_TYPE_GENERIC_THREAD_NATIVE);
     /// A handle to a posix thread.
-    pub const GENERIC_THREAD_POSIX: u32 = NVTX_RESOURCE_TYPE_GENERIC_THREAD_POSIX;
+    pub const GENERIC_THREAD_POSIX: u32 =
+        resource_type_u32(NVTX_RESOURCE_TYPE_GENERIC_THREAD_POSIX);
 
     #[cfg(feature = "cuda")]
     mod cuda {
         use crate::ffi::nvtxResourceCUDAType_t::*;
         /// A CUDA device resource.
-        pub const CUDA_DEVICE: u32 = NVTX_RESOURCE_TYPE_CUDA_DEVICE;
+        pub const CUDA_DEVICE: u32 = super::resource_type_u32(NVTX_RESOURCE_TYPE_CUDA_DEVICE);
         /// A CUDA context resource.
-        pub const CUDA_CONTEXT: u32 = NVTX_RESOURCE_TYPE_CUDA_CONTEXT;
+        pub const CUDA_CONTEXT: u32 = super::resource_type_u32(NVTX_RESOURCE_TYPE_CUDA_CONTEXT);
         /// A CUDA stream resource.
-        pub const CUDA_STREAM: u32 = NVTX_RESOURCE_TYPE_CUDA_STREAM;
+        pub const CUDA_STREAM: u32 = super::resource_type_u32(NVTX_RESOURCE_TYPE_CUDA_STREAM);
         /// A CUDA event resource.
-        pub const CUDA_EVENT: u32 = NVTX_RESOURCE_TYPE_CUDA_EVENT;
+        pub const CUDA_EVENT: u32 = super::resource_type_u32(NVTX_RESOURCE_TYPE_CUDA_EVENT);
     }
     #[cfg(feature = "cuda")]
     pub use cuda::*;
@@ -132,11 +150,11 @@ pub mod resource_type {
     mod cuda_runtime {
         use crate::ffi::nvtxResourceCUDARTType_t::*;
         /// A CUDA runtime device resource.
-        pub const CUDART_DEVICE: u32 = NVTX_RESOURCE_TYPE_CUDART_DEVICE;
+        pub const CUDART_DEVICE: u32 = super::resource_type_u32(NVTX_RESOURCE_TYPE_CUDART_DEVICE);
         /// A CUDA runtime stream resource.
-        pub const CUDART_STREAM: u32 = NVTX_RESOURCE_TYPE_CUDART_STREAM;
+        pub const CUDART_STREAM: u32 = super::resource_type_u32(NVTX_RESOURCE_TYPE_CUDART_STREAM);
         /// A CUDA runtime event resource.
-        pub const CUDART_EVENT: u32 = NVTX_RESOURCE_TYPE_CUDART_EVENT;
+        pub const CUDART_EVENT: u32 = super::resource_type_u32(NVTX_RESOURCE_TYPE_CUDART_EVENT);
     }
     #[cfg(feature = "cuda_runtime")]
     pub use cuda_runtime::*;
@@ -145,17 +163,23 @@ pub mod resource_type {
     mod pthread {
         use crate::ffi::nvtxResourceSyncPosixThreadType_t::*;
         /// A pthread mutex resource.
-        pub const PTHREAD_MUTEX: u32 = NVTX_RESOURCE_TYPE_SYNC_PTHREAD_MUTEX;
+        pub const PTHREAD_MUTEX: u32 =
+            super::resource_type_u32(NVTX_RESOURCE_TYPE_SYNC_PTHREAD_MUTEX);
         /// A pthread condition variable resource.
-        pub const PTHREAD_CONDITION: u32 = NVTX_RESOURCE_TYPE_SYNC_PTHREAD_CONDITION;
+        pub const PTHREAD_CONDITION: u32 =
+            super::resource_type_u32(NVTX_RESOURCE_TYPE_SYNC_PTHREAD_CONDITION);
         /// A pthread rwlock resource.
-        pub const PTHREAD_RWLOCK: u32 = NVTX_RESOURCE_TYPE_SYNC_PTHREAD_RWLOCK;
+        pub const PTHREAD_RWLOCK: u32 =
+            super::resource_type_u32(NVTX_RESOURCE_TYPE_SYNC_PTHREAD_RWLOCK);
         /// A pthread barrier resource.
-        pub const PTHREAD_BARRIER: u32 = NVTX_RESOURCE_TYPE_SYNC_PTHREAD_BARRIER;
+        pub const PTHREAD_BARRIER: u32 =
+            super::resource_type_u32(NVTX_RESOURCE_TYPE_SYNC_PTHREAD_BARRIER);
         /// A pthread spinlock resource.
-        pub const PTHREAD_SPINLOCK: u32 = NVTX_RESOURCE_TYPE_SYNC_PTHREAD_SPINLOCK;
+        pub const PTHREAD_SPINLOCK: u32 =
+            super::resource_type_u32(NVTX_RESOURCE_TYPE_SYNC_PTHREAD_SPINLOCK);
         /// A pthread oncelock resource.
-        pub const PTHREAD_ONCE: u32 = NVTX_RESOURCE_TYPE_SYNC_PTHREAD_ONCE;
+        pub const PTHREAD_ONCE: u32 =
+            super::resource_type_u32(NVTX_RESOURCE_TYPE_SYNC_PTHREAD_ONCE);
     }
     #[cfg(target_family = "unix")]
     pub use pthread::*;
