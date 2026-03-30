@@ -1,32 +1,29 @@
+---
 name: Python
 
-on:
+'on':
   push:
-    branches:
-      - dev
-      - release-v3
-      - test-*
+    branches: [dev, release-v3, test-*]
+    tags: [v*]
     paths:
-      - ".github/workflows/python.yml"
-      - "c/include/**"
-      - "python/*.cfg"
-      - "python/*.in"
-      - "python/*.py"
-      - "python/*.toml"
-      - "python/src/**"
-      - "python/tests/**"
-    tags:
-      - "v*"
+      - .github/workflows/python.yml
+      - c/include/**
+      - python/*.cfg
+      - python/*.in
+      - python/*.py
+      - python/*.toml
+      - python/src/**
+      - python/tests/**
   pull_request:
     paths:
-      - ".github/workflows/python.yml"
-      - "c/include/**"
-      - "python/*.cfg"
-      - "python/*.in"
-      - "python/*.py"
-      - "python/*.toml"
-      - "python/src/**"
-      - "python/tests/**"
+      - .github/workflows/python.yml
+      - c/include/**
+      - python/*.cfg
+      - python/*.in
+      - python/*.py
+      - python/*.toml
+      - python/src/**
+      - python/tests/**
 
 permissions:
   contents: read
@@ -42,20 +39,14 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        runner: ["ubuntu-latest", "windows-latest"]
-        pyver: ["3.9", "3.10", "3.11", "3.12", "3.13", "3.13t", "3.14", "3.14t"]
+        runner: [ubuntu-latest, windows-latest]
+        pyver: ['3.9', '3.10', '3.11', '3.12', '3.13', 3.13t, '3.14', 3.14t]
     steps:
-    - uses: actions/checkout@v6
-
-    - uses: actions/setup-python@v6
-      with:
-        python-version: ${{ matrix.pyver }}
-
-    - run: pipx run build --sdist python
-
-    - run: pip install ./python[test]
-
-    - run: pytest python/tests
-    - run: pytest --enable-injection python/tests
-
-
+      - uses: actions/checkout@v6
+      - uses: actions/setup-python@v6
+        with:
+          python-version: ${{ matrix.pyver }}
+      - run: pipx run build --sdist python
+      - run: pip install ./python[test]
+      - run: pytest python/tests
+      - run: pytest --enable-injection python/tests

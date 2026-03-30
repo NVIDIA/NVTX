@@ -1,32 +1,27 @@
+---
 name: Rust
 
-on:
+'on':
   push:
-    branches:
-      - dev
-      - release-v3
-      - test-*
+    branches: [dev, release-v3, test-*]
+    tags: [v*]
     paths:
-      - ".github/workflows/rust.yml"
-      - "**/Cargo.*"
-      - "c/include/**"
-      - "rust/*.sh"
-      - "rust/*.toml"
-      - "rust/crates/**"
-      - "rust/examples/**"
-      - "rust/src/**"
-    tags:
-      - "v*"
+      - .github/workflows/rust.yml
+      - '**/Cargo.*'
+      - c/include/**
+      - rust/*.toml
+      - rust/crates/**
+      - rust/examples/**
+      - rust/src/**
   pull_request:
     paths:
-      - ".github/workflows/rust.yml"
-      - "**/Cargo.*"
-      - "c/include/**"
-      - "rust/*.sh"
-      - "rust/*.toml"
-      - "rust/crates/**"
-      - "rust/examples/**"
-      - "rust/src/**"
+      - .github/workflows/rust.yml
+      - '**/Cargo.*'
+      - c/include/**
+      - rust/*.toml
+      - rust/crates/**
+      - rust/examples/**
+      - rust/src/**
 
 permissions:
   contents: read
@@ -56,18 +51,24 @@ jobs:
       matrix:
         include:
           - runner: ubuntu-latest
-            rustver: 1.77.0
+            rv: 1.77.0
           - runner: windows-latest
-            rustver: 1.82.0
+            rv: 1.82.0
     steps:
       - uses: actions/checkout@v6
       - uses: actions/cache@v5
         with:
           path: ${{ env.CARGO_CACHE_PATH }}
-          key: ${{ runner.os }}-cargo-${{ steps.toolchain.outputs.cachekey }}-${{ hashFiles('**/Cargo.lock') }}
-          restore-keys: ${{ runner.os }}-cargo-${{ steps.toolchain.outputs.cachekey }}-
-      - run: rustup install ${{ matrix.rustver }}
-      - run: cargo +${{ matrix.rustver }} check --workspace --all-targets --all-features
+          key: "\
+            ${{ runner.os }}-cargo-\
+            ${{ steps.toolchain.outputs.cachekey }}-\
+            ${{ hashFiles('**/Cargo.lock') }}"
+          restore-keys: "\
+            ${{ runner.os }}-cargo-\
+            ${{ steps.toolchain.outputs.cachekey }}-"
+      - run: rustup install ${{ matrix.rv }}
+      - run: >
+          cargo +${{ matrix.rv }} check --workspace --all-targets --all-features
 
   deny:
     name: Deny
@@ -75,14 +76,17 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        runner: ["ubuntu-latest", "windows-latest"]
+        runner: [ubuntu-latest, windows-latest]
     steps:
       - uses: actions/checkout@v6
       - uses: actions/cache@v5
         with:
           path: ${{ env.CARGO_CACHE_PATH }}
-          key: ${{ runner.os }}-cargo-deny-${{ steps.toolchain.outputs.cachekey }}
-          restore-keys: ${{ runner.os }}-cargo-deny-
+          key: "\
+            ${{ runner.os }}-cargo-deny-\
+            ${{ steps.toolchain.outputs.cachekey }}"
+          restore-keys: "\
+            ${{ runner.os }}-cargo-deny-"
       - run: cargo install --locked cargo-deny || true
       - run: cargo deny --workspace --all-features check --show-stats
 
@@ -92,7 +96,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        runner: ["ubuntu-latest", "windows-latest"]
+        runner: [ubuntu-latest, windows-latest]
     steps:
       - uses: actions/checkout@v6
       - run: cargo fmt --all -- --check
@@ -103,20 +107,27 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        runner: ["ubuntu-latest", "windows-latest"]
-        features: ["--all-features", "--no-default-features"]
+        runner: [ubuntu-latest, windows-latest]
+        f: [--all-features, --no-default-features]
     steps:
       - uses: actions/checkout@v6
       - uses: actions/cache@v5
         with:
           path: ${{ env.CARGO_CACHE_PATH }}
-          key: ${{ runner.os }}-cargo-check-${{ steps.toolchain.outputs.cachekey }}-${{ matrix.features }}-${{ hashFiles('**/Cargo.lock') }}
-          restore-keys: ${{ runner.os }}-cargo-check-${{ steps.toolchain.outputs.cachekey }}-${{ matrix.features }}-
+          key: "\
+            ${{ runner.os }}-cargo-check-\
+            ${{ steps.toolchain.outputs.cachekey }}-\
+            ${{ matrix.f }}-${{ hashFiles('**/Cargo.lock') }}"
+          restore-keys: "\
+            ${{ runner.os }}-cargo-check-\
+            ${{ steps.toolchain.outputs.cachekey }}-\
+            ${{ matrix.f }}-"
       - name: Check
-        run: cargo check --workspace --all-targets ${{ matrix.features }}
+        run: cargo check --workspace --all-targets ${{ matrix.f }}
       - name: Clippy
-        run: cargo clippy --workspace --all-targets ${{ matrix.features }} -- -Dwarnings
+        run: >
+          cargo clippy --workspace --all-targets ${{ matrix.f }} -- -Dwarnings
       - name: Test
-        run: cargo test --workspace --all-targets ${{ matrix.features }}
+        run: cargo test --workspace --all-targets ${{ matrix.f }}
       - name: Doctest
-        run: cargo test --workspace --doc ${{ matrix.features }}
+        run: cargo test --workspace --doc ${{ matrix.f }}

@@ -1,10 +1,11 @@
+---
 name: Build Python wheels and sdist for NVTX
 
-on:
+'on':
   workflow_dispatch:
     inputs:
       branchOrTag:
-        description: 'Branch, tag or SHA to checkout'
+        description: Branch, tag or SHA to checkout
         required: false
 
 jobs:
@@ -12,35 +13,35 @@ jobs:
     name: Build source distribution
     runs-on: ubuntu-latest
     steps:
-    - name: Check out repository
-      uses: actions/checkout@v6
-      with:
-        ref: ${{ inputs.branchOrTag }}
+      - name: Check out repository
+        uses: actions/checkout@v6
+        with:
+          ref: ${{ inputs.branchOrTag }}
 
-    - name: Build sdist
-      run: pipx run build --sdist python
+      - name: Build sdist
+        run: pipx run build --sdist python
 
-    # Ideally, the below step wouldn't be needed, but without it, the installation fails
-    # due to a bug in the default setuptools installed in the ubuntu-latest image.
-    # https://github.com/pypa/setuptools/issues/3269
-    - name: Set up Python
-      uses: actions/setup-python@v6
-      with:
-        python-version: '>=3.9'
+      # Ideally, the below step wouldn't be needed, but without it, the
+      # installation fails due to a bug in the default setuptools in the
+      # ubuntu-latest image. https://github.com/pypa/setuptools/issues/3269
+      - name: Set up Python
+        uses: actions/setup-python@v6
+        with:
+          python-version: '>=3.9'
 
-    - name: Install Python NVTX from sdist
-      run: pip install python/dist/$(ls python/dist)[test]
+      - name: Install Python NVTX from sdist
+        run: pip install python/dist/$(ls python/dist)[test]
 
-    - name: Test sdist
-      run: |
-        pytest python/tests
-        pytest --enable-injection python/tests
+      - name: Test sdist
+        run: |
+          pytest python/tests
+          pytest --enable-injection python/tests
 
-    - name: Upload distribution
-      uses: actions/upload-artifact@v7
-      with:
-        name: nvtx-sdist
-        path: python/dist
+      - name: Upload distribution
+        uses: actions/upload-artifact@v7
+        with:
+          name: nvtx-sdist
+          path: python/dist
 
   wheels:
     name: Build wheels on ${{ matrix.os }}
@@ -49,25 +50,25 @@ jobs:
       matrix:
         os: [ubuntu-latest, windows-latest, macos-latest]
     steps:
-    - name: Check out repository
-      uses: actions/checkout@v6
-      with:
-        ref: ${{ inputs.branchOrTag }}
+      - name: Check out repository
+        uses: actions/checkout@v6
+        with:
+          ref: ${{ inputs.branchOrTag }}
 
-    - name: Set up QEMU
-      if: matrix.os == 'ubuntu-latest'
-      uses: docker/setup-qemu-action@v4
-      with:
-        platforms: arm64
+      - name: Set up QEMU
+        if: matrix.os == 'ubuntu-latest'
+        uses: docker/setup-qemu-action@v4
+        with:
+          platforms: arm64
 
-    - name: Build wheels
-      uses: pypa/cibuildwheel@v3.4
-      with:
-        output-dir: dist
-        package-dir: python
+      - name: Build wheels
+        uses: pypa/cibuildwheel@v3.4
+        with:
+          output-dir: dist
+          package-dir: python
 
-    - name: Upload distributions
-      uses: actions/upload-artifact@v7
-      with:
-        path: dist
-        name: nvtx-wheels-${{ matrix.os }}
+      - name: Upload distributions
+        uses: actions/upload-artifact@v7
+        with:
+          path: dist
+          name: nvtx-wheels-${{ matrix.os }}
