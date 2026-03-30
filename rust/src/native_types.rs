@@ -5,7 +5,7 @@ pub use nvtx_sys::{CuContext, CuDevice, CuEvent, CuStream};
 pub use nvtx_sys::{CudaEvent, CudaStream};
 
 #[cfg(target_family = "unix")]
-pub use libc::{
-    pthread_barrier_t, pthread_cond_t, pthread_mutex_t, pthread_once_t, pthread_rwlock_t,
-    pthread_spinlock_t,
-};
+pub use libc::{pthread_cond_t, pthread_mutex_t, pthread_once_t, pthread_rwlock_t};
+
+#[cfg(all(target_family = "unix", not(target_os = "macos")))]
+pub use libc::{pthread_barrier_t, pthread_spinlock_t};

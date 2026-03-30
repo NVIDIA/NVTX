@@ -1,11 +1,11 @@
 use super::Identifier;
 use crate::{
-    native_types::{
-        pthread_barrier_t, pthread_cond_t, pthread_mutex_t, pthread_once_t, pthread_rwlock_t,
-        pthread_spinlock_t,
-    },
+    native_types::{pthread_cond_t, pthread_mutex_t, pthread_once_t, pthread_rwlock_t},
     TypeValueEncodable,
 };
+
+#[cfg(not(target_os = "macos"))]
+use crate::native_types::{pthread_barrier_t, pthread_spinlock_t};
 
 /// Identifiers used for PThread resources
 pub enum PThreadIdentifier {
@@ -15,8 +15,10 @@ pub enum PThreadIdentifier {
     Condition(*const pthread_cond_t),
     /// PThread rwlock
     RWLock(*const pthread_rwlock_t),
+    #[cfg(not(target_os = "macos"))]
     /// PThread barrier
     Barrier(*const pthread_barrier_t),
+    #[cfg(not(target_os = "macos"))]
     /// PThread spinlock
     Spinlock(*const pthread_spinlock_t),
     /// PThread once
@@ -47,10 +49,12 @@ impl TypeValueEncodable for PThreadIdentifier {
                 nvtx_sys::resource_type::PTHREAD_RWLOCK,
                 Self::Value { pValue: rwl.cast() },
             ),
+            #[cfg(not(target_os = "macos"))]
             Self::Barrier(bar) => (
                 nvtx_sys::resource_type::PTHREAD_BARRIER,
                 Self::Value { pValue: bar.cast() },
             ),
+            #[cfg(not(target_os = "macos"))]
             Self::Spinlock(s) => (
                 nvtx_sys::resource_type::PTHREAD_SPINLOCK,
                 Self::Value { pValue: s.cast() },
@@ -96,6 +100,7 @@ mod tests {
         );
     }
 
+    #[cfg(not(target_os = "macos"))]
     #[test]
     fn test_identifier_barrier() {
         let dummy = ();
@@ -118,6 +123,7 @@ mod tests {
         );
     }
 
+    #[cfg(not(target_os = "macos"))]
     #[test]
     fn test_identifier_spinlock() {
         let dummy = ();
@@ -168,6 +174,7 @@ mod tests {
         }
     }
 
+    #[cfg(not(target_os = "macos"))]
     #[test]
     fn test_encode_barrier() {
         let dummy = ();
@@ -196,6 +203,7 @@ mod tests {
         }
     }
 
+    #[cfg(not(target_os = "macos"))]
     #[test]
     fn test_encode_spinlock() {
         let dummy = ();
