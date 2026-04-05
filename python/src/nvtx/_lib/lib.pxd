@@ -200,6 +200,7 @@ cdef class EventAttributes:
     cdef nvtxStringHandle_t string_handle
     cdef nvtxEventAttributes_t c_obj
     cdef nvtxPayloadData_t _payload_data
+    cdef object _payload_object
 
     # Dynamic memory allocation is required for array payloads.
     # This pointer is used to track the memory that should be freed.

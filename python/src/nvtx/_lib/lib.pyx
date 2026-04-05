@@ -189,6 +189,7 @@ cdef class EventAttributes:
                 payload = np.ascontiguousarray(payload)
                 array_length = payload.size
 
+            self._payload_object = payload
             self._set_binary_payload(
                 <void*><size_t>payload.ctypes.data,
                 <uint64_t>schema,
@@ -223,6 +224,7 @@ cdef class EventAttributes:
 
     cdef _clear_payload(self):
         self._payload = None
+        self._payload_object = None
         if self._allocated_payload is not NULL:
             free(self._allocated_payload)
             self._allocated_payload = NULL
