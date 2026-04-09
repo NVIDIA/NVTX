@@ -3,8 +3,6 @@ name: Rust
 
 'on':
   push:
-    branches: [dev, release-v3, test-*]
-    tags: [v*]
     paths:
       - .github/workflows/rust.yml
       - '**/Cargo.*'
