@@ -23,6 +23,9 @@ name: Core
       - c/include/**
       - tests/**
 
+permissions:
+  contents: read
+
 jobs:
   test-ubuntu-24-04:
     name: Test (Ubuntu 24.04, ${{ matrix.arch }})

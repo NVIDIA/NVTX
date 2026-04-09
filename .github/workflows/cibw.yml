@@ -8,6 +8,9 @@ name: Build Python wheels and sdist for NVTX
         description: Branch, tag or SHA to checkout
         required: false
 
+permissions:
+  contents: read
+
 jobs:
   sdist:
     name: Build source distribution
