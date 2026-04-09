@@ -60,12 +60,12 @@ jobs:
 
       - name: Set up QEMU
         if: matrix.os == 'ubuntu-latest'
-        uses: docker/setup-qemu-action@v4
+        uses: docker/setup-qemu-action@ce360397dd3f832beb865e1373c09c0e9f86d70a
         with:
           platforms: arm64
 
       - name: Build wheels
-        uses: pypa/cibuildwheel@v3.4
+        uses: pypa/cibuildwheel@8d2b08b68458a16aeb24b64e68a09ab1c8e82084
         with:
           output-dir: dist
           package-dir: python
