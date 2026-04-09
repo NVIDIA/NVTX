@@ -2,11 +2,7 @@
 name: Build Python wheels and sdist for NVTX
 
 'on':
-  workflow_dispatch:
-    inputs:
-      branchOrTag:
-        description: Branch, tag or SHA to checkout
-        required: false
+  workflow_dispatch: {}
 
 permissions:
   contents: read
@@ -18,8 +14,6 @@ jobs:
     steps:
       - name: Check out repository
         uses: actions/checkout@v6
-        with:
-          ref: ${{ inputs.branchOrTag }}
 
       - name: Build sdist
         run: pipx run build --sdist python
@@ -55,8 +49,6 @@ jobs:
     steps:
       - name: Check out repository
         uses: actions/checkout@v6
-        with:
-          ref: ${{ inputs.branchOrTag }}
 
       - name: Set up QEMU
         if: matrix.os == 'ubuntu-latest'
