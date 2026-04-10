@@ -327,6 +327,7 @@ pub fn range_end(id: RangeId) {
     unsafe { crate::ffi::nvtxRangeEnd(id) }
 }
 
+#[allow(clippy::must_use_candidate)]
 /// Start a thread-visible range within a domain with an attributes structure.
 ///
 /// To close, see [`domain_range_pop`].
@@ -334,6 +335,7 @@ pub fn domain_range_push_ex(domain: DomainHandle, event_attrib: &EventAttributes
     unsafe { crate::ffi::nvtxDomainRangePushEx(domain.handle, event_attrib) }
 }
 
+#[allow(clippy::must_use_candidate)]
 /// Start a thread-visible range with an attributes structure.
 ///
 /// To close, see [`range_pop`].
@@ -341,6 +343,7 @@ pub fn range_push_ex(event_attrib: &EventAttributes) -> i32 {
     unsafe { crate::ffi::nvtxRangePushEx(event_attrib) }
 }
 
+#[allow(clippy::must_use_candidate)]
 /// Start a thread-visible range with an ASCII string.
 ///
 /// To close, see [`range_pop`].
@@ -348,6 +351,7 @@ pub fn range_push_ascii(message: &CStr) -> i32 {
     unsafe { crate::ffi::nvtxRangePushA(message.as_ptr()) }
 }
 
+#[allow(clippy::must_use_candidate)]
 /// Start a thread-visible range with a Unicode string.
 ///
 /// To close, see [`range_pop`].
@@ -355,6 +359,7 @@ pub fn range_push_unicode(message: &WideCStr) -> i32 {
     unsafe { crate::ffi::nvtxRangePushW(message.as_ptr().cast()) }
 }
 
+#[allow(clippy::must_use_candidate)]
 /// End a thread-visible range within a domain.
 ///
 /// The range would have been created via [`domain_range_push_ex`].
@@ -362,6 +367,7 @@ pub fn domain_range_pop(domain: DomainHandle) -> i32 {
     unsafe { crate::ffi::nvtxDomainRangePop(domain.handle) }
 }
 
+#[allow(clippy::must_use_candidate)]
 /// End a thread-visible range.
 ///
 /// The range would have been created via one of:

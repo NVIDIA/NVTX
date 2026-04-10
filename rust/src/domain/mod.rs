@@ -62,6 +62,7 @@ impl<'a> EventAttributesBuilder<'a> {
     /// // ...
     /// let builder = builder.category(cat);
     /// ```
+    #[must_use]
     pub fn category(mut self, category: Category<'a>) -> EventAttributesBuilder<'a> {
         assert!(
             std::ptr::eq(category.domain(), self.domain),
@@ -81,6 +82,7 @@ impl<'a> EventAttributesBuilder<'a> {
     /// // ...
     /// let builder = builder.category_name("Category2");
     /// ```
+    #[must_use]
     pub fn category_name(mut self, name: impl Into<Str>) -> EventAttributesBuilder<'a> {
         let category = self.domain.register_category(name);
         self.inner = self.inner.category(category);
@@ -95,6 +97,7 @@ impl<'a> EventAttributesBuilder<'a> {
     /// // ...
     /// let builder = builder.color([255, 255, 255]);
     /// ```
+    #[must_use]
     pub fn color(mut self, color: impl Into<Color>) -> EventAttributesBuilder<'a> {
         self.inner = self.inner.color(color);
         self
@@ -108,6 +111,7 @@ impl<'a> EventAttributesBuilder<'a> {
     /// // ...
     /// let builder = builder.payload(3.1415926535);
     /// ```
+    #[must_use]
     pub fn payload(mut self, payload: impl Into<Payload>) -> EventAttributesBuilder<'a> {
         self.inner = self.inner.payload(payload);
         self
@@ -123,6 +127,7 @@ impl<'a> EventAttributesBuilder<'a> {
     /// // ...
     /// let builder = builder.message("test");
     /// ```
+    #[must_use]
     pub fn message(mut self, message: impl Into<Message<'a>>) -> EventAttributesBuilder<'a> {
         // implementation optimization: always prefer registered strings
         let msg = match message.into() {
@@ -150,6 +155,7 @@ impl<'a> EventAttributesBuilder<'a> {
     ///                 .payload(1234567)
     ///                 .build();
     /// ```
+    #[must_use]
     pub fn build(self) -> EventAttributes<'a> {
         self.inner.build()
     }

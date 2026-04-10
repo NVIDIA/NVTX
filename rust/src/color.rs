@@ -51,6 +51,7 @@ impl Color {
     /// ```
     /// let nice_blue = nvtx::Color::new(0, 192, 255, 255);
     /// ```
+    #[must_use]
     pub fn new(r: u8, g: u8, b: u8, a: u8) -> Self {
         Self { a, r, g, b }
     }
@@ -61,6 +62,7 @@ impl Color {
     /// let nice_blue = nvtx::Color::new(0, 192, 255, 255);
     /// let translucent_blue = nice_blue.with_alpha(128);
     /// ```
+    #[must_use]
     pub fn with_alpha(&self, a: u8) -> Self {
         Color { a, ..*self }
     }
@@ -71,6 +73,7 @@ impl Color {
     /// let dark_gray = nvtx::Color::new(32, 32, 32, 255);
     /// let dark_red = dark_gray.with_red(128);
     /// ```
+    #[must_use]
     pub fn with_red(&self, r: u8) -> Self {
         Color { r, ..*self }
     }
@@ -81,6 +84,7 @@ impl Color {
     /// let dark_gray = nvtx::Color::new(32, 32, 32, 255);
     /// let dark_green = dark_gray.with_green(128);
     /// ```
+    #[must_use]
     pub fn with_green(&self, g: u8) -> Self {
         Color { g, ..*self }
     }
@@ -91,26 +95,31 @@ impl Color {
     /// let dark_gray = nvtx::Color::new(32, 32, 32, 255);
     /// let dark_blue = dark_gray.with_blue(128);
     /// ```
+    #[must_use]
     pub fn with_blue(&self, b: u8) -> Self {
         Color { b, ..*self }
     }
 
     /// Get the value of the alpha channel
+    #[must_use]
     pub fn alpha(&self) -> u8 {
         self.a
     }
 
     /// Get the value of the red channel
+    #[must_use]
     pub fn red(&self) -> u8 {
         self.r
     }
 
     /// Get the value of the green channel
+    #[must_use]
     pub fn green(&self) -> u8 {
         self.g
     }
 
     /// Get the value of the blue channel
+    #[must_use]
     pub fn blue(&self) -> u8 {
         self.b
     }
