@@ -259,13 +259,13 @@ use std::ffi::CStr;
 use widestring::WideCStr;
 
 /// Create a mark within a domain.
-pub fn domain_mark_ex(domain: DomainHandle, eventAttrib: &EventAttributes) {
-    unsafe { crate::ffi::nvtxDomainMarkEx(domain.handle, eventAttrib) }
+pub fn domain_mark_ex(domain: DomainHandle, event_attrib: &EventAttributes) {
+    unsafe { crate::ffi::nvtxDomainMarkEx(domain.handle, event_attrib) }
 }
 
 /// Create a mark with an attributes structure.
-pub fn mark_ex(eventAttrib: &EventAttributes) {
-    unsafe { crate::ffi::nvtxMarkEx(eventAttrib) }
+pub fn mark_ex(event_attrib: &EventAttributes) {
+    unsafe { crate::ffi::nvtxMarkEx(event_attrib) }
 }
 
 /// Create a mark with an ASCII string.
@@ -282,16 +282,16 @@ pub fn mark_unicode(message: &WideCStr) {
 /// Start a process-visible range within a domain with an attributes structure.
 ///
 /// To close the range, see [`domain_range_end`].
-pub fn domain_range_start_ex(domain: DomainHandle, eventAttrib: &EventAttributes) -> RangeId {
-    unsafe { crate::ffi::nvtxDomainRangeStartEx(domain.handle, eventAttrib) }
+pub fn domain_range_start_ex(domain: DomainHandle, event_attrib: &EventAttributes) -> RangeId {
+    unsafe { crate::ffi::nvtxDomainRangeStartEx(domain.handle, event_attrib) }
 }
 
 #[must_use]
 /// Start a process-visible range with an attributes structure.
 ///
 /// To close the range, see [`range_end`].
-pub fn range_start_ex(eventAttrib: &EventAttributes) -> RangeId {
-    unsafe { crate::ffi::nvtxRangeStartEx(eventAttrib) }
+pub fn range_start_ex(event_attrib: &EventAttributes) -> RangeId {
+    unsafe { crate::ffi::nvtxRangeStartEx(event_attrib) }
 }
 
 #[must_use]
@@ -330,15 +330,15 @@ pub fn range_end(id: RangeId) {
 /// Start a thread-visible range within a domain with an attributes structure.
 ///
 /// To close, see [`domain_range_pop`].
-pub fn domain_range_push_ex(domain: DomainHandle, eventAttrib: &EventAttributes) -> i32 {
-    unsafe { crate::ffi::nvtxDomainRangePushEx(domain.handle, eventAttrib) }
+pub fn domain_range_push_ex(domain: DomainHandle, event_attrib: &EventAttributes) -> i32 {
+    unsafe { crate::ffi::nvtxDomainRangePushEx(domain.handle, event_attrib) }
 }
 
 /// Start a thread-visible range with an attributes structure.
 ///
 /// To close, see [`range_pop`].
-pub fn range_push_ex(eventAttrib: &EventAttributes) -> i32 {
-    unsafe { crate::ffi::nvtxRangePushEx(eventAttrib) }
+pub fn range_push_ex(event_attrib: &EventAttributes) -> i32 {
+    unsafe { crate::ffi::nvtxRangePushEx(event_attrib) }
 }
 
 /// Start a thread-visible range with an ASCII string.
@@ -417,15 +417,15 @@ pub fn name_category_unicode(category: u32, name: &WideCStr) {
 /// Name an OS thread with an ASCII string.
 ///
 /// Note: the threadId must be an operating-specific thread id. On Linux this would be a process's tid.
-pub fn name_os_thread_ascii(threadId: u32, name: &CStr) {
-    unsafe { crate::ffi::nvtxNameOsThreadA(threadId, name.as_ptr()) }
+pub fn name_os_thread_ascii(thread_id: u32, name: &CStr) {
+    unsafe { crate::ffi::nvtxNameOsThreadA(thread_id, name.as_ptr()) }
 }
 
 /// Name an OS thread with a Unicode string.
 ///
 /// Note: the threadId must be an operating-specific thread id. On Linux this would be a process's tid.
-pub fn name_os_thread_unicode(threadId: u32, name: &WideCStr) {
-    unsafe { crate::ffi::nvtxNameOsThreadW(threadId, name.as_ptr().cast()) }
+pub fn name_os_thread_unicode(thread_id: u32, name: &WideCStr) {
+    unsafe { crate::ffi::nvtxNameOsThreadW(thread_id, name.as_ptr().cast()) }
 }
 
 #[must_use]
