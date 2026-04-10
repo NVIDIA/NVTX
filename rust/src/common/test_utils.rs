@@ -18,6 +18,7 @@ impl TestUtils {
         let (t, v) = message.encode();
         assert_eq!(t, nvtx_sys::MessageType::NVTX_MESSAGE_TYPE_ASCII);
         let expected_cstr = std::ffi::CString::new(expected_str).unwrap();
+        // SAFETY: The ASCII message type is checked above, so reading `ascii` is valid.
         unsafe {
             assert!(
                 matches!(v, nvtx_sys::MessageValue{ ascii: p } if std::ffi::CStr::from_ptr(p) == expected_cstr.as_c_str())
@@ -32,6 +33,7 @@ impl TestUtils {
     {
         let (t, v) = message.encode();
         assert_eq!(t, nvtx_sys::MessageType::NVTX_MESSAGE_TYPE_UNICODE);
+        // SAFETY: The Unicode message type is checked above, so reading `unicode` is valid.
         unsafe {
             assert!(
                 matches!(v, nvtx_sys::MessageValue{ unicode: p } if WideCStr::from_ptr_str(p.cast()) == WideCString::from_str(expected_str).unwrap())

@@ -149,6 +149,7 @@ mod tests {
         let x = PThreadIdentifier::Mutex(ptr);
         let (t, v) = x.encode();
         assert_eq!(t, nvtx_sys::resource_type::PTHREAD_MUTEX);
+        // SAFETY: The mutex resource type is asserted above, so reading `pValue` is valid.
         unsafe {
             assert!(
                 matches!(v, nvtx_sys::ResourceAttributesIdentifier { pValue: p } if std::ptr::eq(p, ptr.cast::<c_void>()))
@@ -162,6 +163,7 @@ mod tests {
         let x = PThreadIdentifier::Condition(ptr);
         let (t, v) = x.encode();
         assert_eq!(t, nvtx_sys::resource_type::PTHREAD_CONDITION);
+        // SAFETY: The condition resource type is asserted above, so reading `pValue` is valid.
         unsafe {
             assert!(
                 matches!(v, nvtx_sys::ResourceAttributesIdentifier { pValue: p } if std::ptr::eq(p, ptr.cast::<c_void>()))
@@ -176,6 +178,7 @@ mod tests {
         let x = PThreadIdentifier::Barrier(ptr);
         let (t, v) = x.encode();
         assert_eq!(t, nvtx_sys::resource_type::PTHREAD_BARRIER);
+        // SAFETY: The barrier resource type is asserted above, so reading `pValue` is valid.
         unsafe {
             assert!(
                 matches!(v, nvtx_sys::ResourceAttributesIdentifier { pValue: p } if std::ptr::eq(p, ptr.cast::<c_void>()))
@@ -189,6 +192,7 @@ mod tests {
         let x = PThreadIdentifier::RWLock(ptr);
         let (t, v) = x.encode();
         assert_eq!(t, nvtx_sys::resource_type::PTHREAD_RWLOCK);
+        // SAFETY: The rwlock resource type is asserted above, so reading `pValue` is valid.
         unsafe {
             assert!(
                 matches!(v, nvtx_sys::ResourceAttributesIdentifier { pValue: p } if std::ptr::eq(p, ptr.cast::<c_void>()))
@@ -203,6 +207,7 @@ mod tests {
         let x = PThreadIdentifier::Spinlock(ptr);
         let (t, v) = x.encode();
         assert_eq!(t, nvtx_sys::resource_type::PTHREAD_SPINLOCK);
+        // SAFETY: The spinlock resource type is asserted above, so reading `pValue` is valid.
         unsafe {
             assert!(
                 matches!(v, nvtx_sys::ResourceAttributesIdentifier { pValue: p } if std::ptr::eq(p, ptr.cast::<c_void>()))
@@ -216,6 +221,7 @@ mod tests {
         let x = PThreadIdentifier::Once(ptr);
         let (t, v) = x.encode();
         assert_eq!(t, nvtx_sys::resource_type::PTHREAD_ONCE);
+        // SAFETY: The once resource type is asserted above, so reading `pValue` is valid.
         unsafe {
             assert!(
                 matches!(v, nvtx_sys::ResourceAttributesIdentifier { pValue: p } if std::ptr::eq(p, ptr.cast::<c_void>()))

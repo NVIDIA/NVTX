@@ -49,20 +49,38 @@ impl From<nvtx_sys::CuStream> for CudaResource {
 pub fn name_cuda_resource(resource: impl Into<CudaResource>, name: impl Into<Str>) {
     match resource.into() {
         CudaResource::Context(context) => match name.into() {
-            Str::Ascii(s) => unsafe { nvtx_sys::name_cucontext_ascii(context, &s) },
-            Str::Unicode(s) => unsafe { nvtx_sys::name_cucontext_unicode(context, &s) },
+            Str::Ascii(s) => {
+                // SAFETY: NVTX requires a valid CUDA context handle; caller provides `CudaResource::Context`.
+                unsafe { nvtx_sys::name_cucontext_ascii(context, &s) }
+            }
+            Str::Unicode(s) => {
+                // SAFETY: NVTX requires a valid CUDA context handle; caller provides `CudaResource::Context`.
+                unsafe { nvtx_sys::name_cucontext_unicode(context, &s) }
+            }
         },
         CudaResource::Device(device) => match name.into() {
             Str::Ascii(s) => nvtx_sys::name_cudevice_ascii(device, &s),
             Str::Unicode(s) => nvtx_sys::name_cudevice_unicode(device, &s),
         },
         CudaResource::Event(event) => match name.into() {
-            Str::Ascii(s) => unsafe { nvtx_sys::name_cuevent_ascii(event, &s) },
-            Str::Unicode(s) => unsafe { nvtx_sys::name_cuevent_unicode(event, &s) },
+            Str::Ascii(s) => {
+                // SAFETY: NVTX requires a valid CUDA event handle; caller provides `CudaResource::Event`.
+                unsafe { nvtx_sys::name_cuevent_ascii(event, &s) }
+            }
+            Str::Unicode(s) => {
+                // SAFETY: NVTX requires a valid CUDA event handle; caller provides `CudaResource::Event`.
+                unsafe { nvtx_sys::name_cuevent_unicode(event, &s) }
+            }
         },
         CudaResource::Stream(stream) => match name.into() {
-            Str::Ascii(s) => unsafe { nvtx_sys::name_custream_ascii(stream, &s) },
-            Str::Unicode(s) => unsafe { nvtx_sys::name_custream_unicode(stream, &s) },
+            Str::Ascii(s) => {
+                // SAFETY: NVTX requires a valid CUDA stream handle; caller provides `CudaResource::Stream`.
+                unsafe { nvtx_sys::name_custream_ascii(stream, &s) }
+            }
+            Str::Unicode(s) => {
+                // SAFETY: NVTX requires a valid CUDA stream handle; caller provides `CudaResource::Stream`.
+                unsafe { nvtx_sys::name_custream_unicode(stream, &s) }
+            }
         },
     }
 }

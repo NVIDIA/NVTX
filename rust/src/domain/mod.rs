@@ -643,6 +643,7 @@ mod tests {
         let m = Message::Registered(reg);
         let (t, v) = m.encode();
         assert_eq!(t, nvtx_sys::MessageType::NVTX_MESSAGE_TYPE_REGISTERED);
+        // SAFETY: The registered message type is checked above, so reading `registered` is valid.
         unsafe {
             assert!(
                 matches!(v, nvtx_sys::MessageValue{ registered: r } if r == nvtx_sys::ffi::nvtxStringHandle_t::from(reg.handle()))

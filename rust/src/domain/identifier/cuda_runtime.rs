@@ -82,6 +82,7 @@ mod tests {
         let x = CudaRuntimeIdentifier::Device(device_id);
         let (t, v) = x.encode();
         assert_eq!(t, nvtx_sys::resource_type::CUDART_DEVICE);
+        // SAFETY: The device resource type is asserted above, so reading `ullValue` is valid.
         unsafe {
             // CAST: Test compares the encoded raw identifier bits exactly as NVTX stores them.
             assert!(
@@ -96,6 +97,7 @@ mod tests {
         let x = CudaRuntimeIdentifier::Event(ptr);
         let (t, v) = x.encode();
         assert_eq!(t, nvtx_sys::resource_type::CUDART_EVENT);
+        // SAFETY: The event resource type is asserted above, so reading `pValue` is valid.
         unsafe {
             assert!(
                 matches!(v, nvtx_sys::ResourceAttributesIdentifier { pValue: p } if std::ptr::eq(p, ptr.cast_const().cast::<c_void>()))
@@ -109,6 +111,7 @@ mod tests {
         let x = CudaRuntimeIdentifier::Stream(ptr);
         let (t, v) = x.encode();
         assert_eq!(t, nvtx_sys::resource_type::CUDART_STREAM);
+        // SAFETY: The stream resource type is asserted above, so reading `pValue` is valid.
         unsafe {
             assert!(
                 matches!(v, nvtx_sys::ResourceAttributesIdentifier { pValue: p } if std::ptr::eq(p, ptr.cast_const().cast::<c_void>()))

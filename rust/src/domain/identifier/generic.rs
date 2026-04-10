@@ -99,6 +99,7 @@ mod tests {
         let x = GenericIdentifier::Pointer(ptr);
         let (t, v) = x.encode();
         assert_eq!(t, nvtx_sys::resource_type::GENERIC_POINTER);
+        // SAFETY: The pointer resource type is asserted above, so reading `pValue` is valid.
         unsafe {
             assert!(matches!(v, nvtx_sys::ResourceAttributesIdentifier { pValue: p } if p == ptr));
         }
@@ -110,6 +111,7 @@ mod tests {
         let x = GenericIdentifier::Handle(val);
         let (t, v) = x.encode();
         assert_eq!(t, nvtx_sys::resource_type::GENERIC_HANDLE);
+        // SAFETY: The handle resource type is asserted above, so reading `ullValue` is valid.
         unsafe {
             assert!(
                 matches!(v, nvtx_sys::ResourceAttributesIdentifier { ullValue: v } if v == val)
@@ -123,6 +125,7 @@ mod tests {
         let x = GenericIdentifier::NativeThread(val);
         let (t, v) = x.encode();
         assert_eq!(t, nvtx_sys::resource_type::GENERIC_THREAD_NATIVE);
+        // SAFETY: The native thread type is asserted above, so reading `ullValue` is valid.
         unsafe {
             assert!(
                 matches!(v, nvtx_sys::ResourceAttributesIdentifier { ullValue: v } if v == val)
@@ -136,6 +139,7 @@ mod tests {
         let x = GenericIdentifier::PosixThread(val);
         let (t, v) = x.encode();
         assert_eq!(t, nvtx_sys::resource_type::GENERIC_THREAD_POSIX);
+        // SAFETY: The POSIX thread type is asserted above, so reading `ullValue` is valid.
         unsafe {
             assert!(
                 matches!(v, nvtx_sys::ResourceAttributesIdentifier { ullValue: v } if v == val)

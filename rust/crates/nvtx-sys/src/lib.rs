@@ -2,6 +2,8 @@
 // SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception
 
 #![cfg_attr(test, allow(clippy::unwrap_used))]
+// SAFETY: All FFI calls are technically unsafe by definition, but the NVTX API is a safe API.
+#![allow(clippy::undocumented_unsafe_blocks)]
 
 /// The unmodified FFI imported functions, types, and definitions
 pub mod ffi {
