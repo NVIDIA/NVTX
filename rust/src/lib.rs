@@ -172,7 +172,7 @@ pub fn mark(argument: impl Into<EventArgument>) {
     match argument.into() {
         EventArgument::Message(Message::Ascii(s)) => nvtx_sys::mark_ascii(&s),
         EventArgument::Message(Message::Unicode(s)) => nvtx_sys::mark_unicode(&s),
-        EventArgument::Message(Message::Registered(_)) => {
+        EventArgument::Message(Message::Registered(())) => {
             unreachable!("Registered strings are not valid in the global context")
         }
         EventArgument::Attributes(a) => nvtx_sys::mark_ex(&a.encode()),

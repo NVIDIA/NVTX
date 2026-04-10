@@ -36,7 +36,7 @@ impl Range {
         let id = match arg.into() {
             EventArgument::Message(Message::Ascii(s)) => nvtx_sys::range_start_ascii(&s),
             EventArgument::Message(Message::Unicode(s)) => nvtx_sys::range_start_unicode(&s),
-            EventArgument::Message(Message::Registered(_)) => {
+            EventArgument::Message(Message::Registered(())) => {
                 unreachable!("Registered strings are not valid in the global context")
             }
             EventArgument::Attributes(a) => nvtx_sys::range_start_ex(&a.encode()),
@@ -83,7 +83,7 @@ impl LocalRange {
         match arg.into() {
             EventArgument::Message(Message::Ascii(s)) => nvtx_sys::range_push_ascii(&s),
             EventArgument::Message(Message::Unicode(s)) => nvtx_sys::range_push_unicode(&s),
-            EventArgument::Message(Message::Registered(_)) => {
+            EventArgument::Message(Message::Registered(())) => {
                 unreachable!("Registered strings are not valid in the global context")
             }
             EventArgument::Attributes(a) => nvtx_sys::range_push_ex(&a.encode()),
