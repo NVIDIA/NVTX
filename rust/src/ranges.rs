@@ -47,7 +47,7 @@ impl Range {
 
 impl Drop for Range {
     fn drop(&mut self) {
-        nvtx_sys::range_end(self.id)
+        nvtx_sys::range_end(self.id);
     }
 }
 

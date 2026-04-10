@@ -37,7 +37,7 @@ fn main() {
         let t1 = s.spawn(move || {
             nvtx::name_current_thread("Fork 1");
             sleep(Duration::from_millis(10));
-            drop(r)
+            drop(r);
         });
         let t2 = s.spawn(move || {
             nvtx::name_current_thread("Fork 2");
@@ -48,7 +48,7 @@ fn main() {
         let t3 = s.spawn(move || {
             nvtx::name_current_thread("Fork 3");
             let _r = d.range("Start and end on Fork 3");
-            sleep(Duration::from_millis(30))
+            sleep(Duration::from_millis(30));
         });
 
         unwrap_join("t2", t2.join());

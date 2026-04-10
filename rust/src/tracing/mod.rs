@@ -156,7 +156,7 @@ where
                 .or_insert_with(|| Domain::new(domain_name));
 
             range_id = Some(domain.range_start(data.event_attributes(domain)));
-        };
+        }
         if let Some(range) = range_id {
             span.extensions_mut().insert(NvtxId(range));
         }
@@ -180,7 +180,7 @@ where
             .or_insert_with(|| Domain::new(domain_name));
 
         if let Some(NvtxId(id)) = maybe_id {
-            domain.range_end(id)
+            domain.range_end(id);
         }
     }
 }
@@ -224,7 +224,7 @@ where
             let masked_value = value & 0xFFFFFFFF;
             if value == masked_value {
                 // CAST: The mask check above constrains the value to NVTX's 32-bit color field.
-                self.data.color = Some((value as u32).into())
+                self.data.color = Some((value as u32).into());
             }
         }
     }
@@ -235,7 +235,7 @@ where
             let masked_value = value & 0xFFFFFFFF;
             if value == masked_value {
                 // CAST: The mask check above constrains the value to NVTX's 32-bit color field.
-                self.data.color = Some((value as u32).into())
+                self.data.color = Some((value as u32).into());
             }
         }
     }

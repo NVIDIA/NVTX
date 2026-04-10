@@ -11,6 +11,6 @@ pub struct Resource<'a> {
 
 impl Drop for Resource<'_> {
     fn drop(&mut self) {
-        nvtx_sys::domain_resource_destroy(self.handle)
+        nvtx_sys::domain_resource_destroy(self.handle);
     }
 }

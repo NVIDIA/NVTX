@@ -369,7 +369,7 @@ impl Domain {
                     );
                 }
                 let encoded = attr.encode();
-                nvtx_sys::domain_mark_ex(self.handle, &encoded)
+                nvtx_sys::domain_mark_ex(self.handle, &encoded);
             }
             EventArgument::Message(m) => {
                 if let Message::Registered(reg_str) = m {
@@ -380,7 +380,7 @@ impl Domain {
                 }
                 let attr: EventAttributes = m.into();
                 let encoded = attr.encode();
-                nvtx_sys::domain_mark_ex(self.handle, &encoded)
+                nvtx_sys::domain_mark_ex(self.handle, &encoded);
             }
         }
     }
@@ -543,7 +543,7 @@ impl Domain {
 
 impl Drop for Domain {
     fn drop(&mut self) {
-        nvtx_sys::domain_destroy(self.handle)
+        nvtx_sys::domain_destroy(self.handle);
     }
 }
 
