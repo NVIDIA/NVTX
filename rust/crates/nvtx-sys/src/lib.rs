@@ -2,8 +2,7 @@
 // SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception
 
 #![cfg_attr(test, allow(clippy::unwrap_used))]
-// SAFETY: All FFI calls are technically unsafe by definition, but the NVTX API is a safe API.
-#![allow(clippy::undocumented_unsafe_blocks)]
+#![deny(unsafe_op_in_unsafe_fn)]
 
 /// The unmodified FFI imported functions, types, and definitions
 pub mod ffi {
@@ -14,6 +13,7 @@ pub mod ffi {
 }
 
 /// The NVTX version.
+#[allow(clippy::cast_possible_truncation)]
 // CAST: This constant cast stays `as` because `From`/`TryFrom` calls are not const on stable Rust.
 pub const NVTX_VERSION: i16 = ffi::NVTX_VERSION as i16;
 
@@ -48,10 +48,11 @@ pub type PayloadType = ffi::nvtxPayloadType_t;
 /// [`EventAttributes`] payload value union.
 pub type PayloadValue = ffi::nvtxEventAttributes_v2_payload_t;
 
+// Keep this declarative macro for tightly scoped impl boilerplate only.
 macro_rules! impl_from_repr_u32_enum_for_i32 {
     ($($ty:ty),+ $(,)?) => {
         $(
-            impl From<$ty> for i32 {
+            impl ::core::convert::From<$ty> for i32 {
                 fn from(value: $ty) -> Self {
                     // CAST: Rust has no blanket enum->int `From`; `as` preserves the 32-bit bit pattern expected by NVTX's i32 fields.
                     value as i32
@@ -132,7 +133,10 @@ pub struct DomainHandle {
     handle: ffi::nvtxDomainHandle_t,
 }
 
+// SAFETY: `DomainHandle` is an opaque FFI handle with no Rust aliasing guarantees of its own.
+// Sending/sharing this value is equivalent to sending/sharing the raw C handle value.
 unsafe impl Send for DomainHandle {}
+// SAFETY: See the `Send` rationale above.
 unsafe impl Sync for DomainHandle {}
 
 /// Unique handle for a registered resource.
@@ -141,7 +145,9 @@ pub struct ResourceHandle {
     handle: ffi::nvtxResourceHandle_t,
 }
 
+// SAFETY: `ResourceHandle` is an opaque FFI handle; thread-safety is defined by NVTX.
 unsafe impl Send for ResourceHandle {}
+// SAFETY: See the `Send` rationale above.
 unsafe impl Sync for ResourceHandle {}
 
 /// Unique handle for a registered string.
@@ -156,7 +162,9 @@ impl From<StringHandle> for ffi::nvtxStringHandle_t {
     }
 }
 
+// SAFETY: `StringHandle` is an immutable opaque handle managed by NVTX.
 unsafe impl Send for StringHandle {}
+// SAFETY: See the `Send` rationale above.
 unsafe impl Sync for StringHandle {}
 
 /// Unique handle for a registered user-defined synchronization object.
@@ -165,7 +173,9 @@ pub struct SyncUserHandle {
     handle: ffi::nvtxSyncUser_t,
 }
 
+// SAFETY: `SyncUserHandle` is an opaque NVTX token whose synchronization semantics are in NVTX.
 unsafe impl Send for SyncUserHandle {}
+// SAFETY: See the `Send` rationale above.
 unsafe impl Sync for SyncUserHandle {}
 
 #[cfg(feature = "cuda_runtime")]
@@ -263,21 +273,25 @@ use widestring::WideCStr;
 
 /// Create a mark within a domain.
 pub fn domain_mark_ex(domain: DomainHandle, event_attrib: &EventAttributes) {
+    // SAFETY: We forward a valid NVTX domain handle plus an immutable attributes pointer.
     unsafe { crate::ffi::nvtxDomainMarkEx(domain.handle, event_attrib) }
 }
 
 /// Create a mark with an attributes structure.
 pub fn mark_ex(event_attrib: &EventAttributes) {
+    // SAFETY: We pass an immutable attributes pointer directly to NVTX.
     unsafe { crate::ffi::nvtxMarkEx(event_attrib) }
 }
 
 /// Create a mark with an ASCII string.
 pub fn mark_ascii(message: &CStr) {
+    // SAFETY: `message` is a valid NUL-terminated C string for the call duration.
     unsafe { crate::ffi::nvtxMarkA(message.as_ptr()) }
 }
 
 /// Create a mark with a Unicode string.
 pub fn mark_unicode(message: &WideCStr) {
+    // SAFETY: `message` points to a valid wide C string for the call duration.
     unsafe { crate::ffi::nvtxMarkW(message.as_ptr().cast()) }
 }
 
@@ -286,6 +300,7 @@ pub fn mark_unicode(message: &WideCStr) {
 ///
 /// To close the range, see [`domain_range_end`].
 pub fn domain_range_start_ex(domain: DomainHandle, event_attrib: &EventAttributes) -> RangeId {
+    // SAFETY: We forward a valid NVTX domain handle plus an immutable attributes pointer.
     unsafe { crate::ffi::nvtxDomainRangeStartEx(domain.handle, event_attrib) }
 }
 
@@ -294,6 +309,7 @@ pub fn domain_range_start_ex(domain: DomainHandle, event_attrib: &EventAttribute
 ///
 /// To close the range, see [`range_end`].
 pub fn range_start_ex(event_attrib: &EventAttributes) -> RangeId {
+    // SAFETY: We pass an immutable attributes pointer directly to NVTX.
     unsafe { crate::ffi::nvtxRangeStartEx(event_attrib) }
 }
 
@@ -302,6 +318,7 @@ pub fn range_start_ex(event_attrib: &EventAttributes) -> RangeId {
 ///
 /// To close the range, see [`range_end`].
 pub fn range_start_ascii(message: &CStr) -> RangeId {
+    // SAFETY: `message` is a valid NUL-terminated C string for the call duration.
     unsafe { crate::ffi::nvtxRangeStartA(message.as_ptr()) }
 }
 
@@ -310,6 +327,7 @@ pub fn range_start_ascii(message: &CStr) -> RangeId {
 ///
 /// To close the range, see [`range_end`].
 pub fn range_start_unicode(message: &WideCStr) -> RangeId {
+    // SAFETY: `message` points to a valid wide C string for the call duration.
     unsafe { crate::ffi::nvtxRangeStartW(message.as_ptr().cast()) }
 }
 
@@ -317,6 +335,7 @@ pub fn range_start_unicode(message: &WideCStr) -> RangeId {
 ///
 /// The range id is created by [`domain_range_start_ex`]
 pub fn domain_range_end(domain: DomainHandle, id: RangeId) {
+    // SAFETY: `domain` and `id` originate from NVTX range start APIs.
     unsafe { crate::ffi::nvtxDomainRangeEnd(domain.handle, id) }
 }
 
@@ -327,6 +346,7 @@ pub fn domain_range_end(domain: DomainHandle, id: RangeId) {
 /// * [`range_start_unicode`]
 /// * [`range_start_ex`]
 pub fn range_end(id: RangeId) {
+    // SAFETY: `id` originates from an NVTX range start API.
     unsafe { crate::ffi::nvtxRangeEnd(id) }
 }
 
@@ -335,6 +355,7 @@ pub fn range_end(id: RangeId) {
 ///
 /// To close, see [`domain_range_pop`].
 pub fn domain_range_push_ex(domain: DomainHandle, event_attrib: &EventAttributes) -> i32 {
+    // SAFETY: We forward a valid NVTX domain handle plus an immutable attributes pointer.
     unsafe { crate::ffi::nvtxDomainRangePushEx(domain.handle, event_attrib) }
 }
 
@@ -343,6 +364,7 @@ pub fn domain_range_push_ex(domain: DomainHandle, event_attrib: &EventAttributes
 ///
 /// To close, see [`range_pop`].
 pub fn range_push_ex(event_attrib: &EventAttributes) -> i32 {
+    // SAFETY: We pass an immutable attributes pointer directly to NVTX.
     unsafe { crate::ffi::nvtxRangePushEx(event_attrib) }
 }
 
@@ -351,6 +373,7 @@ pub fn range_push_ex(event_attrib: &EventAttributes) -> i32 {
 ///
 /// To close, see [`range_pop`].
 pub fn range_push_ascii(message: &CStr) -> i32 {
+    // SAFETY: `message` is a valid NUL-terminated C string for the call duration.
     unsafe { crate::ffi::nvtxRangePushA(message.as_ptr()) }
 }
 
@@ -359,6 +382,7 @@ pub fn range_push_ascii(message: &CStr) -> i32 {
 ///
 /// To close, see [`range_pop`].
 pub fn range_push_unicode(message: &WideCStr) -> i32 {
+    // SAFETY: `message` points to a valid wide C string for the call duration.
     unsafe { crate::ffi::nvtxRangePushW(message.as_ptr().cast()) }
 }
 
@@ -367,6 +391,7 @@ pub fn range_push_unicode(message: &WideCStr) -> i32 {
 ///
 /// The range would have been created via [`domain_range_push_ex`].
 pub fn domain_range_pop(domain: DomainHandle) -> i32 {
+    // SAFETY: `domain` is an opaque handle created by NVTX.
     unsafe { crate::ffi::nvtxDomainRangePop(domain.handle) }
 }
 
@@ -378,6 +403,7 @@ pub fn domain_range_pop(domain: DomainHandle) -> i32 {
 /// * [`range_push_unicode`]
 /// * [`range_push_ex`]
 pub fn range_pop() -> i32 {
+    // SAFETY: Pops the current thread-local NVTX range stack in this process.
     unsafe { crate::ffi::nvtxRangePop() }
 }
 
@@ -387,6 +413,7 @@ pub fn range_pop() -> i32 {
 /// To destroy the resource, see [`domain_resource_destroy`].
 pub fn domain_resource_create(domain: DomainHandle, attribs: ResourceAttributes) -> ResourceHandle {
     ResourceHandle {
+        // SAFETY: `domain` is an opaque NVTX handle and `attribs` lives across the call.
         handle: unsafe {
             crate::ffi::nvtxDomainResourceCreate(
                 domain.handle,
@@ -400,26 +427,31 @@ pub fn domain_resource_create(domain: DomainHandle, attribs: ResourceAttributes)
 ///
 /// The named resource is created by [`domain_resource_create`].
 pub fn domain_resource_destroy(resource: ResourceHandle) {
+    // SAFETY: `resource` was created by NVTX and is consumed by this destroy call.
     unsafe { crate::ffi::nvtxDomainResourceDestroy(resource.handle) }
 }
 
 /// Name a category within a domain with an ASCII string.
 pub fn domain_name_category_ascii(domain: DomainHandle, category: u32, name: &CStr) {
+    // SAFETY: `domain` is valid and `name` is a valid C string.
     unsafe { crate::ffi::nvtxDomainNameCategoryA(domain.handle, category, name.as_ptr()) }
 }
 
 /// Name a category within a domain with a Unicode string.
 pub fn domain_name_category_unicode(domain: DomainHandle, category: u32, name: &WideCStr) {
+    // SAFETY: `domain` is valid and `name` is a valid wide C string.
     unsafe { crate::ffi::nvtxDomainNameCategoryW(domain.handle, category, name.as_ptr().cast()) }
 }
 
 /// Name a category with an ASCII string.
 pub fn name_category_ascii(category: u32, name: &CStr) {
+    // SAFETY: `name` is a valid C string.
     unsafe { crate::ffi::nvtxNameCategoryA(category, name.as_ptr()) }
 }
 
 /// Name a category with a Unicode string.
 pub fn name_category_unicode(category: u32, name: &WideCStr) {
+    // SAFETY: `name` is a valid wide C string.
     unsafe { crate::ffi::nvtxNameCategoryW(category, name.as_ptr().cast()) }
 }
 
@@ -427,6 +459,7 @@ pub fn name_category_unicode(category: u32, name: &WideCStr) {
 ///
 /// Note: the threadId must be an operating-specific thread id. On Linux this would be a process's tid.
 pub fn name_os_thread_ascii(thread_id: u32, name: &CStr) {
+    // SAFETY: `name` is a valid C string and `thread_id` is passed through verbatim.
     unsafe { crate::ffi::nvtxNameOsThreadA(thread_id, name.as_ptr()) }
 }
 
@@ -434,6 +467,7 @@ pub fn name_os_thread_ascii(thread_id: u32, name: &CStr) {
 ///
 /// Note: the threadId must be an operating-specific thread id. On Linux this would be a process's tid.
 pub fn name_os_thread_unicode(thread_id: u32, name: &WideCStr) {
+    // SAFETY: `name` is a valid wide C string and `thread_id` is passed through verbatim.
     unsafe { crate::ffi::nvtxNameOsThreadW(thread_id, name.as_ptr().cast()) }
 }
 
@@ -441,6 +475,7 @@ pub fn name_os_thread_unicode(thread_id: u32, name: &WideCStr) {
 /// Register an immutable ASCII string with a domain.
 pub fn domain_register_string_ascii(domain: DomainHandle, string: &CStr) -> StringHandle {
     StringHandle {
+        // SAFETY: `domain` is valid and `string` is a valid C string for the call.
         handle: unsafe { crate::ffi::nvtxDomainRegisterStringA(domain.handle, string.as_ptr()) },
     }
 }
@@ -449,6 +484,7 @@ pub fn domain_register_string_ascii(domain: DomainHandle, string: &CStr) -> Stri
 /// Register an immutable Unicode string with a domain.
 pub fn domain_register_string_unicode(domain: DomainHandle, string: &WideCStr) -> StringHandle {
     StringHandle {
+        // SAFETY: `domain` is valid and `string` is a valid wide C string for the call.
         handle: unsafe {
             crate::ffi::nvtxDomainRegisterStringW(domain.handle, string.as_ptr().cast())
         },
@@ -459,6 +495,7 @@ pub fn domain_register_string_unicode(domain: DomainHandle, string: &WideCStr) -
 /// Create a new domain with a given ASCII string name.
 pub fn domain_create_ascii(name: &CStr) -> DomainHandle {
     DomainHandle {
+        // SAFETY: `name` is a valid C string for the call duration.
         handle: unsafe { crate::ffi::nvtxDomainCreateA(name.as_ptr()) },
     }
 }
@@ -467,6 +504,7 @@ pub fn domain_create_ascii(name: &CStr) -> DomainHandle {
 /// Create a new domain with a given Unicode string name.
 pub fn domain_create_unicode(name: &WideCStr) -> DomainHandle {
     DomainHandle {
+        // SAFETY: `name` is a valid wide C string for the call duration.
         handle: unsafe { crate::ffi::nvtxDomainCreateW(name.as_ptr().cast()) },
     }
 }
@@ -475,18 +513,21 @@ pub fn domain_create_unicode(name: &WideCStr) -> DomainHandle {
 ///
 /// The domain is created by [`domain_create_ascii`] or [`domain_create_unicode`].
 pub fn domain_destroy(domain: DomainHandle) {
+    // SAFETY: `domain` is an opaque handle created by NVTX.
     unsafe { crate::ffi::nvtxDomainDestroy(domain.handle) }
 }
 
 #[cfg(feature = "cuda")]
 /// Name a CUDA device with an ASCII string.
 pub fn name_cudevice_ascii(device: CuDevice, name: &CStr) {
+    // SAFETY: `device` is forwarded opaquely and `name` is a valid C string.
     unsafe { crate::ffi::nvtxNameCuDeviceA(device, name.as_ptr()) }
 }
 
 #[cfg(feature = "cuda")]
 /// Name a CUDA device with a Unicode string.
 pub fn name_cudevice_unicode(device: CuDevice, name: &WideCStr) {
+    // SAFETY: `device` is forwarded opaquely and `name` is a valid wide C string.
     unsafe { crate::ffi::nvtxNameCuDeviceW(device, name.as_ptr().cast()) }
 }
 
@@ -496,6 +537,7 @@ pub fn name_cudevice_unicode(device: CuDevice, name: &WideCStr) {
 /// # Safety
 /// This function is marked unsafe because of the pointer parameter referring to the CUDA context.
 pub unsafe fn name_cucontext_ascii(context: CuContext, name: &CStr) {
+    // SAFETY: Caller guarantees `context` is a valid CUDA context handle.
     unsafe { crate::ffi::nvtxNameCuContextA(context, name.as_ptr()) }
 }
 
@@ -505,6 +547,7 @@ pub unsafe fn name_cucontext_ascii(context: CuContext, name: &CStr) {
 /// # Safety
 /// This function is marked unsafe because of the pointer parameter referring to the CUDA context.
 pub unsafe fn name_cucontext_unicode(context: CuContext, name: &WideCStr) {
+    // SAFETY: Caller guarantees `context` is a valid CUDA context handle.
     unsafe { crate::ffi::nvtxNameCuContextW(context, name.as_ptr().cast()) }
 }
 
@@ -514,6 +557,7 @@ pub unsafe fn name_cucontext_unicode(context: CuContext, name: &WideCStr) {
 /// # Safety
 /// This function is marked unsafe because of the pointer parameter referring to the CUDA stream.
 pub unsafe fn name_custream_ascii(stream: CuStream, name: &CStr) {
+    // SAFETY: Caller guarantees `stream` is a valid CUDA stream handle.
     unsafe { crate::ffi::nvtxNameCuStreamA(stream, name.as_ptr()) }
 }
 
@@ -523,6 +567,7 @@ pub unsafe fn name_custream_ascii(stream: CuStream, name: &CStr) {
 /// # Safety
 /// This function is marked unsafe because of the pointer parameter referring to the CUDA stream.
 pub unsafe fn name_custream_unicode(stream: CuStream, name: &WideCStr) {
+    // SAFETY: Caller guarantees `stream` is a valid CUDA stream handle.
     unsafe { crate::ffi::nvtxNameCuStreamW(stream, name.as_ptr().cast()) }
 }
 
@@ -532,6 +577,7 @@ pub unsafe fn name_custream_unicode(stream: CuStream, name: &WideCStr) {
 /// # Safety
 /// This function is marked unsafe because of the pointer parameter referring to the CUDA event.
 pub unsafe fn name_cuevent_ascii(event: CuEvent, name: &CStr) {
+    // SAFETY: Caller guarantees `event` is a valid CUDA event handle.
     unsafe { crate::ffi::nvtxNameCuEventA(event, name.as_ptr()) }
 }
 
@@ -541,18 +587,21 @@ pub unsafe fn name_cuevent_ascii(event: CuEvent, name: &CStr) {
 /// # Safety
 /// This function is marked unsafe because of the pointer parameter referring to the CUDA event.
 pub unsafe fn name_cuevent_unicode(event: CuEvent, name: &WideCStr) {
+    // SAFETY: Caller guarantees `event` is a valid CUDA event handle.
     unsafe { crate::ffi::nvtxNameCuEventW(event, name.as_ptr().cast()) }
 }
 
 #[cfg(feature = "cuda_runtime")]
 /// Name a CUDA Runtime device with an ASCII string.
 pub fn name_cuda_device_ascii(device: i32, name: &CStr) {
+    // SAFETY: `device` is passed through as the CUDA runtime device ID and `name` is valid.
     unsafe { crate::ffi::nvtxNameCudaDeviceA(device, name.as_ptr()) }
 }
 
 #[cfg(feature = "cuda_runtime")]
 /// Name a CUDA Runtime device with a Unicode string.
 pub fn name_cuda_device_unicode(device: i32, name: &WideCStr) {
+    // SAFETY: `device` is passed through as the CUDA runtime device ID and `name` is valid.
     unsafe { crate::ffi::nvtxNameCudaDeviceW(device, name.as_ptr().cast()) }
 }
 
@@ -562,6 +611,7 @@ pub fn name_cuda_device_unicode(device: i32, name: &WideCStr) {
 /// # Safety
 /// This function is marked unsafe because of the pointer parameter referring to the CUDA stream.
 pub unsafe fn name_cuda_stream_ascii(stream: CudaStream, name: &CStr) {
+    // SAFETY: Caller guarantees `stream` is a valid CUDA runtime stream handle.
     unsafe { crate::ffi::nvtxNameCudaStreamA(stream, name.as_ptr()) }
 }
 
@@ -571,6 +621,7 @@ pub unsafe fn name_cuda_stream_ascii(stream: CudaStream, name: &CStr) {
 /// # Safety
 /// This function is marked unsafe because of the pointer parameter referring to the CUDA stream.
 pub unsafe fn name_cuda_stream_unicode(stream: CudaStream, name: &WideCStr) {
+    // SAFETY: Caller guarantees `stream` is a valid CUDA runtime stream handle.
     unsafe { crate::ffi::nvtxNameCudaStreamW(stream, name.as_ptr().cast()) }
 }
 
@@ -580,6 +631,7 @@ pub unsafe fn name_cuda_stream_unicode(stream: CudaStream, name: &WideCStr) {
 /// # Safety
 /// This function is marked unsafe because of the pointer parameter referring to the CUDA event.
 pub unsafe fn name_cuda_event_ascii(event: CudaEvent, name: &CStr) {
+    // SAFETY: Caller guarantees `event` is a valid CUDA runtime event handle.
     unsafe { crate::ffi::nvtxNameCudaEventA(event, name.as_ptr()) }
 }
 
@@ -589,6 +641,7 @@ pub unsafe fn name_cuda_event_ascii(event: CudaEvent, name: &CStr) {
 /// # Safety
 /// This function is marked unsafe because of the pointer parameter referring to the CUDA event.
 pub unsafe fn name_cuda_event_unicode(event: CudaEvent, name: &WideCStr) {
+    // SAFETY: Caller guarantees `event` is a valid CUDA runtime event handle.
     unsafe { crate::ffi::nvtxNameCudaEventW(event, name.as_ptr().cast()) }
 }
 
@@ -596,6 +649,7 @@ pub unsafe fn name_cuda_event_unicode(event: CudaEvent, name: &WideCStr) {
 /// Create a new user-defined synchronization within a domain.
 pub fn domain_syncuser_create(domain: DomainHandle, attribs: SyncUserAttributes) -> SyncUserHandle {
     SyncUserHandle {
+        // SAFETY: `domain` is valid and `attribs` lives across the FFI call.
         handle: unsafe {
             crate::ffi::nvtxDomainSyncUserCreate(
                 domain.handle,
@@ -609,11 +663,13 @@ pub fn domain_syncuser_create(domain: DomainHandle, attribs: SyncUserAttributes)
 ///
 /// Created by [`domain_syncuser_create`].
 pub fn domain_syncuser_destroy(handle: SyncUserHandle) {
+    // SAFETY: `handle` was created by NVTX and is consumed by this destroy call.
     unsafe { crate::ffi::nvtxDomainSyncUserDestroy(handle.handle) }
 }
 
 /// Indicate that a user-defined synchronization started to acquire.
 pub fn domain_syncuser_acquire_start(handle: SyncUserHandle) {
+    // SAFETY: `handle` is an opaque sync-user token created by NVTX.
     unsafe { crate::ffi::nvtxDomainSyncUserAcquireStart(handle.handle) }
 }
 
@@ -621,6 +677,7 @@ pub fn domain_syncuser_acquire_start(handle: SyncUserHandle) {
 ///
 /// Note: this call is only valid after a call to [`domain_syncuser_acquire_start`].
 pub fn domain_syncuser_acquire_failed(handle: SyncUserHandle) {
+    // SAFETY: `handle` is an opaque sync-user token created by NVTX.
     unsafe { crate::ffi::nvtxDomainSyncUserAcquireFailed(handle.handle) }
 }
 
@@ -628,6 +685,7 @@ pub fn domain_syncuser_acquire_failed(handle: SyncUserHandle) {
 ///
 /// Note: this call is only valid after a call to [`domain_syncuser_acquire_start`].
 pub fn domain_syncuser_acquire_success(handle: SyncUserHandle) {
+    // SAFETY: `handle` is an opaque sync-user token created by NVTX.
     unsafe { crate::ffi::nvtxDomainSyncUserAcquireSuccess(handle.handle) }
 }
 
@@ -635,5 +693,6 @@ pub fn domain_syncuser_acquire_success(handle: SyncUserHandle) {
 ///
 /// Note: this call is only valid after a call to [`domain_syncuser_acquire_success`].
 pub fn domain_syncuser_acquire_releasing(handle: SyncUserHandle) {
+    // SAFETY: `handle` is an opaque sync-user token created by NVTX.
     unsafe { crate::ffi::nvtxDomainSyncUserReleasing(handle.handle) }
 }

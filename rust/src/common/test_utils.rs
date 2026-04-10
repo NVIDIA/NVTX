@@ -9,7 +9,7 @@ use widestring::{WideCStr, WideCString};
 pub struct TestUtils;
 
 #[cfg(test)]
-#[allow(clippy::missing_panics_doc)]
+#[allow(clippy::missing_panics_doc, clippy::panic)]
 impl TestUtils {
     /// Assert that a message encodes to ASCII correctly
     pub fn assert_message_ascii_encoding<T>(message: &T, expected_str: &str)

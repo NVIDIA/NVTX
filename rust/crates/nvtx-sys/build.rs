@@ -1,6 +1,9 @@
 // SPDX-FileCopyrightText: Copyright (c) 2024-2026 NVIDIA CORPORATION & AFFILIATES. All rights reserved.
 // SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception
 
+#![allow(clippy::unwrap_used)]
+#![allow(clippy::expect_used)]
+
 use std::{
     env,
     path::{Path, PathBuf},

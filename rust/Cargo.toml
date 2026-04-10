@@ -15,6 +15,44 @@ readme = "README.md"
 publish = false
 license = "Apache-2.0 WITH LLVM-exception"
 
+[workspace.lints.clippy]
+all = { level = "deny", priority = -1 }
+pedantic = { level = "deny", priority = -1 }
+cargo = { level = "deny", priority = -1 }
+style = { level = "deny", priority = -1 }
+perf = { level = "deny", priority = -1 }
+suspicious = { level = "deny", priority = -1 }
+complexity = { level = "deny", priority = -1 }
+mod_module_files = "deny"
+self_named_module_files = "allow"
+alloc_instead_of_core = "deny"
+pub_use = "allow"
+pub_without_shorthand = "deny"
+pub_with_shorthand = "allow"
+arbitrary_source_item_ordering = "allow"
+implicit_return = "allow"
+single_call_fn = "allow"
+question_mark_used = "allow"
+print_stdout = "warn"
+use_debug = "warn"
+todo = "warn"
+unimplemented = "warn"
+panic = "deny"
+shadow_same = "allow"
+shadow_reuse = "allow"
+shadow_unrelated = "allow"
+unwrap_used = "deny"
+expect_used = "deny"
+allow_attributes = "allow"
+multiple_unsafe_ops_per_block = "deny"
+undocumented_unsafe_blocks = "deny"
+unreadable_literal = "allow"
+arithmetic_side_effects = "allow"
+float_cmp = "allow"
+cast_possible_truncation = "allow"
+cast_possible_wrap = "allow"
+cast_sign_loss = "allow"
+
 [package]
 name = "nvidia-nvtx"
 version.workspace = true
@@ -82,3 +120,6 @@ required-features = ["name-current-thread"]
 [[example]]
 name = "tracing"
 required-features = ["tracing"]
+
+[lints]
+workspace = true

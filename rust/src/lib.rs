@@ -4,10 +4,11 @@
 #![deny(missing_docs)]
 #![cfg_attr(docsrs, feature(doc_auto_cfg, doc_cfg))]
 #![cfg_attr(test, allow(clippy::expect_used, clippy::unwrap_used))]
+#![deny(unsafe_op_in_unsafe_fn)]
 
 //! Crate for interfacing with NVIDIA's NVTX API
 //!
-//! When not running within NSight tools, the calls will dispatch to
+//! When not running within Nsight tools, the calls will dispatch to
 //! empty method stubs, thus enabling low-overhead profiling.
 //!
 //! * All events are fully supported:
@@ -69,7 +70,7 @@ pub use common::test_utils;
 
 /// Support for colors.
 pub mod color;
-/// Color type for controlling appearance within NSight profilers.
+/// Color type for controlling appearance within Nsight profilers.
 pub type Color = color::Color;
 
 #[cfg(feature = "cuda")]
@@ -86,7 +87,7 @@ pub use cuda_runtime::*;
 
 /// Specialized types for use within a domain context.
 pub mod domain;
-/// Domain for high-level grouping within NSight profilers.
+/// Domain for high-level grouping within Nsight profilers.
 pub type Domain = domain::Domain;
 
 /// Convenience wrapper for all valid argument types to ranges and marks.

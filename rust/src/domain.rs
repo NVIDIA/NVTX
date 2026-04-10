@@ -197,7 +197,7 @@ pub use resource::Resource;
 /// user-defined synchronization objects
 pub mod sync;
 
-/// Represents a domain for high-level grouping within NSight profilers.
+/// Represents a domain for high-level grouping within Nsight profilers.
 #[derive(Debug)]
 pub struct Domain {
     handle: nvtx_sys::DomainHandle,

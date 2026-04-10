@@ -24,3 +24,6 @@ widestring = "1.2.1"
 default = []
 cuda = []
 cuda_runtime = []
+
+[lints]
+workspace = true

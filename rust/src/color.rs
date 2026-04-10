@@ -6,7 +6,7 @@ use crate::TypeValueEncodable;
 #[cfg(feature = "color-name")]
 pub use color_name::css::colors::*;
 
-/// Represents a color in use for controlling appearance within NSight profilers.
+/// Represents a color in use for controlling appearance within Nsight profilers.
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub struct Color {
     /// alpha channel
