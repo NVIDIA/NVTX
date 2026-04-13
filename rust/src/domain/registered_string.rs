@@ -17,7 +17,7 @@ impl PartialEq for RegisteredString<'_> {
     fn eq(&self, other: &Self) -> bool {
         self.handle == other.handle
             && self.uid == other.uid
-            && std::ptr::eq(self.domain, other.domain)
+            && core::ptr::eq(self.domain, other.domain)
     }
 }
 

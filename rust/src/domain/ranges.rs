@@ -1,7 +1,7 @@
 // SPDX-FileCopyrightText: Copyright (c) 2025-2026 NVIDIA CORPORATION & AFFILIATES. All rights reserved.
 // SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception
 
-use std::marker::PhantomData;
+use core::marker::PhantomData;
 
 use super::EventArgument;
 use crate::Domain;
