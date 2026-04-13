@@ -12,6 +12,7 @@ use std::{
 fn main() {
     let mut lib_builder = cc::Build::new();
     let mut builder = bindgen::Builder::default();
+    let host = env::var("HOST").expect("host triple is always set");
 
     lib_builder
         .include("../../../c/include")
@@ -20,6 +21,7 @@ fn main() {
         .file(Path::new("c/src/lib.c"));
 
     builder = builder
+        .use_core()
         .detect_include_paths(true)
         .clang_arg("-I")
         .clang_arg("../../../c/include")
@@ -27,6 +29,9 @@ fn main() {
         .clang_arg("c/include")
         .header("c/include/wrapper.h")
         .parse_callbacks(Box::new(bindgen::CargoCallbacks::new()))
+        // Bare-metal checks parse NVTX headers using the host target, so bindgen's
+        // generated host layout assertions are not meaningful for that target.
+        .layout_tests(false)
         .allowlist_recursively(false)
         .generate_comments(false)
         .generate_cstr(true)
@@ -67,7 +72,15 @@ fn main() {
         lib_builder.define("ENABLE_CUDART", None);
     }
 
-    lib_builder.compile("nvtx");
+    let target_os = env::var("CARGO_CFG_TARGET_OS").expect("target OS is always set");
+    if target_os == "none" {
+        // For bare-metal cross checks, parse headers against the host's libc headers.
+        // NVTX does not expose target-dependent structs, so host parsing is sufficient.
+        builder = builder.clang_arg(format!("--target={host}"));
+        println!("cargo:warning=Skipping C shim build for target OS 'none'");
+    } else {
+        lib_builder.compile("nvtx");
+    }
     let bindings = builder.generate().expect("Unable to generate bindings");
 
     // Write the bindings to the $OUT_DIR/bindings.rs file.

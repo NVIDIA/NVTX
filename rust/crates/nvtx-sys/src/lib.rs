@@ -2,6 +2,7 @@
 // SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception
 
 #![cfg_attr(test, allow(clippy::unwrap_used))]
+#![no_std]
 #![deny(unsafe_op_in_unsafe_fn)]
 
 /// The unmodified FFI imported functions, types, and definitions
@@ -23,7 +24,7 @@ pub type RangeId = ffi::nvtxRangeId_t;
 /// Struct representing all possible Event attributes.
 pub type EventAttributes = ffi::nvtxEventAttributes_t;
 
-pub const NVTX_EVENT_ATTRIBUTES_SIZE: usize = ::std::mem::size_of::<EventAttributes>();
+pub const NVTX_EVENT_ATTRIBUTES_SIZE: usize = core::mem::size_of::<EventAttributes>();
 
 /// Struct representing all possible Resource attributes.
 pub type ResourceAttributes = ffi::nvtxResourceAttributes_t;
@@ -268,7 +269,7 @@ pub mod resource_type {
     pub use pthread::*;
 }
 
-use std::ffi::CStr;
+use core::ffi::CStr;
 use widestring::WideCStr;
 
 /// Create a mark within a domain.
@@ -417,7 +418,7 @@ pub fn domain_resource_create(domain: DomainHandle, attribs: ResourceAttributes)
         handle: unsafe {
             crate::ffi::nvtxDomainResourceCreate(
                 domain.handle,
-                std::ptr::addr_of!(attribs).cast_mut(),
+                core::ptr::addr_of!(attribs).cast_mut(),
             )
         },
     }
@@ -653,7 +654,7 @@ pub fn domain_syncuser_create(domain: DomainHandle, attribs: SyncUserAttributes)
         handle: unsafe {
             crate::ffi::nvtxDomainSyncUserCreate(
                 domain.handle,
-                std::ptr::addr_of!(attribs).cast_mut(),
+                core::ptr::addr_of!(attribs).cast_mut(),
             )
         },
     }
