@@ -188,48 +188,34 @@ pub type CuStream = ffi::CUstream;
 
 /// Resource types for use within [`crate::ResourceAttributes`].
 pub mod resource_type {
+    #![allow(clippy::unnecessary_cast)]
+
     use crate::ffi::nvtxResourceGenericType_t::*;
-    #[cfg(target_os = "windows")]
-    type ResourceType = i32;
-    #[cfg(not(target_os = "windows"))]
-    type ResourceType = u32;
-
-    const fn resource_type_u32(value: ResourceType) -> u32 {
-        #[cfg(target_os = "windows")]
-        {
-            // CAST: This is in a `const fn`, where `From`/`TryFrom` are not const-callable on stable Rust.
-            value as u32
-        }
-        #[cfg(not(target_os = "windows"))]
-        {
-            value
-        }
-    }
-
+    // CAST: Bindgen emits these enum constants as either `i32` or `u32` across platforms/targets.
+    // Normalize to the raw 32-bit identifier representation expected by NVTX.
     /// An unknown resource type.
-    pub const UNKNOWN: u32 = resource_type_u32(NVTX_RESOURCE_TYPE_UNKNOWN);
+    pub const UNKNOWN: u32 = NVTX_RESOURCE_TYPE_UNKNOWN as u32;
     /// A handle to a generic resource.
-    pub const GENERIC_HANDLE: u32 = resource_type_u32(NVTX_RESOURCE_TYPE_GENERIC_HANDLE);
+    pub const GENERIC_HANDLE: u32 = NVTX_RESOURCE_TYPE_GENERIC_HANDLE as u32;
     /// A pointer to a generic resource.
-    pub const GENERIC_POINTER: u32 = resource_type_u32(NVTX_RESOURCE_TYPE_GENERIC_POINTER);
+    pub const GENERIC_POINTER: u32 = NVTX_RESOURCE_TYPE_GENERIC_POINTER as u32;
     /// A handle to a native thread.
-    pub const GENERIC_THREAD_NATIVE: u32 =
-        resource_type_u32(NVTX_RESOURCE_TYPE_GENERIC_THREAD_NATIVE);
+    pub const GENERIC_THREAD_NATIVE: u32 = NVTX_RESOURCE_TYPE_GENERIC_THREAD_NATIVE as u32;
     /// A handle to a posix thread.
-    pub const GENERIC_THREAD_POSIX: u32 =
-        resource_type_u32(NVTX_RESOURCE_TYPE_GENERIC_THREAD_POSIX);
+    pub const GENERIC_THREAD_POSIX: u32 = NVTX_RESOURCE_TYPE_GENERIC_THREAD_POSIX as u32;
 
     #[cfg(feature = "cuda")]
     mod cuda {
         use crate::ffi::nvtxResourceCUDAType_t::*;
+        // CAST: See `resource_type::UNKNOWN` for cast rationale.
         /// A CUDA device resource.
-        pub const CUDA_DEVICE: u32 = super::resource_type_u32(NVTX_RESOURCE_TYPE_CUDA_DEVICE);
+        pub const CUDA_DEVICE: u32 = NVTX_RESOURCE_TYPE_CUDA_DEVICE as u32;
         /// A CUDA context resource.
-        pub const CUDA_CONTEXT: u32 = super::resource_type_u32(NVTX_RESOURCE_TYPE_CUDA_CONTEXT);
+        pub const CUDA_CONTEXT: u32 = NVTX_RESOURCE_TYPE_CUDA_CONTEXT as u32;
         /// A CUDA stream resource.
-        pub const CUDA_STREAM: u32 = super::resource_type_u32(NVTX_RESOURCE_TYPE_CUDA_STREAM);
+        pub const CUDA_STREAM: u32 = NVTX_RESOURCE_TYPE_CUDA_STREAM as u32;
         /// A CUDA event resource.
-        pub const CUDA_EVENT: u32 = super::resource_type_u32(NVTX_RESOURCE_TYPE_CUDA_EVENT);
+        pub const CUDA_EVENT: u32 = NVTX_RESOURCE_TYPE_CUDA_EVENT as u32;
     }
     #[cfg(feature = "cuda")]
     pub use cuda::*;
@@ -237,12 +223,13 @@ pub mod resource_type {
     #[cfg(feature = "cuda_runtime")]
     mod cuda_runtime {
         use crate::ffi::nvtxResourceCUDARTType_t::*;
+        // CAST: See `resource_type::UNKNOWN` for cast rationale.
         /// A CUDA runtime device resource.
-        pub const CUDART_DEVICE: u32 = super::resource_type_u32(NVTX_RESOURCE_TYPE_CUDART_DEVICE);
+        pub const CUDART_DEVICE: u32 = NVTX_RESOURCE_TYPE_CUDART_DEVICE as u32;
         /// A CUDA runtime stream resource.
-        pub const CUDART_STREAM: u32 = super::resource_type_u32(NVTX_RESOURCE_TYPE_CUDART_STREAM);
+        pub const CUDART_STREAM: u32 = NVTX_RESOURCE_TYPE_CUDART_STREAM as u32;
         /// A CUDA runtime event resource.
-        pub const CUDART_EVENT: u32 = super::resource_type_u32(NVTX_RESOURCE_TYPE_CUDART_EVENT);
+        pub const CUDART_EVENT: u32 = NVTX_RESOURCE_TYPE_CUDART_EVENT as u32;
     }
     #[cfg(feature = "cuda_runtime")]
     pub use cuda_runtime::*;
@@ -250,24 +237,19 @@ pub mod resource_type {
     #[cfg(target_family = "unix")]
     mod pthread {
         use crate::ffi::nvtxResourceSyncPosixThreadType_t::*;
+        // CAST: See `resource_type::UNKNOWN` for cast rationale.
         /// A pthread mutex resource.
-        pub const PTHREAD_MUTEX: u32 =
-            super::resource_type_u32(NVTX_RESOURCE_TYPE_SYNC_PTHREAD_MUTEX);
+        pub const PTHREAD_MUTEX: u32 = NVTX_RESOURCE_TYPE_SYNC_PTHREAD_MUTEX as u32;
         /// A pthread condition variable resource.
-        pub const PTHREAD_CONDITION: u32 =
-            super::resource_type_u32(NVTX_RESOURCE_TYPE_SYNC_PTHREAD_CONDITION);
+        pub const PTHREAD_CONDITION: u32 = NVTX_RESOURCE_TYPE_SYNC_PTHREAD_CONDITION as u32;
         /// A pthread rwlock resource.
-        pub const PTHREAD_RWLOCK: u32 =
-            super::resource_type_u32(NVTX_RESOURCE_TYPE_SYNC_PTHREAD_RWLOCK);
+        pub const PTHREAD_RWLOCK: u32 = NVTX_RESOURCE_TYPE_SYNC_PTHREAD_RWLOCK as u32;
         /// A pthread barrier resource.
-        pub const PTHREAD_BARRIER: u32 =
-            super::resource_type_u32(NVTX_RESOURCE_TYPE_SYNC_PTHREAD_BARRIER);
+        pub const PTHREAD_BARRIER: u32 = NVTX_RESOURCE_TYPE_SYNC_PTHREAD_BARRIER as u32;
         /// A pthread spinlock resource.
-        pub const PTHREAD_SPINLOCK: u32 =
-            super::resource_type_u32(NVTX_RESOURCE_TYPE_SYNC_PTHREAD_SPINLOCK);
+        pub const PTHREAD_SPINLOCK: u32 = NVTX_RESOURCE_TYPE_SYNC_PTHREAD_SPINLOCK as u32;
         /// A pthread oncelock resource.
-        pub const PTHREAD_ONCE: u32 =
-            super::resource_type_u32(NVTX_RESOURCE_TYPE_SYNC_PTHREAD_ONCE);
+        pub const PTHREAD_ONCE: u32 = NVTX_RESOURCE_TYPE_SYNC_PTHREAD_ONCE as u32;
     }
     #[cfg(target_family = "unix")]
     pub use pthread::*;
