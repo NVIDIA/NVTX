@@ -1,48 +1,76 @@
 // SPDX-FileCopyrightText: Copyright (c) 2025-2026 NVIDIA CORPORATION & AFFILIATES. All rights reserved.
 // SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception
 
-use crate::{common::GenericMessage, Color, Payload, TypeValueEncodable};
-use derive_builder::Builder;
+use crate::{Color, Payload, TypeValueEncodable};
 
 /// Generic event attributes that can be used in both global and domain contexts.
 ///
 /// This struct holds optional fields for category, color, message, and payload.
 /// It is used to describe the attributes of an NVTX event.
-#[derive(Default, Debug, Clone, Builder)]
-#[builder(pattern = "owned", derive(Clone), build_fn(skip))]
+#[derive(Debug, Clone)]
 pub struct GenericEventAttributes<C, M> {
-    #[builder(setter(into, strip_option))]
     pub category: Option<C>,
-    #[builder(setter(into, strip_option))]
     pub color: Option<Color>,
-    #[builder(setter(into, strip_option))]
     pub message: Option<M>,
-    #[builder(setter(into, strip_option))]
     pub payload: Option<Payload>,
 }
 
-impl<M, T: Into<GenericMessage<M>>, C> From<T> for GenericEventAttributes<C, GenericMessage<M>>
-where
-    C: CategoryEncodable,
-{
-    fn from(value: T) -> Self {
-        GenericEventAttributes {
+/// Builder for [`GenericEventAttributes`].
+#[derive(Debug, Clone)]
+pub struct GenericEventAttributesBuilder<C, M> {
+    category: Option<C>,
+    color: Option<Color>,
+    message: Option<M>,
+    payload: Option<Payload>,
+}
+
+impl<C, M> Default for GenericEventAttributesBuilder<C, M> {
+    fn default() -> Self {
+        Self {
             category: None,
             color: None,
-            message: Some(value.into()),
+            message: None,
             payload: None,
         }
     }
 }
 
 impl<C, M> GenericEventAttributesBuilder<C, M> {
+    /// Set the event category.
+    #[must_use]
+    pub fn category(mut self, category: impl Into<C>) -> Self {
+        self.category = Some(category.into());
+        self
+    }
+
+    /// Set the event color.
+    #[must_use]
+    pub fn color(mut self, color: impl Into<Color>) -> Self {
+        self.color = Some(color.into());
+        self
+    }
+
+    /// Set the event message.
+    #[must_use]
+    pub fn message(mut self, message: impl Into<M>) -> Self {
+        self.message = Some(message.into());
+        self
+    }
+
+    /// Set the event payload.
+    #[must_use]
+    pub fn payload(mut self, payload: impl Into<Payload>) -> Self {
+        self.payload = Some(payload.into());
+        self
+    }
+
     /// Build the event attributes, allowing all fields to be optional.
     pub fn build(self) -> GenericEventAttributes<C, M> {
         GenericEventAttributes {
-            category: self.category.flatten(),
-            color: self.color.flatten(),
-            message: self.message.flatten(),
-            payload: self.payload.flatten(),
+            category: self.category,
+            color: self.color,
+            message: self.message,
+            payload: self.payload,
         }
     }
 }

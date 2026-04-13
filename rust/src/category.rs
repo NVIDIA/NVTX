@@ -2,7 +2,7 @@
 // SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception
 
 use crate::{common::CategoryEncodable, Str};
-use std::sync::atomic::{AtomicU32, Ordering};
+use core::sync::atomic::{AtomicU32, Ordering};
 
 /// Represents a category for use with mark and range grouping.
 ///
@@ -36,7 +36,7 @@ impl CategoryEncodable for Category {
     }
 }
 
-#[cfg(test)]
+#[cfg(all(test, feature = "std"))]
 mod tests {
     use super::*;
     use crate::common::TestUtils;

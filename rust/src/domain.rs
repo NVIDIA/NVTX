@@ -8,14 +8,23 @@ use crate::{
     },
     Color, Payload, Str, TypeValueEncodable,
 };
-use std::{
-    collections::HashMap,
+#[cfg(all(feature = "alloc", not(feature = "std")))]
+// `HashMap` depends on `std`'s hasher support. In `no_std + alloc`, `BTreeMap`
+// keeps the caches available with O(log n) lookups instead of average O(1).
+use alloc::collections::BTreeMap as StringMap;
+use alloc::string::{String, ToString};
+use core::{
     marker::PhantomData,
-    sync::{
-        atomic::{AtomicU32, Ordering},
-        Mutex,
-    },
+    sync::atomic::{AtomicU32, Ordering},
 };
+#[cfg(all(feature = "alloc", not(feature = "std")))]
+// Domain caches use a spinlock in this tier; see the crate feature docs for
+// the interrupt/RTOS priority inversion caveat.
+use spin::Mutex;
+#[cfg(feature = "std")]
+use std::collections::HashMap as StringMap;
+#[cfg(feature = "std")]
+use std::sync::Mutex;
 
 mod category;
 pub use category::Category;
@@ -69,7 +78,7 @@ impl<'a> EventAttributesBuilder<'a> {
     #[must_use]
     pub fn category(mut self, category: Category<'a>) -> EventAttributesBuilder<'a> {
         assert!(
-            std::ptr::eq(category.domain(), self.domain),
+            core::ptr::eq(category.domain(), self.domain),
             "EventAttributesBuilder's Domain differs from Category's Domain"
         );
         self.inner = self.inner.category(category);
@@ -144,7 +153,7 @@ impl<'a> EventAttributesBuilder<'a> {
             Message::Registered(r) => r,
         };
         assert!(
-            std::ptr::eq(msg.domain(), self.domain),
+            core::ptr::eq(msg.domain(), self.domain),
             "EventAttributesBuilder's Domain differs from RegisteredString's Domain"
         );
         self.inner = self.inner.message(Message::Registered(msg));
@@ -203,8 +212,20 @@ pub struct Domain {
     handle: nvtx_sys::DomainHandle,
     registered_strings: AtomicU32,
     registered_categories: AtomicU32,
-    strings: Mutex<HashMap<String, (nvtx_sys::StringHandle, u32)>>,
-    categories: Mutex<HashMap<String, u32>>,
+    strings: Mutex<StringMap<String, (nvtx_sys::StringHandle, u32)>>,
+    categories: Mutex<StringMap<String, u32>>,
+}
+
+#[cfg(feature = "std")]
+fn lock_unpoison<T>(mutex: &Mutex<T>) -> std::sync::MutexGuard<'_, T> {
+    mutex
+        .lock()
+        .unwrap_or_else(std::sync::PoisonError::into_inner)
+}
+
+#[cfg(all(feature = "alloc", not(feature = "std")))]
+fn lock_unpoison<T>(mutex: &Mutex<T>) -> spin::MutexGuard<'_, T> {
+    mutex.lock()
 }
 
 impl Domain {
@@ -223,8 +244,8 @@ impl Domain {
             },
             registered_strings: AtomicU32::new(0),
             registered_categories: AtomicU32::new(0),
-            strings: Mutex::new(HashMap::default()),
-            categories: Mutex::new(HashMap::default()),
+            strings: Mutex::new(StringMap::default()),
+            categories: Mutex::new(StringMap::default()),
         }
     }
 
@@ -259,10 +280,7 @@ impl Domain {
             Str::Ascii(s) => s.to_string_lossy().to_string(),
             Str::Unicode(s) => s.to_string_lossy().clone(),
         };
-        let (handle, uid) = *self
-            .strings
-            .lock()
-            .unwrap_or_else(std::sync::PoisonError::into_inner)
+        let (handle, uid) = *lock_unpoison(&self.strings)
             .entry(owned_string)
             .or_insert_with(|| {
                 let id = 1 + self.registered_strings.fetch_add(1, Ordering::SeqCst);
@@ -311,10 +329,7 @@ impl Domain {
             Str::Unicode(s) => s.to_string_lossy().clone(),
         };
 
-        let id = *self
-            .categories
-            .lock()
-            .unwrap_or_else(std::sync::PoisonError::into_inner)
+        let id = *lock_unpoison(&self.categories)
             .entry(owned_name)
             .or_insert_with(|| {
                 let id = 1 + self.registered_categories.fetch_add(1, Ordering::SeqCst);
@@ -376,13 +391,13 @@ impl Domain {
             EventArgument::Attributes(attr) => {
                 if let Some(category) = &attr.category {
                     assert!(
-                        std::ptr::eq(category.domain(), self),
+                        core::ptr::eq(category.domain(), self),
                         "EventAttributes' Domain does not match current Domain"
                     );
                 }
                 if let Some(Message::Registered(reg_str)) = &attr.message {
                     assert!(
-                        std::ptr::eq(reg_str.domain(), self),
+                        core::ptr::eq(reg_str.domain(), self),
                         "EventAttributes' Domain does not match current Domain"
                     );
                 }
@@ -392,11 +407,16 @@ impl Domain {
             EventArgument::Message(m) => {
                 if let Message::Registered(reg_str) = m {
                     assert!(
-                        std::ptr::eq(reg_str.domain(), self),
+                        core::ptr::eq(reg_str.domain(), self),
                         "EventAttributes' Domain does not match current Domain"
                     );
                 }
-                let attr: EventAttributes = m.into();
+                let attr = EventAttributes {
+                    category: None,
+                    color: None,
+                    message: Some(m),
+                    payload: None,
+                };
                 let encoded = attr.encode();
                 nvtx_sys::domain_mark_ex(self.handle, &encoded);
             }
@@ -464,13 +484,13 @@ impl Domain {
                 // Validate that all categories and messages belong to this domain
                 if let Some(category) = &attr.category {
                     assert!(
-                        std::ptr::eq(category.domain(), self),
+                        core::ptr::eq(category.domain(), self),
                         "EventAttributes' Domain does not match current Domain"
                     );
                 }
                 if let Some(Message::Registered(reg_str)) = &attr.message {
                     assert!(
-                        std::ptr::eq(reg_str.domain(), self),
+                        core::ptr::eq(reg_str.domain(), self),
                         "EventAttributes' Domain does not match current Domain"
                     );
                 }
@@ -479,7 +499,7 @@ impl Domain {
                 // NEW: Add validation here
                 if let Message::Registered(reg_str) = m {
                     assert!(
-                        std::ptr::eq(reg_str.domain(), self),
+                        core::ptr::eq(reg_str.domain(), self),
                         "EventAttributes' Domain does not match current Domain"
                     );
                 }
@@ -492,7 +512,12 @@ impl Domain {
     pub(super) fn range_start<'a>(&self, arg: impl Into<EventArgument<'a>>) -> u64 {
         let arg = match arg.into() {
             EventArgument::Attributes(attr) => attr,
-            EventArgument::Message(m) => m.into(),
+            EventArgument::Message(m) => EventAttributes {
+                category: None,
+                color: None,
+                message: Some(m),
+                payload: None,
+            },
         };
         nvtx_sys::domain_range_start_ex(self.handle, &arg.encode())
     }
@@ -569,7 +594,7 @@ impl Drop for Domain {
     }
 }
 
-#[cfg(test)]
+#[cfg(all(test, feature = "std"))]
 mod tests {
     use super::*;
     use crate::common::TestUtils;

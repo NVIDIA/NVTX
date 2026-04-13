@@ -35,7 +35,8 @@
 //!
 //! * **alloc** -
 //!   `#![no_std]` + heap-backed API (domains, categories, ranges, and owned strings) without
-//!   `std` integrations.
+//!   `std` integrations. Domain caches use a spinlock in this profile; interrupt-driven or
+//!   RTOS environments should account for priority inversion risk around domain operations.
 //!
 //! * **core-only** (`--no-default-features`) -
 //!   Strict `#![no_std]` profile with low-level borrowed-string APIs, including

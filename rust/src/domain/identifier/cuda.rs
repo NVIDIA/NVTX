@@ -55,7 +55,7 @@ impl TypeValueEncodable for CudaIdentifier {
     }
 }
 
-#[cfg(test)]
+#[cfg(all(test, feature = "std"))]
 mod tests {
 
     use std::os::raw::c_void;

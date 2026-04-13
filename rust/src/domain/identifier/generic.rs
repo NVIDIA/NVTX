@@ -7,7 +7,7 @@ use crate::TypeValueEncodable;
 /// Identifiers used for Generic resources
 pub enum GenericIdentifier {
     /// Generic pointer
-    Pointer(*const ::std::os::raw::c_void),
+    Pointer(*const core::ffi::c_void),
     /// Generic handle
     Handle(u64),
     /// Generic thread native
@@ -52,7 +52,7 @@ impl TypeValueEncodable for GenericIdentifier {
     }
 }
 
-#[cfg(test)]
+#[cfg(all(test, feature = "std"))]
 mod tests {
 
     use super::*;

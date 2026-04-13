@@ -78,7 +78,8 @@ default = [
     "tracing",
 ]
 std = ["alloc", "nvtx-sys/std", "widestring/std"]
-alloc = ["nvtx-sys/alloc", "widestring/alloc"]
+# `alloc` uses `spin::Mutex` for domain caches because `std::sync::Mutex` is unavailable.
+alloc = ["dep:spin", "nvtx-sys/alloc", "widestring/alloc"]
 color-name = ["std", "dep:color-name"]
 name-current-thread = ["std", "dep:gettid"]
 cuda = ["nvtx-sys/cuda"]
@@ -92,9 +93,9 @@ tracing = [
 
 [dependencies]
 color-name = { version = "1.2.0", optional = true }
-derive_builder = "0.20"
 gettid = { version = "0.1.4", optional = true }
 nvtx-sys = { path = "crates/nvtx-sys", default-features = false }
+spin = { version = "0.10.0", optional = true }
 tracing-core = { version = "0.1.36", optional = true }
 tracing-subscriber = { version = "0.3.23", optional = true }
 widestring = { version = "1.2.1", default-features = false }

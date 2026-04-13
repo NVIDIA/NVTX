@@ -2,6 +2,7 @@
 // SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception
 
 use crate::common::event_attributes::GenericEventAttributes;
+use crate::common::GenericMessage;
 
 /// Generic event argument type that can be used in both global and domain contexts
 #[derive(Debug, Clone)]
@@ -12,11 +13,11 @@ pub enum GenericEventArgument<M, A> {
     Attributes(A),
 }
 
-impl<C, M, T: Into<GenericEventAttributes<C, M>>> From<T>
+impl<C, M> From<GenericEventAttributes<C, M>>
     for GenericEventArgument<M, GenericEventAttributes<C, M>>
 {
-    fn from(value: T) -> Self {
-        match value.into() {
+    fn from(value: GenericEventAttributes<C, M>) -> Self {
+        match value {
             GenericEventAttributes {
                 category: None,
                 color: None,
@@ -25,5 +26,13 @@ impl<C, M, T: Into<GenericEventAttributes<C, M>>> From<T>
             } => GenericEventArgument::Message(m),
             attr => GenericEventArgument::Attributes(attr),
         }
+    }
+}
+
+impl<C, R, T: Into<GenericMessage<R>>> From<T>
+    for GenericEventArgument<GenericMessage<R>, GenericEventAttributes<C, GenericMessage<R>>>
+{
+    fn from(value: T) -> Self {
+        GenericEventArgument::Message(value.into())
     }
 }
