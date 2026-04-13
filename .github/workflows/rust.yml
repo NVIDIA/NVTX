@@ -61,11 +61,9 @@ jobs:
           path: ${{ env.CARGO_CACHE_PATH }}
           key: "\
             ${{ runner.os }}-cargo-\
-            ${{ steps.toolchain.outputs.cachekey }}-\
             ${{ hashFiles('**/Cargo.lock') }}"
           restore-keys: "\
-            ${{ runner.os }}-cargo-\
-            ${{ steps.toolchain.outputs.cachekey }}-"
+            ${{ runner.os }}-cargo-"
       - run: rustup install ${{ matrix.rv }}
       - run: >
           cargo +${{ matrix.rv }} check --workspace --all-targets --all-features
@@ -84,7 +82,7 @@ jobs:
           path: ${{ env.CARGO_CACHE_PATH }}
           key: "\
             ${{ runner.os }}-cargo-deny-\
-            ${{ steps.toolchain.outputs.cachekey }}"
+            ${{ hashFiles('**/Cargo.lock') }}"
           restore-keys: "\
             ${{ runner.os }}-cargo-deny-"
       - run: cargo install --locked cargo-deny || true
@@ -108,7 +106,13 @@ jobs:
       fail-fast: false
       matrix:
         runner: [ubuntu-latest, windows-latest, macos-latest]
-        f: [--all-features, --no-default-features]
+        include:
+          - name: all-features
+            f: --all-features
+          - name: alloc
+            f: --no-default-features --features alloc
+          - name: core
+            f: --no-default-features
     steps:
       - uses: actions/checkout@v7
       - uses: actions/cache@v6
@@ -116,12 +120,10 @@ jobs:
           path: ${{ env.CARGO_CACHE_PATH }}
           key: "\
             ${{ runner.os }}-cargo-check-\
-            ${{ steps.toolchain.outputs.cachekey }}-\
-            ${{ matrix.f }}-${{ hashFiles('**/Cargo.lock') }}"
+            ${{ matrix.name }}-${{ hashFiles('**/Cargo.lock') }}"
           restore-keys: "\
             ${{ runner.os }}-cargo-check-\
-            ${{ steps.toolchain.outputs.cachekey }}-\
-            ${{ matrix.f }}-"
+            ${{ matrix.name }}-"
       - name: Check
         run: cargo check --workspace --all-targets ${{ matrix.f }}
       - name: Clippy
@@ -131,3 +133,10 @@ jobs:
         run: cargo test --workspace --all-targets ${{ matrix.f }}
       - name: Doctest
         run: cargo test --workspace --doc ${{ matrix.f }}
+      - name: Install `no_std` target
+        run: rustup target add thumbv7em-none-eabi
+        if: matrix.name != 'all-features'
+      - name: Check `no_std` target
+        if: matrix.name != 'all-features'
+        run: >
+          cargo check --workspace --target thumbv7em-none-eabi ${{ matrix.f }}

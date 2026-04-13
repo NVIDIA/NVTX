@@ -19,19 +19,32 @@ function Exit-IfFailed {
 cargo "+$Toolchain" fmt --all -- --check
 Exit-IfFailed
 
-foreach ($features in @("--all-features", "--no-default-features")) {
-    cargo "+$Toolchain" check --workspace --all-targets $features
+foreach ($buildProfile in @(
+    @{ Name = "all-features"; Args = @("--all-features") },
+    @{ Name = "alloc"; Args = @("--no-default-features", "--features", "alloc") },
+    @{ Name = "core"; Args = @("--no-default-features") }
+)) {
+    cargo "+$Toolchain" check --workspace --all-targets @($buildProfile.Args)
     Exit-IfFailed
 
-    cargo "+$Toolchain" clippy --workspace --all-targets $features -- -Dwarnings
+    cargo "+$Toolchain" clippy --workspace --all-targets @($buildProfile.Args) -- -Dwarnings
     Exit-IfFailed
 
-    cargo "+$Toolchain" test --workspace --all-targets $features
+    cargo "+$Toolchain" test --workspace --all-targets @($buildProfile.Args)
     Exit-IfFailed
 
-    cargo "+$Toolchain" test --workspace --doc $features
+    cargo "+$Toolchain" test --workspace --doc @($buildProfile.Args)
     Exit-IfFailed
 }
+
+rustup target add thumbv7em-none-eabi --toolchain $Toolchain
+Exit-IfFailed
+
+cargo "+$Toolchain" check --workspace --no-default-features --target thumbv7em-none-eabi
+Exit-IfFailed
+
+cargo "+$Toolchain" check --workspace --no-default-features --features alloc --target thumbv7em-none-eabi
+Exit-IfFailed
 
 cargo "+$Toolchain" install --locked cargo-deny
 if ($LASTEXITCODE -ne 0) {

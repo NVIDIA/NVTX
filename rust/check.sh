@@ -7,12 +7,20 @@ set -eux
 
 cargo fmt --all -- --check
 
-for features in '--all-features' '--no-default-features' ; do
-    cargo check --workspace --all-targets $features
-    cargo clippy --workspace --all-targets $features -- -Dwarnings
-    cargo test --workspace --all-targets $features
-    cargo test --workspace --doc $features
-done
+run_profile() {
+    cargo check --workspace --all-targets "$@"
+    cargo clippy --workspace --all-targets "$@" -- -Dwarnings
+    cargo test --workspace --all-targets "$@"
+    cargo test --workspace --doc "$@"
+}
+
+run_profile --all-features
+run_profile --no-default-features --features alloc
+run_profile --no-default-features
+
+rustup target add thumbv7em-none-eabi
+cargo check --workspace --no-default-features --target thumbv7em-none-eabi
+cargo check --workspace --no-default-features --features alloc --target thumbv7em-none-eabi
 
 cargo install --locked cargo-deny || true
 cargo deny --workspace --all-features check --show-stats
