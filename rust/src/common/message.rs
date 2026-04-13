@@ -2,7 +2,10 @@
 // SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception
 
 use crate::{domain::RegisteredString, Str, TypeValueEncodable};
-use std::ffi::{CStr, CString};
+use alloc::borrow::ToOwned;
+use alloc::ffi::CString;
+use alloc::string::String;
+use core::ffi::CStr;
 use widestring::{WideCStr, WideCString};
 
 /// Generic message type that can be used in both global and domain contexts
@@ -118,7 +121,7 @@ where
         (
             Self::Type::NVTX_MESSAGE_UNKNOWN,
             Self::Value {
-                ascii: std::ptr::null(),
+                ascii: core::ptr::null(),
             },
         )
     }

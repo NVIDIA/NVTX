@@ -70,26 +70,34 @@ name = "nvtx"
 
 [features]
 default = [
+    "std",
     "color-name",
     "name-current-thread",
     "cuda",
     "cuda_runtime",
     "tracing",
 ]
-color-name = ["dep:color-name"]
-name-current-thread = ["dep:gettid"]
+std = ["alloc", "nvtx-sys/std", "widestring/std"]
+alloc = ["nvtx-sys/alloc", "widestring/alloc"]
+color-name = ["std", "dep:color-name"]
+name-current-thread = ["std", "dep:gettid"]
 cuda = ["nvtx-sys/cuda"]
 cuda_runtime = ["nvtx-sys/cuda_runtime"]
-tracing = ["dep:tracing-core", "dep:tracing-subscriber", "dep:color-name"]
+tracing = [
+    "std",
+    "color-name",
+    "dep:tracing-core",
+    "dep:tracing-subscriber",
+]
 
 [dependencies]
 color-name = { version = "1.2.0", optional = true }
 derive_builder = "0.20"
 gettid = { version = "0.1.4", optional = true }
-nvtx-sys = { path = "crates/nvtx-sys" }
+nvtx-sys = { path = "crates/nvtx-sys", default-features = false }
 tracing-core = { version = "0.1.36", optional = true }
 tracing-subscriber = { version = "0.3.23", optional = true }
-widestring = "1.2.1"
+widestring = { version = "1.2.1", default-features = false }
 
 [dev-dependencies]
 tracing = { version = "0.1.41", features = ["attributes"] }

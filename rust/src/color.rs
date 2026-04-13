@@ -139,7 +139,7 @@ impl TypeValueEncodable for Color {
     }
 }
 
-#[cfg(test)]
+#[cfg(all(test, feature = "std"))]
 mod tests {
     use crate::{common::TestUtils, TypeValueEncodable};
 

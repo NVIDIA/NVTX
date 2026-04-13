@@ -1,7 +1,8 @@
 // SPDX-FileCopyrightText: Copyright (c) 2024-2026 NVIDIA CORPORATION & AFFILIATES. All rights reserved.
 // SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception
 
-use std::ffi::{CStr, CString};
+use alloc::{ffi::CString, string::String};
+use core::ffi::CStr;
 use widestring::{WideCStr, WideCString};
 
 /// A convenience wrapper for various string types.

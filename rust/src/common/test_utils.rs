@@ -1,14 +1,14 @@
 // SPDX-FileCopyrightText: Copyright (c) 2025-2026 NVIDIA CORPORATION & AFFILIATES. All rights reserved.
 // SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception
 
-#[cfg(test)]
+#[cfg(all(test, feature = "std"))]
 use crate::{common::CategoryEncodable, Color, Payload, TypeValueEncodable};
 use widestring::{WideCStr, WideCString};
 
 /// Utility struct for common test assertions and helpers.
 pub struct TestUtils;
 
-#[cfg(test)]
+#[cfg(all(test, feature = "std"))]
 #[allow(clippy::missing_panics_doc, clippy::panic)]
 impl TestUtils {
     /// Assert that a message encodes to ASCII correctly

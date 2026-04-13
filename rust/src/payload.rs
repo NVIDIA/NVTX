@@ -104,7 +104,7 @@ impl TypeValueEncodable for Payload {
     }
 }
 
-#[cfg(test)]
+#[cfg(all(test, feature = "std"))]
 mod tests {
     use super::Payload;
     use crate::common::TestUtils;

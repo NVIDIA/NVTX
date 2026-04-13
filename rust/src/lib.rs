@@ -3,6 +3,7 @@
 
 #![deny(missing_docs)]
 #![cfg_attr(docsrs, feature(doc_auto_cfg, doc_cfg))]
+#![cfg_attr(not(feature = "std"), no_std)]
 #![cfg_attr(test, allow(clippy::expect_used, clippy::unwrap_used))]
 #![deny(unsafe_op_in_unsafe_fn)]
 
@@ -11,12 +12,13 @@
 //! When not running within Nsight tools, the calls will dispatch to
 //! empty method stubs, thus enabling low-overhead profiling.
 //!
-//! * All events are fully supported:
+//! * In `alloc`/`std` profiles, all events are fully supported:
 //!   * process ranges [`Range`] and [`domain::Range`]
 //!   * thread ranges [`LocalRange`] and [`domain::LocalRange`]
 //!   * marks [`mark`] and [`Domain::mark`]
-//! * Naming threads is fully supported (See [`name_thread`] and [`name_current_thread`]).
-//! * Domain, category, and registered strings are fully supported.
+//! * In `alloc`/`std` profiles, naming threads is fully supported
+//!   (see [`name_thread`] and [`name_current_thread`]).
+//! * In `alloc`/`std` profiles, domain, category, and registered strings are fully supported.
 //! * The user-defined synchronization API is implemented.
 //! * The user-defined resource naming API is implemented for the following platforms:
 //!   * Pthreads (on unix-like platforms)
@@ -25,10 +27,24 @@
 //!
 //! ## Features
 //!
-//! This crate defines a few features which provide opt-in behavior. By default, all
-//! features are enabled.
+//! The crate supports three capability tiers:
 //!
-//! * **color-names** -
+//! * **std** *(default)* -
+//!   Full ergonomic API surface, including domain caching and integrations like
+//!   [`name_current_thread`] and [`tracing::NvtxLayer`].
+//!
+//! * **alloc** -
+//!   `#![no_std]` + heap-backed API (domains, categories, ranges, and owned strings) without
+//!   `std` integrations.
+//!
+//! * **core-only** (`--no-default-features`) -
+//!   Strict `#![no_std]` profile with low-level borrowed-string APIs, including
+//!   [`mark_ascii`], [`mark_unicode`], [`name_thread_ascii`], [`name_thread_unicode`], and
+//!   low-level exports under [`sys`].
+//!
+//! Additional opt-in features:
+//!
+//! * **color-name** -
 //!   When enabled, [`color`] is populated with many human-readable color names.
 //!
 //! * **name-current-thread** -
@@ -59,13 +75,19 @@
 //!   enables the naming of Pthread-specific entities such as mutexes, semaphores,
 //!   condition variables, and read-write-locks.
 
+#[cfg(feature = "alloc")]
+extern crate alloc;
+
+#[cfg(feature = "alloc")]
 mod category;
 /// Category for use with marks and ranges.
+#[cfg(feature = "alloc")]
 pub use category::Category;
 
 /// Common utilities and types shared between global and domain contexts
+#[cfg(feature = "alloc")]
 mod common;
-#[cfg(test)]
+#[cfg(all(test, feature = "std"))]
 pub use common::test_utils;
 
 /// Support for colors.
@@ -73,21 +95,23 @@ pub mod color;
 /// Color type for controlling appearance within Nsight profilers.
 pub type Color = color::Color;
 
-#[cfg(feature = "cuda")]
+#[cfg(all(feature = "alloc", feature = "cuda"))]
 /// Support for CUDA-related APIs.
 mod cuda;
-#[cfg(feature = "cuda")]
+#[cfg(all(feature = "alloc", feature = "cuda"))]
 pub use cuda::*;
 
-#[cfg(feature = "cuda_runtime")]
+#[cfg(all(feature = "alloc", feature = "cuda_runtime"))]
 /// Support for CUDA runtime related APIs.
 mod cuda_runtime;
-#[cfg(feature = "cuda_runtime")]
+#[cfg(all(feature = "alloc", feature = "cuda_runtime"))]
 pub use cuda_runtime::*;
 
 /// Specialized types for use within a domain context.
+#[cfg(feature = "alloc")]
 pub mod domain;
 /// Domain for high-level grouping within Nsight profilers.
+#[cfg(feature = "alloc")]
 pub type Domain = domain::Domain;
 
 /// Convenience wrapper for all valid argument types to ranges and marks.
@@ -97,11 +121,14 @@ pub type Domain = domain::Domain;
 ///   - If its [`EventAttributes`] only specifies a message, then message will be used.
 ///   - Otherwise, the existing [`EventAttributes`] will be used for the event.
 ///
+#[cfg(feature = "alloc")]
 pub type EventArgument = crate::common::GenericEventArgument<Message, EventAttributes>;
 
 /// All attributes that are associated with marks and ranges.
+#[cfg(feature = "alloc")]
 pub type EventAttributes = crate::common::GenericEventAttributes<Category, Message>;
 
+#[cfg(feature = "alloc")]
 impl EventAttributes {
     pub fn builder() -> crate::common::GenericEventAttributesBuilder<Category, Message> {
         crate::common::GenericEventAttributesBuilder::default()
@@ -112,6 +139,7 @@ impl EventAttributes {
 ///
 /// * [`Message::Ascii`] is the discriminator for ASCII C strings
 /// * [`Message::Unicode`] is the discriminator for Rust strings and wide C strings
+#[cfg(feature = "alloc")]
 pub type Message = crate::common::GenericMessage<()>;
 
 /// Platform-native types.
@@ -123,18 +151,25 @@ mod payload;
 pub use payload::Payload;
 
 /// Support for process-wide ranges.
+#[cfg(feature = "alloc")]
 mod ranges;
 /// Process-wide range for use across threads.
+#[cfg(feature = "alloc")]
 pub use ranges::{LocalRange, Range};
 
 /// Support for transparent string types (ASCII or Unicode).
+#[cfg(feature = "alloc")]
 mod str;
 /// Transparent string type (ASCII or Unicode).
+#[cfg(feature = "alloc")]
 pub use crate::str::Str;
 
-#[cfg(feature = "tracing")]
+#[cfg(all(feature = "tracing", feature = "std"))]
 /// Support for tracing.
 pub mod tracing;
+
+/// Low-level NVTX FFI exports.
+pub use nvtx_sys as sys;
 
 /// Trait used to encode a type to a struct type and value.
 pub trait TypeValueEncodable {
@@ -148,6 +183,16 @@ pub trait TypeValueEncodable {
 
     /// Yield a default type-value tuple.
     fn default_encoding() -> (Self::Type, Self::Value);
+}
+
+/// Marks an instantaneous event with an ASCII C string.
+pub fn mark_ascii(message: &core::ffi::CStr) {
+    nvtx_sys::mark_ascii(message);
+}
+
+/// Marks an instantaneous event with a Unicode wide C string.
+pub fn mark_unicode(message: &widestring::WideCStr) {
+    nvtx_sys::mark_unicode(message);
 }
 
 /// Marks an instantaneous event in the application.
@@ -169,10 +214,11 @@ pub trait TypeValueEncodable {
 ///     .color([255, 0, 0])
 ///     .build());
 /// ```
+#[cfg(feature = "alloc")]
 pub fn mark(argument: impl Into<EventArgument>) {
     match argument.into() {
-        EventArgument::Message(Message::Ascii(s)) => nvtx_sys::mark_ascii(&s),
-        EventArgument::Message(Message::Unicode(s)) => nvtx_sys::mark_unicode(&s),
+        EventArgument::Message(Message::Ascii(s)) => mark_ascii(&s),
+        EventArgument::Message(Message::Unicode(s)) => mark_unicode(&s),
         EventArgument::Message(Message::Registered(())) => {
             unreachable!("Registered strings are not valid in the global context")
         }
@@ -194,14 +240,25 @@ pub fn mark(argument: impl Into<EventArgument>) {
 /// ```
 /// nvtx::name_thread(12345, "My custom name");
 /// ```
+#[cfg(feature = "alloc")]
 pub fn name_thread(native_tid: u32, name: impl Into<Str>) {
     match name.into() {
-        Str::Ascii(s) => nvtx_sys::name_os_thread_ascii(native_tid, &s),
-        Str::Unicode(s) => nvtx_sys::name_os_thread_unicode(native_tid, &s),
+        Str::Ascii(s) => name_thread_ascii(native_tid, &s),
+        Str::Unicode(s) => name_thread_unicode(native_tid, &s),
     }
 }
 
-#[cfg(feature = "name-current-thread")]
+/// Names an active thread with an ASCII C string.
+pub fn name_thread_ascii(native_tid: u32, name: &core::ffi::CStr) {
+    nvtx_sys::name_os_thread_ascii(native_tid, name);
+}
+
+/// Names an active thread with a Unicode wide C string.
+pub fn name_thread_unicode(native_tid: u32, name: &widestring::WideCStr) {
+    nvtx_sys::name_os_thread_unicode(native_tid, name);
+}
+
+#[cfg(all(feature = "name-current-thread", feature = "std"))]
 /// Name the current thread of the current process.
 ///
 /// See [`Str`] for valid conversions.
@@ -224,6 +281,7 @@ pub fn name_current_thread(name: impl Into<Str>) {
 /// ```
 /// let cat_a = nvtx::register_category("Category A");
 /// ```
+#[cfg(feature = "alloc")]
 pub fn register_category(name: impl Into<Str>) -> Category {
     Category::new(name)
 }
@@ -234,11 +292,12 @@ pub fn register_category(name: impl Into<Str>) -> Category {
 /// ```
 /// let [cat_a, cat_b] = nvtx::register_categories(["Category A", "Category B"]);
 /// ```
+#[cfg(feature = "alloc")]
 pub fn register_categories<const C: usize>(names: [impl Into<Str>; C]) -> [Category; C] {
     names.map(register_category)
 }
 
-#[cfg(test)]
+#[cfg(all(test, feature = "std"))]
 mod tests {
     use super::*;
     use crate::common::TestUtils;
