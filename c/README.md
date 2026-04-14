@@ -149,7 +149,7 @@ Tools should be implemented in a thread-safe way.  They should assume that any f
 
 For C and C++, NVTX is a header-only library with no dependencies.  Simply #include the header(s) you want to use, and call NVTX functions!  NVTX initializes automatically during the first call to any NVTX function.
 
-It is not necessary to link against a binary library.  On POSIX platforms, adding the `-ldl` option to the linker command-line is required.
+It is not necessary to link against a binary library or add any link-time parameters.  On older POSIX platforms with glibc versions prior to 2.34, adding the `-ldl` option to the linker command is required.
 
 _NOTE:_ Older versions of NVTX did require linking against a dynamic library.  NVTX version 3 provides the same API, but removes the need to link with any library.  Ensure you are including NVTX v3 by using the `nvtx3` directory as a prefix in your #includes:
 **C**:
@@ -164,7 +164,8 @@ _NOTE:_ Older versions of NVTX did require linking against a dynamic library.  N
 Since the C and C++ APIs are header-only, dependency-free, and don't require explicit initialization, they are suitable for annotating other header-only libraries.
 
 # Use NVTX with CMake
-For projects that use CMake, the included `CMakeLists.txt` provides targets `nvtx3-c` and `nvtx3-cpp` that set the include search paths and the `-ldl` linker option where required.
+
+For projects that use CMake, the included `CMakeLists.txt` provides targets `nvtx3-c` and `nvtx3-cpp` that set the include search paths (and add the `-ldl` linker option if applicable).
 
 ## Use a local copy of NVTX
 

@@ -72,7 +72,7 @@ The C++ and Python interfaces provide objects and decorators for automatically m
 
 For C and C++, NVTX is a header-only library with no dependencies.  Simply #include the header(s) you want to use, and call NVTX functions!  NVTX initializes automatically during the first call to any NVTX function.
 
-It is not necessary to link against a binary library.  On POSIX platforms, adding the `-ldl` option to the linker command-line is required.
+It is not necessary to link against a binary library or add any link-time parameters.  On older POSIX platforms with glibc versions prior to 2.34, adding the `-ldl` option to the linker command is required.
 
 _NOTE:_ Older versions of NVTX did require linking against a dynamic library.  NVTX version 3 provides the same API, but removes the need to link with any library.  Ensure you are including NVTX v3 by using the `nvtx3` directory as a prefix in your #includes:
 
@@ -107,7 +107,7 @@ See more details in [the `c` directory](/c) of this repo, and in the API referen
 
 ### CMake
 
-For projects that use CMake, the CMake scripts included with NVTX provide targets `nvtx3-c` and `nvtx3-cpp`.  Use `target_link_libraries` to make any CMake target use `nvtx3-c` for the C API only and `nvtx3-cpp` for both the C and C++ APIs.  Since NVTX is a header-only library, these targets simply add the include search path for the NVTX headers and add the `-ldl` linker option where required.  Example usage:
+For projects that use CMake, the CMake scripts included with NVTX provide targets `nvtx3-c` and `nvtx3-cpp`.  Use `target_link_libraries` to make any CMake target use `nvtx3-c` for the C API only and `nvtx3-cpp` for both the C and C++ APIs.  Since NVTX is a header-only library, these targets simply add the include search path for the NVTX headers (and add the `-ldl` linker option if applicable).  Example usage:
 
 ```cmake
 # Example C program
