@@ -17,11 +17,11 @@ impl TestUtils {
     {
         let (t, v) = message.encode();
         assert_eq!(t, nvtx_sys::MessageType::NVTX_MESSAGE_TYPE_ASCII);
-        let expected_cstr = std::ffi::CString::new(expected_str).unwrap();
+        let expected_message_cstr = std::ffi::CString::new(expected_str).unwrap();
         // SAFETY: The ASCII message type is checked above, so reading `ascii` is valid.
         unsafe {
             assert!(
-                matches!(v, nvtx_sys::MessageValue{ ascii: p } if std::ffi::CStr::from_ptr(p) == expected_cstr.as_c_str())
+                matches!(v, nvtx_sys::MessageValue{ ascii: p } if std::ffi::CStr::from_ptr(p) == expected_message_cstr.as_c_str())
             );
         }
     }

@@ -638,15 +638,18 @@ mod tests {
 
     #[test]
     fn test_encode_registered() {
-        let d = Domain::new("d");
-        let reg = d.register_string("test");
-        let m = Message::Registered(reg);
-        let (t, v) = m.encode();
-        assert_eq!(t, nvtx_sys::MessageType::NVTX_MESSAGE_TYPE_REGISTERED);
+        let domain = Domain::new("d");
+        let registered_message = domain.register_string("test");
+        let message = Message::Registered(registered_message);
+        let (message_type, message_value) = message.encode();
+        assert_eq!(
+            message_type,
+            nvtx_sys::MessageType::NVTX_MESSAGE_TYPE_REGISTERED
+        );
         // SAFETY: The registered message type is checked above, so reading `registered` is valid.
         unsafe {
             assert!(
-                matches!(v, nvtx_sys::MessageValue{ registered: r } if r == nvtx_sys::ffi::nvtxStringHandle_t::from(reg.handle()))
+                matches!(message_value, nvtx_sys::MessageValue{ registered: registered_handle } if registered_handle == nvtx_sys::ffi::nvtxStringHandle_t::from(registered_message.handle()))
             );
         }
     }
