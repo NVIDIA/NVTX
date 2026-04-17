@@ -40,7 +40,7 @@
 //!   adds [`domain::CudaIdentifier`] to provide an alternative naming mechanism via
 //!   [`Domain::name_resource`].
 //!
-//! * **cuda_runtime** -
+//! * **`cuda_runtime`** -
 //!   When enabled, [`name_cudart_resource`] is added to the crate. This enables the
 //!   naming of CUDA runtime resources such as Devices, Events, and Streams. The feature
 //!   also adds [`domain::CudaRuntimeIdentifier`] to provide an alternative naming
@@ -53,7 +53,7 @@
 //!
 //! ## Platform-specific types
 //!
-//! * **PThread Resource Naming** -
+//! * **`PThread` Resource Naming** -
 //!   `PThreadIdentifier` is added to the [`domain`] module on UNIX-like platforms. This
 //!   enables the naming of Pthread-specific entities such as mutexes, semaphores,
 //!   condition variables, and read-write-locks.

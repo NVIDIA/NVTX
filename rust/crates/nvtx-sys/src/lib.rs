@@ -306,7 +306,7 @@ pub fn range_start_ascii(message: &CStr) -> RangeId {
 }
 
 #[must_use]
-/// Start a process-visible range with a Unicde string.
+/// Start a process-visible range with a Unicode string.
 ///
 /// To close the range, see [`range_end`].
 pub fn range_start_unicode(message: &WideCStr) -> RangeId {

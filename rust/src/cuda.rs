@@ -5,13 +5,13 @@ use crate::Str;
 
 /// Enum for all CUDA types.
 pub enum CudaResource {
-    /// CuDevice
+    /// `CuDevice`
     Device(nvtx_sys::CuDevice),
-    /// CuContext
+    /// `CuContext`
     Context(nvtx_sys::CuContext),
-    /// CuEvent
+    /// `CuEvent`
     Event(nvtx_sys::CuEvent),
-    /// CuStream
+    /// `CuStream`
     Stream(nvtx_sys::CuStream),
 }
 

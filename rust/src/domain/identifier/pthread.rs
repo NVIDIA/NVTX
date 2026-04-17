@@ -10,21 +10,21 @@ use crate::{
 #[cfg(not(target_os = "macos"))]
 use crate::native_types::{pthread_barrier_t, pthread_spinlock_t};
 
-/// Identifiers used for PThread resources
+/// Identifiers used for `PThread` resources
 pub enum PThreadIdentifier {
-    /// PThread mutex
+    /// `PThread` mutex
     Mutex(*const pthread_mutex_t),
-    /// PThread condition_variable
+    /// `PThread` `condition_variable`
     Condition(*const pthread_cond_t),
-    /// PThread rwlock
+    /// `PThread` rwlock
     RWLock(*const pthread_rwlock_t),
     #[cfg(not(target_os = "macos"))]
-    /// PThread barrier
+    /// `PThread` barrier
     Barrier(*const pthread_barrier_t),
     #[cfg(not(target_os = "macos"))]
-    /// PThread spinlock
+    /// `PThread` spinlock
     Spinlock(*const pthread_spinlock_t),
-    /// PThread once
+    /// `PThread` once
     Once(*const pthread_once_t),
 }
 

@@ -8,7 +8,7 @@ use crate::common::event_attributes::GenericEventAttributes;
 pub enum GenericEventArgument<M, A> {
     /// Holds a Message.
     Message(M),
-    /// Holds an EventAttributes.
+    /// Holds an `EventAttributes`.
     Attributes(A),
 }
 

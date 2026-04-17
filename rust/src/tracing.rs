@@ -197,7 +197,7 @@ impl<'a, S> NvtxVisitor<'a, S>
 where
     S: Subscriber + for<'lookup> LookupSpan<'lookup>,
 {
-    /// Create a new NvtxVisitor given a mutable data reference.
+    /// Create a new `NvtxVisitor` given a mutable data reference.
     fn new(data: &'a mut NvtxData) -> NvtxVisitor<'a, S> {
         NvtxVisitor {
             data,
