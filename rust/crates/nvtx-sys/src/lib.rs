@@ -190,6 +190,7 @@ pub type CuStream = ffi::CUstream;
 
 /// Resource types for use within [`crate::ResourceAttributes`].
 pub mod resource_type {
+    #![allow(clippy::wildcard_imports)]
     #![allow(clippy::unnecessary_cast)]
 
     use crate::ffi::nvtxResourceGenericType_t::*;

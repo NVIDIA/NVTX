@@ -25,7 +25,7 @@ impl TypeValueEncodable for CudaRuntimeIdentifier {
     type Value = nvtx_sys::ResourceAttributesIdentifier;
 
     fn encode(&self) -> (Self::Type, Self::Value) {
-        use nvtx_sys::resource_type::*;
+        use nvtx_sys::resource_type::{CUDART_DEVICE, CUDART_EVENT, CUDART_STREAM};
         match self {
             Self::Device(id) => (
                 CUDART_DEVICE,
