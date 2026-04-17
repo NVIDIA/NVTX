@@ -54,6 +54,10 @@ impl<'a> EventAttributesBuilder<'a> {
     /// Update the attribute's category. An assertion will be thrown if a Category is
     /// passed in whose domain is not the same as this builder.
     ///
+    /// # Panics
+    ///
+    /// Panics if `category` belongs to a different [`Domain`].
+    ///
     /// ```
     /// let domain = nvtx::Domain::new("Domain");
     /// let cat = domain.register_category("Category1");
@@ -120,6 +124,10 @@ impl<'a> EventAttributesBuilder<'a> {
     /// Update the attribute's message. An assertion will be thrown if a
     /// [`super::RegisteredString`] is passed in whose domain is not the same as this
     /// builder.
+    ///
+    /// # Panics
+    ///
+    /// Panics if `message` resolves to a registered string from a different [`Domain`].
     ///
     /// ```
     /// let domain = nvtx::Domain::new("Domain");
@@ -359,6 +367,10 @@ impl Domain {
     /// let reg_str = domain.register_string("Registered String");
     /// domain.mark(reg_str);
     /// ```
+    ///
+    /// # Panics
+    ///
+    /// Panics if `arg` contains a category or registered string owned by another [`Domain`].
     pub fn mark<'a>(&'a self, arg: impl Into<EventArgument<'a>>) {
         match arg.into() {
             EventArgument::Attributes(attr) => {
@@ -441,6 +453,10 @@ impl Domain {
     /// // explicitly end a range
     /// drop(range)
     /// ```
+    ///
+    /// # Panics
+    ///
+    /// Panics if `arg` contains a category or registered string owned by another [`Domain`].
     pub fn range<'a>(&'a self, arg: impl Into<EventArgument<'a>>) -> Range<'a> {
         let event_arg = arg.into();
         match &event_arg {
