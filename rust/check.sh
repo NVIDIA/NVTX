@@ -26,3 +26,7 @@ cargo install --locked cargo-deny || true
 cargo deny --workspace --all-features check --show-stats
 
 cargo +1.77.0 check --workspace --all-targets --all-features
+
+cargo install --locked cargo-toml-lint || true
+cargo-toml-lint Cargo.toml
+cargo-toml-lint crates/nvtx-sys/Cargo.toml
