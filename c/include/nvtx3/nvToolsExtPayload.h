@@ -921,15 +921,40 @@ typedef struct nvtxScopeAttr_v1
      * ']' characters in node names. An empty C string "" and `NULL` are valid
      * inputs and treated equivalently.
      *
-     * A GPU can be specified using its:
-     * - Unique identifier (UUID) with "GPU[UUID:#]",
-     * - CUDA device ID (sensitive to CUDA_VISIBLE_DEVICES) with "GPU[CUDAID:#]",
-     * - NVML (nvidia-smi) device ID with "GPU[NVSMI:#]"
+     * A GPU can be specified with the following notations:
+     * "GPU[UUID:<unique alphanumeric GPU ID>]",
+     * "GPU[CUDAID:<CUDA device ID>]" (sensitive to CUDA_VISIBLE_DEVICES),
+     * "GPU[NVSMI:<nvidia-smi(NVML) device ID>]".
      *
-     * (replace `#` with the actual device ID).
      * For display purposes, a tool is recommended to show a pretty name.
      * To clearly identify a GPU, the @ref parentScope should also match
      * the GPU's execution context.
+     *
+     * A CPU can be specified with the following notations:
+     * "CPU[<physical package ID>:<OS logical core index>]",
+     * "CPU[OS:<physical package ID>:<OS logical core index>]",
+     * "CPU[HW:<physical package ID>:<hardware physical core index>]",
+     * "CPU[NUMA_OS:<NUMA node ID>:<OS logical core index>]",
+     * "CPU[NUMA_HW:<NUMA node ID>:<hardware physical core index>]".
+     *
+     * Physical package ID:
+     * - Windows: GetLogicalProcessorInformationEx (RelationProcessorPackage)
+     * - Linux: /sys/devices/system/cpu/cpu<N>/topology/physical_package_id or
+     *          /proc/cpuinfo (physical id)
+     *
+     * NUMA node ID:
+     * - Windows: GetLogicalProcessorInformationEx (RelationNumaNode)
+     * - Linux: /sys/devices/system/cpu/cpu<N>/topology/numa_node or libnuma
+     *
+     * OS logical core index:
+     * - Windows: GetCurrentProcessorNumber() or
+     *            GetSystemCpuSetInformation (LogicalProcessorIndex)
+     * - Linux: sched_getcpu() or /proc/cpuinfo (processor field)
+     *
+     * Hardware physical core index:
+     * - Windows: GetLogicalProcessorInformationEx (RelationProcessorCore)
+     * - Linux: /sys/devices/system/cpu/cpu<N>/topology/core_id or
+     *          /proc/cpuinfo (core id)
      */
     const char* path;
 
