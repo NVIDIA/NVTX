@@ -165,6 +165,7 @@ cdef class EventAttributes:
             if np is None:
                 msg += " Install numpy for extended payload support."
             warnings.warn(msg, NvtxWarning)
+            return
         setter(self, value)
 
     @payload_setter(int)
@@ -180,12 +181,15 @@ cdef class EventAttributes:
     if np is not None:
         @payload_setter(np.ndarray)
         def _set_payload_numpy(self, payload):
+            if payload.nbytes == 0:
+                return
             schema = self.domain.get_numpy_array_schema(payload.dtype, bool(payload.ndim))
             cdef size_t array_length = 0
             if payload.ndim:
                 payload = np.ascontiguousarray(payload)
                 array_length = payload.size
 
+            self._payload_object = payload
             self._set_binary_payload(
                 <void*><size_t>payload.ctypes.data,
                 <uint64_t>schema,
@@ -220,6 +224,7 @@ cdef class EventAttributes:
 
     cdef _clear_payload(self):
         self._payload = None
+        self._payload_object = None
         if self._allocated_payload is not NULL:
             free(self._allocated_payload)
             self._allocated_payload = NULL

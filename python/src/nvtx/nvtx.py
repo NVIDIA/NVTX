@@ -43,11 +43,15 @@ _ENABLED = not os.getenv("NVTX_DISABLE", False)
 
 
 @lru_cache(maxsize=None)
+def _get_domain_cached(name):
+    return Domain(name)
+
+
 def get_domain(name: Optional[str] = None) -> Union[Domain, DummyDomain]:
     """
     Get or create a :class:`Domain` object for a domain name.
     """
-    return Domain(name)
+    return _get_domain_cached(name)
 
 
 class annotate:
@@ -100,19 +104,27 @@ class annotate:
     """
 
     def __init__(
-        self, message: Optional[str] = None, color: Optional[Union[str, int]] = None,
-        domain: Optional[str] = None, category: Optional[Union[str, int]] = None,
-        payload: Optional[PayloadTypeAlias] = None):
+        self,
+        message: Optional[str] = None,
+        color: Optional[Union[str, int]] = None,
+        domain: Optional[str] = None,
+        category: Optional[Union[str, int]] = None,
+        payload: Optional[PayloadTypeAlias] = None,
+    ):
 
         self.init_args = message, color, domain, category, payload
         self.domain = get_domain(domain)
         if self.domain is not dummy_domain:
             if payload is not None and type(payload) not in _immutable_payload_types:
                 self.mutable_payload = payload
-                self.attributes = self.domain.get_event_attributes(message, color, category)
+                self.attributes = self.domain.get_event_attributes(
+                    message, color, category
+                )
             else:
                 self.mutable_payload = None
-                self.attributes = self.domain.get_event_attributes(message, color, category, payload)
+                self.attributes = self.domain.get_event_attributes(
+                    message, color, category, payload
+                )
 
     def __reduce__(self):
         return self.__class__, self.init_args
@@ -150,9 +162,13 @@ class annotate:
         return inner
 
 
-def mark(message: Optional[str] = None, color: Optional[Union[str, int]] = "blue",
-         domain: Optional[str] = None, category: Optional[Union[str, int]] = None,
-         payload: Optional[PayloadTypeAlias] = None):
+def mark(
+    message: Optional[str] = None,
+    color: Optional[Union[str, int]] = "blue",
+    domain: Optional[str] = None,
+    category: Optional[Union[str, int]] = None,
+    payload: Optional[PayloadTypeAlias] = None,
+):
     """
     Mark an instantaneous event.
 
@@ -193,12 +209,19 @@ def mark(message: Optional[str] = None, color: Optional[Union[str, int]] = "blue
     """
     domain = get_domain(domain)
     if domain is not dummy_domain:
-        libnvtx_mark(domain.get_event_attributes(message, color, category, payload), domain.handle)
+        libnvtx_mark(
+            domain.get_event_attributes(message, color, category, payload),
+            domain.handle,
+        )
 
 
-def push_range(message: Optional[str] = None, color: Optional[Union[str, int]] = "blue",
-               domain: Optional[str] = None, category: Optional[Union[str, int]] = None,
-               payload: Optional[PayloadTypeAlias] = None):
+def push_range(
+    message: Optional[str] = None,
+    color: Optional[Union[str, int]] = "blue",
+    domain: Optional[str] = None,
+    category: Optional[Union[str, int]] = None,
+    payload: Optional[PayloadTypeAlias] = None,
+):
     """
     Mark the beginning of a code range.
 
@@ -243,8 +266,10 @@ def push_range(message: Optional[str] = None, color: Optional[Union[str, int]] =
     """
     domain = get_domain(domain)
     if domain is not dummy_domain:
-        libnvtx_push_range(domain.get_event_attributes(message, color, category, payload),
-                           domain.handle)
+        libnvtx_push_range(
+            domain.get_event_attributes(message, color, category, payload),
+            domain.handle,
+        )
 
 
 def pop_range(domain: Optional[str] = None):
@@ -263,9 +288,11 @@ def pop_range(domain: Optional[str] = None):
 
 
 def start_range(
-    message: Optional[str] = None, color: Optional[Union[str, int]] = None,
-    domain: Optional[str] = None, category: Optional[Union[str, int]] = None,
-    payload: Optional[PayloadTypeAlias] = None
+    message: Optional[str] = None,
+    color: Optional[Union[str, int]] = None,
+    domain: Optional[str] = None,
+    category: Optional[Union[str, int]] = None,
+    payload: Optional[PayloadTypeAlias] = None,
 ) -> Tuple[int, int]:
     """
     Mark the beginning of a process range.
@@ -315,7 +342,9 @@ def start_range(
     domain = get_domain(domain)
     if domain is not dummy_domain:
         return libnvtx_start_range(
-            domain.get_event_attributes(message, color, category, payload), domain.handle)
+            domain.get_event_attributes(message, color, category, payload),
+            domain.handle,
+        )
 
 
 def end_range(range_id: Tuple[int, int]):

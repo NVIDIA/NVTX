@@ -31,6 +31,10 @@ jobs:
 
       - name: Test sdist
         run: |
+          pip install numpy
+          pytest python/tests
+          pytest --enable-injection python/tests
+          pip uninstall -y numpy
           pytest python/tests
           pytest --enable-injection python/tests
 

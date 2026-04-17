@@ -25,6 +25,7 @@
 #include <vector>
 #include <deque>
 #include <nvtx3/nvToolsExt.h>
+#include <nvtx3/nvToolsExtPayload.h>
 #include <Python.h>
 
 #ifdef _WIN32
@@ -47,6 +48,7 @@ enum class EventKind : uint32_t
     RangePop = 6,
     RangeStart = 7,
     RangeEnd = 8,
+    PayloadSchemaRegister = 9,
 };
 
 struct EventRecord
@@ -61,6 +63,9 @@ struct EventRecord
     int32_t payload_type{0};
     int64_t payload_i64{0};
     double payload_f64{0.0};
+    uint64_t payload_ext_schema_id{0};
+    uint64_t payload_ext_size{0};
+    uint8_t payload_ext_data[256]{};
 };
 
 // Queue of the recorded events. Consumed by `read_event()` (called by Python tests).
@@ -75,6 +80,14 @@ std::vector<std::string> g_registeredDomains;
 
 // Registered strings.
 std::vector<std::string> g_registeredStrings;
+
+// Atomic counter for assigning unique schema IDs (starting at 1).
+std::atomic<uint64_t> g_schemaId{1};
+
+uint8_t DomainIsEnabled(nvtxDomainHandle_t /*domain*/)
+{
+    return 1;
+}
 
 const char* ResolveDomain(nvtxDomainHandle_t domain)
 {
@@ -94,6 +107,18 @@ const char* ResolveDomain(nvtxDomainHandle_t domain)
         return nullptr;
     }
     return g_registeredDomains[domainIndex].c_str();
+}
+
+uint64_t PayloadSchemaRegister(nvtxDomainHandle_t domain,
+    const nvtxPayloadSchemaAttr_t* /*attr*/)
+{
+    uint64_t schemaId = g_schemaId.fetch_add(1, std::memory_order_relaxed);
+    EventRecord record{};
+    record.kind = static_cast<uint32_t>(EventKind::PayloadSchemaRegister);
+    record.domain = ResolveDomain(domain);
+    record.payload_ext_schema_id = schemaId;
+    g_events.push_back(record);
+    return schemaId;
 }
 
 const char* ResolveString(nvtxStringHandle_t string)
@@ -167,6 +192,7 @@ void ValidateEventAttributes(const nvtxEventAttributes_t* attrib)
         case NVTX_PAYLOAD_UNKNOWN:
         case NVTX_PAYLOAD_TYPE_INT64:
         case NVTX_PAYLOAD_TYPE_DOUBLE:
+        case NVTX_PAYLOAD_TYPE_EXT:
             break;
         default:
         {
@@ -196,20 +222,33 @@ void RecordEventFromAttrib(
     EventKind kind, const char* domain, const nvtxEventAttributes_t* attrib)
 {
     ValidateEventAttributes(attrib);
-    g_events.push_back(
+    EventRecord record{};
+    record.kind = static_cast<uint32_t>(kind);
+    record.domain = domain;
+    record.message_type = attrib->messageType;
+    record.message = ResolveMessage(attrib);
+    record.category = attrib->category;
+    record.range_id = 0;
+    record.color = attrib->color;
+    record.payload_type = attrib->payloadType;
+    record.payload_i64 = attrib->payloadType == NVTX_PAYLOAD_TYPE_INT64 ? attrib->payload.llValue : 0;
+    record.payload_f64 = attrib->payloadType == NVTX_PAYLOAD_TYPE_DOUBLE ? attrib->payload.dValue : 0.0;
+
+    if (attrib->payloadType == NVTX_PAYLOAD_TYPE_EXT)
+    {
+        auto numPayloads = attrib->reserved0;
+        if (numPayloads >= 1)
         {
-            static_cast<uint32_t>(kind),
-            domain,
-            attrib->messageType,
-            ResolveMessage(attrib),
-            attrib->category,
-            0,  // rangeId
-            attrib->color,
-            attrib->payloadType,
-            attrib->payloadType == NVTX_PAYLOAD_TYPE_INT64 ? attrib->payload.llValue : 0,
-            attrib->payloadType == NVTX_PAYLOAD_TYPE_DOUBLE ? attrib->payload.dValue : 0.0,
+            auto* payloadDataPtr = reinterpret_cast<const nvtxPayloadData_t*>(
+                static_cast<uintptr_t>(attrib->payload.ullValue));
+            record.payload_ext_schema_id = payloadDataPtr->schemaId;
+            record.payload_ext_size = payloadDataPtr->size;
+            size_t copySize = (std::min)(payloadDataPtr->size, sizeof(record.payload_ext_data));
+            memcpy(record.payload_ext_data, payloadDataPtr->payload, copySize);
         }
-    );
+    }
+
+    g_events.push_back(record);
 }
 
 nvtxDomainHandle_t DomainCreateA(const char* name)
@@ -334,6 +373,31 @@ EXPORT_SYMBOL int InitializeInjectionNvtx2(NvtxGetExportTableFunc_t getExportTab
         reinterpret_cast<NvtxFunctionPointer>(DomainRegisterStringA);
     *core2[NVTX_CBID_CORE2_DomainNameCategoryA] =
         reinterpret_cast<NvtxFunctionPointer>(DomainNameCategoryA);
+
+    return 1;
+}
+
+EXPORT_SYMBOL int InitializeInjectionNvtxExtension(nvtxExtModuleInfo_t* moduleInfo)
+{
+    if (moduleInfo == nullptr || moduleInfo->segments == nullptr || moduleInfo->segmentsCount == 0)
+    {
+        return 0;
+    }
+
+    if (moduleInfo->moduleId == NVTX_EXT_PAYLOAD_MODULEID)
+    {
+        auto& seg = moduleInfo->segments[0];
+        if (seg.slotCount > NVTX3EXT_CBID_nvtxPayloadSchemaRegister)
+        {
+            seg.functionSlots[NVTX3EXT_CBID_nvtxPayloadSchemaRegister] =
+                reinterpret_cast<intptr_t>(PayloadSchemaRegister);
+        }
+        if (seg.slotCount > NVTX3EXT_CBID_nvtxDomainIsEnabled)
+        {
+            seg.functionSlots[NVTX3EXT_CBID_nvtxDomainIsEnabled] =
+                reinterpret_cast<intptr_t>(DomainIsEnabled);
+        }
+    }
 
     return 1;
 }
