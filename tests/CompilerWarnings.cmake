@@ -96,6 +96,12 @@ elseif(CMAKE_C_COMPILER_ID STREQUAL "AppleClang")
         list(APPEND _appleclang_warn -Wno-cast-function-type-strict)
     endif()
 
+    if(NOT CMAKE_C_COMPILER_VERSION VERSION_LESS "16")
+        list(APPEND _appleclang_warn -Wno-pre-c23-compat -Wno-pre-c11-compat)
+    elseif(NOT CMAKE_C_COMPILER_VERSION VERSION_LESS "14")
+        list(APPEND _appleclang_warn -Wno-pre-c2x-compat)
+    endif()
+
     add_compile_options(${_appleclang_warn} $<$<COMPILE_LANGUAGE:C,CXX>:-Werror>)
 
 elseif(CMAKE_C_COMPILER_ID MATCHES "Clang")
@@ -127,6 +133,16 @@ elseif(CMAKE_C_COMPILER_ID MATCHES "Clang")
 
         if(NOT CMAKE_C_COMPILER_VERSION VERSION_LESS "16")
             list(APPEND _clang_warn -Wno-unsafe-buffer-usage -Wno-cast-function-type-strict)
+        endif()
+
+        if(NOT CMAKE_C_COMPILER_VERSION VERSION_LESS "18")
+            list(APPEND _clang_warn -Wno-pre-c23-compat)
+        elseif(NOT CMAKE_C_COMPILER_VERSION VERSION_LESS "14")
+            list(APPEND _clang_warn -Wno-pre-c2x-compat)
+        endif()
+
+        if(NOT CMAKE_C_COMPILER_VERSION VERSION_LESS "19")
+            list(APPEND _clang_warn -Wno-pre-c11-compat)
         endif()
 
         if(WIN32 OR APPLE)
