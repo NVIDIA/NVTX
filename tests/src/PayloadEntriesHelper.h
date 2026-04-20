@@ -39,6 +39,23 @@ NVTX_DEFINE_STRUCT_WITH_SCHEMA(testPayload, "TestSchemaEntryFields",
     )
 )
 
+#if NVTX_HAVE_CHAR16_CHAR32
+NVTX_DEFINE_STRUCT_WITH_SCHEMA(testPayloadChar16Char32, "TestSchemaEntryFieldsChar16Char32",
+    NVTX_PAYLOAD_ENTRIES(
+        (char32_t, vchar32, TYPE_CHAR32, "entryChar32", "descChar32"),
+        (char16_t, vchar16, TYPE_CHAR16, "entryChar16", "descChar16")
+    )
+)
+#endif
+
+#if NVTX_HAVE_CHAR8
+NVTX_DEFINE_STRUCT_WITH_SCHEMA(testPayloadChar8, "TestSchemaEntryFieldsChar8",
+    NVTX_PAYLOAD_ENTRIES(
+        (char8_t, vchar8, TYPE_CHAR8, "entryChar8", "descChar8")
+    )
+)
+#endif
+
 static int check_entry(
     const nvtxPayloadSchemaEntry_t* e,
     uint64_t flags,
@@ -95,6 +112,36 @@ int RunTest(int argc, const char** argv)
             NVTX_NULLPTR,
             0))
         return 6;
+
+#if NVTX_HAVE_CHAR16_CHAR32
+    if (!check_entry(
+            &testPayloadChar16Char32Schema[0],
+            0,
+            NVTX_PAYLOAD_ENTRY_TYPE_CHAR32,
+            "entryChar32",
+            "descChar32",
+            0))
+        return 7;
+    if (!check_entry(
+            &testPayloadChar16Char32Schema[1],
+            0,
+            NVTX_PAYLOAD_ENTRY_TYPE_CHAR16,
+            "entryChar16",
+            "descChar16",
+            0))
+        return 8;
+#endif
+
+#if NVTX_HAVE_CHAR8
+    if (!check_entry(
+            &testPayloadChar8Schema[0],
+            0,
+            NVTX_PAYLOAD_ENTRY_TYPE_CHAR8,
+            "entryChar8",
+            "descChar8",
+            0))
+        return 9;
+#endif
 
     return 0;
 }
