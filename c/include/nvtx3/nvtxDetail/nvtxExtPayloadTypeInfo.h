@@ -35,21 +35,21 @@
 typedef void* nvtx_payload_pointer_type;
 
 #if (defined(__STDC_VERSION__) && __STDC_VERSION__ >= 201112L)
-#ifndef __APPLE__
+#if !defined(__APPLE__) && !defined(__CYGWIN32__)
 #include <uchar.h>
 #endif
 #include <stdalign.h>
 #endif
 
-/* `char8_t` is available as of C++20 or C23 */
-#if ((defined(__STDC_VERSION__) && __STDC_VERSION__ >= 202311L) || (defined(__cplusplus) && __cplusplus >= 201811L)) && !defined(__APPLE__)
+/* `char8_t` is available as of C++20 or C23. */
+#if ((defined(__STDC_VERSION__) && __STDC_VERSION__ >= 202311L) || defined(__cpp_char8_t)) && !defined(__APPLE__) && !defined(__CYGWIN32__)
 #define NVTX_HAVE_CHAR8 1
 #else
 #define NVTX_HAVE_CHAR8 0
 #endif
 
-/* `char16_t` and `char32_t` are available as of C++11 or C11 */
-#if ((defined(__STDC_VERSION__) && __STDC_VERSION__ >= 201112L) || (defined(__cplusplus) && __cplusplus >= 200704L)) && !defined(__APPLE__)
+/* `char16_t` and `char32_t` are available as of C++11 or C11. */
+#if ((defined(__STDC_VERSION__) && __STDC_VERSION__ >= 201112L) || (defined(__cplusplus) && __cplusplus >= 200704L)) && !defined(__APPLE__) && !defined(__CYGWIN32__)
 #define NVTX_HAVE_CHAR16_CHAR32 1
 #else
 #define NVTX_HAVE_CHAR16_CHAR32 0
@@ -185,5 +185,3 @@ NVTX_EXT_PAYLOAD_VERSIONED_ID(nvtxExtPayloadTypeInfo)[NVTX_PAYLOAD_ENTRY_TYPE_IN
 
 #undef nvtx_alignof
 #undef nvtx_alignof2
-#undef NVTX_HAVE_CHAR8
-#undef NVTX_HAVE_CHAR16_CHAR32
