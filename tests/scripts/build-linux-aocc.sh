@@ -5,10 +5,19 @@
 
 set -euo pipefail
 
-NAME='build-linux-aocc'
+VER="${1-}"
+if [[ -n "$VER" ]]; then
+    SUFFIX="-$VER"
+else
+    SUFFIX=""
+fi
+
+NAME="build-linux-aocc$SUFFIX"
 LOCATION="$(cd "$(dirname "$0")/.." ; pwd)"
 mkdir "$LOCATION/$NAME"
 cd "$LOCATION/$NAME"
+
+AOCC_PATH="$AOCC_ROOT/aocc-compiler-$VER/bin"
 
 NVCC="$CONDA/envs/cuda-env/bin/nvcc"
 [[ -x "$NVCC" ]] && ENABLE_CUDA='True' || ENABLE_CUDA='False'

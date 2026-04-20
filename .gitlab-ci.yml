@@ -86,15 +86,59 @@
   script:
     - tests/scripts/validate-source-files.sh
 
-'Core (Linux, x64, NVHPC)':
+'Core (Linux, x64, NVHPC 25.7)':
   tags: [linux, x64]
   extends: .core-template
   script:
-    - tests/scripts/build-linux-nvhpc.sh
-    - cd tests/build-linux-nvhpc
+    - tests/scripts/build-linux-nvhpc.sh 25.7
+    - cd tests/build-linux-nvhpc-25.7
     - ctest --output-on-failure
   artifacts:
-    paths: [tests/build-linux-nvhpc/]
+    paths: [tests/build-linux-nvhpc-25.7/]
+    expire_in: 1 day
+
+'Core (Linux, x64, NVHPC 25.9)':
+  tags: [linux, x64]
+  extends: .core-template
+  script:
+    - tests/scripts/build-linux-nvhpc.sh 25.9
+    - cd tests/build-linux-nvhpc-25.9
+    - ctest --output-on-failure
+  artifacts:
+    paths: [tests/build-linux-nvhpc-25.9/]
+    expire_in: 1 day
+
+'Core (Linux, x64, NVHPC 25.11)':
+  tags: [linux, x64]
+  extends: .core-template
+  script:
+    - tests/scripts/build-linux-nvhpc.sh 25.11
+    - cd tests/build-linux-nvhpc-25.11
+    - ctest --output-on-failure
+  artifacts:
+    paths: [tests/build-linux-nvhpc-25.11/]
+    expire_in: 1 day
+
+'Core (Linux, x64, NVHPC 26.1)':
+  tags: [linux, x64]
+  extends: .core-template
+  script:
+    - tests/scripts/build-linux-nvhpc.sh 26.1
+    - cd tests/build-linux-nvhpc-26.1
+    - ctest --output-on-failure
+  artifacts:
+    paths: [tests/build-linux-nvhpc-26.1/]
+    expire_in: 1 day
+
+'Core (Linux, x64, NVHPC 26.3)':
+  tags: [linux, x64]
+  extends: .core-template
+  script:
+    - tests/scripts/build-linux-nvhpc.sh 26.3
+    - cd tests/build-linux-nvhpc-26.3
+    - ctest --output-on-failure
+  artifacts:
+    paths: [tests/build-linux-nvhpc-26.3/]
     expire_in: 1 day
 
 'Core (Linux, x64, GCC 9)':
@@ -240,15 +284,26 @@
     paths: [tests/build-linux-clang-20/]
     expire_in: 1 day
 
-'Core (Linux, x64, AOCC)':
+'Core (Linux, x64, AOCC 5.0)':
   tags: [linux, x64]
   extends: .core-template
   script:
-    - tests/scripts/build-linux-aocc.sh
-    - cd tests/build-linux-aocc
+    - tests/scripts/build-linux-aocc.sh 5.0.0
+    - cd tests/build-linux-aocc-5.0.0
     - ctest --output-on-failure
   artifacts:
-    paths: [tests/build-linux-aocc/]
+    paths: [tests/build-linux-aocc-5.0.0/]
+    expire_in: 1 day
+
+'Core (Linux, x64, AOCC 5.1)':
+  tags: [linux, x64]
+  extends: .core-template
+  script:
+    - tests/scripts/build-linux-aocc.sh 5.1.0
+    - cd tests/build-linux-aocc-5.1.0
+    - ctest --output-on-failure
+  artifacts:
+    paths: [tests/build-linux-aocc-5.1.0/]
     expire_in: 1 day
 
 'Core (Linux, x64, MinGW-w64 GCC) (build only)':

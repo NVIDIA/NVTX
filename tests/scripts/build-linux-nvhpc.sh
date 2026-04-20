@@ -5,10 +5,19 @@
 
 set -euo pipefail
 
-NAME='build-linux-nvhpc'
+VER="${1-}"
+if [[ -n "$VER" ]]; then
+    SUFFIX="-$VER"
+else
+    SUFFIX=""
+fi
+
+NAME="build-linux-nvhpc$SUFFIX"
 LOCATION="$(cd "$(dirname "$0")/.." ; pwd)"
 mkdir "$LOCATION/$NAME"
 cd "$LOCATION/$NAME"
+
+NVHPC_PATH="$NVHPC_ROOT/$VER/compilers/bin"
 
 cmake .. -G Ninja -DCMAKE_BUILD_TYPE=Release \
     -DCMAKE_C_COMPILER="$NVHPC_PATH/nvc" \
