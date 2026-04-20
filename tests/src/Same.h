@@ -49,8 +49,11 @@ template <typename T> struct is_complete<T, void_t<decltype(sizeof(T))>> { stati
 // print information about differences to 'oss'.  The generic overload only works if there's
 // an operator== and operator<< defined.
 template <typename T>
-inline auto Same(T const& lhs, T const& rhs, SAME_COMMON_ARGS)
-    -> decltype(lhs == rhs, oss << lhs, bool())
+inline auto Same(T const &lhs, T const &rhs, SAME_COMMON_ARGS) ->
+    typename std::enable_if<
+        std::is_convertible<decltype(lhs == rhs), bool>::value &&
+            std::is_convertible<decltype(oss << lhs), std::ostream &>::value,
+        bool>::type
 {
     (void)!deep; /* unused */
     bool objSame = lhs == rhs;
