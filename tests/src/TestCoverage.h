@@ -267,7 +267,7 @@ static int RunTestCommon(int argc, const char** argv)
             category{11},
             payload{5.0f},
             rgb{1,2,3}};
-        mark_in<a_lib>(attr);
+        mark_in<a_lib>(a_attr);
 
         mark_in<a_lib>(event_attributes{
             message{"a: Hello2"},
@@ -312,7 +312,7 @@ static int RunTestCommon(int argc, const char** argv)
             category{11},
             payload{5.0f},
             rgb{1,2,3}};
-        auto h4 = start_range_in<a_lib>(attr);
+        auto h4 = start_range_in<a_lib>(a_attr);
 
         auto h5 = start_range_in<a_lib>(event_attributes{
             message{"a: Hello2"},
@@ -374,7 +374,7 @@ static int RunTestCommon(int argc, const char** argv)
             category{11},
             payload{5.0f},
             rgb{1,2,3}};
-        unique_range_in<a_lib> u4{attr};
+        unique_range_in<a_lib> u4{a_attr};
 
         unique_range_in<a_lib> u5{event_attributes{
             message{"a: Hello2"},
@@ -426,7 +426,7 @@ static int RunTestCommon(int argc, const char** argv)
             category{11},
             payload{5.0f},
             rgb{1,2,3}};
-        scoped_range_in<a_lib> s4{attr};
+        scoped_range_in<a_lib> s4{a_attr};
 
         scoped_range_in<a_lib> s5{event_attributes{
             message{"a: Hello2"},
