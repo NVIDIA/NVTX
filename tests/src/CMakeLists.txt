@@ -167,13 +167,14 @@ add_nvtx_test_library(coverage-ext-payload-disabled SHARED "CoverageExtPayload.c
 target_compile_definitions(coverage-ext-payload-disabled PRIVATE NVTX_DISABLE)
 
 set(skip_payload_helper_macros_test OFF)
-# MSVC <= 19.16 cannot expand NVTX payload helper variadic selectors.
-if(MSVC AND MSVC_VERSION LESS_EQUAL 1916)
+# Older MSVC cannot expand NVTX payload helper variadic selectors.
+if(MSVC AND MSVC_TOOLSET_VERSION LESS 142)
     set(skip_payload_helper_macros_test ON)
 endif()
 
 if(NOT skip_payload_helper_macros_test)
-    add_nvtx_test_library(payload-helper-macros SHARED "PayloadEntriesHelper.c")
+    add_nvtx_test_library(payload-helper-macros-c SHARED "PayloadEntriesHelperC.c")
+    add_nvtx_test_library(payload-helper-macros-cpp SHARED "PayloadEntriesHelperCpp.cpp")
 endif()
 
 add_nvtx_test_library(coverage-ext-counter SHARED "CoverageExtCounter.c")
@@ -295,9 +296,12 @@ add_test(NAME "CoverageExtPayload with PrintInjectionC" COMMAND runtest -t cover
 add_test(NAME "CoverageExtPayload with PrintInjectionCpp" COMMAND runtest -t coverage-ext-payload -i inj-cpp)
 add_test(NAME "CoverageExtPayload with NVTX_DISABLE" COMMAND runtest -t coverage-ext-payload-disabled)
 if(NOT skip_payload_helper_macros_test)
-    add_test(NAME "PayloadHelperMacros" COMMAND runtest -t payload-helper-macros)
-    add_test(NAME "PayloadHelperMacros with PrintInjectionC" COMMAND runtest -t payload-helper-macros -i inj-c)
-    add_test(NAME "PayloadHelperMacros with PrintInjectionCpp" COMMAND runtest -t payload-helper-macros -i inj-cpp)
+    add_test(NAME "PayloadHelperMacrosC" COMMAND runtest -t payload-helper-macros-c)
+    add_test(NAME "PayloadHelperMacrosC with PrintInjectionC" COMMAND runtest -t payload-helper-macros-c -i inj-c)
+    add_test(NAME "PayloadHelperMacrosC with PrintInjectionCpp" COMMAND runtest -t payload-helper-macros-c -i inj-cpp)
+    add_test(NAME "PayloadHelperMacrosCpp" COMMAND runtest -t payload-helper-macros-cpp)
+    add_test(NAME "PayloadHelperMacrosCpp with PrintInjectionC" COMMAND runtest -t payload-helper-macros-cpp -i inj-c)
+    add_test(NAME "PayloadHelperMacrosCpp with PrintInjectionCpp" COMMAND runtest -t payload-helper-macros-cpp -i inj-cpp)
 endif()
 add_test(NAME "CoverageExtCounter" COMMAND runtest -t coverage-ext-counter)
 add_test(NAME "CoverageExtCounter with PrintInjectionC" COMMAND runtest -t coverage-ext-counter -i inj-c)

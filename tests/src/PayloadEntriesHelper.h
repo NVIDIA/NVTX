@@ -35,7 +35,7 @@ NVTX_DEFINE_STRUCT_WITH_SCHEMA(testPayload, "TestSchemaEntryFields",
         (int32_t, v5, TYPE_INT32, "entry5", "desc5"),
         (int32_t, (v6, 2), TYPE_INT32, "entry6", "desc6", 2),
         (int32_t, (v7, 3), TYPE_INT32, "entry7", "desc7", 3, ARRAY_FIXED_SIZE),
-        (int32_t, (v7neutral, 1), TYPE_INT32, NULL, NULL, 0, UNUSED)
+        (int32_t, (v7neutral, 1), TYPE_INT32, NVTX_NULLPTR, NVTX_NULLPTR, 0, UNUSED)
     )
 )
 
@@ -49,18 +49,24 @@ static int check_entry(
 {
     if (e->flags != flags) return 0;
     if (e->type != type) return 0;
-    if (((name == NULL) != (e->name == NULL)) ||
-        (name != NULL && strcmp(name, e->name) != 0)) return 0;
-    if (((desc == NULL) != (e->description == NULL)) ||
-        (desc != NULL && strcmp(desc, e->description) != 0)) return 0;
+    if (((name == NVTX_NULLPTR) != (e->name == NVTX_NULLPTR)) ||
+        (name != NVTX_NULLPTR && strcmp(name, e->name) != 0)) return 0;
+    if (((desc == NVTX_NULLPTR) != (e->description == NVTX_NULLPTR)) ||
+        (desc != NVTX_NULLPTR && strcmp(desc, e->description) != 0)) return 0;
     if (e->arrayOrUnionDetail != array_detail) return 0;
-    if (e->semantics != NULL) return 0;
-    if (e->reserved != NULL) return 0;
+    if (e->semantics != NVTX_NULLPTR) return 0;
+    if (e->reserved != NVTX_NULLPTR) return 0;
     return 1;
 }
 
+#ifdef __cplusplus
+extern "C" {
+#endif
 NVTX_DYNAMIC_EXPORT
 extern int RunTest(int argc, const char** argv);
+#ifdef __cplusplus
+}
+#endif
 NVTX_DYNAMIC_EXPORT
 int RunTest(int argc, const char** argv)
 {
@@ -69,8 +75,8 @@ int RunTest(int argc, const char** argv)
     (void)argc;
     (void)argv;
 
-    if (!check_entry(&testPayloadSchema[0], 0, NVTX_PAYLOAD_ENTRY_TYPE_INT32, NULL, NULL, 0)) return 1;
-    if (!check_entry(&testPayloadSchema[1], 0, NVTX_PAYLOAD_ENTRY_TYPE_INT32, "entry4", NULL, 0)) return 2;
+    if (!check_entry(&testPayloadSchema[0], 0, NVTX_PAYLOAD_ENTRY_TYPE_INT32, NVTX_NULLPTR, NVTX_NULLPTR, 0)) return 1;
+    if (!check_entry(&testPayloadSchema[1], 0, NVTX_PAYLOAD_ENTRY_TYPE_INT32, "entry4", NVTX_NULLPTR, 0)) return 2;
     if (!check_entry(&testPayloadSchema[2], 0, NVTX_PAYLOAD_ENTRY_TYPE_INT32, "entry5", "desc5", 0)) return 3;
     if (!check_entry(&testPayloadSchema[3], 0, NVTX_PAYLOAD_ENTRY_TYPE_INT32, "entry6", "desc6", 2)) return 4;
     if (!check_entry(
@@ -85,8 +91,8 @@ int RunTest(int argc, const char** argv)
             &testPayloadSchema[5],
             NVTX_PAYLOAD_ENTRY_FLAG_UNUSED,
             NVTX_PAYLOAD_ENTRY_TYPE_INT32,
-            NULL,
-            NULL,
+            NVTX_NULLPTR,
+            NVTX_NULLPTR,
             0))
         return 6;
 
