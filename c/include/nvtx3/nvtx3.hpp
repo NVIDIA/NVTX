@@ -3297,6 +3297,10 @@ inline void mark(Args const&... args) noexcept
  * @param[in] struct_id The name of the struct.
  * @param[in] schema_name Name of the payload schema.
  * @param[in] entries Payload schema entries using NVTX_PAYLOAD_ENTRIES macro.
+ *
+ * @note On MSVC, this macro requires the conforming preprocessor:
+ *       \c /Zc:preprocessor (VS 2019+) or \c /experimental:preprocessor
+ *       (VS 2017 v15.5+).  Not supported on older MSVC versions.
  */
 #define NVTX3_V1_DEFINE_SCHEMA_GET(dom, struct_id, schema_name, entries)                               \
     template <>                                                                                        \

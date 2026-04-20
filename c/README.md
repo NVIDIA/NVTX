@@ -266,6 +266,10 @@ It is supported to link together multiple minor versions of NVTX in different ob
 
 For maximum compatibility in header-only libraries or other scenarios with complex NVTX dependencies, use symbols of a specific major version, e.g. `nvtx3::v1::domain`.
 
+### NVTX3_DEFINE_SCHEMA_GET and MSVC
+
+The `NVTX3_DEFINE_SCHEMA_GET` macro (in `nvtx3.hpp`) internally uses the C payload helper macros, which rely on variadic macro argument counting.  The same MSVC preprocessor requirement described [above](#payload-helper-macros-and-msvc) applies: enable `/Zc:preprocessor` (VS 2019+) or `/experimental:preprocessor` (VS 2017 v15.5+).
+
 ### C++ version history
 
 - v3.3: Add `payload_data` wrapper for `nvtxPayloadData_t` in support of extended payloads.
