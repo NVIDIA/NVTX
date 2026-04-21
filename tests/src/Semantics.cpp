@@ -19,6 +19,7 @@
  */
 
 #include <nvtx3/nvtx3.hpp>
+#include <nvtx3/nvToolsExtSemanticsCorrelation.h>
 #include <nvtx3/nvToolsExtSemanticsScope.h>
 #include <nvtx3/nvToolsExtSemanticsTime.h>
 
@@ -39,7 +40,21 @@ static void check_u64(char const* label, char const* expr,
     }
 }
 
+static void check_str(char const* label, char const* expr,
+                      char const* actual, char const* expected)
+{
+    bool const eq = (actual == expected)
+        || (actual && expected && std::strcmp(actual, expected) == 0);
+    if (!eq) {
+        ++g_failures;
+        std::cout << "  FAIL [" << label << "] " << expr
+                  << " = \"" << (actual ? actual : "(null)")
+                  << "\" (expected \"" << (expected ? expected : "(null)") << "\")\n";
+    }
+}
+
 #define CHECK_U64(LABEL, ACTUAL, EXPECTED) check_u64((LABEL), #ACTUAL, static_cast<uint64_t>(ACTUAL), static_cast<uint64_t>(EXPECTED))
+#define CHECK_STR(LABEL, ACTUAL, EXPECTED) check_str((LABEL), #ACTUAL, (ACTUAL), (EXPECTED))
 
 static nvtxSemanticsScope_v1 const&
 as_scope(nvtx3::scope_semantic const& sem)
@@ -51,6 +66,12 @@ static nvtxSemanticsTime_v1 const&
 as_time(nvtx3::time_semantic const& sem)
 {
     return *reinterpret_cast<nvtxSemanticsTime_v1 const*>(sem.get());
+}
+
+static nvtxSemanticsCorrelation_v1 const&
+as_correlation(nvtx3::correlation_semantic const& sem)
+{
+    return *reinterpret_cast<nvtxSemanticsCorrelation_v1 const*>(sem.get());
 }
 
 extern "C" NVTX_DYNAMIC_EXPORT
@@ -140,6 +161,57 @@ int RunTest(int argc, const char** argv)
         auto const& t = as_time(time_sem);
         CHECK_U64("time_chain", t.timeDomainId, NVTX_TIMESTAMP_TYPE_CPU_CLOCK_GETTIME_MONOTONIC);
         CHECK_U64("time_chain", t.header.next == &s.header, 1);
+    }
+    std::cout << "-------------------------------------\n";
+
+    {
+        std::cout << "correlation_semantic: default-constructed\n";
+        nvtx3::correlation_semantic sem;
+        auto const& c = as_correlation(sem);
+        CHECK_U64("corr_default", c.header.semanticId, NVTX_SEMANTIC_ID_CORRELATION_V1);
+        CHECK_U64("corr_default", c.header.version,    NVTX_CORRELATION_SEMANTIC_VERSION);
+        CHECK_U64("corr_default", c.header.structSize, sizeof(nvtxSemanticsCorrelation_v1));
+        CHECK_U64("corr_default", c.header.next != nullptr, 0);
+        CHECK_U64("corr_default", c.role, NVTX_CORRELATION_ROLE_NONE);
+        CHECK_STR("corr_default", c.displayName, nullptr);
+        for (int i = 0; i < 16; ++i) {
+            CHECK_U64("corr_default_uuid", c.correlationDomainUuid[i], 0);
+        }
+    }
+    std::cout << "-------------------------------------\n";
+
+    {
+        std::cout << "correlation_semantic: .domain_uuid / .display_name / .role\n";
+        static constexpr unsigned char example_uuid[16] = {
+            0x01, 0x23, 0x45, 0x67, 0x89, 0xab, 0xcd, 0xef,
+            0xfe, 0xdc, 0xba, 0x98, 0x76, 0x54, 0x32, 0x10};
+        nvtx3::correlation_semantic sem;
+        sem.domain_uuid(example_uuid)
+            .display_name("ExampleCorrelationDomain")
+            .role(uint64_t{42});
+        auto const& c = as_correlation(sem);
+        CHECK_U64("corr_full", c.role, 42);
+        CHECK_STR("corr_full", c.displayName, "ExampleCorrelationDomain");
+        for (int i = 0; i < 16; ++i) {
+            CHECK_U64("corr_full_uuid", c.correlationDomainUuid[i], example_uuid[i]);
+        }
+    }
+    std::cout << "-------------------------------------\n";
+
+    {
+        std::cout << "correlation_semantic: chained correlation -> time -> scope\n";
+        nvtx3::scope_semantic scope_sem;
+        scope_sem.scope(nvtx3::scope::current_sw_process());
+        nvtx3::time_semantic time_sem{scope_sem};
+        time_sem.time_domain(NVTX_TIMESTAMP_TYPE_CPU_TSC);
+        nvtx3::correlation_semantic corr_sem{time_sem};
+        corr_sem.role(uint64_t{7});
+        auto const& s = as_scope(scope_sem);
+        auto const& t = as_time(time_sem);
+        auto const& c = as_correlation(corr_sem);
+        CHECK_U64("corr_chain", c.role, 7);
+        CHECK_U64("corr_chain", c.header.next == &t.header, 1);
+        CHECK_U64("corr_chain", t.header.next == &s.header, 1);
     }
     std::cout << "-------------------------------------\n";
 

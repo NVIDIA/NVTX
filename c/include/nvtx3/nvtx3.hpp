@@ -760,6 +760,7 @@
 #include "nvToolsExtCounters.h"
 #include "nvToolsExtPayload.h"
 #include "nvToolsExtPayloadHelper.h"
+#include "nvToolsExtSemanticsCorrelation.h"
 #include "nvToolsExtSemanticsCounters.h"
 #include "nvToolsExtSemanticsScope.h"
 #include "nvToolsExtSemanticsTime.h"
@@ -3709,6 +3710,84 @@ public:
   NVTX3_CONSTEXPR_IF_CPP14 time_semantic& time_domain(uint64_t domain_id) noexcept
   {
     data_.timeDomainId = domain_id;
+    return *this;
+  }
+};
+
+/**
+ * @brief Builder for the correlation semantic applied to a payload entry.
+ *
+ * Marks an entry as the identifier of a correlation domain and specifies
+ * how the event relates to other events in that domain. The UUID must be
+ * globally unique across NVTX domains; the optional display name is
+ * copied by the tool at schema registration time.
+ */
+class correlation_semantic : public detail::semantic_base<nvtxSemanticsCorrelation_t> {
+public:
+  /**
+   * @brief Construct a correlation semantic, optionally chained to another semantic.
+   *
+   * @param next Pointer to the next semantic in the chain, or nullptr.
+   */
+  constexpr explicit correlation_semantic(nvtxSemanticsHeader_t const* next = nullptr) noexcept
+    : detail::semantic_base<nvtxSemanticsCorrelation_t>{
+        {{sizeof(nvtxSemanticsCorrelation_t), NVTX_SEMANTIC_ID_CORRELATION_V1,
+          NVTX_CORRELATION_SEMANTIC_VERSION, next},
+         {0},
+         nullptr,
+         NVTX_CORRELATION_ROLE_NONE}}
+  {
+  }
+
+  /**
+   * @brief Construct a correlation semantic that chains to another semantic builder.
+   *
+   * Convenience overload of the header-pointer constructor that accepts a
+   * sibling semantic builder object directly. The referenced builder must
+   * outlive this object.
+   *
+   * @tparam Other Type of the other semantic (must expose get()).
+   * @param next The semantic builder to chain after this one.
+   */
+  template <typename Other>
+  constexpr explicit correlation_semantic(Other const& next) noexcept
+    : correlation_semantic{next.get()}
+  {
+  }
+
+  /**
+   * @brief Set the correlation domain UUID.
+   * @param uuid A 16-byte array that must be globally unique across NVTX domains.
+   * @return Reference to this object for chaining.
+   */
+  NVTX3_CONSTEXPR_IF_CPP14 correlation_semantic& domain_uuid(const unsigned char uuid[16]) noexcept
+  {
+    for (int i = 0; i < 16; ++i) {
+      data_.correlationDomainUuid[i] = uuid[i];
+    }
+    return *this;
+  }
+
+  /**
+   * @brief Set the optional display name for the correlation domain.
+   * @param name String copied by the tool at schema registration; must remain
+   *             valid until then.
+   * @return Reference to this object for chaining.
+   */
+  NVTX3_CONSTEXPR_IF_CPP14 correlation_semantic& display_name(const char* name) noexcept
+  {
+    data_.displayName = name;
+    return *this;
+  }
+
+  /**
+   * @brief Set the role this entry plays in the correlation.
+   * @param role_id One of the \c NVTX_CORRELATION_ROLE_* values.
+   * @return Reference to this object for chaining.
+   */
+  NVTX3_CONSTEXPR_IF_CPP14 correlation_semantic& role(uint64_t role_id) noexcept
+  {
+    data_.role = role_id;
     return *this;
   }
 };
