@@ -20,6 +20,7 @@
 
 #include <nvtx3/nvtx3.hpp>
 #include <nvtx3/nvToolsExtSemanticsScope.h>
+#include <nvtx3/nvToolsExtSemanticsTime.h>
 
 #include <cstdint>
 #include <cstring>
@@ -44,6 +45,12 @@ static nvtxSemanticsScope_v1 const&
 as_scope(nvtx3::scope_semantic const& sem)
 {
     return *reinterpret_cast<nvtxSemanticsScope_v1 const*>(sem.get());
+}
+
+static nvtxSemanticsTime_v1 const&
+as_time(nvtx3::time_semantic const& sem)
+{
+    return *reinterpret_cast<nvtxSemanticsTime_v1 const*>(sem.get());
 }
 
 extern "C" NVTX_DYNAMIC_EXPORT
@@ -99,6 +106,40 @@ int RunTest(int argc, const char** argv)
         CHECK_U64("scope_chain", o.scopeId, NVTX_SCOPE_CURRENT_SW_PROCESS);
         CHECK_U64("scope_chain", i.scopeId, NVTX_SCOPE_CURRENT_SW_THREAD);
         CHECK_U64("scope_chain", i.header.next == &o.header, 1);
+    }
+    std::cout << "-------------------------------------\n";
+
+    {
+        std::cout << "time_semantic: default-constructed\n";
+        nvtx3::time_semantic sem;
+        auto const& t = as_time(sem);
+        CHECK_U64("time_default", t.header.semanticId, NVTX_SEMANTIC_ID_TIME_V1);
+        CHECK_U64("time_default", t.header.version,    NVTX_TIME_SEMANTIC_VERSION);
+        CHECK_U64("time_default", t.header.structSize, sizeof(nvtxSemanticsTime_v1));
+        CHECK_U64("time_default", t.header.next != nullptr, 0);
+        CHECK_U64("time_default", t.timeDomainId, 0);
+    }
+    std::cout << "-------------------------------------\n";
+
+    {
+        std::cout << "time_semantic: .time_domain(NVTX_TIMESTAMP_TYPE_*)\n";
+        nvtx3::time_semantic sem;
+        sem.time_domain(NVTX_TIMESTAMP_TYPE_CPU_TSC);
+        auto const& t = as_time(sem);
+        CHECK_U64("time_predefined", t.timeDomainId, NVTX_TIMESTAMP_TYPE_CPU_TSC);
+    }
+    std::cout << "-------------------------------------\n";
+
+    {
+        std::cout << "time_semantic: chained to scope_semantic\n";
+        nvtx3::scope_semantic scope_sem;
+        scope_sem.scope(nvtx3::scope::current_sw_thread());
+        nvtx3::time_semantic time_sem{scope_sem};
+        time_sem.time_domain(NVTX_TIMESTAMP_TYPE_CPU_CLOCK_GETTIME_MONOTONIC);
+        auto const& s = as_scope(scope_sem);
+        auto const& t = as_time(time_sem);
+        CHECK_U64("time_chain", t.timeDomainId, NVTX_TIMESTAMP_TYPE_CPU_CLOCK_GETTIME_MONOTONIC);
+        CHECK_U64("time_chain", t.header.next == &s.header, 1);
     }
     std::cout << "-------------------------------------\n";
 

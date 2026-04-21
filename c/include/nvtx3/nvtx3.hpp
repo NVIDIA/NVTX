@@ -762,6 +762,7 @@
 #include "nvToolsExtPayloadHelper.h"
 #include "nvToolsExtSemanticsCounters.h"
 #include "nvToolsExtSemanticsScope.h"
+#include "nvToolsExtSemanticsTime.h"
 
 #include <memory>
 #include <stdexcept>
@@ -3657,6 +3658,57 @@ public:
   NVTX3_CONSTEXPR_IF_CPP14 scope_semantic& scope(nvtx3::scope s) noexcept
   {
     data_.scopeId = s.get();
+    return *this;
+  }
+};
+
+/**
+ * @brief Builder for the time semantic applied to a payload entry.
+ *
+ * Specifies the time domain of a timestamp payload entry. The domain
+ * is either a user-registered identifier or one of the predefined
+ * \c NVTX_TIMESTAMP_TYPE_* constants.
+ */
+class time_semantic : public detail::semantic_base<nvtxSemanticsTime_t> {
+public:
+  /**
+   * @brief Construct a time semantic, optionally chained to another semantic.
+   *
+   * @param next Pointer to the next semantic in the chain, or nullptr.
+   */
+  constexpr explicit time_semantic(nvtxSemanticsHeader_t const* next = nullptr) noexcept
+    : detail::semantic_base<nvtxSemanticsTime_t>{
+        {{sizeof(nvtxSemanticsTime_t), NVTX_SEMANTIC_ID_TIME_V1,
+          NVTX_TIME_SEMANTIC_VERSION, next},
+         0}}
+  {
+  }
+
+  /**
+   * @brief Construct a time semantic that chains to another semantic builder.
+   *
+   * Convenience overload of the header-pointer constructor that accepts a
+   * sibling semantic builder object directly. The referenced builder must
+   * outlive this object.
+   *
+   * @tparam Other Type of the other semantic (must expose get()).
+   * @param next The semantic builder to chain after this one.
+   */
+  template <typename Other>
+  constexpr explicit time_semantic(Other const& next) noexcept
+    : time_semantic{next.get()}
+  {
+  }
+
+  /**
+   * @brief Set the time domain by identifier.
+   * @param domain_id A tool-registered time domain ID or a predefined
+   *                  \c NVTX_TIMESTAMP_TYPE_* value.
+   * @return Reference to this object for chaining.
+   */
+  NVTX3_CONSTEXPR_IF_CPP14 time_semantic& time_domain(uint64_t domain_id) noexcept
+  {
+    data_.timeDomainId = domain_id;
     return *this;
   }
 };
