@@ -757,8 +757,10 @@
 #define NVTX3_CPP_DEFINITIONS_V1_0
 
 #include "nvToolsExt.h"
+#include "nvToolsExtCounters.h"
 #include "nvToolsExtPayload.h"
 #include "nvToolsExtPayloadHelper.h"
+#include "nvToolsExtSemanticsCounters.h"
 
 #include <memory>
 #include <string>
@@ -866,6 +868,29 @@ struct is_safe_wrapper_of<
         sizeof(W) == sizeof(U)>::type> : std::true_type
 {
 };
+/**
+ * @brief Base class for semantic types, providing header access.
+ *
+ * @tparam DataType The underlying C struct type (e.g., nvtxSemanticsCounter_t).
+ */
+template <typename DataType>
+class semantic_base {
+public:
+  /**
+   * @brief Get pointer to the underlying C semantics header.
+   * @return Pointer to the semantics header.
+   */
+  nvtxSemanticsHeader_t const* get() const noexcept
+  {
+    return reinterpret_cast<nvtxSemanticsHeader_t const*>(&data_);
+  }
+
+protected:
+  constexpr explicit semantic_base(DataType const& data) noexcept : data_{data} {}
+
+  DataType data_;
+};
+
 } // namespace detail
 
 /**
@@ -3157,6 +3182,600 @@ inline void mark(Args const&... args) noexcept
 #endif
 }
 
+/* ===== Counter Semantics API ============================================== */
+
+/**
+ * @brief Type-safe wrapper for NVTX scope identifiers.
+ *
+ * Scopes define the context in which a counter is meaningful, such as
+ * process-wide or thread-local.
+ *
+ * Predefined scopes are available as static member functions. Custom scopes
+ * can be created using explicit construction from a raw scope ID (C interop)
+ * or in future versions via `nvtxScopeRegister`.
+ *
+ * Example:
+ * \code{.cpp}
+ * // Use predefined scopes
+ * nvtx3::counter<int64_t> c1{"counter", nvtx3::scope::current_sw_process()};
+ *
+ * // C interop: wrap a raw scope ID
+ * uint64_t raw_id = some_c_api_returning_scope();
+ * nvtx3::scope custom{raw_id};
+ * nvtx3::counter<int64_t> c2{"counter", custom};
+ * \endcode
+ */
+class scope {
+public:
+  using value_type = uint64_t;
+
+  /**
+   * @brief Explicit constructor from a raw scope ID.
+   *
+   * Use this for C API interoperability when you have a scope ID
+   * from `nvtxScopeRegister` or similar.
+   *
+   * @param id The raw scope ID.
+   */
+  constexpr explicit scope(value_type id) noexcept : id_{id} {}
+
+  /**
+   * @brief Get the underlying scope ID.
+   * @return The raw scope ID for C API interop.
+   */
+  constexpr value_type get() const noexcept { return id_; }
+
+  /** @brief No scope specified. */
+  static constexpr scope none() noexcept { return scope{NVTX_SCOPE_NONE}; }
+  /** @brief The root in a hierarchy. */
+  static constexpr scope root() noexcept { return scope{NVTX_SCOPE_ROOT}; }
+
+  /* Hardware events */
+  /** @brief Node/machine name */
+  static constexpr scope current_hw_machine() noexcept { return scope{NVTX_SCOPE_CURRENT_HW_MACHINE}; }
+  static constexpr scope current_hw_socket() noexcept { return scope{NVTX_SCOPE_CURRENT_HW_SOCKET}; }
+  /** @brief Physical CPU core */
+  static constexpr scope current_hw_cpu_physical() noexcept { return scope{NVTX_SCOPE_CURRENT_HW_CPU_PHYSICAL}; }
+  /** @brief Logical CPU core */
+  static constexpr scope current_hw_cpu_logical() noexcept { return scope{NVTX_SCOPE_CURRENT_HW_CPU_LOGICAL}; }
+  /** @brief Innermost HW execution context */
+  static constexpr scope current_hw_innermost() noexcept{ return scope{NVTX_SCOPE_CURRENT_HW_INNERMOST}; }
+
+  /* Virtualized hardware, virtual machines */
+  static constexpr scope current_hypervisor() noexcept { return scope{NVTX_SCOPE_CURRENT_HYPERVISOR}; }
+  static constexpr scope current_vm() noexcept { return scope{NVTX_SCOPE_CURRENT_VM}; }
+  static constexpr scope current_kernel() noexcept { return scope{NVTX_SCOPE_CURRENT_KERNEL}; }
+  static constexpr scope current_container() noexcept { return scope{NVTX_SCOPE_CURRENT_CONTAINER}; }
+  static constexpr scope current_os() noexcept { return scope{NVTX_SCOPE_CURRENT_OS}; }
+
+  /* Software scopes */
+  /** @brief Process scope */
+  static constexpr scope current_sw_process() noexcept { return scope{NVTX_SCOPE_CURRENT_SW_PROCESS}; }
+  /** @brief Thread scope */
+  static constexpr scope current_sw_thread() noexcept { return scope{NVTX_SCOPE_CURRENT_SW_THREAD}; }
+  /** @brief Innermost SW execution context */
+  static constexpr scope current_sw_innermost() noexcept { return scope{NVTX_SCOPE_CURRENT_SW_INNERMOST}; }
+
+private:
+  value_type id_;
+};
+
+/**
+ * @brief Reasons for sampling a counter without a value.
+ *
+ * Used with `counter_in::sample_no_value()` to indicate why a sample
+ * has no associated value.
+ */
+enum class no_value_reason : uint8_t {
+  zero        = NVTX_COUNTER_SAMPLE_ZERO,
+  unchanged   = NVTX_COUNTER_SAMPLE_UNCHANGED,
+  unavailable = NVTX_COUNTER_SAMPLE_UNAVAILABLE
+};
+
+/**
+ * @brief Builder class for configuring counter semantics.
+ *
+ * Counter semantics provide additional metadata about counter values,
+ * such as units, limits, interpolation behavior, and value types. This
+ * information helps tools to properly display and interpret counter data.
+ *
+ * Settings are always accumulated as flags, never reset.
+ * Do not mix overlapping settings.
+ *
+ * Setters return `*this` to allow method chaining.
+ *
+ * Example:
+ * \code{.cpp}
+ * nvtx3::counter_semantic sem;
+ * sem.unit("bytes")
+ *    .limits(0LL, 1024LL * 1024 * 1024)
+ *    .interpolation_since_last();
+ *
+ * nvtx3::counter<int64_t> memory{"heap_size",
+ *                                "Process heap size",
+ *                                nvtx3::scope::current_sw_process(),
+ *                                sem};
+ * \endcode
+ */
+class counter_semantic : public detail::semantic_base<nvtxSemanticsCounter_t> {
+public:
+  /**
+   * @brief Construct a counter semantic, optionally chained to another semantic.
+   *
+   * @param next Pointer to the next semantic in the chain (nullptr if none).
+   */
+  constexpr explicit counter_semantic(nvtxSemanticsHeader_t const* next = nullptr) noexcept
+    : detail::semantic_base<nvtxSemanticsCounter_t>{
+        {{sizeof(nvtxSemanticsCounter_t), NVTX_SEMANTIC_ID_COUNTERS_V1,
+          NVTX_COUNTER_SEMANTIC_VERSION, next},
+         NVTX_COUNTER_FLAGS_NONE,
+         nullptr,
+         1,
+         1,
+         NVTX_COUNTER_LIMIT_UNDEFINED,
+         {0},
+         {0}}}
+  {
+  }
+
+  /**
+   * @brief Construct a counter semantic chained to another semantic.
+   *
+   * @tparam Other Type of the other semantic (must have get() method).
+   * @param next The semantic to chain after this one.
+   */
+  template <typename Other>
+  constexpr explicit counter_semantic(Other const& next) noexcept
+    : counter_semantic{next.get()}
+  {
+  }
+
+  /**
+   * @brief Set the unit string for the counter (e.g., "bytes", "ms", "%").
+   * @param unit_name Unit string (must remain valid for the lifetime of this object).
+   * @return Reference to this object for chaining.
+   */
+  NVTX3_CONSTEXPR_IF_CPP14 counter_semantic& unit(const char* unit_name) noexcept
+  {
+    data_.unit = unit_name;
+    return *this;
+  }
+
+  /**
+   * @brief Set the unit scale as a fraction (numerator/denominator).
+   *
+   * @param numerator Scale numerator (should be 1 if not used).
+   * @param denominator Scale denominator (should be 1 if not used).
+   * @return Reference to this object for chaining.
+   */
+  NVTX3_CONSTEXPR_IF_CPP14 counter_semantic& unit_scale(uint64_t numerator, uint64_t denominator = 1) noexcept
+  {
+    data_.unitScaleNumerator = numerator;
+    data_.unitScaleDenominator = denominator;
+    return *this;
+  }
+
+  /**
+   * @brief Enable normalization of counter values.
+   *
+   * Convert the fixed point value to a normalized floating point.
+   * Use the sign/unsign from the underlying type this flag is applied to.
+   * Unsigned [0f : 1f] or signed [-1f : 1f]
+   *
+   * @return Reference to this object for chaining.
+   */
+  NVTX3_CONSTEXPR_IF_CPP14 counter_semantic& normalize() noexcept
+  {
+    data_.flags |= NVTX_COUNTER_FLAG_NORMALIZE;
+    return *this;
+  }
+
+  /**
+   * @brief Set value type to absolute.
+   * @return Reference to this object for chaining.
+   */
+  NVTX3_CONSTEXPR_IF_CPP14 counter_semantic& valuetype_absolute() noexcept
+  {
+    data_.flags |= NVTX_COUNTER_FLAG_VALUETYPE_ABSOLUTE;
+    return *this;
+  }
+
+  /**
+   * @brief Set value type to delta from previous sample.
+   * @return Reference to this object for chaining.
+   */
+  NVTX3_CONSTEXPR_IF_CPP14 counter_semantic& valuetype_delta() noexcept
+  {
+    data_.flags |= NVTX_COUNTER_FLAG_VALUETYPE_DELTA;
+    return *this;
+  }
+
+  /**
+   * @brief Set value type to delta since start.
+   * @return Reference to this object for chaining.
+   */
+  NVTX3_CONSTEXPR_IF_CPP14 counter_semantic& valuetype_delta_since_start() noexcept
+  {
+    data_.flags |= NVTX_COUNTER_FLAG_VALUETYPE_DELTA_SINCE_START;
+    return *this;
+  }
+
+  /**
+   * @brief Set interpolation to point (no interpolation between samples).
+   * @return Reference to this object for chaining.
+   */
+  NVTX3_CONSTEXPR_IF_CPP14 counter_semantic& interpolation_point() noexcept
+  {
+    data_.flags |= NVTX_COUNTER_FLAG_INTERPOLATION_POINT;
+    return *this;
+  }
+
+  /**
+   * @brief Set interpolation to piecewise constant from last sample.
+   * @return Reference to this object for chaining.
+   */
+  NVTX3_CONSTEXPR_IF_CPP14 counter_semantic& interpolation_since_last() noexcept
+  {
+    data_.flags |= NVTX_COUNTER_FLAG_INTERPOLATION_SINCE_LAST;
+    return *this;
+  }
+
+  /**
+   * @brief Set interpolation to piecewise constant until next sample.
+   * @return Reference to this object for chaining.
+   */
+  NVTX3_CONSTEXPR_IF_CPP14 counter_semantic& interpolation_until_next() noexcept
+  {
+    data_.flags |= NVTX_COUNTER_FLAG_INTERPOLATION_UNTIL_NEXT;
+    return *this;
+  }
+
+  /**
+   * @brief Set interpolation to linear between samples.
+   * @return Reference to this object for chaining.
+   */
+  NVTX3_CONSTEXPR_IF_CPP14 counter_semantic& interpolation_linear() noexcept
+  {
+    data_.flags |= NVTX_COUNTER_FLAG_INTERPOLATION_LINEAR;
+    return *this;
+  }
+
+  /**
+   * @brief Set minimum and maximum limits for int64_t values.
+   * @param min_val Minimum limit.
+   * @param max_val Maximum limit.
+   * @return Reference to this object for chaining.
+   */
+  NVTX3_CONSTEXPR_IF_CPP20 counter_semantic& limits(int64_t min_val, int64_t max_val) noexcept
+  {
+    data_.limitType = NVTX_COUNTER_LIMIT_I64;
+    data_.flags |= NVTX_COUNTER_FLAG_LIMITS;
+    data_.min.i64 = min_val;
+    data_.max.i64 = max_val;
+    return *this;
+  }
+
+  /**
+   * @brief Set minimum and maximum limits for uint64_t values.
+   * @param min_val Minimum limit.
+   * @param max_val Maximum limit.
+   * @return Reference to this object for chaining.
+   */
+  NVTX3_CONSTEXPR_IF_CPP20 counter_semantic& limits(uint64_t min_val, uint64_t max_val) noexcept
+  {
+    data_.limitType = NVTX_COUNTER_LIMIT_U64;
+    data_.flags |= NVTX_COUNTER_FLAG_LIMITS;
+    data_.min.u64 = min_val;
+    data_.max.u64 = max_val;
+    return *this;
+  }
+
+  /**
+   * @brief Set minimum and maximum limits for double values.
+   * @param min_val Minimum limit.
+   * @param max_val Maximum limit.
+   * @return Reference to this object for chaining.
+   */
+  NVTX3_CONSTEXPR_IF_CPP20 counter_semantic& limits(double min_val, double max_val) noexcept
+  {
+    data_.limitType = NVTX_COUNTER_LIMIT_F64;
+    data_.flags |= NVTX_COUNTER_FLAG_LIMITS;
+    data_.min.f64 = min_val;
+    data_.max.f64 = max_val;
+    return *this;
+  }
+
+  /**
+   * @brief Set only the minimum limit for int64_t values.
+   * @param min_val Minimum limit.
+   * @return Reference to this object for chaining.
+   */
+  NVTX3_CONSTEXPR_IF_CPP20 counter_semantic& limit_min(int64_t min_val) noexcept
+  {
+    data_.limitType = NVTX_COUNTER_LIMIT_I64;
+    data_.flags |= NVTX_COUNTER_FLAG_LIMIT_MIN;
+    data_.min.i64 = min_val;
+    return *this;
+  }
+
+  /**
+   * @brief Set only the maximum limit for int64_t values.
+   * @param max_val Maximum limit.
+   * @return Reference to this object for chaining.
+   */
+  NVTX3_CONSTEXPR_IF_CPP20 counter_semantic& limit_max(int64_t max_val) noexcept
+  {
+    data_.limitType = NVTX_COUNTER_LIMIT_I64;
+    data_.flags |= NVTX_COUNTER_FLAG_LIMIT_MAX;
+    data_.max.i64 = max_val;
+    return *this;
+  }
+
+  /**
+   * @brief Set only the minimum limit for uint64_t values.
+   * @param min_val Minimum limit.
+   * @return Reference to this object for chaining.
+   */
+  NVTX3_CONSTEXPR_IF_CPP20 counter_semantic& limit_min(uint64_t min_val) noexcept
+  {
+    data_.limitType = NVTX_COUNTER_LIMIT_U64;
+    data_.flags |= NVTX_COUNTER_FLAG_LIMIT_MIN;
+    data_.min.u64 = min_val;
+    return *this;
+  }
+
+  /**
+   * @brief Set only the maximum limit for uint64_t values.
+   * @param max_val Maximum limit.
+   * @return Reference to this object for chaining.
+   */
+  NVTX3_CONSTEXPR_IF_CPP20 counter_semantic& limit_max(uint64_t max_val) noexcept
+  {
+    data_.limitType = NVTX_COUNTER_LIMIT_U64;
+    data_.flags |= NVTX_COUNTER_FLAG_LIMIT_MAX;
+    data_.max.u64 = max_val;
+    return *this;
+  }
+
+  /**
+   * @brief Set only the minimum limit for double values.
+   * @param min_val Minimum limit.
+   * @return Reference to this object for chaining.
+   */
+  NVTX3_CONSTEXPR_IF_CPP20 counter_semantic& limit_min(double min_val) noexcept
+  {
+    data_.limitType = NVTX_COUNTER_LIMIT_F64;
+    data_.flags |= NVTX_COUNTER_FLAG_LIMIT_MIN;
+    data_.min.f64 = min_val;
+    return *this;
+  }
+
+  /**
+   * @brief Set only the maximum limit for double values.
+   * @param max_val Maximum limit.
+   * @return Reference to this object for chaining.
+   */
+  NVTX3_CONSTEXPR_IF_CPP20 counter_semantic& limit_max(double max_val) noexcept
+  {
+    data_.limitType = NVTX_COUNTER_LIMIT_F64;
+    data_.flags |= NVTX_COUNTER_FLAG_LIMIT_MAX;
+    data_.max.f64 = max_val;
+    return *this;
+  }
+
+};
+
+namespace detail {
+
+/**
+ * @brief Type trait to get the NVTX schema ID for a given C++ type.
+ *
+ * Primary template uses schema::get<T>() for user-defined struct types.
+ * Specializations exist for primitive types.
+ */
+template <typename T, typename = void>
+struct counter_schema_id {
+  static uint64_t get() noexcept
+  {
+    return schema::get<T>().get_handle();
+  }
+};
+
+// Specializations for primitive types
+template <>
+struct counter_schema_id<int64_t> {
+  static constexpr uint64_t get() noexcept { return NVTX_PAYLOAD_ENTRY_TYPE_INT64; }
+};
+
+template <>
+struct counter_schema_id<uint64_t> {
+  static constexpr uint64_t get() noexcept { return NVTX_PAYLOAD_ENTRY_TYPE_UINT64; }
+};
+
+template <>
+struct counter_schema_id<int32_t> {
+  static constexpr uint64_t get() noexcept { return NVTX_PAYLOAD_ENTRY_TYPE_INT32; }
+};
+
+template <>
+struct counter_schema_id<uint32_t> {
+  static constexpr uint64_t get() noexcept { return NVTX_PAYLOAD_ENTRY_TYPE_UINT32; }
+};
+
+template <>
+struct counter_schema_id<double> {
+  static constexpr uint64_t get() noexcept { return NVTX_PAYLOAD_ENTRY_TYPE_FLOAT64; }
+};
+
+template <>
+struct counter_schema_id<float> {
+  static constexpr uint64_t get() noexcept { return NVTX_PAYLOAD_ENTRY_TYPE_FLOAT; }
+};
+
+} // namespace detail
+
+/**
+ * @brief A type-safe NVTX counter in a specific domain.
+ *
+ * `counter_in` provides a type-safe interface for NVTX counters. The counter
+ * value type is specified as a template parameter, ensuring that only values
+ * of the correct type can be sampled.
+ *
+ * For primitive types (int64_t, double, etc.), the schema is automatically
+ * determined. For user-defined struct types, a schema must be registered
+ * using `NVTX3_DEFINE_SCHEMA_GET`.
+ *
+ * @tparam T The value type of the counter.
+ * @tparam D The domain type (defaults to global domain).
+ *
+ * Example:
+ * \code{.cpp}
+ * // Simple int64_t counter
+ * nvtx3::counter<int64_t> iterations{"iteration_count"};
+ * iterations.sample(42);
+ *
+ * // Counter with semantics
+ * nvtx3::counter_semantic sem;
+ * sem.unit("bytes").limits(int64_t{0}, int64_t{1024 * 1024});
+ * nvtx3::counter<int64_t> memory{"heap_size",
+ *                                "Process heap size",
+ *                                nvtx3::scope::current_sw_process(),
+ *                                sem};
+ * memory.sample(512 * 1024);
+ *
+ * // Struct counter (requires NVTX3_DEFINE_SCHEMA_GET)
+ * nvtx3::counter<gpu_metrics> gpu{"gpu_0"};
+ * gpu.sample({72.5f, 250, 0.85});
+ * \endcode
+ */
+template <typename T, typename D = domain::global>
+class counter_in {
+public:
+  using value_type = T;
+
+private:
+  counter_in(const char* name, const char* description, scope s, counter_semantic const* semantic) noexcept
+  {
+#ifndef NVTX_DISABLE
+    nvtxCounterAttr_t attr{};
+    attr.structSize = sizeof(nvtxCounterAttr_t);
+    attr.schemaId = detail::counter_schema_id<T>::get();
+    attr.name = name;
+    attr.description = description;
+    attr.scopeId = s.get();
+    attr.semantics = semantic ? semantic->get() : nullptr;
+
+    id_ = nvtxCounterRegister(domain::get<D>(), &attr);
+#else
+    (void)name;
+    (void)description;
+    (void)s;
+    (void)semantic;
+#endif
+  }
+
+public:
+  /**
+   * @brief Construct a counter with a name, description, and scope.
+   *
+   * @param name The counter name.
+   * @param description The counter description.
+   * @param s The scope for this counter.
+   */
+  counter_in(const char* name, const char* description = nullptr, scope s = scope::none() ) noexcept
+    : counter_in{name, description, s, nullptr}
+  {
+  }
+
+  /**
+   * @brief Construct a counter with name, description, scope, and semantics.
+   *
+   * @param name The counter name.
+   * @param description The counter description.
+   * @param s The scope for this counter.
+   * @param semantic The counter semantics.
+   */
+  counter_in(const char* name, const char* description, scope s, const counter_semantic& semantic) noexcept
+    : counter_in{name, description, s, &semantic}
+  {
+  }
+
+  /**
+   * @brief Sample the counter with a value.
+   *
+   * The value type must match the counter's template parameter T.
+   * For primitive types (int64_t, double), optimized sampling functions
+   * are used. For struct types, the value is passed by reference.
+   *
+   * @param value The counter value to sample.
+   */
+  void sample(T const& value) noexcept
+  {
+#ifndef NVTX_DISABLE
+    sample_impl(value, std::is_same<T, int64_t>{}, std::is_same<T, double>{});
+#else
+    (void)value;
+#endif
+  }
+
+  /**
+   * @brief Sample the counter without a value.
+   *
+   * Used when a sample cannot be taken but should still be recorded.
+   *
+   * @param reason The reason for the missing value.
+   */
+  void sample_no_value(no_value_reason reason) noexcept
+  {
+#ifndef NVTX_DISABLE
+    nvtxCounterSampleNoValue(domain::get<D>(), id_, static_cast<uint8_t>(reason));
+#else
+    (void)reason;
+#endif
+  }
+
+  /**
+   * @brief Get the underlying counter ID.
+   *
+   * Useful for interoperability with the NVTX C API.
+   *
+   * @return The counter ID.
+   */
+  uint64_t id() const noexcept { return id_; }
+
+private:
+  // Overloads for optimized primitive sampling (int64_t)
+  void sample_impl(int64_t value, std::true_type /*is_int64*/, std::false_type) noexcept
+  {
+    nvtxCounterSampleInt64(domain::get<D>(), id_, value);
+  }
+
+  // Overloads for optimized primitive sampling (double)
+  void sample_impl(double value, std::false_type, std::true_type /*is_double*/) noexcept
+  {
+    nvtxCounterSampleFloat64(domain::get<D>(), id_, value);
+  }
+
+  // Generic fallback for struct types
+  void sample_impl(T const& value, std::false_type, std::false_type) noexcept
+  {
+    nvtxCounterSample(domain::get<D>(), id_, &value, sizeof(T));
+  }
+
+  uint64_t id_{0};
+};
+
+/**
+ * @brief Alias for a counter in the global NVTX domain.
+ *
+ * Example:
+ * \code{.cpp}
+ * nvtx3::counter<int64_t> my_counter{"name"};
+ * \endcode
+ */
+template <typename T>
+using counter = counter_in<T, domain::global>;
+
 }  // namespace NVTX3_MINOR_VERSION_NAMESPACE
 }  // namespace NVTX3_VERSION_NAMESPACE
 } // namespace nvtx3
@@ -3315,6 +3934,34 @@ inline void mark(Args const&... args) noexcept
         return s;                                                                                      \
     }
 
+/**
+ * @brief Macro for inline counter semantic definitions in schema entries.
+ *
+ * Use this macro within NVTX_PAYLOAD_ENTRIES to define per-field semantics.
+ * The macro creates a static local to ensure the semantic object has stable
+ * storage for the lifetime of the program.
+ *
+ * Example:
+ * \code{.cpp}
+ * NVTX3_DEFINE_SCHEMA_GET(
+ *     my_domain,
+ *     sensor_data,
+ *     "SensorData",
+ *     NVTX_PAYLOAD_ENTRIES(
+ *         (temperature, TYPE_FLOAT, "Temperature", nullptr, 0, UNUSED,
+ *             NVTX3_SEMANTIC(nvtx3::counter_semantic{}.unit("C").limits(-40.0f, 85.0f))),
+ *         (pressure, TYPE_FLOAT, "Pressure", nullptr, 0, UNUSED,
+ *             NVTX3_SEMANTIC(nvtx3::counter_semantic{}.unit("hPa")))))
+ * \endcode
+ *
+ * @param expr A counter_semantic expression.
+ */
+#define NVTX3_V1_SEMANTIC(expr)                                    \
+    ([]() -> nvtxSemanticsHeader_t const* {                        \
+        static ::nvtx3::v1::counter_semantic const s_ = (expr);    \
+        return s_.get();                                           \
+    }())
+
 /* When inlining this version, versioned macros must have unversioned aliases.
  * For each NVTX3_Vx_ #define, make an NVTX3_ alias of it here.*/
 #if defined(NVTX3_INLINE_THIS_VERSION)
@@ -3324,6 +3971,7 @@ inline void mark(Args const&... args) noexcept
 #define NVTX3_FUNC_RANGE_IN     NVTX3_V1_FUNC_RANGE_IN
 #define NVTX3_FUNC_RANGE_IF_IN  NVTX3_V1_FUNC_RANGE_IF_IN
 #define NVTX3_DEFINE_SCHEMA_GET NVTX3_V1_DEFINE_SCHEMA_GET
+#define NVTX3_SEMANTIC          NVTX3_V1_SEMANTIC
 /* clang format on */
 #endif
 
@@ -3340,6 +3988,7 @@ inline void mark(Args const&... args) noexcept
 #undef NVTX3_MINOR_VERSION_NAMESPACE
 #undef NVTX3_INLINE_IF_REQUESTED
 #undef NVTX3_CONSTEXPR_IF_CPP14
+#undef NVTX3_CONSTEXPR_IF_CPP20
 #undef NVTX3_MAYBE_UNUSED
 #undef NVTX3_NO_DISCARD
 
