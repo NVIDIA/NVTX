@@ -3239,7 +3239,7 @@ public:
   /** @brief Logical CPU core */
   static constexpr scope current_hw_cpu_logical() noexcept { return scope{NVTX_SCOPE_CURRENT_HW_CPU_LOGICAL}; }
   /** @brief Innermost HW execution context */
-  static constexpr scope current_hw_innermost() noexcept{ return scope{NVTX_SCOPE_CURRENT_HW_INNERMOST}; }
+  static constexpr scope current_hw_innermost() noexcept { return scope{NVTX_SCOPE_CURRENT_HW_INNERMOST}; }
 
   /* Virtualized hardware, virtual machines */
   static constexpr scope current_hypervisor() noexcept { return scope{NVTX_SCOPE_CURRENT_HYPERVISOR}; }
@@ -3319,10 +3319,14 @@ public:
   }
 
   /**
-   * @brief Construct a counter semantic chained to another semantic.
+   * @brief Construct a counter semantic that chains to another semantic builder.
    *
-   * @tparam Other Type of the other semantic (must have get() method).
-   * @param next The semantic to chain after this one.
+   * Convenience overload of the header-pointer constructor that accepts a
+   * sibling semantic builder object directly. The referenced builder must
+   * outlive this object.
+   *
+   * @tparam Other Type of the other semantic (must expose get()).
+   * @param next The semantic builder to chain after this one.
    */
   template <typename Other>
   constexpr explicit counter_semantic(Other const& next) noexcept
@@ -3562,7 +3566,6 @@ public:
     data_.max.f64 = max_val;
     return *this;
   }
-
 };
 
 namespace detail {
@@ -3653,28 +3656,6 @@ class counter_in {
 public:
   using value_type = T;
 
-private:
-  counter_in(const char* name, const char* description, scope s, counter_semantic const* semantic) noexcept
-  {
-#ifndef NVTX_DISABLE
-    nvtxCounterAttr_t attr{};
-    attr.structSize = sizeof(nvtxCounterAttr_t);
-    attr.schemaId = detail::counter_schema_id<T>::get();
-    attr.name = name;
-    attr.description = description;
-    attr.scopeId = s.get();
-    attr.semantics = semantic ? semantic->get() : nullptr;
-
-    id_ = nvtxCounterRegister(domain::get<D>(), &attr);
-#else
-    (void)name;
-    (void)description;
-    (void)s;
-    (void)semantic;
-#endif
-  }
-
-public:
   /**
    * @brief Construct a counter with a name, description, and scope.
    *
@@ -3744,6 +3725,26 @@ public:
   uint64_t id() const noexcept { return id_; }
 
 private:
+  counter_in(const char* name, const char* description, scope s, counter_semantic const* semantic) noexcept
+  {
+#ifndef NVTX_DISABLE
+    nvtxCounterAttr_t attr{};
+    attr.structSize = sizeof(nvtxCounterAttr_t);
+    attr.schemaId = detail::counter_schema_id<T>::get();
+    attr.name = name;
+    attr.description = description;
+    attr.scopeId = s.get();
+    attr.semantics = semantic ? semantic->get() : nullptr;
+
+    id_ = nvtxCounterRegister(domain::get<D>(), &attr);
+#else
+    (void)name;
+    (void)description;
+    (void)s;
+    (void)semantic;
+#endif
+  }
+
   // Overloads for optimized primitive sampling (int64_t)
   void sample_impl(int64_t value, std::true_type /*is_int64*/, std::false_type) noexcept
   {
@@ -3935,11 +3936,17 @@ using counter = counter_in<T, domain::global>;
     }
 
 /**
- * @brief Macro for inline counter semantic definitions in schema entries.
+ * @brief Macro for inline semantic definitions in schema entries.
  *
- * Use this macro within NVTX_PAYLOAD_ENTRIES to define per-field semantics.
- * The macro creates a static local to ensure the semantic object has stable
- * storage for the lifetime of the program.
+ * Use this macro within NVTX_PAYLOAD_ENTRIES to attach per-field semantics
+ * or a chain thereof. The macro creates a static local to give the
+ * semantic object stable storage for the lifetime of the program, and
+ * returns the pointer to its header that the schema entry's \c semantics
+ * field expects.
+ *
+ * The type of the semantic is deduced from the expression, so any builder
+ * in the `::nvtx3::v1` semantic family works, and builder chains assembled
+ * inline work too.
  *
  * Example:
  * \code{.cpp}
@@ -3954,11 +3961,12 @@ using counter = counter_in<T, domain::global>;
  *             NVTX3_SEMANTIC(nvtx3::counter_semantic{}.unit("hPa")))))
  * \endcode
  *
- * @param expr A counter_semantic expression.
+ * @param expr Any semantic builder expression exposing a \c get() method
+ *             returning an \c nvtxSemanticsHeader_t const*.
  */
 #define NVTX3_V1_SEMANTIC(expr)                                    \
     ([]() -> nvtxSemanticsHeader_t const* {                        \
-        static ::nvtx3::v1::counter_semantic const s_ = (expr);    \
+        static auto const s_ = (expr);                             \
         return s_.get();                                           \
     }())
 

@@ -19,9 +19,97 @@
  */
 
 #include <nvtx3/nvtx3.hpp>
+#include <nvtx3/nvToolsExtSemanticsCounters.h>
 
 #include <cstdint>
+#include <cstring>
 #include <iostream>
+
+static int g_failures = 0;
+
+static void check_u64(char const* label, char const* expr,
+                      uint64_t actual, uint64_t expected)
+{
+    if (actual != expected) {
+        ++g_failures;
+        std::cout << "  FAIL [" << label << "] " << expr
+                  << " = 0x" << std::hex << actual
+                  << " (expected 0x" << expected << ")" << std::dec << "\n";
+    }
+}
+
+static void check_i64(char const* label, char const* expr,
+                      int64_t actual, int64_t expected)
+{
+    if (actual != expected) {
+        ++g_failures;
+        std::cout << "  FAIL [" << label << "] " << expr
+                  << " = " << actual
+                  << " (expected " << expected << ")\n";
+    }
+}
+
+static void check_f64(char const* label, char const* expr,
+                      double actual, double expected)
+{
+    if (actual != expected) {
+        ++g_failures;
+        std::cout << "  FAIL [" << label << "] " << expr
+                  << " = " << actual
+                  << " (expected " << expected << ")\n";
+    }
+}
+
+static void check_str(char const* label, char const* expr,
+                      char const* actual, char const* expected)
+{
+    bool const eq = (actual == expected)
+        || (actual && expected && std::strcmp(actual, expected) == 0);
+    if (!eq) {
+        ++g_failures;
+        std::cout << "  FAIL [" << label << "] " << expr
+                  << " = \"" << (actual ? actual : "(null)")
+                  << "\" (expected \"" << (expected ? expected : "(null)") << "\")\n";
+    }
+}
+
+#define CHECK_U64(LABEL, ACTUAL, EXPECTED) check_u64((LABEL), #ACTUAL, static_cast<uint64_t>(ACTUAL), static_cast<uint64_t>(EXPECTED))
+#define CHECK_I64(LABEL, ACTUAL, EXPECTED) check_i64((LABEL), #ACTUAL, static_cast<int64_t>(ACTUAL),  static_cast<int64_t>(EXPECTED))
+#define CHECK_F64(LABEL, ACTUAL, EXPECTED) check_f64((LABEL), #ACTUAL, static_cast<double>(ACTUAL),   static_cast<double>(EXPECTED))
+#define CHECK_STR(LABEL, ACTUAL, EXPECTED) check_str((LABEL), #ACTUAL, (ACTUAL), (EXPECTED))
+
+static nvtxSemanticsCounter_v1 const&
+as_counter(nvtx3::counter_semantic const& sem)
+{
+    return *reinterpret_cast<nvtxSemanticsCounter_v1 const*>(sem.get());
+}
+
+static void dump_counter_semantic(char const* label, nvtx3::counter_semantic const& sem)
+{
+    auto const& c = as_counter(sem);
+    std::cout << "  [" << label << "]"
+              << " semanticId=" << c.header.semanticId
+              << " ver=" << c.header.version
+              << " flags=0x" << std::hex << c.flags << std::dec
+              << " limitType=" << c.limitType
+              << " unit=" << (c.unit ? c.unit : "(null)")
+              << " scaleNum=" << c.unitScaleNumerator
+              << " scaleDen=" << c.unitScaleDenominator;
+    switch (c.limitType) {
+        case NVTX_COUNTER_LIMIT_I64:
+            std::cout << " min.i64=" << c.min.i64 << " max.i64=" << c.max.i64;
+            break;
+        case NVTX_COUNTER_LIMIT_U64:
+            std::cout << " min.u64=" << c.min.u64 << " max.u64=" << c.max.u64;
+            break;
+        case NVTX_COUNTER_LIMIT_F64:
+            std::cout << " min.f64=" << c.min.f64 << " max.f64=" << c.max.f64;
+            break;
+        default:
+            break;
+    }
+    std::cout << " next=" << (c.header.next ? "yes" : "no") << "\n";
+}
 
 struct counters_domain
 {
@@ -33,6 +121,26 @@ struct sensor_sample
     float temperature;
     uint32_t channel_id;
 };
+
+/*
+ * Compile-verified mirror of the NVTX3_SEMANTIC docstring example.
+ * If you change one, update the other.
+ */
+struct sensor_data
+{
+    float temperature;
+    float pressure;
+};
+
+NVTX3_DEFINE_SCHEMA_GET(
+    counters_domain,
+    sensor_data,
+    "SensorData",
+    NVTX_PAYLOAD_ENTRIES(
+        (temperature, TYPE_FLOAT, "Temperature", nullptr, 0, UNUSED,
+            NVTX3_SEMANTIC(nvtx3::counter_semantic{}.unit("C").limits(-40.0f, 85.0f))),
+        (pressure, TYPE_FLOAT, "Pressure", nullptr, 0, UNUSED,
+            NVTX3_SEMANTIC(nvtx3::counter_semantic{}.unit("hPa")))))
 
 NVTX3_DEFINE_SCHEMA_GET(
     counters_domain,
@@ -49,6 +157,8 @@ NVTX_DYNAMIC_EXPORT
 int RunTest(int argc, const char** argv)
 {
     NVTX_EXPORT_UNMANGLED_FUNCTION_NAME
+
+    g_failures = 0;
 
     (void)argc;
     (void)argv;
@@ -82,6 +192,21 @@ int RunTest(int argc, const char** argv)
             .valuetype_absolute()
             .normalize();
 
+        dump_counter_semantic("heap_size", sem);
+        auto const& c = as_counter(sem);
+        CHECK_U64("heap_size", c.flags,
+                  NVTX_COUNTER_FLAG_NORMALIZE
+                | NVTX_COUNTER_FLAG_LIMITS
+                | NVTX_COUNTER_FLAG_VALUETYPE_ABSOLUTE
+                | NVTX_COUNTER_FLAG_INTERPOLATION_LINEAR);
+        CHECK_I64("heap_size", c.limitType, NVTX_COUNTER_LIMIT_I64);
+        CHECK_I64("heap_size", c.min.i64, 0);
+        CHECK_I64("heap_size", c.max.i64, int64_t{1} << 20);
+        CHECK_STR("heap_size", c.unit, "bytes");
+        CHECK_U64("heap_size", c.unitScaleNumerator, 1024);
+        CHECK_U64("heap_size", c.unitScaleDenominator, 1);
+        CHECK_U64("heap_size", c.header.next != nullptr, 0);
+
         nvtx3::counter_in<int64_t, counters_domain> heap_size{
             "heap_size",
             "Process heap size",
@@ -101,6 +226,19 @@ int RunTest(int argc, const char** argv)
         nvtx3::counter_semantic sem;
         sem.unit("%").limits(0.0, 100.0).interpolation_since_last();
 
+        dump_counter_semantic("gpu_utilization", sem);
+        auto const& c = as_counter(sem);
+        CHECK_U64("gpu_utilization", c.flags,
+                  NVTX_COUNTER_FLAG_LIMITS
+                | NVTX_COUNTER_FLAG_INTERPOLATION_SINCE_LAST);
+        CHECK_I64("gpu_utilization", c.limitType, NVTX_COUNTER_LIMIT_F64);
+        CHECK_F64("gpu_utilization", c.min.f64, 0.0);
+        CHECK_F64("gpu_utilization", c.max.f64, 100.0);
+        CHECK_STR("gpu_utilization", c.unit, "%");
+        CHECK_U64("gpu_utilization", c.unitScaleNumerator, 1);
+        CHECK_U64("gpu_utilization", c.unitScaleDenominator, 1);
+        CHECK_U64("gpu_utilization", c.header.next != nullptr, 0);
+
         nvtx3::counter_in<double, counters_domain> utilization{
             "gpu_utilization",
             "GPU utilization percentage",
@@ -116,6 +254,17 @@ int RunTest(int argc, const char** argv)
         std::cout << "Unsigned counter with separate limit_min / limit_max setters:\n";
         nvtx3::counter_semantic sem;
         sem.limit_min(uint64_t{0}).limit_max(uint64_t{1ull} << 40);
+
+        dump_counter_semantic("file_offset", sem);
+        auto const& c = as_counter(sem);
+        CHECK_U64("file_offset", c.flags, NVTX_COUNTER_FLAG_LIMITS);
+        CHECK_I64("file_offset", c.limitType, NVTX_COUNTER_LIMIT_U64);
+        CHECK_U64("file_offset", c.min.u64, 0u);
+        CHECK_U64("file_offset", c.max.u64, uint64_t{1ull} << 40);
+        CHECK_STR("file_offset", c.unit, nullptr);
+        CHECK_U64("file_offset", c.unitScaleNumerator, 1);
+        CHECK_U64("file_offset", c.unitScaleDenominator, 1);
+        CHECK_U64("file_offset", c.header.next != nullptr, 0);
 
         nvtx3::counter_in<uint64_t, counters_domain> offset{
             "file_offset",
@@ -133,6 +282,17 @@ int RunTest(int argc, const char** argv)
         nvtx3::counter_semantic sem;
         sem.interpolation_since_last().valuetype_absolute();
 
+        dump_counter_semantic("sensor", sem);
+        auto const& c = as_counter(sem);
+        CHECK_U64("sensor", c.flags,
+                  NVTX_COUNTER_FLAG_INTERPOLATION_SINCE_LAST
+                | NVTX_COUNTER_FLAG_VALUETYPE_ABSOLUTE);
+        CHECK_I64("sensor", c.limitType, NVTX_COUNTER_LIMIT_UNDEFINED);
+        CHECK_STR("sensor", c.unit, nullptr);
+        CHECK_U64("sensor", c.unitScaleNumerator, 1);
+        CHECK_U64("sensor", c.unitScaleDenominator, 1);
+        CHECK_U64("sensor", c.header.next != nullptr, 0);
+
         nvtx3::counter_in<sensor_sample, counters_domain> sensor{
             "sensor",
             "Example payload counter",
@@ -145,5 +305,19 @@ int RunTest(int argc, const char** argv)
     }
     std::cout << "-------------------------------------\n";
 
-    return 0;
+    {
+        std::cout << "Doc-example schema (NVTX3_SEMANTIC with mixed builders):\n";
+        nvtx3::counter_in<sensor_data, counters_domain> probe{
+            "env_probe",
+            "Per-field semantic mix from the NVTX3_SEMANTIC docstring"};
+        probe.sample({21.5f, 1013.25f});
+        probe.sample({22.0f, 1012.80f});
+        std::cout << "  counter id: " << probe.id() << "\n";
+    }
+    std::cout << "-------------------------------------\n";
+
+    if (g_failures != 0) {
+        std::cout << "FAILED: " << g_failures << " counter_semantic check(s) mismatched expected values\n";
+    }
+    return g_failures;
 }
