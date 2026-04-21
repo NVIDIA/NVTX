@@ -24,6 +24,7 @@
 #include <cstdint>
 #include <cstring>
 #include <iostream>
+#include <stdexcept>
 
 static int g_failures = 0;
 
@@ -302,6 +303,54 @@ int RunTest(int argc, const char** argv)
         sensor.sample({23.0f, 1u});
         sensor.sample({19.25f, 0u});
         std::cout << "  counter id: " << sensor.id() << "\n";
+    }
+    std::cout << "-------------------------------------\n";
+
+    {
+        std::cout << "Conflicting enum-group setters throw std::logic_error:\n";
+
+        {
+            nvtx3::counter_semantic sem;
+            sem.valuetype_absolute();
+            bool threw = false;
+            try {
+                sem.valuetype_delta();
+            } catch (std::logic_error const& e) {
+                threw = true;
+                std::cout << "  caught (valuetype): " << e.what() << "\n";
+            }
+            CHECK_U64("conflict_valuetype", threw, 1);
+            auto const& c = as_counter(sem);
+            CHECK_U64("conflict_valuetype",
+                      c.flags & NVTX_COUNTER_FLAG_VALUETYPES,
+                      NVTX_COUNTER_FLAG_VALUETYPE_ABSOLUTE);
+        }
+
+        {
+            nvtx3::counter_semantic sem;
+            sem.interpolation_linear();
+            bool threw = false;
+            try {
+                sem.interpolation_point();
+            } catch (std::logic_error const& e) {
+                threw = true;
+                std::cout << "  caught (interpolation): " << e.what() << "\n";
+            }
+            CHECK_U64("conflict_interpolation", threw, 1);
+            auto const& c = as_counter(sem);
+            CHECK_U64("conflict_interpolation",
+                      c.flags & NVTX_COUNTER_FLAG_INTERPOLATIONS,
+                      NVTX_COUNTER_FLAG_INTERPOLATION_LINEAR);
+        }
+
+        {
+            nvtx3::counter_semantic sem;
+            sem.valuetype_absolute().interpolation_linear();
+            auto const& c = as_counter(sem);
+            CHECK_U64("cross_group_ok", c.flags,
+                      NVTX_COUNTER_FLAG_VALUETYPE_ABSOLUTE
+                    | NVTX_COUNTER_FLAG_INTERPOLATION_LINEAR);
+        }
     }
     std::cout << "-------------------------------------\n";
 

@@ -63,6 +63,10 @@
 /* Delta to previous sample, tool-defined if no previous sample is available. */
 #define NVTX_COUNTER_FLAG_VALUETYPE_DELTA             (2 << 4)
 #define NVTX_COUNTER_FLAG_VALUETYPE_DELTA_SINCE_START (3 << 4)
+/* Mask covering the NVTX_COUNTER_FLAG_VALUETYPE_* bit range;
+ * use to test whether a value type is already set, or to clear the current
+ * value type before OR-ing in a new one. */
+#define NVTX_COUNTER_FLAG_VALUETYPES                  (3 << 4)
 
 /**
  * Counter interpolation / effective range of counters.
@@ -75,6 +79,10 @@
 #define NVTX_COUNTER_FLAG_INTERPOLATION_UNTIL_NEXT    (3 << 8)
 /* Piecewise linear interpolation between samples. */
 #define NVTX_COUNTER_FLAG_INTERPOLATION_LINEAR        (4 << 8)
+/* Mask covering the NVTX_COUNTER_FLAG_INTERPOLATION_* bit range;
+ * use to test whether a value type is already set, or to clear the current
+ * value type before OR-ing in a new one. */
+#define NVTX_COUNTER_FLAG_INTERPOLATIONS              (7 << 8)
 
 /**
  * Datatype for limits union (value of `limitType`).

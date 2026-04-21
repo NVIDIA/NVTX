@@ -763,6 +763,7 @@
 #include "nvToolsExtSemanticsCounters.h"
 
 #include <memory>
+#include <stdexcept>
 #include <string>
 #include <type_traits>
 #include <utility>
@@ -3432,71 +3433,99 @@ public:
 
   /**
    * @brief Set value type to absolute.
+   *
+   * @throws std::logic_error if any valuetype_* setter has already been
+   *         called on this object.
    * @return Reference to this object for chaining.
    */
-  NVTX3_CONSTEXPR_IF_CPP14 counter_semantic& valuetype_absolute() noexcept
+  counter_semantic& valuetype_absolute()
   {
-    data_.flags |= NVTX_COUNTER_FLAG_VALUETYPE_ABSOLUTE;
+    set_enum_group_flag(NVTX_COUNTER_FLAG_VALUETYPES,
+                        NVTX_COUNTER_FLAG_VALUETYPE_ABSOLUTE, "valuetype");
     return *this;
   }
 
   /**
    * @brief Set value type to delta from previous sample.
+   *
+   * @throws std::logic_error if any valuetype_* setter has already been
+   *         called on this object.
    * @return Reference to this object for chaining.
    */
-  NVTX3_CONSTEXPR_IF_CPP14 counter_semantic& valuetype_delta() noexcept
+  counter_semantic& valuetype_delta()
   {
-    data_.flags |= NVTX_COUNTER_FLAG_VALUETYPE_DELTA;
+    set_enum_group_flag(NVTX_COUNTER_FLAG_VALUETYPES,
+                        NVTX_COUNTER_FLAG_VALUETYPE_DELTA, "valuetype");
     return *this;
   }
 
   /**
    * @brief Set value type to delta since start.
+   *
+   * @throws std::logic_error if any valuetype_* setter has already been
+   *         called on this object.
    * @return Reference to this object for chaining.
    */
-  NVTX3_CONSTEXPR_IF_CPP14 counter_semantic& valuetype_delta_since_start() noexcept
+  counter_semantic& valuetype_delta_since_start()
   {
-    data_.flags |= NVTX_COUNTER_FLAG_VALUETYPE_DELTA_SINCE_START;
+    set_enum_group_flag(NVTX_COUNTER_FLAG_VALUETYPES,
+                        NVTX_COUNTER_FLAG_VALUETYPE_DELTA_SINCE_START, "valuetype");
     return *this;
   }
 
   /**
    * @brief Set interpolation to point (no interpolation between samples).
+   *
+   * @throws std::logic_error if any interpolation_* setter has already
+   *         been called on this object.
    * @return Reference to this object for chaining.
    */
-  NVTX3_CONSTEXPR_IF_CPP14 counter_semantic& interpolation_point() noexcept
+  counter_semantic& interpolation_point()
   {
-    data_.flags |= NVTX_COUNTER_FLAG_INTERPOLATION_POINT;
+    set_enum_group_flag(NVTX_COUNTER_FLAG_INTERPOLATIONS,
+                        NVTX_COUNTER_FLAG_INTERPOLATION_POINT, "interpolation");
     return *this;
   }
 
   /**
    * @brief Set interpolation to piecewise constant from last sample.
+   *
+   * @throws std::logic_error if any interpolation_* setter has already
+   *         been called on this object.
    * @return Reference to this object for chaining.
    */
-  NVTX3_CONSTEXPR_IF_CPP14 counter_semantic& interpolation_since_last() noexcept
+  counter_semantic& interpolation_since_last()
   {
-    data_.flags |= NVTX_COUNTER_FLAG_INTERPOLATION_SINCE_LAST;
+    set_enum_group_flag(NVTX_COUNTER_FLAG_INTERPOLATIONS,
+                        NVTX_COUNTER_FLAG_INTERPOLATION_SINCE_LAST, "interpolation");
     return *this;
   }
 
   /**
    * @brief Set interpolation to piecewise constant until next sample.
+   *
+   * @throws std::logic_error if any interpolation_* setter has already
+   *         been called on this object.
    * @return Reference to this object for chaining.
    */
-  NVTX3_CONSTEXPR_IF_CPP14 counter_semantic& interpolation_until_next() noexcept
+  counter_semantic& interpolation_until_next()
   {
-    data_.flags |= NVTX_COUNTER_FLAG_INTERPOLATION_UNTIL_NEXT;
+    set_enum_group_flag(NVTX_COUNTER_FLAG_INTERPOLATIONS,
+                        NVTX_COUNTER_FLAG_INTERPOLATION_UNTIL_NEXT, "interpolation");
     return *this;
   }
 
   /**
    * @brief Set interpolation to linear between samples.
+   *
+   * @throws std::logic_error if any interpolation_* setter has already
+   *         been called on this object.
    * @return Reference to this object for chaining.
    */
-  NVTX3_CONSTEXPR_IF_CPP14 counter_semantic& interpolation_linear() noexcept
+  counter_semantic& interpolation_linear()
   {
-    data_.flags |= NVTX_COUNTER_FLAG_INTERPOLATION_LINEAR;
+    set_enum_group_flag(NVTX_COUNTER_FLAG_INTERPOLATIONS,
+                        NVTX_COUNTER_FLAG_INTERPOLATION_LINEAR, "interpolation");
     return *this;
   }
 
@@ -3557,6 +3586,16 @@ public:
     data_.flags |= NVTX_COUNTER_FLAG_LIMIT_MAX;
     traits::store(data_.max, max_val);
     return *this;
+  }
+
+private:
+  void set_enum_group_flag(uint64_t group_mask, uint64_t value, char const* group_name)
+  {
+    if ((data_.flags & group_mask) != 0) {
+      throw std::logic_error(std::string("counter_semantic: conflicting ") + group_name
+                             + " setter; the " + group_name + " can be set only once");
+    }
+    data_.flags |= value;
   }
 };
 
