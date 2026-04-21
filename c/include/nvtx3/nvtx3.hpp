@@ -3309,7 +3309,7 @@ inline void mark(Args const&... args) noexcept
             std::is_trivially_copyable<struct_id>::value,                                              \
             "structs used for NVTX3 payload schema must be trivially copyable");                       \
         using nvtx_struct_id = struct_id; /* avoids issues with namespaced struct_id */                \
-        _NVTX_DEFINE_SCHEMA_FOR_STRUCT(nvtx_struct_id, schema_name, static constexpr, entries)         \
+        _NVTX_DEFINE_SCHEMA_FOR_STRUCT(nvtx_struct_id, schema_name, static const, entries)              \
         static const schema s{                                                                         \
             nvtxPayloadSchemaRegister(nvtx3::v1::domain::get<dom>(), &nvtx_struct_id##Attr)};          \
         return s;                                                                                      \
