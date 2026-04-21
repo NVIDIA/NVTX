@@ -138,7 +138,7 @@ NVTX3_DEFINE_SCHEMA_GET(
     "SensorData",
     NVTX_PAYLOAD_ENTRIES(
         (temperature, TYPE_FLOAT, "Temperature", nullptr, 0, UNUSED,
-            NVTX3_SEMANTIC(nvtx3::counter_semantic{}.unit("C").limits(-40.0f, 85.0f))),
+            NVTX3_SEMANTIC(nvtx3::counter_semantic{}.unit("C").limits(-40.0, 85.0))),
         (pressure, TYPE_FLOAT, "Pressure", nullptr, 0, UNUSED,
             NVTX3_SEMANTIC(nvtx3::counter_semantic{}.unit("hPa")))))
 

@@ -907,6 +907,46 @@ protected:
   DataType data_;
 };
 
+/**
+ * @brief Maps a C++ limit type to the matching nvtxSemanticsCounter_t storage.
+ *
+ * The primary template is intentionally undefined so that an unsupported T
+ * produces a clear "no type named 'limit_type_value' in
+ * counter_limit_traits<T>" diagnostic at the call site.
+ */
+template <typename T>
+struct counter_limit_traits;
+
+template <>
+struct counter_limit_traits<int64_t>
+{
+  static constexpr int64_t limit_type_value = NVTX_COUNTER_LIMIT_I64;
+  static NVTX3_CONSTEXPR_IF_CPP20 void store(nvtxCounterLimit_t& slot, int64_t v) noexcept
+  {
+    slot.i64 = v;
+  }
+};
+
+template <>
+struct counter_limit_traits<uint64_t>
+{
+  static constexpr int64_t limit_type_value = NVTX_COUNTER_LIMIT_U64;
+  static NVTX3_CONSTEXPR_IF_CPP20 void store(nvtxCounterLimit_t& slot, uint64_t v) noexcept
+  {
+    slot.u64 = v;
+  }
+};
+
+template <>
+struct counter_limit_traits<double>
+{
+  static constexpr int64_t limit_type_value = NVTX_COUNTER_LIMIT_F64;
+  static NVTX3_CONSTEXPR_IF_CPP20 void store(nvtxCounterLimit_t& slot, double v) noexcept
+  {
+    slot.f64 = v;
+  }
+};
+
 } // namespace detail
 
 /**
@@ -3304,7 +3344,7 @@ enum class no_value_reason : uint8_t {
  * \code{.cpp}
  * nvtx3::counter_semantic sem;
  * sem.unit("bytes")
- *    .limits(0LL, 1024LL * 1024 * 1024)
+ *    .limits<int64_t>(0, 1024LL * 1024 * 1024)
  *    .interpolation_since_last();
  *
  * nvtx3::counter<int64_t> memory{"heap_size",
@@ -3461,125 +3501,61 @@ public:
   }
 
   /**
-   * @brief Set minimum and maximum limits for int64_t values.
+   * @brief Set minimum and maximum limits, typed.
+   *
+   * @tparam T One of `int64_t`, `uint64_t`, or `double`; selects the union
+   *           member in the underlying nvtxSemanticsCounter_v1 struct and
+   *           the corresponding NVTX_COUNTER_LIMIT_* tag stored in
+   *           `limitType`.
    * @param min_val Minimum limit.
    * @param max_val Maximum limit.
    * @return Reference to this object for chaining.
+   *
+   * @note If limit_min<T1>() and limit_max<T2>() are called with different
+   *       T the last call wins on `limitType`, and the earlier write lives
+   *       in the wrong union member. Prefer this overload of limits() over
+   *       paired limit_min/limit_max when you want both bounds.
    */
-  NVTX3_CONSTEXPR_IF_CPP20 counter_semantic& limits(int64_t min_val, int64_t max_val) noexcept
+  template <typename T>
+  NVTX3_CONSTEXPR_IF_CPP20 counter_semantic& limits(T min_val, T max_val) noexcept
   {
-    data_.limitType = NVTX_COUNTER_LIMIT_I64;
+    using traits = detail::counter_limit_traits<T>;
+    data_.limitType = traits::limit_type_value;
     data_.flags |= NVTX_COUNTER_FLAG_LIMITS;
-    data_.min.i64 = min_val;
-    data_.max.i64 = max_val;
+    traits::store(data_.min, min_val);
+    traits::store(data_.max, max_val);
     return *this;
   }
 
   /**
-   * @brief Set minimum and maximum limits for uint64_t values.
-   * @param min_val Minimum limit.
-   * @param max_val Maximum limit.
-   * @return Reference to this object for chaining.
-   */
-  NVTX3_CONSTEXPR_IF_CPP20 counter_semantic& limits(uint64_t min_val, uint64_t max_val) noexcept
-  {
-    data_.limitType = NVTX_COUNTER_LIMIT_U64;
-    data_.flags |= NVTX_COUNTER_FLAG_LIMITS;
-    data_.min.u64 = min_val;
-    data_.max.u64 = max_val;
-    return *this;
-  }
-
-  /**
-   * @brief Set minimum and maximum limits for double values.
-   * @param min_val Minimum limit.
-   * @param max_val Maximum limit.
-   * @return Reference to this object for chaining.
-   */
-  NVTX3_CONSTEXPR_IF_CPP20 counter_semantic& limits(double min_val, double max_val) noexcept
-  {
-    data_.limitType = NVTX_COUNTER_LIMIT_F64;
-    data_.flags |= NVTX_COUNTER_FLAG_LIMITS;
-    data_.min.f64 = min_val;
-    data_.max.f64 = max_val;
-    return *this;
-  }
-
-  /**
-   * @brief Set only the minimum limit for int64_t values.
+   * @brief Set only the minimum limit, typed.
+   * @tparam T One of `int64_t`, `uint64_t`, or `double`.
    * @param min_val Minimum limit.
    * @return Reference to this object for chaining.
    */
-  NVTX3_CONSTEXPR_IF_CPP20 counter_semantic& limit_min(int64_t min_val) noexcept
+  template <typename T>
+  NVTX3_CONSTEXPR_IF_CPP20 counter_semantic& limit_min(T min_val) noexcept
   {
-    data_.limitType = NVTX_COUNTER_LIMIT_I64;
+    using traits = detail::counter_limit_traits<T>;
+    data_.limitType = traits::limit_type_value;
     data_.flags |= NVTX_COUNTER_FLAG_LIMIT_MIN;
-    data_.min.i64 = min_val;
+    traits::store(data_.min, min_val);
     return *this;
   }
 
   /**
-   * @brief Set only the maximum limit for int64_t values.
+   * @brief Set only the maximum limit, typed.
+   * @tparam T One of `int64_t`, `uint64_t`, or `double`.
    * @param max_val Maximum limit.
    * @return Reference to this object for chaining.
    */
-  NVTX3_CONSTEXPR_IF_CPP20 counter_semantic& limit_max(int64_t max_val) noexcept
+  template <typename T>
+  NVTX3_CONSTEXPR_IF_CPP20 counter_semantic& limit_max(T max_val) noexcept
   {
-    data_.limitType = NVTX_COUNTER_LIMIT_I64;
+    using traits = detail::counter_limit_traits<T>;
+    data_.limitType = traits::limit_type_value;
     data_.flags |= NVTX_COUNTER_FLAG_LIMIT_MAX;
-    data_.max.i64 = max_val;
-    return *this;
-  }
-
-  /**
-   * @brief Set only the minimum limit for uint64_t values.
-   * @param min_val Minimum limit.
-   * @return Reference to this object for chaining.
-   */
-  NVTX3_CONSTEXPR_IF_CPP20 counter_semantic& limit_min(uint64_t min_val) noexcept
-  {
-    data_.limitType = NVTX_COUNTER_LIMIT_U64;
-    data_.flags |= NVTX_COUNTER_FLAG_LIMIT_MIN;
-    data_.min.u64 = min_val;
-    return *this;
-  }
-
-  /**
-   * @brief Set only the maximum limit for uint64_t values.
-   * @param max_val Maximum limit.
-   * @return Reference to this object for chaining.
-   */
-  NVTX3_CONSTEXPR_IF_CPP20 counter_semantic& limit_max(uint64_t max_val) noexcept
-  {
-    data_.limitType = NVTX_COUNTER_LIMIT_U64;
-    data_.flags |= NVTX_COUNTER_FLAG_LIMIT_MAX;
-    data_.max.u64 = max_val;
-    return *this;
-  }
-
-  /**
-   * @brief Set only the minimum limit for double values.
-   * @param min_val Minimum limit.
-   * @return Reference to this object for chaining.
-   */
-  NVTX3_CONSTEXPR_IF_CPP20 counter_semantic& limit_min(double min_val) noexcept
-  {
-    data_.limitType = NVTX_COUNTER_LIMIT_F64;
-    data_.flags |= NVTX_COUNTER_FLAG_LIMIT_MIN;
-    data_.min.f64 = min_val;
-    return *this;
-  }
-
-  /**
-   * @brief Set only the maximum limit for double values.
-   * @param max_val Maximum limit.
-   * @return Reference to this object for chaining.
-   */
-  NVTX3_CONSTEXPR_IF_CPP20 counter_semantic& limit_max(double max_val) noexcept
-  {
-    data_.limitType = NVTX_COUNTER_LIMIT_F64;
-    data_.flags |= NVTX_COUNTER_FLAG_LIMIT_MAX;
-    data_.max.f64 = max_val;
+    traits::store(data_.max, max_val);
     return *this;
   }
 };
@@ -3972,7 +3948,7 @@ using counter = counter_in<T, domain::global>;
  *     "SensorData",
  *     NVTX_PAYLOAD_ENTRIES(
  *         (temperature, TYPE_FLOAT, "Temperature", nullptr, 0, UNUSED,
- *             NVTX3_SEMANTIC(nvtx3::counter_semantic{}.unit("C").limits(-40.0f, 85.0f))),
+ *             NVTX3_SEMANTIC(nvtx3::counter_semantic{}.unit("C").limits(-40.0, 85.0))),
  *         (pressure, TYPE_FLOAT, "Pressure", nullptr, 0, UNUSED,
  *             NVTX3_SEMANTIC(nvtx3::counter_semantic{}.unit("hPa")))))
  * \endcode
