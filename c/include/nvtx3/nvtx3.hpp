@@ -871,6 +871,11 @@ struct is_safe_wrapper_of<
 /**
  * @brief Base class for semantic types, providing header access.
  *
+ * Derived builders are lvalue objects whose lifetime must encompass every
+ * NVTX API call that consumes the pointer returned by get(). The pointer
+ * aliases internal storage of the builder and is invalidated when the
+ * builder is destroyed.
+ *
  * @tparam DataType The underlying C struct type (e.g., nvtxSemanticsCounter_t).
  */
 template <typename DataType>
@@ -878,12 +883,23 @@ class semantic_base {
 public:
   /**
    * @brief Get pointer to the underlying C semantics header.
+   *
+   * The returned pointer aliases internal storage of this object. It is
+   * valid only for the lifetime of *this and must not be used after this
+   * object is destroyed. Because of that, taking the pointer on a
+   * temporary builder (rvalue) is disallowed: the temporary would be
+   * destroyed at the end of the surrounding full-expression and leave
+   * the pointer dangling.
+   *
    * @return Pointer to the semantics header.
    */
-  nvtxSemanticsHeader_t const* get() const noexcept
+  nvtxSemanticsHeader_t const* get() const & noexcept
   {
     return reinterpret_cast<nvtxSemanticsHeader_t const*>(&data_);
   }
+
+  /** @brief Deleted to prevent taking a pointer into an rvalue builder. */
+  nvtxSemanticsHeader_t const* get() const && noexcept = delete;
 
 protected:
   constexpr explicit semantic_base(DataType const& data) noexcept : data_{data} {}
