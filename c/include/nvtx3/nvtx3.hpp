@@ -761,6 +761,7 @@
 #include "nvToolsExtPayload.h"
 #include "nvToolsExtPayloadHelper.h"
 #include "nvToolsExtSemanticsCounters.h"
+#include "nvToolsExtSemanticsScope.h"
 
 #include <memory>
 #include <stdexcept>
@@ -3596,6 +3597,67 @@ private:
                              + " setter; the " + group_name + " can be set only once");
     }
     data_.flags |= value;
+  }
+};
+
+/**
+ * @brief Builder for the scope semantic applied to a payload entry.
+ *
+ * Specifies the NVTX scope that applies to a particular value within a
+ * payload (for example, the scope of a counter or a timestamp). The
+ * scope must be known at schema registration time.
+ */
+class scope_semantic : public detail::semantic_base<nvtxSemanticsScope_t> {
+public:
+  /**
+   * @brief Construct a scope semantic, optionally chained to another semantic.
+   *
+   * @param next Pointer to the next semantic in the chain, or nullptr.
+   */
+  constexpr explicit scope_semantic(nvtxSemanticsHeader_t const* next = nullptr) noexcept
+    : detail::semantic_base<nvtxSemanticsScope_t>{
+        {{sizeof(nvtxSemanticsScope_t), NVTX_SEMANTIC_ID_SCOPE_V1,
+          NVTX_SCOPE_SEMANTIC_VERSION, next},
+         NVTX_SCOPE_NONE}}
+  {
+  }
+
+  /**
+   * @brief Construct a scope semantic that chains to another semantic builder.
+   *
+   * Convenience overload of the header-pointer constructor that accepts a
+   * sibling semantic builder object directly. The referenced builder must
+   * outlive this object.
+   *
+   * @tparam Other Type of the other semantic (must expose get()).
+   * @param next The semantic builder to chain after this one.
+   */
+  template <typename Other>
+  constexpr explicit scope_semantic(Other const& next) noexcept
+    : scope_semantic{next.get()}
+  {
+  }
+
+  /**
+   * @brief Set the scope by raw NVTX scope identifier.
+   * @param scope_id One of the NVTX_SCOPE_* values or a tool-defined scope.
+   * @return Reference to this object for chaining.
+   */
+  NVTX3_CONSTEXPR_IF_CPP14 scope_semantic& scope(uint64_t scope_id) noexcept
+  {
+    data_.scopeId = scope_id;
+    return *this;
+  }
+
+  /**
+   * @brief Set the scope by \c nvtx3::scope identifier.
+   * @param s Scope identifier (wraps an NVTX_SCOPE_* value).
+   * @return Reference to this object for chaining.
+   */
+  NVTX3_CONSTEXPR_IF_CPP14 scope_semantic& scope(nvtx3::scope s) noexcept
+  {
+    data_.scopeId = s.get();
+    return *this;
   }
 };
 
