@@ -3664,6 +3664,62 @@ public:
 };
 
 /**
+ * @brief A domain-scoped handle to a user-registered NVTX scope.
+ *
+ * Calls \c nvtxScopeRegister at construction to create a scope identified
+ * by a path, relative to an optional parent scope. The resulting scope
+ * ID can be used anywhere an NVTX scope is expected and, in particular,
+ * can be handed to \c scope_semantic::scope() through the implicit
+ * conversion to \c nvtx3::scope.
+ *
+ * @tparam D NVTX domain (defaults to \c domain::global).
+ */
+template <typename D = domain::global>
+class scope_in {
+public:
+  /**
+   * @brief Register a scope in the given domain.
+   *
+   * @param path Path delimited by '/' characters, relative to \p parent.
+   *             See \c nvtxScopeAttr_t for the full syntax. `nullptr` and
+   *             `""` are treated equivalently.
+   * @param parent Parent scope. Defaults to \c scope::none() (which the
+   *               tool treats as root).
+   * @param static_id Optional static scope ID, which must be in
+   *                  [\c NVTX_SCOPE_ID_STATIC_START, \c NVTX_SCOPE_ID_DYNAMIC_START).
+   *                  Defaults to \c NVTX_SCOPE_NONE, which lets the tool
+   *                  assign a dynamic ID.
+   */
+  explicit scope_in(char const* path,
+                    nvtx3::scope parent = nvtx3::scope::none(),
+                    uint64_t static_id = NVTX_SCOPE_NONE) noexcept
+  {
+#ifndef NVTX_DISABLE
+    nvtxScopeAttr_t attr{};
+    attr.structSize = sizeof(nvtxScopeAttr_t);
+    attr.path = path;
+    attr.parentScope = parent.get();
+    attr.scopeId = static_id;
+    id_ = nvtxScopeRegister(domain::get<D>(), &attr);
+#else
+    (void)path;
+    (void)parent;
+    (void)static_id;
+    id_ = NVTX_SCOPE_NONE;
+#endif
+  }
+
+  /** @brief The registered scope ID (\c NVTX_SCOPE_NONE on failure). */
+  uint64_t id() const noexcept { return id_; }
+
+  /** @brief Convert to an \c nvtx3::scope for use with scope_semantic. */
+  operator nvtx3::scope() const noexcept { return nvtx3::scope{id_}; }
+
+private:
+  uint64_t id_;
+};
+
+/**
  * @brief Builder for the time semantic applied to a payload entry.
  *
  * Specifies the time domain of a timestamp payload entry. The domain

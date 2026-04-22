@@ -74,6 +74,11 @@ as_correlation(nvtx3::correlation_semantic const& sem)
     return *reinterpret_cast<nvtxSemanticsCorrelation_v1 const*>(sem.get());
 }
 
+struct scopes_domain
+{
+    static constexpr char const* name{"ScopesDomain"};
+};
+
 extern "C" NVTX_DYNAMIC_EXPORT
 int RunTest(int argc, const char** argv);
 NVTX_DYNAMIC_EXPORT
@@ -212,6 +217,39 @@ int RunTest(int argc, const char** argv)
         CHECK_U64("corr_chain", c.role, 7);
         CHECK_U64("corr_chain", c.header.next == &t.header, 1);
         CHECK_U64("corr_chain", t.header.next == &s.header, 1);
+    }
+    std::cout << "-------------------------------------\n";
+
+    {
+        std::cout << "scope_in: register a dynamic scope\n";
+        nvtx3::scope_in<scopes_domain> gpu0{"GPU[CUDAID:0]"};
+        std::cout << "  scope id: " << gpu0.id() << "\n";
+
+        nvtx3::scope s = gpu0;
+        CHECK_U64("scope_in_conv", s.get(), gpu0.id());
+
+        nvtx3::scope_semantic sem;
+        sem.scope(gpu0);
+        auto const& c = *reinterpret_cast<nvtxSemanticsScope_v1 const*>(sem.get());
+        CHECK_U64("scope_in_sem", c.scopeId, gpu0.id());
+    }
+    std::cout << "-------------------------------------\n";
+
+    {
+        std::cout << "scope_in: register a static scope with an explicit ID\n";
+        uint64_t const static_id = NVTX_SCOPE_ID_STATIC_START + 7;
+        nvtx3::scope_in<scopes_domain> leaf{
+            "stream[compute]", nvtx3::scope::none(), static_id};
+        std::cout << "  requested=" << static_id << " returned=" << leaf.id() << "\n";
+    }
+    std::cout << "-------------------------------------\n";
+
+    {
+        std::cout << "scope_in: child scope under a parent scope\n";
+        nvtx3::scope_in<scopes_domain> parent{"GPU[CUDAID:1]"};
+        nvtx3::scope_in<scopes_domain> child{"stream[copy]", parent};
+        std::cout << "  parent id: " << parent.id() << "\n";
+        std::cout << "  child  id: " << child.id() << "\n";
     }
     std::cout << "-------------------------------------\n";
 
