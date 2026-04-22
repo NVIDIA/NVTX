@@ -436,7 +436,7 @@ While domains are meant to keep the annotations from different libraries separat
 
 ## Avoid slow processing to prepare arguments for NVTX calls
 
-When tools are not present, the first NVTX call quickly configures the API to make all subsequent NVTX calls into no-ops.  However, any processing done before making an NVTX call to prepare the arguments for the call is not disabled.  Using a function like `sprintf` to generate a message string dynamically for each call will add overhead even in the case when no tool is present!  Instead of generating message strings, is more efficient to pass a hard-coded string for the message, and variable as a _payload_.
+When tools are not present, the first NVTX call quickly configures the API to make all subsequent NVTX calls into no-ops.  However, any processing done before making an NVTX call to prepare the arguments for the call is not disabled.  Using a function like `sprintf` to generate a message string dynamically for each call will add overhead even in the case when no tool is present!  Instead of generating message strings, it is more efficient to pass a hard-coded string for the message, and the variable data as a single scalar value payload or arbitrarily rich structured data (see the [Extended Payloads: User Guide](tools/docs/NVTX_EXTENDED_PAYLOADS.md) for details).
 
 ## Register strings that will be used many times
 
