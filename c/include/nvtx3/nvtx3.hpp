@@ -3771,6 +3771,195 @@ public:
 };
 
 /**
+ * @brief Read a timestamp from the NVTX handler (wraps \c nvtxTimestampGet).
+ *
+ * If no tool is attached, the returned value is tool-defined (often a
+ * CPU TSC read). The timestamp is only meaningful alongside a registered
+ * timer source or time domain that tells the tool how to interpret it.
+ *
+ * @return The current NVTX timestamp.
+ */
+inline int64_t timestamp() noexcept
+{
+#ifndef NVTX_DISABLE
+  return nvtxTimestampGet();
+#else
+  return 0;
+#endif
+}
+
+/**
+ * @brief A domain-scoped handle to a user-registered NVTX time domain.
+ *
+ * Wraps \c nvtxTimeDomainRegister and the follow-up APIs that describe
+ * timer sources and report time synchronization between domains. Once
+ * constructed, the cached time domain ID can be passed to
+ * \c time_semantic::time_domain() or used directly with the C API.
+ *
+ * @tparam D NVTX domain (defaults to \c domain::global).
+ */
+template <typename D = domain::global>
+class time_domain_in {
+public:
+  /**
+   * @brief Register a time domain in the given NVTX domain.
+   *
+   * @param timestamp_type_id A predefined \c NVTX_TIMESTAMP_TYPE_* value or 0
+   *                          for tool-defined.
+   * @param s Scope in which the timestamps apply.
+   * @param timer_flags \c NVTX_TIMER_FLAG_* bits describing timer properties.
+   * @param timer_resolution Ticks per second (0 means unknown).
+   * @param timer_start One of \c NVTX_TIMER_START_*.
+   * @param static_id Optional static time domain ID, which must be in
+   *                  [\c NVTX_TIME_DOMAIN_ID_STATIC_START,
+   *                  \c NVTX_TIME_DOMAIN_ID_DYNAMIC_START). Defaults to 0,
+   *                  which lets the tool assign the ID.
+   */
+  explicit time_domain_in(uint64_t timestamp_type_id,
+                          nvtx3::scope s = nvtx3::scope::none(),
+                          uint64_t timer_flags = NVTX_TIMER_FLAG_NONE,
+                          int64_t timer_resolution = 0,
+                          uint64_t timer_start = NVTX_TIMER_START_UNKNOWN,
+                          uint64_t static_id = 0) noexcept
+  {
+#ifndef NVTX_DISABLE
+    nvtxTimeDomainAttr_t attr{};
+    attr.scopeId = s.get();
+    attr.timestampTypeId = timestamp_type_id;
+    attr.timeDomainId = static_id;
+    attr.timerFlags = timer_flags;
+    attr.timerResolution = timer_resolution;
+    attr.timerStart = timer_start;
+    id_ = nvtxTimeDomainRegister(domain::get<D>(), &attr);
+#else
+    (void)timestamp_type_id;
+    (void)s;
+    (void)timer_flags;
+    (void)timer_resolution;
+    (void)timer_start;
+    (void)static_id;
+    id_ = 0;
+#endif
+  }
+
+  /** @brief The registered time domain ID. */
+  uint64_t id() const noexcept { return id_; }
+
+  /**
+   * @brief Describe the timer source for this time domain.
+   *
+   * Wraps \c nvtxTimerSource.
+   *
+   * @param flags Provider flags (e.g. whether the function is safe to call
+   *              after process teardown).
+   * @param provider Pointer to a function that returns a timestamp.
+   */
+  void set_timer_source(uint64_t flags, int64_t (*provider)()) noexcept
+  {
+#ifndef NVTX_DISABLE
+    nvtxTimerSource(domain::get<D>(), id_, flags, provider);
+#else
+    (void)flags;
+    (void)provider;
+#endif
+  }
+
+  /**
+   * @brief Describe the timer source with a user data pointer.
+   *
+   * Wraps \c nvtxTimerSourceWithData.
+   *
+   * @param flags Provider flags.
+   * @param provider Pointer to a function that returns a timestamp given
+   *                 \p data.
+   * @param data Opaque pointer passed through to \p provider.
+   */
+  void set_timer_source(uint64_t flags,
+                        int64_t (*provider)(void*),
+                        void* data) noexcept
+  {
+#ifndef NVTX_DISABLE
+    nvtxTimerSourceWithData(domain::get<D>(), id_, flags, provider, data);
+#else
+    (void)flags;
+    (void)provider;
+    (void)data;
+#endif
+  }
+
+  /**
+   * @brief Report one synchronization point to another time domain.
+   *
+   * Wraps \c nvtxTimeSyncPoint.
+   *
+   * @param other_id Target time domain ID (a registered ID or a predefined
+   *                 \c NVTX_TIMESTAMP_TYPE_* when unambiguous).
+   * @param ts_self Timestamp in this time domain.
+   * @param ts_other Timestamp in the other time domain.
+   */
+  void sync_point(uint64_t other_id, int64_t ts_self, int64_t ts_other) noexcept
+  {
+#ifndef NVTX_DISABLE
+    nvtxTimeSyncPoint(domain::get<D>(), id_, other_id, ts_self, ts_other);
+#else
+    (void)other_id;
+    (void)ts_self;
+    (void)ts_other;
+#endif
+  }
+
+  /**
+   * @brief Report a table of synchronization points to another time domain.
+   *
+   * Wraps \c nvtxTimeSyncPointTable.
+   *
+   * @param other_id Target time domain ID.
+   * @param points Array of \c nvtxSyncPoint_t pairs.
+   * @param count Number of entries in \p points.
+   */
+  void sync_point_table(uint64_t other_id,
+                        nvtxSyncPoint_t const* points,
+                        size_t count) noexcept
+  {
+#ifndef NVTX_DISABLE
+    nvtxTimeSyncPointTable(domain::get<D>(), id_, other_id, points, count);
+#else
+    (void)other_id;
+    (void)points;
+    (void)count;
+#endif
+  }
+
+  /**
+   * @brief Report a conversion factor from this domain to another.
+   *
+   * Wraps \c nvtxTimestampConversionFactor.
+   *
+   * @param other_id Target time domain ID.
+   * @param slope Conversion factor (other-ticks / this-ticks).
+   * @param ts_self Reference timestamp in this time domain.
+   * @param ts_other Reference timestamp in the other time domain.
+   */
+  void conversion_factor(uint64_t other_id,
+                         double slope,
+                         int64_t ts_self,
+                         int64_t ts_other) noexcept
+  {
+#ifndef NVTX_DISABLE
+    nvtxTimestampConversionFactor(domain::get<D>(), id_, other_id, slope, ts_self, ts_other);
+#else
+    (void)other_id;
+    (void)slope;
+    (void)ts_self;
+    (void)ts_other;
+#endif
+  }
+
+private:
+  uint64_t id_;
+};
+
+/**
  * @brief Builder for the correlation semantic applied to a payload entry.
  *
  * Marks an entry as the identifier of a correlation domain and specifies

@@ -79,6 +79,11 @@ struct scopes_domain
     static constexpr char const* name{"ScopesDomain"};
 };
 
+struct time_domains_domain
+{
+    static constexpr char const* name{"TimeDomainsDomain"};
+};
+
 extern "C" NVTX_DYNAMIC_EXPORT
 int RunTest(int argc, const char** argv);
 NVTX_DYNAMIC_EXPORT
@@ -250,6 +255,68 @@ int RunTest(int argc, const char** argv)
         nvtx3::scope_in<scopes_domain> child{"stream[copy]", parent};
         std::cout << "  parent id: " << parent.id() << "\n";
         std::cout << "  child  id: " << child.id() << "\n";
+    }
+    std::cout << "-------------------------------------\n";
+
+    {
+        std::cout << "timestamp(): read NVTX timestamp\n";
+        int64_t t1 = nvtx3::timestamp();
+        int64_t t2 = nvtx3::timestamp();
+        std::cout << "  t1 = " << t1 << "\n";
+        std::cout << "  t2 = " << t2 << "\n";
+        CHECK_U64("timestamp_nondecreasing", t2 >= t1, 1);
+    }
+    std::cout << "-------------------------------------\n";
+
+    {
+        std::cout << "time_domain_in: register and describe a timer source\n";
+        nvtx3::time_domain_in<time_domains_domain> td{
+            NVTX_TIMESTAMP_TYPE_CPU_CLOCK_GETTIME_MONOTONIC,
+            nvtx3::scope::current_sw_process(),
+            NVTX_TIMER_FLAG_CLOCK_MONOTONIC,
+            int64_t{1000000000},
+            NVTX_TIMER_START_SYSTEM_BOOT};
+        std::cout << "  time domain id: " << td.id() << "\n";
+
+        // nvtxTimestampGet uses NVTX_API (__stdcall on 32-bit Windows), but
+        // nvtxTimerSource expects a default-ABI callback.
+        auto provider = +[]() -> int64_t { return nvtx3::timestamp(); };
+        td.set_timer_source(NVTX_TIMER_FLAG_NONE, provider);
+
+        static int64_t stub_counter = 0;
+        auto with_data = +[](void* data) -> int64_t {
+            return ++(*static_cast<int64_t*>(data));
+        };
+        td.set_timer_source(NVTX_TIMER_FLAG_NONE, with_data, &stub_counter);
+
+        nvtx3::time_semantic sem;
+        sem.time_domain(td.id());
+        auto const& c = *reinterpret_cast<nvtxSemanticsTime_v1 const*>(sem.get());
+        CHECK_U64("time_domain_in_sem", c.timeDomainId, td.id());
+    }
+    std::cout << "-------------------------------------\n";
+
+    {
+        std::cout << "time_domain_in: sync_point / sync_point_table / conversion_factor\n";
+        nvtx3::time_domain_in<time_domains_domain> monotonic{
+            NVTX_TIMESTAMP_TYPE_CPU_CLOCK_GETTIME_MONOTONIC};
+        nvtx3::time_domain_in<time_domains_domain> tsc{NVTX_TIMESTAMP_TYPE_CPU_TSC};
+
+        monotonic.sync_point(tsc.id(),
+                             int64_t{1000000000},
+                             int64_t{3000000000});
+
+        nvtxSyncPoint_t points[3] = {
+            {int64_t{1}, int64_t{3}},
+            {int64_t{2}, int64_t{6}},
+            {int64_t{3}, int64_t{9}},
+        };
+        monotonic.sync_point_table(tsc.id(), points, 3);
+
+        monotonic.conversion_factor(tsc.id(), 3.0,
+                                    int64_t{1000000000},
+                                    int64_t{3000000000});
+        std::cout << "  called sync_point / sync_point_table / conversion_factor OK\n";
     }
     std::cout << "-------------------------------------\n";
 
