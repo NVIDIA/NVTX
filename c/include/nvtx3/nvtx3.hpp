@@ -875,10 +875,10 @@ struct is_safe_wrapper_of<
 /**
  * @brief Base class for semantic types, providing header access.
  *
- * Derived builders are lvalue objects whose lifetime must encompass every
- * NVTX API call that consumes the pointer returned by get(). The pointer
- * aliases internal storage of the builder and is invalidated when the
- * builder is destroyed.
+ * The pointer returned by get() aliases internal storage of the builder and is
+ * invalidated when the builder is destroyed. Semantic chains constructed from
+ * another C++ semantic builder own a snapshot of the referenced chain, so
+ * inline temporary chains are safe to use.
  *
  * @tparam DataType The underlying C struct type (e.g., nvtxSemanticsCounter_t).
  */
@@ -888,12 +888,9 @@ public:
   /**
    * @brief Get pointer to the underlying C semantics header.
    *
-   * The returned pointer aliases internal storage of this object. It is
-   * valid only for the lifetime of *this and must not be used after this
-   * object is destroyed. Because of that, taking the pointer on a
-   * temporary builder (rvalue) is disallowed: the temporary would be
-   * destroyed at the end of the surrounding full-expression and leave
-   * the pointer dangling.
+   * The returned pointer aliases internal storage of this object. It is valid
+   * only for the lifetime of *this and must not be used after this object is
+   * destroyed.
    *
    * @return Pointer to the semantics header.
    */
@@ -902,13 +899,31 @@ public:
     return reinterpret_cast<nvtxSemanticsHeader_t const*>(&data_);
   }
 
-  /** @brief Deleted to prevent taking a pointer into an rvalue builder. */
-  nvtxSemanticsHeader_t const* get() const && noexcept = delete;
-
 protected:
-  constexpr explicit semantic_base(DataType const& data) noexcept : data_{data} {}
+  explicit semantic_base(DataType const& data) noexcept : data_{data} {}
+
+  void set_next(nvtxSemanticsHeader_t const* next) noexcept
+  {
+    // Raw C-header chaining is non-owning; callers must keep next alive.
+    next_owner_.reset();
+    data_.header.next = next;
+  }
+
+  template <typename OtherDataType>
+  void own_next(semantic_base<OtherDataType> const& next)
+  {
+    // C++ wrapper chaining snapshots next and points the C header at the owned copy.
+    auto owned_next = std::make_shared<semantic_base<OtherDataType>>(next);
+    data_.header.next = owned_next->get();
+    next_owner_ = owned_next;
+  }
 
   DataType data_;
+
+private:
+  // Type-erased owner for the semantic object addressed by data_.header.next.
+  // Stored here to keep the pointer alive
+  std::shared_ptr<void const> next_owner_;
 };
 
 /**
@@ -3360,14 +3375,12 @@ enum class no_value_reason : uint8_t {
 class counter_semantic : public detail::semantic_base<nvtxSemanticsCounter_t> {
 public:
   /**
-   * @brief Construct a counter semantic, optionally chained to another semantic.
-   *
-   * @param next Pointer to the next semantic in the chain (nullptr if none).
+   * @brief Construct an unchained counter semantic.
    */
-  constexpr explicit counter_semantic(nvtxSemanticsHeader_t const* next = nullptr) noexcept
+  counter_semantic() noexcept
     : detail::semantic_base<nvtxSemanticsCounter_t>{
         {{sizeof(nvtxSemanticsCounter_t), NVTX_SEMANTIC_ID_COUNTERS_V1,
-          NVTX_COUNTER_SEMANTIC_VERSION, next},
+          NVTX_COUNTER_SEMANTIC_VERSION, nullptr},
          NVTX_COUNTER_FLAGS_NONE,
          nullptr,
          1,
@@ -3378,20 +3391,33 @@ public:
   {
   }
 
+  // Raw C-header chaining is non-owning. Prefer the semantic-wrapper overload.
+  /**
+   * @brief Construct a counter semantic chained to another semantic header.
+   *
+   * @param next Non-owning pointer to the next semantic in the chain (nullptr if none).
+   */
+  explicit counter_semantic(nvtxSemanticsHeader_t const* next)
+    : counter_semantic{}
+  {
+    set_next(next);
+  }
+
   /**
    * @brief Construct a counter semantic that chains to another semantic builder.
    *
    * Convenience overload of the header-pointer constructor that accepts a
-   * sibling semantic builder object directly. The referenced builder must
-   * outlive this object.
+   * sibling semantic builder object directly. The referenced builder is copied
+   * into this object.
    *
-   * @tparam Other Type of the other semantic (must expose get()).
+   * @tparam OtherDataType Underlying C struct type of the other semantic.
    * @param next The semantic builder to chain after this one.
    */
-  template <typename Other>
-  constexpr explicit counter_semantic(Other const& next) noexcept
-    : counter_semantic{next.get()}
+  template <typename OtherDataType>
+  explicit counter_semantic(detail::semantic_base<OtherDataType> const& next)
+    : counter_semantic{}
   {
+    own_next(next);
   }
 
   /**
@@ -3399,7 +3425,7 @@ public:
    * @param unit_name Unit string (must remain valid for the lifetime of this object).
    * @return Reference to this object for chaining.
    */
-  NVTX3_CONSTEXPR_IF_CPP14 counter_semantic& unit(const char* unit_name) noexcept
+  counter_semantic& unit(const char* unit_name) noexcept
   {
     data_.unit = unit_name;
     return *this;
@@ -3412,7 +3438,7 @@ public:
    * @param denominator Scale denominator (should be 1 if not used).
    * @return Reference to this object for chaining.
    */
-  NVTX3_CONSTEXPR_IF_CPP14 counter_semantic& unit_scale(uint64_t numerator, uint64_t denominator = 1) noexcept
+  counter_semantic& unit_scale(uint64_t numerator, uint64_t denominator = 1) noexcept
   {
     data_.unitScaleNumerator = numerator;
     data_.unitScaleDenominator = denominator;
@@ -3428,7 +3454,7 @@ public:
    *
    * @return Reference to this object for chaining.
    */
-  NVTX3_CONSTEXPR_IF_CPP14 counter_semantic& normalize() noexcept
+  counter_semantic& normalize() noexcept
   {
     data_.flags |= NVTX_COUNTER_FLAG_NORMALIZE;
     return *this;
@@ -3549,7 +3575,7 @@ public:
    *       paired limit_min/limit_max when you want both bounds.
    */
   template <typename T>
-  NVTX3_CONSTEXPR_IF_CPP20 counter_semantic& limits(T min_val, T max_val) noexcept
+  counter_semantic& limits(T min_val, T max_val) noexcept
   {
     using traits = detail::counter_limit_traits<T>;
     data_.limitType = traits::limit_type_value;
@@ -3566,7 +3592,7 @@ public:
    * @return Reference to this object for chaining.
    */
   template <typename T>
-  NVTX3_CONSTEXPR_IF_CPP20 counter_semantic& limit_min(T min_val) noexcept
+  counter_semantic& limit_min(T min_val) noexcept
   {
     using traits = detail::counter_limit_traits<T>;
     data_.limitType = traits::limit_type_value;
@@ -3582,7 +3608,7 @@ public:
    * @return Reference to this object for chaining.
    */
   template <typename T>
-  NVTX3_CONSTEXPR_IF_CPP20 counter_semantic& limit_max(T max_val) noexcept
+  counter_semantic& limit_max(T max_val) noexcept
   {
     using traits = detail::counter_limit_traits<T>;
     data_.limitType = traits::limit_type_value;
@@ -3612,32 +3638,43 @@ private:
 class scope_semantic : public detail::semantic_base<nvtxSemanticsScope_t> {
 public:
   /**
-   * @brief Construct a scope semantic, optionally chained to another semantic.
-   *
-   * @param next Pointer to the next semantic in the chain, or nullptr.
+   * @brief Construct an unchained scope semantic.
    */
-  constexpr explicit scope_semantic(nvtxSemanticsHeader_t const* next = nullptr) noexcept
+  scope_semantic() noexcept
     : detail::semantic_base<nvtxSemanticsScope_t>{
         {{sizeof(nvtxSemanticsScope_t), NVTX_SEMANTIC_ID_SCOPE_V1,
-          NVTX_SCOPE_SEMANTIC_VERSION, next},
+          NVTX_SCOPE_SEMANTIC_VERSION, nullptr},
          NVTX_SCOPE_NONE}}
   {
+  }
+
+  // Raw C-header chaining is non-owning. Prefer the semantic-wrapper overload.
+  /**
+   * @brief Construct a scope semantic chained to another semantic header.
+   *
+   * @param next Non-owning pointer to the next semantic in the chain, or nullptr.
+   */
+  explicit scope_semantic(nvtxSemanticsHeader_t const* next)
+    : scope_semantic{}
+  {
+    set_next(next);
   }
 
   /**
    * @brief Construct a scope semantic that chains to another semantic builder.
    *
    * Convenience overload of the header-pointer constructor that accepts a
-   * sibling semantic builder object directly. The referenced builder must
-   * outlive this object.
+   * sibling semantic builder object directly. The referenced builder is copied
+   * into this object.
    *
-   * @tparam Other Type of the other semantic (must expose get()).
+   * @tparam OtherDataType Underlying C struct type of the other semantic.
    * @param next The semantic builder to chain after this one.
    */
-  template <typename Other>
-  constexpr explicit scope_semantic(Other const& next) noexcept
-    : scope_semantic{next.get()}
+  template <typename OtherDataType>
+  explicit scope_semantic(detail::semantic_base<OtherDataType> const& next)
+    : scope_semantic{}
   {
+    own_next(next);
   }
 
   /**
@@ -3645,7 +3682,7 @@ public:
    * @param scope_id One of the NVTX_SCOPE_* values or a tool-defined scope.
    * @return Reference to this object for chaining.
    */
-  NVTX3_CONSTEXPR_IF_CPP14 scope_semantic& scope(uint64_t scope_id) noexcept
+  scope_semantic& scope(uint64_t scope_id) noexcept
   {
     data_.scopeId = scope_id;
     return *this;
@@ -3656,7 +3693,7 @@ public:
    * @param s Scope identifier (wraps an NVTX_SCOPE_* value).
    * @return Reference to this object for chaining.
    */
-  NVTX3_CONSTEXPR_IF_CPP14 scope_semantic& scope(nvtx3::scope s) noexcept
+  scope_semantic& scope(nvtx3::scope s) noexcept
   {
     data_.scopeId = s.get();
     return *this;
@@ -3729,32 +3766,43 @@ private:
 class time_semantic : public detail::semantic_base<nvtxSemanticsTime_t> {
 public:
   /**
-   * @brief Construct a time semantic, optionally chained to another semantic.
-   *
-   * @param next Pointer to the next semantic in the chain, or nullptr.
+   * @brief Construct an unchained time semantic.
    */
-  constexpr explicit time_semantic(nvtxSemanticsHeader_t const* next = nullptr) noexcept
+  time_semantic() noexcept
     : detail::semantic_base<nvtxSemanticsTime_t>{
         {{sizeof(nvtxSemanticsTime_t), NVTX_SEMANTIC_ID_TIME_V1,
-          NVTX_TIME_SEMANTIC_VERSION, next},
+          NVTX_TIME_SEMANTIC_VERSION, nullptr},
          0}}
   {
+  }
+
+  // Raw C-header chaining is non-owning. Prefer the semantic-wrapper overload.
+  /**
+   * @brief Construct a time semantic chained to another semantic header.
+   *
+   * @param next Non-owning pointer to the next semantic in the chain, or nullptr.
+   */
+  explicit time_semantic(nvtxSemanticsHeader_t const* next)
+    : time_semantic{}
+  {
+    set_next(next);
   }
 
   /**
    * @brief Construct a time semantic that chains to another semantic builder.
    *
    * Convenience overload of the header-pointer constructor that accepts a
-   * sibling semantic builder object directly. The referenced builder must
-   * outlive this object.
+   * sibling semantic builder object directly. The referenced builder is copied
+   * into this object.
    *
-   * @tparam Other Type of the other semantic (must expose get()).
+   * @tparam OtherDataType Underlying C struct type of the other semantic.
    * @param next The semantic builder to chain after this one.
    */
-  template <typename Other>
-  constexpr explicit time_semantic(Other const& next) noexcept
-    : time_semantic{next.get()}
+  template <typename OtherDataType>
+  explicit time_semantic(detail::semantic_base<OtherDataType> const& next)
+    : time_semantic{}
   {
+    own_next(next);
   }
 
   /**
@@ -3763,7 +3811,7 @@ public:
    *                  \c NVTX_TIMESTAMP_TYPE_* value.
    * @return Reference to this object for chaining.
    */
-  NVTX3_CONSTEXPR_IF_CPP14 time_semantic& time_domain(uint64_t domain_id) noexcept
+  time_semantic& time_domain(uint64_t domain_id) noexcept
   {
     data_.timeDomainId = domain_id;
     return *this;
@@ -3970,34 +4018,45 @@ private:
 class correlation_semantic : public detail::semantic_base<nvtxSemanticsCorrelation_t> {
 public:
   /**
-   * @brief Construct a correlation semantic, optionally chained to another semantic.
-   *
-   * @param next Pointer to the next semantic in the chain, or nullptr.
+   * @brief Construct an unchained correlation semantic.
    */
-  constexpr explicit correlation_semantic(nvtxSemanticsHeader_t const* next = nullptr) noexcept
+  correlation_semantic() noexcept
     : detail::semantic_base<nvtxSemanticsCorrelation_t>{
         {{sizeof(nvtxSemanticsCorrelation_t), NVTX_SEMANTIC_ID_CORRELATION_V1,
-          NVTX_CORRELATION_SEMANTIC_VERSION, next},
+          NVTX_CORRELATION_SEMANTIC_VERSION, nullptr},
          {0},
          nullptr,
          NVTX_CORRELATION_ROLE_NONE}}
   {
   }
 
+  // Raw C-header chaining is non-owning. Prefer the semantic-wrapper overload.
+  /**
+   * @brief Construct a correlation semantic chained to another semantic header.
+   *
+   * @param next Non-owning pointer to the next semantic in the chain, or nullptr.
+   */
+  explicit correlation_semantic(nvtxSemanticsHeader_t const* next)
+    : correlation_semantic{}
+  {
+    set_next(next);
+  }
+
   /**
    * @brief Construct a correlation semantic that chains to another semantic builder.
    *
    * Convenience overload of the header-pointer constructor that accepts a
-   * sibling semantic builder object directly. The referenced builder must
-   * outlive this object.
+   * sibling semantic builder object directly. The referenced builder is copied
+   * into this object.
    *
-   * @tparam Other Type of the other semantic (must expose get()).
+   * @tparam OtherDataType Underlying C struct type of the other semantic.
    * @param next The semantic builder to chain after this one.
    */
-  template <typename Other>
-  constexpr explicit correlation_semantic(Other const& next) noexcept
-    : correlation_semantic{next.get()}
+  template <typename OtherDataType>
+  explicit correlation_semantic(detail::semantic_base<OtherDataType> const& next)
+    : correlation_semantic{}
   {
+    own_next(next);
   }
 
   /**
@@ -4005,7 +4064,7 @@ public:
    * @param uuid A 16-byte array that must be globally unique across NVTX domains.
    * @return Reference to this object for chaining.
    */
-  NVTX3_CONSTEXPR_IF_CPP14 correlation_semantic& domain_uuid(const unsigned char uuid[16]) noexcept
+  correlation_semantic& domain_uuid(const unsigned char uuid[16]) noexcept
   {
     for (int i = 0; i < 16; ++i) {
       data_.correlationDomainUuid[i] = uuid[i];
@@ -4019,7 +4078,7 @@ public:
    *             valid until then.
    * @return Reference to this object for chaining.
    */
-  NVTX3_CONSTEXPR_IF_CPP14 correlation_semantic& display_name(const char* name) noexcept
+  correlation_semantic& display_name(const char* name) noexcept
   {
     data_.displayName = name;
     return *this;
@@ -4030,7 +4089,7 @@ public:
    * @param role_id One of the \c NVTX_CORRELATION_ROLE_* values.
    * @return Reference to this object for chaining.
    */
-  NVTX3_CONSTEXPR_IF_CPP14 correlation_semantic& role(uint64_t role_id) noexcept
+  correlation_semantic& role(uint64_t role_id) noexcept
   {
     data_.role = role_id;
     return *this;
@@ -4503,8 +4562,8 @@ using counter = counter_in<T, domain::global>;
  * field expects.
  *
  * The type of the semantic is deduced from the expression, so any builder
- * in the `::nvtx3::v1` semantic family works, and builder chains assembled
- * inline work too.
+ * in the `::nvtx3::v1` semantic family works. If the semantic is chained to
+ * another semantic, the chain is copied into the static semantic object.
  *
  * Example:
  * \code{.cpp}

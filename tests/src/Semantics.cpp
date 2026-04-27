@@ -134,8 +134,11 @@ int RunTest(int argc, const char** argv)
         inner.scope(nvtx3::scope::current_sw_thread());
         auto const& o = as_scope(outer);
         auto const& i = as_scope(inner);
+        auto const* next = reinterpret_cast<nvtxSemanticsScope_v1 const*>(i.header.next);
         CHECK_U64("scope_chain", o.scopeId, NVTX_SCOPE_CURRENT_SW_PROCESS);
         CHECK_U64("scope_chain", i.scopeId, NVTX_SCOPE_CURRENT_SW_THREAD);
+        CHECK_U64("scope_chain", next != nullptr, 1);
+        CHECK_U64("scope_chain", next ? next->scopeId : 0, NVTX_SCOPE_CURRENT_SW_PROCESS);
         CHECK_U64("scope_chain", i.header.next == &o.header, 1);
     }
     std::cout << "-------------------------------------\n";
@@ -167,10 +170,38 @@ int RunTest(int argc, const char** argv)
         scope_sem.scope(nvtx3::scope::current_sw_thread());
         nvtx3::time_semantic time_sem{scope_sem};
         time_sem.time_domain(NVTX_TIMESTAMP_TYPE_CPU_CLOCK_GETTIME_MONOTONIC);
-        auto const& s = as_scope(scope_sem);
         auto const& t = as_time(time_sem);
+        auto const* next = reinterpret_cast<nvtxSemanticsScope_v1 const*>(t.header.next);
         CHECK_U64("time_chain", t.timeDomainId, NVTX_TIMESTAMP_TYPE_CPU_CLOCK_GETTIME_MONOTONIC);
-        CHECK_U64("time_chain", t.header.next == &s.header, 1);
+        CHECK_U64("time_chain", next != nullptr, 1);
+        CHECK_U64("time_chain", next ? next->scopeId : 0, NVTX_SCOPE_CURRENT_SW_THREAD);
+    }
+    std::cout << "-------------------------------------\n";
+
+    {
+        std::cout << "time_semantic: chained from temporary scope_semantic\n";
+        nvtx3::time_semantic time_sem{
+            nvtx3::scope_semantic{}.scope(nvtx3::scope::current_sw_thread())};
+        time_sem.time_domain(NVTX_TIMESTAMP_TYPE_CPU_TSC);
+        auto const& t = as_time(time_sem);
+        auto const* next = reinterpret_cast<nvtxSemanticsScope_v1 const*>(t.header.next);
+        CHECK_U64("time_temp_chain", t.timeDomainId, NVTX_TIMESTAMP_TYPE_CPU_TSC);
+        CHECK_U64("time_temp_chain", next != nullptr, 1);
+        CHECK_U64("time_temp_chain", next ? next->scopeId : 0, NVTX_SCOPE_CURRENT_SW_THREAD);
+    }
+    std::cout << "-------------------------------------\n";
+
+    {
+        std::cout << "NVTX3_SEMANTIC: chained temporary semantics\n";
+        auto const* sem = NVTX3_SEMANTIC(
+            nvtx3::time_semantic{
+                nvtx3::scope_semantic{}.scope(nvtx3::scope::current_sw_process())}
+                .time_domain(NVTX_TIMESTAMP_TYPE_CPU_TSC));
+        auto const* t = reinterpret_cast<nvtxSemanticsTime_v1 const*>(sem);
+        auto const* next = reinterpret_cast<nvtxSemanticsScope_v1 const*>(t->header.next);
+        CHECK_U64("semantic_macro_chain", t->timeDomainId, NVTX_TIMESTAMP_TYPE_CPU_TSC);
+        CHECK_U64("semantic_macro_chain", next != nullptr, 1);
+        CHECK_U64("semantic_macro_chain", next ? next->scopeId : 0, NVTX_SCOPE_CURRENT_SW_PROCESS);
     }
     std::cout << "-------------------------------------\n";
 
@@ -216,12 +247,18 @@ int RunTest(int argc, const char** argv)
         time_sem.time_domain(NVTX_TIMESTAMP_TYPE_CPU_TSC);
         nvtx3::correlation_semantic corr_sem{time_sem};
         corr_sem.role(uint64_t{7});
-        auto const& s = as_scope(scope_sem);
         auto const& t = as_time(time_sem);
         auto const& c = as_correlation(corr_sem);
+        auto const* next_time = reinterpret_cast<nvtxSemanticsTime_v1 const*>(c.header.next);
+        auto const* next_scope = next_time
+            ? reinterpret_cast<nvtxSemanticsScope_v1 const*>(next_time->header.next)
+            : nullptr;
         CHECK_U64("corr_chain", c.role, 7);
-        CHECK_U64("corr_chain", c.header.next == &t.header, 1);
-        CHECK_U64("corr_chain", t.header.next == &s.header, 1);
+        CHECK_U64("corr_chain", c.header.next != nullptr, 1);
+        CHECK_U64("corr_chain", c.header.next == &t.header, 0);
+        CHECK_U64("corr_chain", next_time ? next_time->timeDomainId : 0, NVTX_TIMESTAMP_TYPE_CPU_TSC);
+        CHECK_U64("corr_chain", next_scope != nullptr, 1);
+        CHECK_U64("corr_chain", next_scope ? next_scope->scopeId : 0, NVTX_SCOPE_CURRENT_SW_PROCESS);
     }
     std::cout << "-------------------------------------\n";
 
