@@ -4185,6 +4185,95 @@ public:
   }
 
   /**
+   * @brief Submit a batch of counter samples.
+   *
+   * Use this overload when the counter sample layout includes timestamp entries.
+   * Otherwise, provide timestamps with one of the timestamp overloads.
+   *
+   * @param values Pointer to a contiguous array of counter samples.
+   * @param count Number of samples in \p values.
+   * @param flags \c NVTX_BATCH_FLAG_* and \c NVTX_COUNTER_BATCH_FLAG_* bits.
+   */
+  void submit_batch(T const* values,
+                    size_t count,
+                    uint64_t flags = NVTX_BATCH_FLAG_TIME_SORTED) noexcept
+  {
+    submit_batch(values, count, nullptr, 0, flags);
+  }
+
+  /**
+   * @brief Submit a batch of counter samples with external timestamps.
+   *
+   * @param values Pointer to a contiguous array of counter samples.
+   * @param count Number of samples in \p values.
+   * @param timestamps Pointer to timestamps or timestamp/interval pairs.
+   * @param timestamp_count Number of timestamp values in \p timestamps.
+   * @param flags \c NVTX_BATCH_FLAG_* and \c NVTX_COUNTER_BATCH_FLAG_* bits.
+   */
+  void submit_batch(T const* values,
+                    size_t count,
+                    int64_t const* timestamps,
+                    size_t timestamp_count,
+                    uint64_t flags = NVTX_BATCH_FLAG_TIME_SORTED) noexcept
+  {
+#ifndef NVTX_DISABLE
+    nvtxCounterBatch_t batch{};
+    batch.counterId = id_;
+    batch.counters = values;
+    batch.countersSize = count * sizeof(T);
+    batch.flags = flags;
+    batch.timestamps = timestamps;
+    batch.timestampsSize = timestamp_count * sizeof(int64_t);
+
+    nvtxCounterBatchSubmit(domain::get<D>(), &batch);
+#else
+    (void)values;
+    (void)count;
+    (void)timestamps;
+    (void)timestamp_count;
+    (void)flags;
+#endif
+  }
+
+  /**
+   * @brief Submit a batch from a contiguous container.
+   *
+   * The container must expose \c data() returning \c T* or \c T const*, and
+   * \c size() convertible to \c size_t.
+   */
+  template <
+      typename CounterContainer,
+      typename = typename std::enable_if<
+          detail::has_data_member<CounterContainer, T>::value
+          && detail::has_size_member<CounterContainer>::value>::type>
+  void submit_batch(CounterContainer const& values,
+                    uint64_t flags = NVTX_BATCH_FLAG_TIME_SORTED) noexcept
+  {
+    submit_batch(values.data(), values.size(), flags);
+  }
+
+  /**
+   * @brief Submit a batch from contiguous sample and timestamp containers.
+   *
+   * The sample container must expose \c T elements. The timestamp container must
+   * expose \c int64_t elements.
+   */
+  template <
+      typename CounterContainer,
+      typename TimestampContainer,
+      typename = typename std::enable_if<
+          detail::has_data_member<CounterContainer, T>::value
+          && detail::has_size_member<CounterContainer>::value
+          && detail::has_data_member<TimestampContainer, int64_t>::value
+          && detail::has_size_member<TimestampContainer>::value>::type>
+  void submit_batch(CounterContainer const& values,
+                    TimestampContainer const& timestamps,
+                    uint64_t flags = NVTX_BATCH_FLAG_TIME_SORTED) noexcept
+  {
+    submit_batch(values.data(), values.size(), timestamps.data(), timestamps.size(), flags);
+  }
+
+  /**
    * @brief Get the underlying counter ID.
    *
    * Useful for interoperability with the NVTX C API.

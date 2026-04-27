@@ -21,10 +21,12 @@
 #include <nvtx3/nvtx3.hpp>
 #include <nvtx3/nvToolsExtSemanticsCounters.h>
 
+#include <array>
 #include <cstdint>
 #include <cstring>
 #include <iostream>
 #include <stdexcept>
+#include <vector>
 
 static int g_failures = 0;
 
@@ -123,6 +125,13 @@ struct sensor_sample
     uint32_t channel_id;
 };
 
+struct timestamped_sensor_sample
+{
+    int64_t timestamp;
+    float temperature;
+    uint32_t channel_id;
+};
+
 /*
  * Compile-verified mirror of the NVTX3_SEMANTIC docstring example.
  * If you change one, update the other.
@@ -152,6 +161,17 @@ NVTX3_DEFINE_SCHEMA_GET(
             NVTX3_SEMANTIC(nvtx3::counter_semantic{}.unit("C").limits(-40.0, 85.0))),
         (channel_id, TYPE_UINT32, "ChannelID")))
 
+NVTX3_DEFINE_SCHEMA_GET(
+    counters_domain,
+    timestamped_sensor_sample,
+    "TimestampedSensorSample",
+    NVTX_PAYLOAD_ENTRIES(
+        (timestamp, TYPE_INT64, "Timestamp", nullptr, 0, TIMESTAMP,
+            NVTX3_SEMANTIC(nvtx3::time_semantic{}.time_domain(NVTX_TIMESTAMP_TYPE_CPU_TSC))),
+        (temperature, TYPE_FLOAT, "Temperature", nullptr, 0, UNUSED,
+            NVTX3_SEMANTIC(nvtx3::counter_semantic{}.unit("C").limits(-40.0, 85.0))),
+        (channel_id, TYPE_UINT32, "ChannelID")))
+
 extern "C" NVTX_DYNAMIC_EXPORT
 int RunTest(int argc, const char** argv);
 NVTX_DYNAMIC_EXPORT
@@ -169,6 +189,10 @@ int RunTest(int argc, const char** argv)
         nvtx3::counter_in<int64_t, counters_domain> iterations{"iterations"};
         iterations.sample(1);
         iterations.sample(42);
+        int64_t batch_samples[] = {3, 5, 8};
+        int64_t batch_timestamps[] = {100, 200, 300};
+        iterations.submit_batch(batch_samples, 3, batch_timestamps, 3,
+                                NVTX_BATCH_FLAG_TIME_SORTED_PER_SCOPE);
         std::cout << "  counter id: " << iterations.id() << "\n";
     }
     std::cout << "-------------------------------------\n";
@@ -302,6 +326,24 @@ int RunTest(int argc, const char** argv)
         sensor.sample({21.5f, 0u});
         sensor.sample({23.0f, 1u});
         sensor.sample({19.25f, 0u});
+        std::array<sensor_sample, 2> batch_samples{{{24.0f, 1u}, {25.5f, 2u}}};
+        std::array<int64_t, 4> batch_interval{{400, 50, 500, 50}};
+        sensor.submit_batch(batch_samples, batch_interval,
+                            NVTX_COUNTER_BATCH_FLAG_BEGINTIME_INTERVAL_PAIR);
+        std::cout << "  counter id: " << sensor.id() << "\n";
+    }
+    std::cout << "-------------------------------------\n";
+
+    {
+        std::cout << "Payload-struct counter batch with embedded timestamps:\n";
+        nvtx3::counter_in<timestamped_sensor_sample, counters_domain> sensor{
+            "timestamped_sensor",
+            "Example payload counter with embedded timestamps"};
+        std::vector<timestamped_sensor_sample> batch_samples{
+            {1000, 21.5f, 0u},
+            {2000, 23.0f, 1u},
+            {3000, 19.25f, 0u}};
+        sensor.submit_batch(batch_samples);
         std::cout << "  counter id: " << sensor.id() << "\n";
     }
     std::cout << "-------------------------------------\n";
