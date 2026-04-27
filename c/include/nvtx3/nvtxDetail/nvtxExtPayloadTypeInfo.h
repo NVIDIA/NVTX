@@ -43,6 +43,11 @@ typedef void* nvtx_payload_pointer_type;
 
 /* `char8_t` is available as of C++20 or C23 */
 #if ((defined(__STDC_VERSION__) && __STDC_VERSION__ >= 202311L) || (defined(__cplusplus) && __cplusplus >= 201811L)) && !defined(__APPLE__)
+/* Fallback for systems where glibc < 2.36 does not define char8_t
+ * in uchar.h even when the compiler supports C23 (e.g. RHEL 9). */
+#ifndef __cpp_char8_t
+typedef unsigned char char8_t;
+#endif
 #define NVTX_HAVE_CHAR8 1
 #else
 #define NVTX_HAVE_CHAR8 0
