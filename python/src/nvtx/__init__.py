@@ -28,6 +28,8 @@ from nvtx.nvtx import (
     Domain,
 )
 
+from nvtx._lib.time import TimestampType
+
 if enabled():
     from nvtx._lib.profiler import Profile
 else:

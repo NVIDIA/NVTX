@@ -21,6 +21,7 @@ import warnings
 from functools import lru_cache
 from libc.stdlib cimport malloc, free
 from libc.string cimport memcpy
+from nvtx._lib.time cimport nvtxTimestampGet
 from nvtx._lib.lib cimport *
 from nvtx.colors import color_to_hex
 
@@ -298,6 +299,9 @@ class DummyDomain:
 
     def end_range(self, nvtxRangeId_t range_id):
         pass
+
+    def get_timestamp(self):
+        return 0
 
 
 dummy_domain = DummyDomain()
@@ -593,6 +597,23 @@ class Domain:
             The value returned by :func:`Domain.start_range`.
         """
         nvtxDomainRangeEnd((<DomainHandle>self.handle).c_obj, range_id)
+
+    @lru_cache(maxsize=None)
+    def _get_scope_id(self, path) -> int:
+        cdef bytes path_bytes = _to_bytes(path)
+        cdef nvtxScopeAttr_t attr
+        attr.structSize = sizeof(nvtxScopeAttr_t)
+        attr.path = path_bytes
+        attr.parentScope = NVTX_SCOPE_NONE
+        attr.scopeId = NVTX_SCOPE_NONE
+        return nvtxScopeRegister((<DomainHandle>self.handle).c_obj, &attr)
+
+    def get_timestamp(self):
+        """
+        Return an NVTX timestamp for use with batched counter samples.
+        """
+
+        return nvtxTimestampGet()
 
     def _register_builtin_schema(self, dt):
         name = dt.name.encode()
