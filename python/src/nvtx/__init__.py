@@ -30,9 +30,14 @@ from nvtx.nvtx import (
 )
 
 from nvtx._lib.counters import (
+    Counter,
     CounterInterpolation,
+    CounterNoValueReason,
     CounterSemantics,
     CounterValueType,
+    ExtCounter,
+    Float64Counter,
+    Int64Counter,
 )
 
 from nvtx._lib.time import TimestampType
