@@ -26,6 +26,7 @@ from nvtx.nvtx import (
     mark,
     get_domain,
     Domain,
+    numpy_dtype,
 )
 
 from nvtx._lib.counters import (
