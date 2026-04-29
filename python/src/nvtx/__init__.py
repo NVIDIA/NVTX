@@ -28,6 +28,12 @@ from nvtx.nvtx import (
     Domain,
 )
 
+from nvtx._lib.counters import (
+    CounterInterpolation,
+    CounterSemantics,
+    CounterValueType,
+)
+
 from nvtx._lib.time import TimestampType
 
 if enabled():
