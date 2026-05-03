@@ -151,24 +151,39 @@ class DomainData:
 registered_domains: Dict[str, DomainData] = {}
 
 
+class _EventAttributeBuffer(ctypes.Structure):
+    _fields_ = [
+        ("message_type", ctypes.c_int32),
+        ("message", ctypes.c_char_p),
+        ("category", ctypes.c_uint32),
+        ("range_id", ctypes.c_uint64),
+        ("color", ctypes.c_uint32),
+    ]
+
+
+class _EventPayloadBuffer(ctypes.Structure):
+    _fields_ = [
+        ("type", ctypes.c_int32),
+        ("i64", ctypes.c_int64),
+        ("f64", ctypes.c_double),
+        ("ext_schema_id", ctypes.c_uint64),
+        ("ext_size", ctypes.c_uint64),
+        ("ext_data", ctypes.c_uint8 * 256),
+    ]
+
+
+class _EventBuffer(ctypes.Structure):
+    # Fields must match the EventRecord struct in NvtxTestInjection.cpp
+    _fields_ = [
+        ("kind", ctypes.c_uint32),
+        ("domain", ctypes.c_char_p),
+        ("attributes", _EventAttributeBuffer),
+        ("payload", _EventPayloadBuffer),
+    ]
+
+
 class NvtxEventsReader:
-    class Buffer(ctypes.Structure):
-        # Fields must match the EventRecord struct in NvtxTestInjection.cpp
-        _fields_ = [
-            ("kind", ctypes.c_uint32),
-            ("domain", ctypes.c_char_p),
-            ("message_type", ctypes.c_int32),
-            ("message", ctypes.c_char_p),
-            ("category", ctypes.c_uint32),
-            ("range_id", ctypes.c_uint64),
-            ("color", ctypes.c_uint32),
-            ("payload_type", ctypes.c_int32),
-            ("payload_i64", ctypes.c_int64),
-            ("payload_f64", ctypes.c_double),
-            ("payload_ext_schema_id", ctypes.c_uint64),
-            ("payload_ext_size", ctypes.c_uint64),
-            ("payload_ext_data", ctypes.c_uint8 * 256),
-        ]
+    Buffer = _EventBuffer
 
     def __init__(self, injection_path: Path):
         self._injection_module = ctypes.CDLL(injection_path)
@@ -185,21 +200,23 @@ class NvtxEventsReader:
             # `read_event()` returns `false` if the buffer is empty.
             # (On error, it raises a Python exception.)
             raise StopIteration
+        attributes = buffer.attributes
+        payload = buffer.payload
         return RecordedEvent(
             kind=EventKind(buffer.kind),
             domain=buffer.domain.decode(),
-            message_type=buffer.message_type,
-            message=buffer.message.decode()
-            if buffer.message_type == MessageType.REGISTERED
+            message_type=attributes.message_type,
+            message=attributes.message.decode()
+            if attributes.message_type == MessageType.REGISTERED
             else "",
-            category=buffer.category,
-            range_id=buffer.range_id,
-            color=buffer.color,
-            payload_type=buffer.payload_type,
-            payload_i64=buffer.payload_i64,
-            payload_f64=buffer.payload_f64,
-            payload_ext_schema_id=buffer.payload_ext_schema_id,
-            payload_ext_data=bytes(buffer.payload_ext_data[: buffer.payload_ext_size]),
+            category=attributes.category,
+            range_id=attributes.range_id,
+            color=attributes.color,
+            payload_type=payload.type,
+            payload_i64=payload.i64,
+            payload_f64=payload.f64,
+            payload_ext_schema_id=payload.ext_schema_id,
+            payload_ext_data=bytes(payload.ext_data[: payload.ext_size]),
         )
 
 

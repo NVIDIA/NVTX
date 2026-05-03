@@ -51,21 +51,31 @@ enum class EventKind : uint32_t
     PayloadSchemaRegister = 9,
 };
 
-struct EventRecord
+struct AttributeRecord
 {
-    uint32_t kind;
-    const char* domain{nullptr};
     int32_t message_type{NVTX_MESSAGE_UNKNOWN};
     const char* message{nullptr};
     uint32_t category{0};
     uint64_t range_id{0};
     uint32_t color{0};
-    int32_t payload_type{0};
-    int64_t payload_i64{0};
-    double payload_f64{0.0};
-    uint64_t payload_ext_schema_id{0};
-    uint64_t payload_ext_size{0};
-    uint8_t payload_ext_data[256]{};
+};
+
+struct PayloadRecord
+{
+    int32_t type{0};
+    int64_t i64{0};
+    double f64{0.0};
+    uint64_t ext_schema_id{0};
+    uint64_t ext_size{0};
+    uint8_t ext_data[256]{};
+};
+
+struct EventRecord
+{
+    uint32_t kind;
+    const char* domain{nullptr};
+    AttributeRecord attributes;
+    PayloadRecord payload;
 };
 
 // Queue of the recorded events. Consumed by `read_event()` (called by Python tests).
@@ -116,7 +126,7 @@ uint64_t PayloadSchemaRegister(nvtxDomainHandle_t domain,
     EventRecord record{};
     record.kind = static_cast<uint32_t>(EventKind::PayloadSchemaRegister);
     record.domain = ResolveDomain(domain);
-    record.payload_ext_schema_id = schemaId;
+    record.payload.ext_schema_id = schemaId;
     g_events.push_back(record);
     return schemaId;
 }
@@ -206,16 +216,15 @@ void ValidateEventAttributes(const nvtxEventAttributes_t* attrib)
 void RecordSimpleEvent(EventKind kind, const char* domain, const char* message = nullptr,
     uint32_t category = 0, uint64_t rangeId = 0)
 {
-    g_events.push_back(
-        {
-            static_cast<uint32_t>(kind),
-            domain,
-            message == nullptr ? NVTX_MESSAGE_UNKNOWN : NVTX_MESSAGE_TYPE_REGISTERED,
-            message,
-            category,
-            rangeId,
-        }
-    );
+    EventRecord record{};
+    record.kind = static_cast<uint32_t>(kind);
+    record.domain = domain;
+    record.attributes.message_type =
+        message == nullptr ? NVTX_MESSAGE_UNKNOWN : NVTX_MESSAGE_TYPE_REGISTERED;
+    record.attributes.message = message;
+    record.attributes.category = category;
+    record.attributes.range_id = rangeId;
+    g_events.push_back(record);
 }
 
 void RecordEventFromAttrib(
@@ -225,14 +234,16 @@ void RecordEventFromAttrib(
     EventRecord record{};
     record.kind = static_cast<uint32_t>(kind);
     record.domain = domain;
-    record.message_type = attrib->messageType;
-    record.message = ResolveMessage(attrib);
-    record.category = attrib->category;
-    record.range_id = 0;
-    record.color = attrib->color;
-    record.payload_type = attrib->payloadType;
-    record.payload_i64 = attrib->payloadType == NVTX_PAYLOAD_TYPE_INT64 ? attrib->payload.llValue : 0;
-    record.payload_f64 = attrib->payloadType == NVTX_PAYLOAD_TYPE_DOUBLE ? attrib->payload.dValue : 0.0;
+    record.attributes.message_type = attrib->messageType;
+    record.attributes.message = ResolveMessage(attrib);
+    record.attributes.category = attrib->category;
+    record.attributes.range_id = 0;
+    record.attributes.color = attrib->color;
+    record.payload.type = attrib->payloadType;
+    record.payload.i64 =
+        attrib->payloadType == NVTX_PAYLOAD_TYPE_INT64 ? attrib->payload.llValue : 0;
+    record.payload.f64 =
+        attrib->payloadType == NVTX_PAYLOAD_TYPE_DOUBLE ? attrib->payload.dValue : 0.0;
 
     if (attrib->payloadType == NVTX_PAYLOAD_TYPE_EXT)
     {
@@ -241,10 +252,10 @@ void RecordEventFromAttrib(
         {
             auto* payloadDataPtr = reinterpret_cast<const nvtxPayloadData_t*>(
                 static_cast<uintptr_t>(attrib->payload.ullValue));
-            record.payload_ext_schema_id = payloadDataPtr->schemaId;
-            record.payload_ext_size = payloadDataPtr->size;
-            size_t copySize = (std::min)(payloadDataPtr->size, sizeof(record.payload_ext_data));
-            memcpy(record.payload_ext_data, payloadDataPtr->payload, copySize);
+            record.payload.ext_schema_id = payloadDataPtr->schemaId;
+            record.payload.ext_size = payloadDataPtr->size;
+            size_t copySize = (std::min)(payloadDataPtr->size, sizeof(record.payload.ext_data));
+            memcpy(record.payload.ext_data, payloadDataPtr->payload, copySize);
         }
     }
 
