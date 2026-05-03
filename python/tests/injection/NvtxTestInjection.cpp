@@ -22,7 +22,6 @@
 #include <cstdint>
 #include <cstring>
 #include <string>
-#include <vector>
 #include <deque>
 #include <nvtx3/nvToolsExt.h>
 #include <nvtx3/nvToolsExtPayload.h>
@@ -84,12 +83,12 @@ std::deque<EventRecord> g_events;
 // Atomic counter for the range IDs.
 std::atomic<uint64_t> g_rangeId{1};
 
-// Registered domains. nvtxDomainHandle_t is the index in the vector
+// Registered domains. nvtxDomainHandle_t is the index in the deque
 // (1-based because 0 is reserved for the default domain)
-std::vector<std::string> g_registeredDomains;
+std::deque<std::string> g_registeredDomains;
 
 // Registered strings.
-std::vector<std::string> g_registeredStrings;
+std::deque<std::string> g_registeredStrings;
 
 // Atomic counter for assigning unique schema IDs (starting at 1).
 std::atomic<uint64_t> g_schemaId{1};
