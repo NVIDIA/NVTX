@@ -97,6 +97,10 @@ def payload(request):
 DEFAULT_DOMAIN = "Default"
 
 
+def _domain_name(domain: Optional[str]) -> str:
+    return DEFAULT_DOMAIN if domain is None else domain
+
+
 class MessageType(enum.IntEnum):
     # Subset of nvtxMessageType_t (nvToolsExt.h)
     UNKNOWN = 0
@@ -141,7 +145,8 @@ class RecordedEvent:
 
 
 class DomainData:
-    def __init__(self):
+    def __init__(self, name: str):
+        self.name = name
         self.registered_strings: Set[str] = set()
         self.registered_categories: Dict[str, int] = {}
         if np is not None:
@@ -227,22 +232,13 @@ def verify_registration_events(
     category: Optional[Union[str, int]] = None,
     payload: Optional[PayloadTypeAlias] = None,
 ):
-    if domain is None:
-        domain = DEFAULT_DOMAIN
-
-    domain_data = registered_domains.get(domain)
-    if domain_data is None:
-        domain_data = registered_domains[domain] = DomainData()
-        if domain is not DEFAULT_DOMAIN:
-            event = next(events)
-            assert event.kind == EventKind.DOMAIN_CREATE
-            assert event.domain == domain
+    domain_data = _ensure_domain(events, domain)
 
     if isinstance(category, str):
         if category not in domain_data.registered_categories:
             event = next(events)
             assert event.kind == EventKind.DOMAIN_NAME_CATEGORY
-            assert event.domain == domain
+            assert event.domain == domain_data.name
             assert event.message == category
             domain_data.registered_categories[category] = event.category
         category = domain_data.registered_categories[category]
@@ -251,12 +247,12 @@ def verify_registration_events(
         if message not in domain_data.registered_strings:
             event = next(events)
             assert event.kind == EventKind.DOMAIN_REGISTER_STRING
-            assert event.domain == domain
+            assert event.domain == domain_data.name
             assert event.message == message
             domain_data.registered_strings.add(message)
 
     if payload is not None and np is not None:
-        verify_payload_schema_registration(events, domain, np.array(payload))
+        verify_payload_schema_registration(events, domain_data.name, np.array(payload))
 
 
 if np is not None:
@@ -317,8 +313,7 @@ def _verify_attributes(
     category: Optional[Union[str, int]],
     payload: Optional[PayloadTypeAlias],
 ):
-    if domain is None:
-        domain = DEFAULT_DOMAIN
+    domain = _domain_name(domain)
     assert event.domain == domain
     if message is None:
         assert event.message_type == MessageType.UNKNOWN
@@ -372,9 +367,7 @@ def verify_push(
 def verify_pop(events: NvtxEventsReader, domain: Optional[str]):
     pop = next(events)
     assert pop.kind == EventKind.RANGE_POP
-    if domain is None:
-        domain = DEFAULT_DOMAIN
-    assert pop.domain == domain
+    assert pop.domain == _domain_name(domain)
 
 
 def verify_start(
@@ -393,9 +386,20 @@ def verify_start(
 def verify_end(events: NvtxEventsReader, domain: Optional[str], range_id: int):
     end = next(events)
     assert end.kind == EventKind.RANGE_END
-    if domain is None:
-        domain = DEFAULT_DOMAIN
-    assert end.domain == domain
+    assert end.domain == _domain_name(domain)
     if isinstance(range_id, tuple):
         range_id = range_id[0]
     assert end.range_id == range_id
+
+
+def _ensure_domain(events: NvtxEventsReader, domain: Optional[str]) -> DomainData:
+    domain = _domain_name(domain)
+
+    domain_data = registered_domains.get(domain)
+    if domain_data is None:
+        domain_data = registered_domains[domain] = DomainData(domain)
+        if domain != DEFAULT_DOMAIN:
+            event = next(events)
+            assert event.kind == EventKind.DOMAIN_CREATE
+            assert event.domain == domain
+    return domain_data
