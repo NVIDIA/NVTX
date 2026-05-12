@@ -45,3 +45,10 @@ Start/End Ranges
 - Can be started and ended by different threads.
 - For best performance, prefer to use :func:`nvtx.Domain.start_range`
   and :func:`nvtx.Domain.end_range` over :func:`nvtx.start_range` and :func:`nvtx.end_range`.
+
+Counters
+--------
+
+Annotate quantities that change over time, such as memory usage, queue depth,
+bytes processed, or training metrics.
+For details, see :doc:`counters`.

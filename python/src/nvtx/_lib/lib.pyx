@@ -724,10 +724,10 @@ class Domain:
 
         Returns
         -------
-        Counter or DummyCounter
-            A counter object whose concrete sample type is determined by
-            ``dtype``. If the domain is disabled, returns a
-            :class:`nvtx._lib.counters.DummyCounter`.
+        Counter
+            A counter whose concrete sample type is determined by ``dtype``,
+            one of :class:`Int64Counter`, :class:`Float64Counter`, or
+            :class:`ExtCounter`.
         """
 
         dtype = _normalize_counter_dtype(dtype)

@@ -57,3 +57,34 @@ html_theme = "nvidia_sphinx_theme"
 # html_static_path = ["_static"]
 
 autodoc_member_order = 'bysource'
+
+
+import inspect
+
+import nvtx
+_COUNTER_BASE = nvtx._lib.counters.Counter
+
+
+def _is_counter_class(what, obj):
+    return what == "class" and inspect.isclass(obj) and issubclass(obj, _COUNTER_BASE)
+
+
+def _suppress_counter_signature(
+    app, what, name, obj, options, signature, return_annotation
+):
+    if _is_counter_class(what, obj):
+        return "", None
+
+
+def _strip_counter_docstring_signature(app, what, name, obj, options, lines):
+    if not _is_counter_class(what, obj):
+        return
+    if lines and lines[0].startswith(f"{obj.__name__}("):
+        del lines[0]
+        if lines and not lines[0]:
+            del lines[0]
+
+
+def setup(app):
+    app.connect("autodoc-process-signature", _suppress_counter_signature)
+    app.connect("autodoc-process-docstring", _strip_counter_docstring_signature)
