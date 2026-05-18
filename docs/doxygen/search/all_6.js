@@ -1,4 +1,6 @@
 var searchData=
 [
-  ['header_0',['header',['../structnvtx_semantics_counter__t.html#a11f4578f98bf9511ac49621748b26057',1,'nvtxSemanticsCounter_t']]]
+  ['general_0',['General',['../group___g_e_n_e_r_a_l.html',1,'']]],
+  ['glance_1',['Concepts at a Glance',['../md__n_v_t_x___e_x_t_e_n_d_e_d___p_a_y_l_o_a_d_s.html#NVTX_EXTENDED_PAYLOADS_CONCEPTS',1,'']]],
+  ['guide_2',['Extended Payloads: User Guide',['../md__n_v_t_x___e_x_t_e_n_d_e_d___p_a_y_l_o_a_d_s.html#NVTX_EXTENDED_PAYLOADS',1,'']]]
 ];

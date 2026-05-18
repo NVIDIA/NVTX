@@ -6,5 +6,7 @@ var searchData=
   ['semanticid_3',['semanticId',['../structnvtx_semantics_header__t.html#ad1e09c81ba70c0678b398808b23133ca',1,'nvtxSemanticsHeader_t']]],
   ['semantics_4',['semantics',['../structnvtx_payload_schema_entry__t.html#a71ddd016470557793d6776781b7c8406',1,'nvtxPayloadSchemaEntry_t::semantics'],['../structnvtx_counter_attr__t.html#a2ab25966e298a5742776ae1aa3bdf401',1,'nvtxCounterAttr_t::semantics']]],
   ['size_5',['size',['../structnvtx_event_attributes__v2.html#a90b5726d65e2665b558668eada26ffb9',1,'nvtxEventAttributes_v2::size'],['../structnvtx_resource_attributes__v0.html#a3f251637098a16e51e3dd16f6f223282',1,'nvtxResourceAttributes_v0::size'],['../structnvtx_sync_user_attributes__v0.html#ad55d1c1734d77c23863234c28667a4e1',1,'nvtxSyncUserAttributes_v0::size'],['../structnvtx_payload_data__t.html#ad0f0648c8ec5854b2cda3aa6e2f5dae5',1,'nvtxPayloadData_t::size'],['../structnvtx_event_batch__t.html#afee23a8f0781cbe9483293172bd2ce07',1,'nvtxEventBatch_t::size']]],
-  ['sizeofenum_6',['sizeOfEnum',['../structnvtx_payload_enum_attr__t.html#a12b15187dd2515a895935a767dfbaac0',1,'nvtxPayloadEnumAttr_t']]]
+  ['sizeofenum_6',['sizeOfEnum',['../structnvtx_payload_enum_attr__t.html#a12b15187dd2515a895935a767dfbaac0',1,'nvtxPayloadEnumAttr_t']]],
+  ['src_7',['src',['../structnvtx_sync_point__t.html#a3e32665fbf26ab3aa10730d4295be5fd',1,'nvtxSyncPoint_t']]],
+  ['structsize_8',['structSize',['../structnvtx_scope_attr__t.html#a8b181652f06ae70ec916c58dc0f3d114',1,'nvtxScopeAttr_t']]]
 ];

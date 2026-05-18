@@ -87,7 +87,7 @@ Data Fields</h2></td></tr>
 <tr class="memdesc:ae9d93cd49514b16ffa11d4ae6bcc1da7"><td class="mdescLeft">&#160;</td><td class="mdescRight">Flags to augment the basic type.  <br /></td></tr>
 <tr class="separator:ae9d93cd49514b16ffa11d4ae6bcc1da7"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a4c30462422da86de1abeedcef07dd541" id="r_a4c30462422da86de1abeedcef07dd541"><td class="memItemLeft" align="right" valign="top">uint64_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structnvtx_payload_schema_entry__t.html#a4c30462422da86de1abeedcef07dd541">type</a></td></tr>
-<tr class="memdesc:a4c30462422da86de1abeedcef07dd541"><td class="mdescLeft">&#160;</td><td class="mdescRight">Predefined payload schema entry type or custom schema ID.  <br /></td></tr>
+<tr class="memdesc:a4c30462422da86de1abeedcef07dd541"><td class="mdescLeft">&#160;</td><td class="mdescRight">Predefined payload schema entry type, registered enum ID, or registered schema ID.  <br /></td></tr>
 <tr class="separator:a4c30462422da86de1abeedcef07dd541"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a98a3b003669edb0daf1a2b4f9a71fa59" id="r_a98a3b003669edb0daf1a2b4f9a71fa59"><td class="memItemLeft" align="right" valign="top">const char *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structnvtx_payload_schema_entry__t.html#a98a3b003669edb0daf1a2b4f9a71fa59">name</a></td></tr>
 <tr class="memdesc:a98a3b003669edb0daf1a2b4f9a71fa59"><td class="mdescLeft">&#160;</td><td class="mdescRight">Name or label of the payload entry. (Optional)  <br /></td></tr>
@@ -105,15 +105,15 @@ Data Fields</h2></td></tr>
 <tr class="memdesc:a71ddd016470557793d6776781b7c8406"><td class="mdescLeft">&#160;</td><td class="mdescRight">Additional semantics of the payload entry.  <br /></td></tr>
 <tr class="separator:a71ddd016470557793d6776781b7c8406"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ae8091f5c48af11c8de5353fa4a949d84" id="r_ae8091f5c48af11c8de5353fa4a949d84"><td class="memItemLeft" align="right" valign="top">const void *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structnvtx_payload_schema_entry__t.html#ae8091f5c48af11c8de5353fa4a949d84">reserved</a></td></tr>
-<tr class="memdesc:ae8091f5c48af11c8de5353fa4a949d84"><td class="mdescLeft">&#160;</td><td class="mdescRight">Reserved for future use. Do not use it!  <br /></td></tr>
+<tr class="memdesc:ae8091f5c48af11c8de5353fa4a949d84"><td class="mdescLeft">&#160;</td><td class="mdescRight">Reserved for future use.  <br /></td></tr>
 <tr class="separator:ae8091f5c48af11c8de5353fa4a949d84"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><p>Entry in a schema. </p>
-<p>A payload schema consists of an array of payload schema entries. It is registered with nvtxPayloadSchemaRegister. <code>flag</code> can be set to <code>0</code> for simple values, 'type' is the only "required" field. If not set explicitly, all other fields are zero-initialized, which means that the entry has no name and the offset is determined based on self-alignment rules.</p>
-<p>Example schema: <a class="el" href="structnvtx_payload_schema_entry__t.html" title="Entry in a schema.">nvtxPayloadSchemaEntry_t</a> schema[] = { {0, NVTX_EXT_PAYLOAD_TYPE_UINT8, "one byte"}, {0, NVTX_EXT_PAYLOAD_TYPE_INT32, "four bytes"} }; </p>
+<p>Payload schemas are arrays of entries registered with <a class="el" href="nv_tools_ext_payload_8h.html#a7b9e5221764eb87caeba7d8cc6be7f03">nvtxPayloadSchemaRegister</a>. For simple values, set <code>flags</code> to <code>0</code>; <code>type</code> is the only required field. Zero-initialized optional fields mean no name and implicit offset calculation.</p>
+<p>Example schema: <a class="el" href="structnvtx_payload_schema_entry__t.html" title="Entry in a schema.">nvtxPayloadSchemaEntry_t</a> schema[] = { {0, NVTX_PAYLOAD_ENTRY_TYPE_UINT8, "one byte"}, {0, NVTX_PAYLOAD_ENTRY_TYPE_INT32, "four bytes"} }; </p>
 
-<p class="definition">Definition at line <a class="el" href="nv_tools_ext_payload_8h_source.html#l00675">675</a> of file <a class="el" href="nv_tools_ext_payload_8h_source.html">nvToolsExtPayload.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="nv_tools_ext_payload_8h_source.html#l00871">871</a> of file <a class="el" href="nv_tools_ext_payload_8h_source.html">nvToolsExtPayload.h</a>.</p>
 </div><h2 class="groupheader">Field Documentation</h2>
 <a id="a187c1291da112ded29e1275700e3dabd" name="a187c1291da112ded29e1275700e3dabd"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a187c1291da112ded29e1275700e3dabd">&#9670;&#160;</a></span>arrayOrUnionDetail</h2>
@@ -128,12 +128,12 @@ Data Fields</h2></td></tr>
 </div><div class="memdoc">
 
 <p>String length, array length or member selector for union types. </p>
-<p>If <a class="el" href="structnvtx_payload_schema_entry__t.html#a4c30462422da86de1abeedcef07dd541">type</a> is a C string type, this field specifies the string length.</p>
-<p>If <a class="el" href="structnvtx_payload_schema_entry__t.html#ae9d93cd49514b16ffa11d4ae6bcc1da7">flags</a> specify that the entry is an array, this field specifies the array length. See <code>NVTX_PAYLOAD_ENTRY_FLAG_ARRAY_*</code> for more details.</p>
+<p>If <a class="el" href="structnvtx_payload_schema_entry__t.html#a4c30462422da86de1abeedcef07dd541">type</a> is a C string type and the entry represents an embedded fixed-size string, this field specifies the string length <b>in string code units</b> (not bytes), and must be at least 1. The byte footprint is this value multiplied by the code-unit width of the string type (see <a class="el" href="nv_tools_ext_payload_8h.html#a4cce0d88fa2510d8fca8e2e0c7c76c96">NVTX_PAYLOAD_ENTRY_TYPE_CSTRING</a>). The value 0 does not denote a zero-length embedded string; it selects the pointer/null-terminated form instead. An empty embedded string uses a length of at least 1 with a leading null code unit.</p>
+<p>If <a class="el" href="structnvtx_payload_schema_entry__t.html#ae9d93cd49514b16ffa11d4ae6bcc1da7">flags</a> specify that the entry is an array, this field specifies the array length or length-source index depending on the array flag. See <code>NVTX_PAYLOAD_ENTRY_FLAG_ARRAY_*</code> for more details.</p>
 <p>If <a class="el" href="structnvtx_payload_schema_entry__t.html#a4c30462422da86de1abeedcef07dd541">type</a> is a union with schema type NVTX_PAYLOAD_SCHEMA_TYPE_UNION (external selection of the union member), this field contains the index (starting with 0) to an entry of integral type in the same schema. The associated field value specifies the selected union member.</p>
 <dl class="section note"><dt>Note</dt><dd>An array of schema type NVTX_PAYLOAD_SCHEMA_TYPE_UNION is not supported. NVTX_PAYLOAD_SCHEMA_TYPE_UNION_WITH_INTERNAL_SELECTOR can be used instead. </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="nv_tools_ext_payload_8h_source.html#l00724">724</a> of file <a class="el" href="nv_tools_ext_payload_8h_source.html">nvToolsExtPayload.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="nv_tools_ext_payload_8h_source.html#l00935">935</a> of file <a class="el" href="nv_tools_ext_payload_8h_source.html">nvToolsExtPayload.h</a>.</p>
 
 </div>
 </div>
@@ -150,9 +150,9 @@ Data Fields</h2></td></tr>
 </div><div class="memdoc">
 
 <p>Description of the payload entry. (Optional) </p>
-<p>A more detail description of the data that is stored with this entry. </p>
+<p>A more detailed description of the data stored with this entry. </p>
 
-<p class="definition">Definition at line <a class="el" href="nv_tools_ext_payload_8h_source.html#l00705">705</a> of file <a class="el" href="nv_tools_ext_payload_8h_source.html">nvToolsExtPayload.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="nv_tools_ext_payload_8h_source.html#l00908">908</a> of file <a class="el" href="nv_tools_ext_payload_8h_source.html">nvToolsExtPayload.h</a>.</p>
 
 </div>
 </div>
@@ -171,7 +171,7 @@ Data Fields</h2></td></tr>
 <p>Flags to augment the basic type. </p>
 <p>This field allows additional properties of the payload entry to be specified. Valid values are <code>NVTX_PAYLOAD_ENTRY_FLAG_*</code>. </p>
 
-<p class="definition">Definition at line <a class="el" href="nv_tools_ext_payload_8h_source.html#l00683">683</a> of file <a class="el" href="nv_tools_ext_payload_8h_source.html">nvToolsExtPayload.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="nv_tools_ext_payload_8h_source.html#l00879">879</a> of file <a class="el" href="nv_tools_ext_payload_8h_source.html">nvToolsExtPayload.h</a>.</p>
 
 </div>
 </div>
@@ -188,9 +188,9 @@ Data Fields</h2></td></tr>
 </div><div class="memdoc">
 
 <p>Name or label of the payload entry. (Optional) </p>
-<p>A meaningful name or label can help organizing and interpreting the data. </p>
+<p>A meaningful name or label helps tools organize and interpret the data. </p>
 
-<p class="definition">Definition at line <a class="el" href="nv_tools_ext_payload_8h_source.html#l00698">698</a> of file <a class="el" href="nv_tools_ext_payload_8h_source.html">nvToolsExtPayload.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="nv_tools_ext_payload_8h_source.html#l00901">901</a> of file <a class="el" href="nv_tools_ext_payload_8h_source.html">nvToolsExtPayload.h</a>.</p>
 
 </div>
 </div>
@@ -208,10 +208,11 @@ Data Fields</h2></td></tr>
 
 <p>Offset in the binary payload data (in bytes). </p>
 <p>This field specifies the byte offset from the base address of the actual binary data (blob) to the start address of the data of this entry.</p>
-<p>It is recommended (but not required) to provide the offset it. Otherwise, the NVTX handler will determine the offset from natural alignment rules. In some cases, e.g. dynamic schema layouts, the offset cannot be set and has to be determined based on the data of prior entries.</p>
-<p>Setting the offset can also be used to skip entries during payload parsing. </p>
+<p>It is recommended (but not required) to provide the offset. Otherwise, the NVTX handler will determine the offset from natural alignment rules (capped by <a class="el" href="structnvtx_payload_schema_attr__t.html#ab7098a38ce30d775c9ce245108ff64db">nvtxPayloadSchemaAttr_t::packAlign</a> when set).</p>
+<p><b>Implicit offset convention:</b> For the first entry (index 0), a value of <code>0</code> is always treated as an explicit offset. For all subsequent entries (index &gt; 0), a value of <code>0</code> signals the tool to compute the offset implicitly. Therefore, to place a later entry explicitly at byte offset 0, use the first entry slot instead. In dynamic schemas, implicit offsets are computed by advancing a running cursor that is aligned per the entry's type alignment.</p>
+<p>Setting the offset can also be used to skip reserved regions in the payload during parsing. </p>
 
-<p class="definition">Definition at line <a class="el" href="nv_tools_ext_payload_8h_source.html#l00739">739</a> of file <a class="el" href="nv_tools_ext_payload_8h_source.html">nvToolsExtPayload.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="nv_tools_ext_payload_8h_source.html#l00958">958</a> of file <a class="el" href="nv_tools_ext_payload_8h_source.html">nvToolsExtPayload.h</a>.</p>
 
 </div>
 </div>
@@ -227,9 +228,9 @@ Data Fields</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p>Reserved for future use. Do not use it! </p>
+<p>Reserved for future use. </p>
 
-<p class="definition">Definition at line <a class="el" href="nv_tools_ext_payload_8h_source.html#l00752">752</a> of file <a class="el" href="nv_tools_ext_payload_8h_source.html">nvToolsExtPayload.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="nv_tools_ext_payload_8h_source.html#l00971">971</a> of file <a class="el" href="nv_tools_ext_payload_8h_source.html">nvToolsExtPayload.h</a>.</p>
 
 </div>
 </div>
@@ -248,7 +249,7 @@ Data Fields</h2></td></tr>
 <p>Additional semantics of the payload entry. </p>
 <p>The field points to the first element in a linked list, which enables multiple semantic extensions. </p>
 
-<p class="definition">Definition at line <a class="el" href="nv_tools_ext_payload_8h_source.html#l00747">747</a> of file <a class="el" href="nv_tools_ext_payload_8h_source.html">nvToolsExtPayload.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="nv_tools_ext_payload_8h_source.html#l00966">966</a> of file <a class="el" href="nv_tools_ext_payload_8h_source.html">nvToolsExtPayload.h</a>.</p>
 
 </div>
 </div>
@@ -264,10 +265,14 @@ Data Fields</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p>Predefined payload schema entry type or custom schema ID. </p>
-<p>Predefined types are <code>NVTX_PAYLOAD_ENTRY_TYPE_*</code>. Passing a schema ID enables nesting of schemas. </p>
+<p>Predefined payload schema entry type, registered enum ID, or registered schema ID. </p>
+<p>The value can be:</p><ul>
+<li>A <b>predefined type</b> (<code>NVTX_PAYLOAD_ENTRY_TYPE_*</code>).</li>
+<li>A <b>registered schema ID</b> (&gt;= NVTX_PAYLOAD_SCHEMA_ID_STATIC_START), nesting the referenced schema inline. Size and alignment are taken from the referenced schema.</li>
+<li>A <b>registered enum ID</b> (&gt;= NVTX_PAYLOAD_SCHEMA_ID_STATIC_START). Byte width is given by <a class="el" href="structnvtx_payload_enum_attr__t.html#a12b15187dd2515a895935a767dfbaac0">nvtxPayloadEnumAttr_t::sizeOfEnum</a>. A tool resolves the integer value to the enum entry name. </li>
+</ul>
 
-<p class="definition">Definition at line <a class="el" href="nv_tools_ext_payload_8h_source.html#l00691">691</a> of file <a class="el" href="nv_tools_ext_payload_8h_source.html">nvToolsExtPayload.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="nv_tools_ext_payload_8h_source.html#l00894">894</a> of file <a class="el" href="nv_tools_ext_payload_8h_source.html">nvToolsExtPayload.h</a>.</p>
 
 </div>
 </div>

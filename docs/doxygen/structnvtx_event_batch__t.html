@@ -88,12 +88,14 @@ Data Fields</h2></td></tr>
 <tr class="memitem:afee23a8f0781cbe9483293172bd2ce07" id="r_afee23a8f0781cbe9483293172bd2ce07"><td class="memItemLeft" align="right" valign="top">size_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structnvtx_event_batch__t.html#afee23a8f0781cbe9483293172bd2ce07">size</a></td></tr>
 <tr class="separator:afee23a8f0781cbe9483293172bd2ce07"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aee58560a3adfde054f0245301cf8d7d4" id="r_aee58560a3adfde054f0245301cf8d7d4"><td class="memItemLeft" align="right" valign="top">const void *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structnvtx_event_batch__t.html#aee58560a3adfde054f0245301cf8d7d4">events</a></td></tr>
+<tr class="memdesc:aee58560a3adfde054f0245301cf8d7d4"><td class="mdescLeft">&#160;</td><td class="mdescRight">Pointer to the array of deferred events.  <br /></td></tr>
 <tr class="separator:aee58560a3adfde054f0245301cf8d7d4"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a2ba91014d2831e199e4b3e38b388c181" id="r_a2ba91014d2831e199e4b3e38b388c181"><td class="memItemLeft" align="right" valign="top">uint64_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structnvtx_event_batch__t.html#a2ba91014d2831e199e4b3e38b388c181">scope</a></td></tr>
 <tr class="separator:a2ba91014d2831e199e4b3e38b388c181"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a12f16213083385276b9cc080100b5197" id="r_a12f16213083385276b9cc080100b5197"><td class="memItemLeft" align="right" valign="top">uint64_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structnvtx_event_batch__t.html#a12f16213083385276b9cc080100b5197">flags</a></td></tr>
 <tr class="separator:a12f16213083385276b9cc080100b5197"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:af4676ad232d7e62ab7a9aeaceb598429" id="r_af4676ad232d7e62ab7a9aeaceb598429"><td class="memItemLeft" align="right" valign="top">const void *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structnvtx_event_batch__t.html#af4676ad232d7e62ab7a9aeaceb598429">flexData</a></td></tr>
+<tr class="memdesc:af4676ad232d7e62ab7a9aeaceb598429"><td class="mdescLeft">&#160;</td><td class="mdescRight">Flexible data blob referenced by events in the batch.  <br /></td></tr>
 <tr class="separator:af4676ad232d7e62ab7a9aeaceb598429"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a6bed0017d4177f4bbbb6dac5ec70bafb" id="r_a6bed0017d4177f4bbbb6dac5ec70bafb"><td class="memItemLeft" align="right" valign="top">size_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structnvtx_event_batch__t.html#a6bed0017d4177f4bbbb6dac5ec70bafb">flexDataSize</a></td></tr>
 <tr class="separator:a6bed0017d4177f4bbbb6dac5ec70bafb"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -104,7 +106,7 @@ Data Fields</h2></td></tr>
 <div class="textblock"><p>Helper struct to submit a batch of events (marks or ranges). </p>
 <p>By default, events are assumed to be chronologically sorted by the first timestamp in the event (start time in a range). If the events are not sorted, the <code>flags</code> field must be set accordingly (see <code>NVTX_BATCH_FLAG_*</code>). </p>
 
-<p class="definition">Definition at line <a class="el" href="nv_tools_ext_payload_8h_source.html#l00992">992</a> of file <a class="el" href="nv_tools_ext_payload_8h_source.html">nvToolsExtPayload.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="nv_tools_ext_payload_8h_source.html#l01250">1250</a> of file <a class="el" href="nv_tools_ext_payload_8h_source.html">nvToolsExtPayload.h</a>.</p>
 </div><h2 class="groupheader">Field Documentation</h2>
 <a id="aee58560a3adfde054f0245301cf8d7d4" name="aee58560a3adfde054f0245301cf8d7d4"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#aee58560a3adfde054f0245301cf8d7d4">&#9670;&#160;</a></span>events</h2>
@@ -117,9 +119,11 @@ Data Fields</h2></td></tr>
         </tr>
       </table>
 </div><div class="memdoc">
-<p>Pointer to the array of deferred events. </p>
 
-<p class="definition">Definition at line <a class="el" href="nv_tools_ext_payload_8h_source.html#l01007">1007</a> of file <a class="el" href="nv_tools_ext_payload_8h_source.html">nvToolsExtPayload.h</a>.</p>
+<p>Pointer to the array of deferred events. </p>
+<p>For static schemas, the stride is the fixed payload size. For dynamic schemas, there is no fixed stride. The buffer is read event by event, advancing the pointer by the size of the event. </p>
+
+<p class="definition">Definition at line <a class="el" href="nv_tools_ext_payload_8h_source.html#l01269">1269</a> of file <a class="el" href="nv_tools_ext_payload_8h_source.html">nvToolsExtPayload.h</a>.</p>
 
 </div>
 </div>
@@ -134,9 +138,9 @@ Data Fields</h2></td></tr>
         </tr>
       </table>
 </div><div class="memdoc">
-<p>Identifier of the data layout of a deferred event in the array of events. Only layouts with static payload size are allowed. The size of an event in the array is specified by the static payload size during the schema registration. The time domain of event timestamps is provided via time semantics in the schema registration. </p>
+<p>Identifier of the data layout of a deferred event in the array of events. The time domain of event timestamps is provided via time semantics in the schema registration. </p>
 
-<p class="definition">Definition at line <a class="el" href="nv_tools_ext_payload_8h_source.html#l01001">1001</a> of file <a class="el" href="nv_tools_ext_payload_8h_source.html">nvToolsExtPayload.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="nv_tools_ext_payload_8h_source.html#l01257">1257</a> of file <a class="el" href="nv_tools_ext_payload_8h_source.html">nvToolsExtPayload.h</a>.</p>
 
 </div>
 </div>
@@ -153,7 +157,7 @@ Data Fields</h2></td></tr>
 </div><div class="memdoc">
 <p>Timestamp ordering (sorted, partially sorted, unsorted), etc. </p>
 
-<p class="definition">Definition at line <a class="el" href="nv_tools_ext_payload_8h_source.html#l01013">1013</a> of file <a class="el" href="nv_tools_ext_payload_8h_source.html">nvToolsExtPayload.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="nv_tools_ext_payload_8h_source.html#l01285">1285</a> of file <a class="el" href="nv_tools_ext_payload_8h_source.html">nvToolsExtPayload.h</a>.</p>
 
 </div>
 </div>
@@ -168,9 +172,11 @@ Data Fields</h2></td></tr>
         </tr>
       </table>
 </div><div class="memdoc">
-<p>Flexible data which can be referenced by events in the batch. </p>
 
-<p class="definition">Definition at line <a class="el" href="nv_tools_ext_payload_8h_source.html#l01016">1016</a> of file <a class="el" href="nv_tools_ext_payload_8h_source.html">nvToolsExtPayload.h</a>.</p>
+<p>Flexible data blob referenced by events in the batch. </p>
+<p>Events may contain pointer or offset entries that reference data in this blob (e.g. variable-length strings or arrays). The usable region starts at byte offset <a class="el" href="structnvtx_event_batch__t.html#a029e6d18671052add9f6d94aaa6bf379">flexDataOffset</a> and extends for <a class="el" href="structnvtx_event_batch__t.html#a6bed0017d4177f4bbbb6dac5ec70bafb">flexDataSize</a> bytes. A tool resolves event-internal offsets relative to <code>flexData</code>. </p>
+
+<p class="definition">Definition at line <a class="el" href="nv_tools_ext_payload_8h_source.html#l01295">1295</a> of file <a class="el" href="nv_tools_ext_payload_8h_source.html">nvToolsExtPayload.h</a>.</p>
 
 </div>
 </div>
@@ -185,9 +191,9 @@ Data Fields</h2></td></tr>
         </tr>
       </table>
 </div><div class="memdoc">
-<p>Offset from the <code>flexData</code> pointer to the begin of the flexible data in bytes. </p>
+<p>Byte offset from <a class="el" href="structnvtx_event_batch__t.html#af4676ad232d7e62ab7a9aeaceb598429">flexData</a> to the start of the usable region. Allows the caller to prepend metadata or align the usable area. </p>
 
-<p class="definition">Definition at line <a class="el" href="nv_tools_ext_payload_8h_source.html#l01025">1025</a> of file <a class="el" href="nv_tools_ext_payload_8h_source.html">nvToolsExtPayload.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="nv_tools_ext_payload_8h_source.html#l01304">1304</a> of file <a class="el" href="nv_tools_ext_payload_8h_source.html">nvToolsExtPayload.h</a>.</p>
 
 </div>
 </div>
@@ -202,9 +208,9 @@ Data Fields</h2></td></tr>
         </tr>
       </table>
 </div><div class="memdoc">
-<p>Size of the flexible data memory blob. </p>
+<p>Size of the usable flexible data region (in bytes). </p>
 
-<p class="definition">Definition at line <a class="el" href="nv_tools_ext_payload_8h_source.html#l01019">1019</a> of file <a class="el" href="nv_tools_ext_payload_8h_source.html">nvToolsExtPayload.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="nv_tools_ext_payload_8h_source.html#l01298">1298</a> of file <a class="el" href="nv_tools_ext_payload_8h_source.html">nvToolsExtPayload.h</a>.</p>
 
 </div>
 </div>
@@ -219,9 +225,11 @@ Data Fields</h2></td></tr>
         </tr>
       </table>
 </div><div class="memdoc">
-<p>Scope of all events or counters in the batch. </p>
+<p>Default scope of events or counters in the batch.</p>
+<p>A scope from a payload entry or purpose-specific scope semantics takes precedence. If no such scope is specified, the batch scope takes precedence over general scope semantics from the schema.</p>
+<p>Use NVTX_SCOPE_NONE when the original execution scope is unknown or intentionally unspecified. Deferred events with NVTX_SCOPE_NONE should not be attributed to the thread or process that submits the batch. </p>
 
-<p class="definition">Definition at line <a class="el" href="nv_tools_ext_payload_8h_source.html#l01010">1010</a> of file <a class="el" href="nv_tools_ext_payload_8h_source.html">nvToolsExtPayload.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="nv_tools_ext_payload_8h_source.html#l01282">1282</a> of file <a class="el" href="nv_tools_ext_payload_8h_source.html">nvToolsExtPayload.h</a>.</p>
 
 </div>
 </div>
@@ -238,7 +246,7 @@ Data Fields</h2></td></tr>
 </div><div class="memdoc">
 <p>Size of the array of deferred events (in bytes). </p>
 
-<p class="definition">Definition at line <a class="el" href="nv_tools_ext_payload_8h_source.html#l01004">1004</a> of file <a class="el" href="nv_tools_ext_payload_8h_source.html">nvToolsExtPayload.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="nv_tools_ext_payload_8h_source.html#l01260">1260</a> of file <a class="el" href="nv_tools_ext_payload_8h_source.html">nvToolsExtPayload.h</a>.</p>
 
 </div>
 </div>

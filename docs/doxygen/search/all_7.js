@@ -1,8 +1,6 @@
 var searchData=
 [
-  ['identifier_5ft_0',['identifier_t',['../unionnvtx_resource_attributes__v0_1_1identifier__t.html',1,'nvtxResourceAttributes_v0']]],
-  ['identifiertype_1',['identifierType',['../structnvtx_resource_attributes__v0.html#acec361e5bafce002e93a604e36bdf31b',1,'nvtxResourceAttributes_v0']]],
-  ['initialization_2',['Initialization',['../index.html#INITIALIZATION',1,'']]],
-  ['introduction_3',['Introduction',['../index.html#INTRODUCTION',1,'']]],
-  ['isflag_4',['isFlag',['../structnvtx_payload_enum__t.html#ae90cfd1bac263d55dfda3e3deab1749a',1,'nvtxPayloadEnum_t']]]
+  ['header_0',['header',['../structnvtx_semantics_counter__t.html#a11f4578f98bf9511ac49621748b26057',1,'nvtxSemanticsCounter_t']]],
+  ['helper_20macros_1',['Helper Macros',['../md__n_v_t_x___e_x_t_e_n_d_e_d___p_a_y_l_o_a_d_s.html#NVTX_EXTENDED_PAYLOADS_HELPERS',1,'']]],
+  ['how_20to_20examples_2',['How-To Examples',['../md__n_v_t_x___e_x_t_e_n_d_e_d___p_a_y_l_o_a_d_s.html#NVTX_EXTENDED_PAYLOADS_HOWTO',1,'']]]
 ];

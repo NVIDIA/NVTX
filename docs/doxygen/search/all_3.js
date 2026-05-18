@@ -1,14 +1,10 @@
 var searchData=
 [
-  ['end_3a_20payload_20schema_20entry_20flags_0',['END: Payload schema entry flags.',['../nv_tools_ext_payload_8h.html#autotoc_md4',1,'']]],
-  ['end_3a_20payload_20schema_20entry_20types_1',['END: Payload schema entry types.',['../nv_tools_ext_payload_8h.html#autotoc_md6',1,'']]],
-  ['entries_2',['entries',['../structnvtx_payload_schema_attr__t.html#afa128ebfebfbb3333f41d8a1161b6176',1,'nvtxPayloadSchemaAttr_t::entries'],['../structnvtx_payload_enum_attr__t.html#a2a81abd10a27f81936c78cdafe5a7ab8',1,'nvtxPayloadEnumAttr_t::entries']]],
-  ['entry_20flags_3',['END: Payload schema entry flags.',['../nv_tools_ext_payload_8h.html#autotoc_md4',1,'']]],
-  ['entry_20flags_20used_20for_20ref_20nvtxpayloadschemaentry_5ft_3a_3aflags_4',['Payload schema entry flags. Used for @ref nvtxPayloadSchemaEntry_t::flags.',['../nv_tools_ext_payload_8h.html#autotoc_md3',1,'']]],
-  ['entry_20types_5',['END: Payload schema entry types.',['../nv_tools_ext_payload_8h.html#autotoc_md6',1,'']]],
-  ['event_20attributes_6',['event attributes',['../group___e_v_e_n_t___a_t_t_r_i_b_u_t_e_s.html',1,'Event Attributes'],['../index.html#EVENT_ATTRIBUTES',1,'Event Attributes']]],
-  ['events_7',['events',['../structnvtx_event_batch__t.html#aee58560a3adfde054f0245301cf8d7d4',1,'nvtxEventBatch_t']]],
-  ['eventschemaid_8',['eventSchemaId',['../structnvtx_event_batch__t.html#ab94294d1b1bb900a008c2029db2967d1',1,'nvtxEventBatch_t']]],
-  ['extension_9',['extension',['../structnvtx_payload_schema_attr__t.html#addb892502797acf269dc928e8614f97f',1,'nvtxPayloadSchemaAttr_t::extension'],['../structnvtx_payload_enum_attr__t.html#a31e43f2fd232fe218a8810ca2367906f',1,'nvtxPayloadEnumAttr_t::extension']]],
-  ['extensions_10',['Optional Extensions',['../index.html#EXTENSIONS',1,'']]]
+  ['deep_20copy_20of_20strings_20and_20buffers_0',['Deep-copy of strings and buffers',['../md__n_v_t_x___e_x_t_e_n_d_e_d___p_a_y_l_o_a_d_s.html#NVTX_EXTENDED_PAYLOADS_DEEP_COPY',1,'']]],
+  ['deferred_20events_1',['Deferred Events',['../md__n_v_t_x___e_x_t_e_n_d_e_d___p_a_y_l_o_a_d_s.html#NVTX_EXTENDED_PAYLOADS_DEFERRED',1,'']]],
+  ['deferred_20marks_20and_20ranges_2',['Deferred marks and ranges',['../md__n_v_t_x___e_x_t_e_n_d_e_d___p_a_y_l_o_a_d_s.html#NVTX_EXTENDED_PAYLOADS_HOWTO_DEFERRED',1,'']]],
+  ['description_3',['description',['../structnvtx_payload_schema_entry__t.html#a6ed4f95ea65ef1bb2ccbdc8c7fb218e0',1,'nvtxPayloadSchemaEntry_t::description'],['../structnvtx_counter_attr__t.html#a029534e6f708be20dbb6e220474b2d52',1,'nvtxCounterAttr_t::description']]],
+  ['displayname_4',['displayName',['../structnvtx_semantics_correlation__t.html#aeba176053808f68d0dac53aab3fa153b',1,'nvtxSemanticsCorrelation_t']]],
+  ['domains_5',['domains',['../group___d_o_m_a_i_n_s.html',1,'Domains'],['../index.html#DOMAINS',1,'Domains'],['../md__n_v_t_x___e_x_t_e_n_d_e_d___p_a_y_l_o_a_d_s.html#NVTX_EXTENDED_PAYLOADS_TIME_DOMAINS',1,'Time Domains']]],
+  ['dst_6',['dst',['../structnvtx_sync_point__t.html#a4753015b28ef4f56893104cf478d19a6',1,'nvtxSyncPoint_t']]]
 ];

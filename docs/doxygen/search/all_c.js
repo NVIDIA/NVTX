@@ -1,15 +1,8 @@
 var searchData=
 [
-  ['packalign_0',['packAlign',['../structnvtx_payload_schema_attr__t.html#ab7098a38ce30d775c9ce245108ff64db',1,'nvtxPayloadSchemaAttr_t']]],
-  ['parentscope_1',['parentScope',['../structnvtx_scope_attr__t.html#a48eeeed47ef503c114af84c40d39ef98',1,'nvtxScopeAttr_t']]],
-  ['path_2',['path',['../structnvtx_scope_attr__t.html#af4db5037a7c7970861688d47db6c0f2a',1,'nvtxScopeAttr_t']]],
-  ['payload_3',['payload',['../structnvtx_payload_data__t.html#ad4ecf00bae9cf3ccd26b75b20cc38019',1,'nvtxPayloadData_t']]],
-  ['payload_20schema_20entry_20flags_4',['END: Payload schema entry flags.',['../nv_tools_ext_payload_8h.html#autotoc_md4',1,'']]],
-  ['payload_20schema_20entry_20flags_20used_20for_20ref_20nvtxpayloadschemaentry_5ft_3a_3aflags_5',['Payload schema entry flags. Used for @ref nvtxPayloadSchemaEntry_t::flags.',['../nv_tools_ext_payload_8h.html#autotoc_md3',1,'']]],
-  ['payload_20schema_20entry_20types_6',['END: Payload schema entry types.',['../nv_tools_ext_payload_8h.html#autotoc_md6',1,'']]],
-  ['payload_20types_7',['Payload Types',['../group___e_v_e_n_t___a_t_t_r_i_b_u_t_e_s.html#autotoc_md2',1,'']]],
-  ['payload_5ft_8',['payload_t',['../unionnvtx_event_attributes__v2_1_1payload__t.html',1,'nvtxEventAttributes_v2']]],
-  ['payloadstaticsize_9',['payloadStaticSize',['../structnvtx_payload_schema_attr__t.html#a30c5c448071bcc470f99ff3b76c29a47',1,'nvtxPayloadSchemaAttr_t']]],
-  ['payloadtype_10',['payloadType',['../structnvtx_event_attributes__v2.html#ab92717e2aed2888cd99ecdf6c4681e45',1,'nvtxEventAttributes_v2']]],
-  ['process_20ranges_11',['Process Ranges',['../index.html#PROCESS_RANGES',1,'']]]
+  ['objects_0',['Resource Objects',['../index.html#RESOURCE_OBJECTS',1,'']]],
+  ['of_20strings_20and_20buffers_1',['Deep-copy of strings and buffers',['../md__n_v_t_x___e_x_t_e_n_d_e_d___p_a_y_l_o_a_d_s.html#NVTX_EXTENDED_PAYLOADS_DEEP_COPY',1,'']]],
+  ['offset_2',['offset',['../structnvtx_payload_schema_entry__t.html#a6a550470ce91d70e4207583b5f04df7e',1,'nvtxPayloadSchemaEntry_t']]],
+  ['opencl_20resource_20naming_3',['OpenCL Resource Naming',['../group___r_e_s_o_u_r_c_e___n_a_m_i_n_g.html#RESOURCE_NAMING_OPENCL',1,'']]],
+  ['optional_20extensions_4',['Optional Extensions',['../index.html#EXTENSIONS',1,'']]]
 ];

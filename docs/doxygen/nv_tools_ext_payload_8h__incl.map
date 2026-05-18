@@ -1,0 +1,19 @@
+<map id="nvToolsExtPayload.h" name="nvToolsExtPayload.h">
+<area shape="rect" id="Node000001" title="NVTX payload extension API: schema types, entry flags, and registration." alt="" coords="453,5,608,31"/>
+<area shape="rect" id="Node000002" href="$nv_tools_ext_8h.html" title=" " alt="" coords="305,79,409,104"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="504,33,399,76,397,71,502,28"/>
+<area shape="rect" id="Node000008" title=" " alt="" coords="434,79,627,104"/>
+<area shape="poly" id="edge7_Node000001_Node000008" title=" " alt="" coords="533,31,533,65,528,65,528,31"/>
+<area shape="rect" id="Node000009" title=" " alt="" coords="652,79,911,104"/>
+<area shape="poly" id="edge8_Node000001_Node000009" title=" " alt="" coords="572,28,728,72,727,77,570,33"/>
+<area shape="rect" id="Node000003" title=" " alt="" coords="5,152,200,177"/>
+<area shape="poly" id="edge2_Node000002_Node000003" title=" " alt="" coords="317,107,157,151,156,146,316,101"/>
+<area shape="rect" id="Node000004" title=" " alt="" coords="225,152,295,177"/>
+<area shape="poly" id="edge3_Node000002_Node000004" title=" " alt="" coords="343,106,289,146,286,141,340,102"/>
+<area shape="rect" id="Node000005" title=" " alt="" coords="320,152,395,177"/>
+<area shape="poly" id="edge4_Node000002_Node000005" title=" " alt="" coords="360,104,360,138,355,138,355,104"/>
+<area shape="rect" id="Node000006" title=" " alt="" coords="419,152,591,177"/>
+<area shape="poly" id="edge5_Node000002_Node000006" title=" " alt="" coords="382,102,470,144,468,148,380,106"/>
+<area shape="rect" id="Node000007" title=" " alt="" coords="615,152,779,177"/>
+<area shape="poly" id="edge6_Node000002_Node000007" title=" " alt="" coords="410,101,630,147,629,152,409,106"/>
+</map>

@@ -138,8 +138,8 @@ Set the size field </li>
 <dl class="section user"><dt>Method 1</dt><dd>Initializing nvtxEventAttributes for future compatibility: <div class="fragment"><div class="line">nvtxEventAttributes_t eventAttrib = {0};</div>
 <div class="line">eventAttrib.version = <a class="code hl_define" href="nv_tools_ext_8h.html#a270c1573fb02bc9f15825438913a255c">NVTX_VERSION</a>;</div>
 <div class="line">eventAttrib.size = <a class="code hl_define" href="nv_tools_ext_8h.html#a5d1913ca9009ed5aad3208c3fb7a5a0e">NVTX_EVENT_ATTRIB_STRUCT_SIZE</a>;</div>
-<div class="ttc" id="anv_tools_ext_8h_html_a270c1573fb02bc9f15825438913a255c"><div class="ttname"><a href="nv_tools_ext_8h.html#a270c1573fb02bc9f15825438913a255c">NVTX_VERSION</a></div><div class="ttdeci">#define NVTX_VERSION</div><div class="ttdef"><b>Definition</b> <a href="nv_tools_ext_8h_source.html#l00177">nvToolsExt.h:177</a></div></div>
-<div class="ttc" id="anv_tools_ext_8h_html_a5d1913ca9009ed5aad3208c3fb7a5a0e"><div class="ttname"><a href="nv_tools_ext_8h.html#a5d1913ca9009ed5aad3208c3fb7a5a0e">NVTX_EVENT_ATTRIB_STRUCT_SIZE</a></div><div class="ttdeci">#define NVTX_EVENT_ATTRIB_STRUCT_SIZE</div><div class="ttdef"><b>Definition</b> <a href="nv_tools_ext_8h_source.html#l00396">nvToolsExt.h:396</a></div></div>
+<div class="ttc" id="anv_tools_ext_8h_html_a270c1573fb02bc9f15825438913a255c"><div class="ttname"><a href="nv_tools_ext_8h.html#a270c1573fb02bc9f15825438913a255c">NVTX_VERSION</a></div><div class="ttdeci">#define NVTX_VERSION</div><div class="ttdef"><b>Definition</b> <a href="nv_tools_ext_8h_source.html#l00180">nvToolsExt.h:180</a></div></div>
+<div class="ttc" id="anv_tools_ext_8h_html_a5d1913ca9009ed5aad3208c3fb7a5a0e"><div class="ttname"><a href="nv_tools_ext_8h.html#a5d1913ca9009ed5aad3208c3fb7a5a0e">NVTX_EVENT_ATTRIB_STRUCT_SIZE</a></div><div class="ttdeci">#define NVTX_EVENT_ATTRIB_STRUCT_SIZE</div><div class="ttdef"><b>Definition</b> <a href="nv_tools_ext_8h_source.html#l00399">nvToolsExt.h:399</a></div></div>
 </div><!-- fragment --></dd></dl>
 <dl class="section user"><dt>Method 2</dt><dd>Initializing nvtxEventAttributes for a specific version: <div class="fragment"><div class="line">nvtxEventAttributes_t eventAttrib = {0};</div>
 <div class="line">eventAttrib.version = 1;</div>
@@ -157,12 +157,12 @@ Set the size field </li>
 <div class="line">eventAttrib.color = 0xFF880000;</div>
 <div class="line">eventAttrib.messageType = <a class="code hl_enumvalue" href="group___g_e_n_e_r_a_l.html#ggaf74d5ab5269ee3c1de7aa0059ca31c46aad30a1fb6651b7f2c36d8d19ade74576">NVTX_MESSAGE_TYPE_ASCII</a>;</div>
 <div class="line">eventAttrib.message.ascii = <span class="stringliteral">&quot;Example&quot;</span>;</div>
-<div class="ttc" id="agroup___g_e_n_e_r_a_l_html_ggad03fafe52eed68d119c1c4ea6e92a521a63a59d87ec996a2eb620e26e37bd705e"><div class="ttname"><a href="group___g_e_n_e_r_a_l.html#ggad03fafe52eed68d119c1c4ea6e92a521a63a59d87ec996a2eb620e26e37bd705e">NVTX_COLOR_ARGB</a></div><div class="ttdeci">@ NVTX_COLOR_ARGB</div><div class="ttdef"><b>Definition</b> <a href="nv_tools_ext_8h_source.html#l00442">nvToolsExt.h:441</a></div></div>
-<div class="ttc" id="agroup___g_e_n_e_r_a_l_html_ggaf74d5ab5269ee3c1de7aa0059ca31c46aad30a1fb6651b7f2c36d8d19ade74576"><div class="ttname"><a href="group___g_e_n_e_r_a_l.html#ggaf74d5ab5269ee3c1de7aa0059ca31c46aad30a1fb6651b7f2c36d8d19ade74576">NVTX_MESSAGE_TYPE_ASCII</a></div><div class="ttdeci">@ NVTX_MESSAGE_TYPE_ASCII</div><div class="ttdef"><b>Definition</b> <a href="nv_tools_ext_8h_source.html#l00450">nvToolsExt.h:450</a></div></div>
+<div class="ttc" id="agroup___g_e_n_e_r_a_l_html_ggad03fafe52eed68d119c1c4ea6e92a521a63a59d87ec996a2eb620e26e37bd705e"><div class="ttname"><a href="group___g_e_n_e_r_a_l.html#ggad03fafe52eed68d119c1c4ea6e92a521a63a59d87ec996a2eb620e26e37bd705e">NVTX_COLOR_ARGB</a></div><div class="ttdeci">@ NVTX_COLOR_ARGB</div><div class="ttdef"><b>Definition</b> <a href="nv_tools_ext_8h_source.html#l00445">nvToolsExt.h:444</a></div></div>
+<div class="ttc" id="agroup___g_e_n_e_r_a_l_html_ggaf74d5ab5269ee3c1de7aa0059ca31c46aad30a1fb6651b7f2c36d8d19ade74576"><div class="ttname"><a href="group___g_e_n_e_r_a_l.html#ggaf74d5ab5269ee3c1de7aa0059ca31c46aad30a1fb6651b7f2c36d8d19ade74576">NVTX_MESSAGE_TYPE_ASCII</a></div><div class="ttdeci">@ NVTX_MESSAGE_TYPE_ASCII</div><div class="ttdef"><b>Definition</b> <a href="nv_tools_ext_8h_source.html#l00453">nvToolsExt.h:453</a></div></div>
 </div><!-- fragment --></dd></dl>
 <p>In the example the caller does not have to set the value of <a class="el" href="structnvtx_event_attributes__v2.html#afb670b7abeb2d588c7157c08248e3665">nvtxEventAttributes_v2::category</a> or ::nvtxEventAttributes_v2::payload as these fields were set to the default value by {0}. </p><dl class="section see"><dt>See also</dt><dd><a class="el" href="group___m_a_r_k_e_r_s___a_n_d___r_a_n_g_e_s.html#ga9e31d7977bcd3b4e64da577908f20e70" title="Marks an instantaneous event in the application.">nvtxDomainMarkEx</a> <a class="el" href="group___m_a_r_k_e_r_s___a_n_d___r_a_n_g_e_s.html#gaf1cdd49e2d1fde6a62fabf30009adbc0" title="Starts a process range in a domain.">nvtxDomainRangeStartEx</a> <a class="el" href="group___m_a_r_k_e_r_s___a_n_d___r_a_n_g_e_s.html#ga5bba05d37e356e080b8b68d6618f174d" title="Starts a nested thread range.">nvtxDomainRangePushEx</a> </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="nv_tools_ext_8h_source.html#l00592">592</a> of file <a class="el" href="nv_tools_ext_8h_source.html">nvToolsExt.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="nv_tools_ext_8h_source.html#l00595">595</a> of file <a class="el" href="nv_tools_ext_8h_source.html">nvToolsExt.h</a>.</p>
 </div><h2 class="groupheader">Field Documentation</h2>
 <a id="afb670b7abeb2d588c7157c08248e3665" name="afb670b7abeb2d588c7157c08248e3665"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#afb670b7abeb2d588c7157c08248e3665">&#9670;&#160;</a></span>category</h2>
@@ -180,7 +180,7 @@ Set the size field </li>
 <p>A category is a user-controlled ID that can be used to group events. The tool may use category IDs to improve filtering or enable grouping of events in the same category. The functions <a class="el" href="group___r_e_s_o_u_r_c_e___n_a_m_i_n_g.html#ga801e84711db9de7b28235e529b101e4a">nvtxNameCategoryA</a> or ::nvtxNameCategoryW can be used to name a category.</p>
 <p>Default Value is 0 </p>
 
-<p class="definition">Definition at line <a class="el" href="nv_tools_ext_8h_source.html#l00622">622</a> of file <a class="el" href="nv_tools_ext_8h_source.html">nvToolsExt.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="nv_tools_ext_8h_source.html#l00625">625</a> of file <a class="el" href="nv_tools_ext_8h_source.html">nvToolsExt.h</a>.</p>
 
 </div>
 </div>
@@ -199,7 +199,7 @@ Set the size field </li>
 <p>Color assigned to this event.<a class="anchor" id="COLOR_FIELD"></a>. </p>
 <p>The color that the tool should use to visualize the event. </p>
 
-<p class="definition">Definition at line <a class="el" href="nv_tools_ext_8h_source.html#l00637">637</a> of file <a class="el" href="nv_tools_ext_8h_source.html">nvToolsExt.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="nv_tools_ext_8h_source.html#l00640">640</a> of file <a class="el" href="nv_tools_ext_8h_source.html">nvToolsExt.h</a>.</p>
 
 </div>
 </div>
@@ -219,7 +219,7 @@ Set the size field </li>
 <p>Defines the color format of the attribute structure's <a class="el" href="structnvtx_event_attributes__v2.html#COLOR_FIELD">color</a> field.</p>
 <p>Default Value is NVTX_COLOR_UNKNOWN </p>
 
-<p class="definition">Definition at line <a class="el" href="nv_tools_ext_8h_source.html#l00631">631</a> of file <a class="el" href="nv_tools_ext_8h_source.html">nvToolsExt.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="nv_tools_ext_8h_source.html#l00634">634</a> of file <a class="el" href="nv_tools_ext_8h_source.html">nvToolsExt.h</a>.</p>
 
 </div>
 </div>
@@ -238,7 +238,7 @@ Set the size field </li>
 <p>Message assigned to this attribute structure.<a class="anchor" id="MESSAGE_FIELD"></a>. </p>
 <p>The text message that is attached to an event. </p>
 
-<p class="definition">Definition at line <a class="el" href="nv_tools_ext_8h_source.html#l00681">681</a> of file <a class="el" href="nv_tools_ext_8h_source.html">nvToolsExt.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="nv_tools_ext_8h_source.html#l00684">684</a> of file <a class="el" href="nv_tools_ext_8h_source.html">nvToolsExt.h</a>.</p>
 
 </div>
 </div>
@@ -258,7 +258,7 @@ Set the size field </li>
 <p>Defines the message format of the attribute structure's <a class="el" href="structnvtx_event_attributes__v2.html#MESSAGE_FIELD">message</a> field.</p>
 <p>Default Value is NVTX_MESSAGE_UNKNOWN </p>
 
-<p class="definition">Definition at line <a class="el" href="nv_tools_ext_8h_source.html#l00675">675</a> of file <a class="el" href="nv_tools_ext_8h_source.html">nvToolsExt.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="nv_tools_ext_8h_source.html#l00678">678</a> of file <a class="el" href="nv_tools_ext_8h_source.html">nvToolsExt.h</a>.</p>
 
 </div>
 </div>
@@ -278,7 +278,7 @@ Set the size field </li>
 <p>Defines the payload format of the attribute structure's <a class="el" href="unionnvtx_event_attributes__v2_1_1payload__t.html#PAYLOAD_FIELD">payload</a> field.</p>
 <p>Default Value is NVTX_PAYLOAD_UNKNOWN </p>
 
-<p class="definition">Definition at line <a class="el" href="nv_tools_ext_8h_source.html#l00647">647</a> of file <a class="el" href="nv_tools_ext_8h_source.html">nvToolsExt.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="nv_tools_ext_8h_source.html#l00650">650</a> of file <a class="el" href="nv_tools_ext_8h_source.html">nvToolsExt.h</a>.</p>
 
 </div>
 </div>
@@ -294,7 +294,7 @@ Set the size field </li>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="nv_tools_ext_8h_source.html#l00649">649</a> of file <a class="el" href="nv_tools_ext_8h_source.html">nvToolsExt.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="nv_tools_ext_8h_source.html#l00652">652</a> of file <a class="el" href="nv_tools_ext_8h_source.html">nvToolsExt.h</a>.</p>
 
 </div>
 </div>
@@ -313,7 +313,7 @@ Set the size field </li>
 <p>Size of the structure. </p>
 <p>Needs to be set to the size in bytes of the event attribute structure used to specify the event. </p>
 
-<p class="definition">Definition at line <a class="el" href="nv_tools_ext_8h_source.html#l00609">609</a> of file <a class="el" href="nv_tools_ext_8h_source.html">nvToolsExt.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="nv_tools_ext_8h_source.html#l00612">612</a> of file <a class="el" href="nv_tools_ext_8h_source.html">nvToolsExt.h</a>.</p>
 
 </div>
 </div>
@@ -332,7 +332,7 @@ Set the size field </li>
 <p>Version flag of the structure. </p>
 <p>Needs to be set to NVTX_VERSION to indicate the version of NVTX APIs supported in this header file. This can optionally be overridden to another version of the tools extension library. </p>
 
-<p class="definition">Definition at line <a class="el" href="nv_tools_ext_8h_source.html#l00601">601</a> of file <a class="el" href="nv_tools_ext_8h_source.html">nvToolsExt.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="nv_tools_ext_8h_source.html#l00604">604</a> of file <a class="el" href="nv_tools_ext_8h_source.html">nvToolsExt.h</a>.</p>
 
 </div>
 </div>

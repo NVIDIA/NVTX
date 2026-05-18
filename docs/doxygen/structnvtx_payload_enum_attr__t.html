@@ -92,17 +92,19 @@ Data Fields</h2></td></tr>
 <tr class="memitem:a011b55b330f17b2e64157c169fad3880" id="r_a011b55b330f17b2e64157c169fad3880"><td class="memItemLeft" align="right" valign="top">size_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structnvtx_payload_enum_attr__t.html#a011b55b330f17b2e64157c169fad3880">numEntries</a></td></tr>
 <tr class="separator:a011b55b330f17b2e64157c169fad3880"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a12b15187dd2515a895935a767dfbaac0" id="r_a12b15187dd2515a895935a767dfbaac0"><td class="memItemLeft" align="right" valign="top">size_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structnvtx_payload_enum_attr__t.html#a12b15187dd2515a895935a767dfbaac0">sizeOfEnum</a></td></tr>
+<tr class="memdesc:a12b15187dd2515a895935a767dfbaac0"><td class="mdescLeft">&#160;</td><td class="mdescRight">Size of the enumeration type in bytes. (Mandatory)  <br /></td></tr>
 <tr class="separator:a12b15187dd2515a895935a767dfbaac0"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ac51da0682943b6a5b4fa12365d7f81d4" id="r_ac51da0682943b6a5b4fa12365d7f81d4"><td class="memItemLeft" align="right" valign="top">uint64_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structnvtx_payload_enum_attr__t.html#ac51da0682943b6a5b4fa12365d7f81d4">schemaId</a></td></tr>
+<tr class="memdesc:ac51da0682943b6a5b4fa12365d7f81d4"><td class="mdescLeft">&#160;</td><td class="mdescRight">Unique identifier for this enum type.  <br /></td></tr>
 <tr class="separator:ac51da0682943b6a5b4fa12365d7f81d4"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a31e43f2fd232fe218a8810ca2367906f" id="r_a31e43f2fd232fe218a8810ca2367906f"><td class="memItemLeft" align="right" valign="top">void *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structnvtx_payload_enum_attr__t.html#a31e43f2fd232fe218a8810ca2367906f">extension</a></td></tr>
 <tr class="separator:a31e43f2fd232fe218a8810ca2367906f"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><p>NVTX payload enumeration type attributes. </p>
-<p>A pointer to this struct is passed to nvtxPayloadEnumRegister. </p>
+<p>A pointer to this struct is passed to <a class="el" href="nv_tools_ext_payload_8h.html#a9d0a3a8685e521d8cfe1db1e2da7c6ae">nvtxPayloadEnumRegister</a>. </p>
 
-<p class="definition">Definition at line <a class="el" href="nv_tools_ext_payload_8h_source.html#l00870">870</a> of file <a class="el" href="nv_tools_ext_payload_8h_source.html">nvToolsExtPayload.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="nv_tools_ext_payload_8h_source.html#l01090">1090</a> of file <a class="el" href="nv_tools_ext_payload_8h_source.html">nvToolsExtPayload.h</a>.</p>
 </div><h2 class="groupheader">Field Documentation</h2>
 <a id="a2a81abd10a27f81936c78cdafe5a7ab8" name="a2a81abd10a27f81936c78cdafe5a7ab8"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a2a81abd10a27f81936c78cdafe5a7ab8">&#9670;&#160;</a></span>entries</h2>
@@ -117,7 +119,7 @@ Data Fields</h2></td></tr>
 </div><div class="memdoc">
 <p>Entries of the enum. (Mandatory) </p>
 
-<p class="definition">Definition at line <a class="el" href="nv_tools_ext_payload_8h_source.html#l00885">885</a> of file <a class="el" href="nv_tools_ext_payload_8h_source.html">nvToolsExtPayload.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="nv_tools_ext_payload_8h_source.html#l01105">1105</a> of file <a class="el" href="nv_tools_ext_payload_8h_source.html">nvToolsExtPayload.h</a>.</p>
 
 </div>
 </div>
@@ -132,9 +134,9 @@ Data Fields</h2></td></tr>
         </tr>
       </table>
 </div><div class="memdoc">
-<p>Flexible extension for enumeration attributes. (Do not use. Reserved for future use.) </p>
+<p>Reserved for future use. </p>
 
-<p class="definition">Definition at line <a class="el" href="nv_tools_ext_payload_8h_source.html#l00908">908</a> of file <a class="el" href="nv_tools_ext_payload_8h_source.html">nvToolsExtPayload.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="nv_tools_ext_payload_8h_source.html#l01129">1129</a> of file <a class="el" href="nv_tools_ext_payload_8h_source.html">nvToolsExtPayload.h</a>.</p>
 
 </div>
 </div>
@@ -151,7 +153,7 @@ Data Fields</h2></td></tr>
 </div><div class="memdoc">
 <p>Mask of valid fields in this struct. See <code>NVTX_PAYLOAD_ENUM_ATTR_FIELD_*</code>. </p>
 
-<p class="definition">Definition at line <a class="el" href="nv_tools_ext_payload_8h_source.html#l00875">875</a> of file <a class="el" href="nv_tools_ext_payload_8h_source.html">nvToolsExtPayload.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="nv_tools_ext_payload_8h_source.html#l01095">1095</a> of file <a class="el" href="nv_tools_ext_payload_8h_source.html">nvToolsExtPayload.h</a>.</p>
 
 </div>
 </div>
@@ -168,7 +170,7 @@ Data Fields</h2></td></tr>
 </div><div class="memdoc">
 <p>Name of the enum. (Optional) </p>
 
-<p class="definition">Definition at line <a class="el" href="nv_tools_ext_payload_8h_source.html#l00880">880</a> of file <a class="el" href="nv_tools_ext_payload_8h_source.html">nvToolsExtPayload.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="nv_tools_ext_payload_8h_source.html#l01100">1100</a> of file <a class="el" href="nv_tools_ext_payload_8h_source.html">nvToolsExtPayload.h</a>.</p>
 
 </div>
 </div>
@@ -185,7 +187,7 @@ Data Fields</h2></td></tr>
 </div><div class="memdoc">
 <p>Number of entries in the enum. (Mandatory) </p>
 
-<p class="definition">Definition at line <a class="el" href="nv_tools_ext_payload_8h_source.html#l00890">890</a> of file <a class="el" href="nv_tools_ext_payload_8h_source.html">nvToolsExtPayload.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="nv_tools_ext_payload_8h_source.html#l01110">1110</a> of file <a class="el" href="nv_tools_ext_payload_8h_source.html">nvToolsExtPayload.h</a>.</p>
 
 </div>
 </div>
@@ -200,9 +202,11 @@ Data Fields</h2></td></tr>
         </tr>
       </table>
 </div><div class="memdoc">
-<p>A static payload schema ID must be unique within the domain, &gt;= NVTX_PAYLOAD_SCHEMA_ID_STATIC_START and &lt; NVTX_PAYLOAD_SCHEMA_ID_DYNAMIC_START </p>
 
-<p class="definition">Definition at line <a class="el" href="nv_tools_ext_payload_8h_source.html#l00902">902</a> of file <a class="el" href="nv_tools_ext_payload_8h_source.html">nvToolsExtPayload.h</a>.</p>
+<p>Unique identifier for this enum type. </p>
+<p>Same constraints as <a class="el" href="structnvtx_payload_schema_attr__t.html#ae1fb939b70bec88c7702d6688ae657fc">nvtxPayloadSchemaAttr_t::schemaId</a>. </p>
+
+<p class="definition">Definition at line <a class="el" href="nv_tools_ext_payload_8h_source.html#l01126">1126</a> of file <a class="el" href="nv_tools_ext_payload_8h_source.html">nvToolsExtPayload.h</a>.</p>
 
 </div>
 </div>
@@ -217,9 +221,11 @@ Data Fields</h2></td></tr>
         </tr>
       </table>
 </div><div class="memdoc">
-<p>Size of enumeration type in bytes </p>
 
-<p class="definition">Definition at line <a class="el" href="nv_tools_ext_payload_8h_source.html#l00895">895</a> of file <a class="el" href="nv_tools_ext_payload_8h_source.html">nvToolsExtPayload.h</a>.</p>
+<p>Size of the enumeration type in bytes. (Mandatory) </p>
+<p>Must be set to a non-zero value (typically <code>sizeof(YourEnumType)</code>) for a tool to be able to read enum-typed fields. If zero, the tool cannot determine how many bytes to read and may skip enum-typed entries. </p>
+
+<p class="definition">Definition at line <a class="el" href="nv_tools_ext_payload_8h_source.html#l01119">1119</a> of file <a class="el" href="nv_tools_ext_payload_8h_source.html">nvToolsExtPayload.h</a>.</p>
 
 </div>
 </div>

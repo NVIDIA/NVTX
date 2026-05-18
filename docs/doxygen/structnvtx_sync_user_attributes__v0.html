@@ -114,7 +114,7 @@ Set the size field </li>
 <dl class="section user"><dt>Method 1</dt><dd>Initializing nvtxEventAttributes for future compatibility: <div class="fragment"><div class="line">nvtxSyncUserAttributes_t attribs = {0};</div>
 <div class="line">attribs.version = <a class="code hl_define" href="nv_tools_ext_8h.html#a270c1573fb02bc9f15825438913a255c">NVTX_VERSION</a>;</div>
 <div class="line">attribs.size = NVTX_SYNCUSER_ATTRIB_STRUCT_SIZE;</div>
-<div class="ttc" id="anv_tools_ext_8h_html_a270c1573fb02bc9f15825438913a255c"><div class="ttname"><a href="nv_tools_ext_8h.html#a270c1573fb02bc9f15825438913a255c">NVTX_VERSION</a></div><div class="ttdeci">#define NVTX_VERSION</div><div class="ttdef"><b>Definition</b> <a href="nv_tools_ext_8h_source.html#l00177">nvToolsExt.h:177</a></div></div>
+<div class="ttc" id="anv_tools_ext_8h_html_a270c1573fb02bc9f15825438913a255c"><div class="ttname"><a href="nv_tools_ext_8h.html#a270c1573fb02bc9f15825438913a255c">NVTX_VERSION</a></div><div class="ttdeci">#define NVTX_VERSION</div><div class="ttdef"><b>Definition</b> <a href="nv_tools_ext_8h_source.html#l00180">nvToolsExt.h:180</a></div></div>
 </div><!-- fragment --></dd></dl>
 <dl class="section user"><dt>Method 2</dt><dd>Initializing nvtxSyncUserAttributes_t for a specific version: <div class="fragment"><div class="line">nvtxSyncUserAttributes_t attribs = {0};</div>
 <div class="line">attribs.version = 1;</div>
@@ -130,7 +130,7 @@ Set the size field </li>
 <div class="line"><span class="comment">// Configure the Attributes</span></div>
 <div class="line">attribs.messageType = <a class="code hl_enumvalue" href="group___g_e_n_e_r_a_l.html#ggaf74d5ab5269ee3c1de7aa0059ca31c46aad30a1fb6651b7f2c36d8d19ade74576">NVTX_MESSAGE_TYPE_ASCII</a>;</div>
 <div class="line">attribs.message.ascii = <span class="stringliteral">&quot;Example&quot;</span>;</div>
-<div class="ttc" id="agroup___g_e_n_e_r_a_l_html_ggaf74d5ab5269ee3c1de7aa0059ca31c46aad30a1fb6651b7f2c36d8d19ade74576"><div class="ttname"><a href="group___g_e_n_e_r_a_l.html#ggaf74d5ab5269ee3c1de7aa0059ca31c46aad30a1fb6651b7f2c36d8d19ade74576">NVTX_MESSAGE_TYPE_ASCII</a></div><div class="ttdeci">@ NVTX_MESSAGE_TYPE_ASCII</div><div class="ttdef"><b>Definition</b> <a href="nv_tools_ext_8h_source.html#l00450">nvToolsExt.h:450</a></div></div>
+<div class="ttc" id="agroup___g_e_n_e_r_a_l_html_ggaf74d5ab5269ee3c1de7aa0059ca31c46aad30a1fb6651b7f2c36d8d19ade74576"><div class="ttname"><a href="group___g_e_n_e_r_a_l.html#ggaf74d5ab5269ee3c1de7aa0059ca31c46aad30a1fb6651b7f2c36d8d19ade74576">NVTX_MESSAGE_TYPE_ASCII</a></div><div class="ttdeci">@ NVTX_MESSAGE_TYPE_ASCII</div><div class="ttdef"><b>Definition</b> <a href="nv_tools_ext_8h_source.html#l00453">nvToolsExt.h:453</a></div></div>
 </div><!-- fragment --></dd></dl>
 <dl class="section see"><dt>See also</dt><dd><a class="el" href="group___s_y_n_c_h_r_o_n_i_z_a_t_i_o_n.html#gafa5155c0890472bcaaba59e8a20c397e" title="Create a user defined synchronization object This is used to track non-OS synchronization working wit...">nvtxDomainSyncUserCreate</a> </dd></dl>
 

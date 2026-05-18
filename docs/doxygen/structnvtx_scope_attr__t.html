@@ -89,7 +89,7 @@ Data Fields</h2></td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock">
-<p class="definition">Definition at line <a class="el" href="nv_tools_ext_payload_8h_source.html#l00911">911</a> of file <a class="el" href="nv_tools_ext_payload_8h_source.html">nvToolsExtPayload.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="nv_tools_ext_payload_8h_source.html#l01132">1132</a> of file <a class="el" href="nv_tools_ext_payload_8h_source.html">nvToolsExtPayload.h</a>.</p>
 </div><h2 class="groupheader">Field Documentation</h2>
 <a id="a48eeeed47ef503c114af84c40d39ef98" name="a48eeeed47ef503c114af84c40d39ef98"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a48eeeed47ef503c114af84c40d39ef98">&#9670;&#160;</a></span>parentScope</h2>
@@ -102,9 +102,9 @@ Data Fields</h2></td></tr>
         </tr>
       </table>
 </div><div class="memdoc">
-<p>Identifier of the parent scope, to which <code>path</code> is appended. </p>
+<p>Identifier of the parent scope, to which <code>path</code> is appended. Must be <code>NVTX_SCOPE_ROOT</code>, <code>NVTX_SCOPE_NONE</code>, or a scope ID previously registered with <code>nvtxScopeRegister</code> for the same domain. The runtime-resolved scopes (<code>NVTX_SCOPE_CURRENT_*</code>) are not valid here. </p>
 
-<p class="definition">Definition at line <a class="el" href="nv_tools_ext_payload_8h_source.html#l00937">937</a> of file <a class="el" href="nv_tools_ext_payload_8h_source.html">nvToolsExtPayload.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="nv_tools_ext_payload_8h_source.html#l01190">1190</a> of file <a class="el" href="nv_tools_ext_payload_8h_source.html">nvToolsExtPayload.h</a>.</p>
 
 </div>
 </div>
@@ -119,15 +119,28 @@ Data Fields</h2></td></tr>
         </tr>
       </table>
 </div><div class="memdoc">
-<p>Path delimited by '/' characters, relative to <a class="el" href="structnvtx_scope_attr__t.html#a48eeeed47ef503c114af84c40d39ef98">parentScope</a>. Leading slashes are ignored. Nodes in the path may use name[key] syntax to indicate an array of sibling nodes, which may be combined with other non-array nodes or different arrays at the same scope. Node names should be UTF8 printable characters. '\' has to be used to escape '/', '[', and ']' characters in node names. An empty C string "" and <code>NULL</code> are valid inputs and treated equivalently.</p>
-<p>A GPU can be specified using its:</p><ul>
-<li>Unique identifier (UUID) with "GPU[UUID:#]",</li>
-<li>CUDA device ID (sensitive to CUDA_VISIBLE_DEVICES) with "GPU[CUDAID:#]",</li>
-<li>NVML (nvidia-smi) device ID with "GPU[NVSMI:#]"</li>
+<p>Path delimited by '/' characters, relative to <a class="el" href="structnvtx_scope_attr__t.html#a48eeeed47ef503c114af84c40d39ef98">parentScope</a>. Leading slashes are ignored. Nodes in the path may use name[key] syntax to indicate an array of sibling nodes, which may be combined with other non-array nodes or different arrays at the same scope. Node names should be printable UTF-8 characters. '\' is used to escape '/', '[', and ']' characters in node names. An empty C string "" and <code>NULL</code> are valid inputs and treated equivalently.</p>
+<p>A GPU can be specified with the following notations: "GPU[UUID:&lt;unique alphanumeric GPU ID&gt;]", "GPU[CUDAID:&lt;CUDA device ID&gt;]" (sensitive to CUDA_VISIBLE_DEVICES), "GPU[NVSMI:&lt;nvidia-smi(NVML) device ID&gt;]".</p>
+<p>For display purposes, a tool may show a pretty name. To clearly identify a GPU, <a class="el" href="structnvtx_scope_attr__t.html#a48eeeed47ef503c114af84c40d39ef98">parentScope</a> should resolve to a registered scope that represents the GPU's execution context.</p>
+<p>A CPU can be specified with the following notations: "CPU[&lt;physical package ID&gt;:&lt;OS logical core index&gt;]", "CPU[OS:&lt;physical package ID&gt;:&lt;OS logical core index&gt;]", "CPU[HW:&lt;physical package ID&gt;:&lt;hardware physical core index&gt;]", "CPU[NUMA_OS:&lt;NUMA node ID&gt;:&lt;OS logical core index&gt;]", "CPU[NUMA_HW:&lt;NUMA node ID&gt;:&lt;hardware physical core index&gt;]".</p>
+<p>Physical package ID:</p><ul>
+<li>Windows: GetLogicalProcessorInformationEx (RelationProcessorPackage)</li>
+<li>Linux: /sys/devices/system/cpu/cpu&lt;N&gt;/topology/physical_package_id or /proc/cpuinfo (physical id)</li>
 </ul>
-<p>(replace <code>#</code> with the actual device ID). For display purposes, a tool is recommended to show a pretty name. To clearly identify a GPU, the <a class="el" href="structnvtx_scope_attr__t.html#a48eeeed47ef503c114af84c40d39ef98">parentScope</a> should also match the GPU's execution context. </p>
+<p>NUMA node ID:</p><ul>
+<li>Windows: GetLogicalProcessorInformationEx (RelationNumaNode)</li>
+<li>Linux: /sys/devices/system/cpu/cpu&lt;N&gt;/topology/numa_node or libnuma</li>
+</ul>
+<p>OS logical core index:</p><ul>
+<li>Windows: GetCurrentProcessorNumber() or GetSystemCpuSetInformation (LogicalProcessorIndex)</li>
+<li>Linux: sched_getcpu() or /proc/cpuinfo (processor field)</li>
+</ul>
+<p>Hardware physical core index:</p><ul>
+<li>Windows: GetLogicalProcessorInformationEx (RelationProcessorCore)</li>
+<li>Linux: /sys/devices/system/cpu/cpu&lt;N&gt;/topology/core_id or /proc/cpuinfo (core id) </li>
+</ul>
 
-<p class="definition">Definition at line <a class="el" href="nv_tools_ext_payload_8h_source.html#l00934">934</a> of file <a class="el" href="nv_tools_ext_payload_8h_source.html">nvToolsExtPayload.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="nv_tools_ext_payload_8h_source.html#l01182">1182</a> of file <a class="el" href="nv_tools_ext_payload_8h_source.html">nvToolsExtPayload.h</a>.</p>
 
 </div>
 </div>
@@ -144,7 +157,7 @@ Data Fields</h2></td></tr>
 </div><div class="memdoc">
 <p>Static scope ID. Must be unique within the domain, &gt;= NVTX_SCOPE_ID_STATIC_START, and &lt; NVTX_SCOPE_ID_DYNAMIC_START. Use NVTX_SCOPE_NONE to let the tool create a (dynamic) scope ID. </p>
 
-<p class="definition">Definition at line <a class="el" href="nv_tools_ext_payload_8h_source.html#l00944">944</a> of file <a class="el" href="nv_tools_ext_payload_8h_source.html">nvToolsExtPayload.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="nv_tools_ext_payload_8h_source.html#l01197">1197</a> of file <a class="el" href="nv_tools_ext_payload_8h_source.html">nvToolsExtPayload.h</a>.</p>
 
 </div>
 </div>
@@ -159,8 +172,9 @@ Data Fields</h2></td></tr>
         </tr>
       </table>
 </div><div class="memdoc">
+<p>Size of this struct in bytes (set to <code>sizeof(nvtxScopeAttr_t)</code>). Allows forward-compatible versioning when fields are appended. </p>
 
-<p class="definition">Definition at line <a class="el" href="nv_tools_ext_payload_8h_source.html#l00913">913</a> of file <a class="el" href="nv_tools_ext_payload_8h_source.html">nvToolsExtPayload.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="nv_tools_ext_payload_8h_source.html#l01136">1136</a> of file <a class="el" href="nv_tools_ext_payload_8h_source.html">nvToolsExtPayload.h</a>.</p>
 
 </div>
 </div>
