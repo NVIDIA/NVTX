@@ -79,6 +79,9 @@
 #[cfg(feature = "alloc")]
 extern crate alloc;
 
+mod error;
+pub use error::NvtxError;
+
 #[cfg(feature = "alloc")]
 mod category;
 /// Category for use with marks and ranges.
@@ -204,6 +207,11 @@ pub fn mark_unicode(message: &widestring::WideCStr) {
 /// attributes structure. These attributes include a text message, color, category, and a
 /// payload. Each of the attributes is optional.
 ///
+/// This helper accepts any value convertible into [`EventArgument`] and returns `()`.
+/// Invalid global-context input is not returned or propagated: it triggers a
+/// `debug_assert!` in debug builds and is dropped in non-debug builds. Use
+/// [`try_mark`] when invalid input must be handled explicitly.
+///
 /// ```
 /// nvtx::mark("Sample mark");
 ///
@@ -217,14 +225,33 @@ pub fn mark_unicode(message: &widestring::WideCStr) {
 /// ```
 #[cfg(feature = "alloc")]
 pub fn mark(argument: impl Into<EventArgument>) {
+    if let Err(error) = try_mark(argument) {
+        debug_assert!(false, "{error}");
+    }
+}
+
+/// Fallible variant of [`mark`] that reports invalid global-context usage.
+///
+/// # Errors
+///
+/// Returns [`NvtxError::RegisteredStringInGlobalContext`] when `argument`
+/// contains a registered-string message variant.
+#[cfg(feature = "alloc")]
+pub fn try_mark(argument: impl Into<EventArgument>) -> Result<(), NvtxError> {
     match argument.into() {
         EventArgument::Message(Message::Ascii(s)) => mark_ascii(&s),
         EventArgument::Message(Message::Unicode(s)) => mark_unicode(&s),
         EventArgument::Message(Message::Registered(())) => {
-            unreachable!("Registered strings are not valid in the global context")
+            return Err(NvtxError::RegisteredStringInGlobalContext);
         }
-        EventArgument::Attributes(a) => nvtx_sys::mark_ex(&a.encode()),
+        EventArgument::Attributes(a) => {
+            if matches!(a.message, Some(Message::Registered(()))) {
+                return Err(NvtxError::RegisteredStringInGlobalContext);
+            }
+            nvtx_sys::mark_ex(&a.encode());
+        }
     }
+    Ok(())
 }
 
 /// Name an active thread of the current process.
@@ -392,5 +419,25 @@ mod tests {
         let cstring = CString::new("This is a message").unwrap();
         let attr = builder.message(cstring.clone()).build();
         assert!(matches!(attr.message, Some(Message::Ascii(s)) if s == cstring));
+    }
+
+    #[test]
+    fn test_try_mark_rejects_registered_message() {
+        let arg = EventArgument::Message(Message::Registered(()));
+        assert!(matches!(
+            try_mark(arg),
+            Err(NvtxError::RegisteredStringInGlobalContext)
+        ));
+    }
+
+    #[test]
+    fn test_try_mark_rejects_registered_message_in_attributes() {
+        let attr = EventAttributes::builder()
+            .message(Message::Registered(()))
+            .build();
+        assert!(matches!(
+            try_mark(attr),
+            Err(NvtxError::RegisteredStringInGlobalContext)
+        ));
     }
 }

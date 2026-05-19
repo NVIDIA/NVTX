@@ -3,12 +3,24 @@
 
 use core::marker::PhantomData;
 
-use crate::{EventArgument, Message};
+use crate::{EventArgument, Message, NvtxError};
+
+fn reject_registered_in_global_context(arg: &EventArgument) -> Result<(), NvtxError> {
+    match arg {
+        EventArgument::Message(Message::Registered(())) => {
+            Err(NvtxError::RegisteredStringInGlobalContext)
+        }
+        EventArgument::Attributes(a) if matches!(&a.message, Some(Message::Registered(()))) => {
+            Err(NvtxError::RegisteredStringInGlobalContext)
+        }
+        _ => Ok(()),
+    }
+}
 
 /// A RAII-like object for modeling process-wide Ranges.
 #[derive(Debug)]
 pub struct Range {
-    id: nvtx_sys::RangeId,
+    id: Option<nvtx_sys::RangeId>,
 }
 
 impl Range {
@@ -33,27 +45,46 @@ impl Range {
     /// drop(range)
     /// ```
     pub fn new(arg: impl Into<EventArgument>) -> Range {
-        let id = match arg.into() {
+        match Self::try_new(arg) {
+            Ok(range) => range,
+            Err(error) => {
+                debug_assert!(false, "{error}");
+                Self { id: None }
+            }
+        }
+    }
+
+    /// Fallible variant of [`Range::new`] for invalid global-context usage.
+    ///
+    /// # Errors
+    ///
+    /// Returns [`NvtxError::RegisteredStringInGlobalContext`] when `arg`
+    /// contains a registered-string message variant.
+    pub fn try_new(arg: impl Into<EventArgument>) -> Result<Range, NvtxError> {
+        let arg = arg.into();
+        reject_registered_in_global_context(&arg)?;
+        let id = match arg {
             EventArgument::Message(Message::Ascii(s)) => nvtx_sys::range_start_ascii(&s),
             EventArgument::Message(Message::Unicode(s)) => nvtx_sys::range_start_unicode(&s),
-            EventArgument::Message(Message::Registered(())) => {
-                unreachable!("Registered strings are not valid in the global context")
-            }
+            EventArgument::Message(Message::Registered(())) => unreachable!("validated above"),
             EventArgument::Attributes(a) => nvtx_sys::range_start_ex(&a.encode()),
         };
-        Range { id }
+        Ok(Range { id: Some(id) })
     }
 }
 
 impl Drop for Range {
     fn drop(&mut self) {
-        nvtx_sys::range_end(self.id);
+        if let Some(id) = self.id {
+            nvtx_sys::range_end(id);
+        }
     }
 }
 
 /// A RAII-like object for modeling callstack (thread-local) Ranges.
 #[derive(Debug)]
 pub struct LocalRange {
+    active: bool,
     // prevent Sync + Send
     _phantom: PhantomData<*mut i32>,
 }
@@ -80,22 +111,90 @@ impl LocalRange {
     /// drop(range)
     /// ```
     pub fn new(arg: impl Into<EventArgument>) -> LocalRange {
-        match arg.into() {
+        match Self::try_new(arg) {
+            Ok(range) => range,
+            Err(error) => {
+                debug_assert!(false, "{error}");
+                LocalRange {
+                    active: false,
+                    _phantom: PhantomData,
+                }
+            }
+        }
+    }
+
+    /// Fallible variant of [`LocalRange::new`] for invalid global-context usage.
+    ///
+    /// # Errors
+    ///
+    /// Returns [`NvtxError::RegisteredStringInGlobalContext`] when `arg`
+    /// contains a registered-string message variant.
+    pub fn try_new(arg: impl Into<EventArgument>) -> Result<LocalRange, NvtxError> {
+        let arg = arg.into();
+        reject_registered_in_global_context(&arg)?;
+        match arg {
             EventArgument::Message(Message::Ascii(s)) => nvtx_sys::range_push_ascii(&s),
             EventArgument::Message(Message::Unicode(s)) => nvtx_sys::range_push_unicode(&s),
-            EventArgument::Message(Message::Registered(())) => {
-                unreachable!("Registered strings are not valid in the global context")
-            }
+            EventArgument::Message(Message::Registered(())) => unreachable!("validated above"),
             EventArgument::Attributes(a) => nvtx_sys::range_push_ex(&a.encode()),
         };
-        LocalRange {
+        Ok(LocalRange {
+            active: true,
             _phantom: PhantomData,
-        }
+        })
     }
 }
 
 impl Drop for LocalRange {
     fn drop(&mut self) {
-        nvtx_sys::range_pop();
+        if self.active {
+            nvtx_sys::range_pop();
+        }
+    }
+}
+
+#[cfg(all(test, feature = "std"))]
+mod tests {
+    use super::*;
+    use crate::EventAttributes;
+
+    #[test]
+    fn range_try_new_rejects_registered_message() {
+        let arg = EventArgument::Message(Message::Registered(()));
+        assert!(matches!(
+            Range::try_new(arg),
+            Err(NvtxError::RegisteredStringInGlobalContext)
+        ));
+    }
+
+    #[test]
+    fn local_range_try_new_rejects_registered_message() {
+        let arg = EventArgument::Message(Message::Registered(()));
+        assert!(matches!(
+            LocalRange::try_new(arg),
+            Err(NvtxError::RegisteredStringInGlobalContext)
+        ));
+    }
+
+    #[test]
+    fn range_try_new_rejects_registered_message_in_attributes() {
+        let attr = EventAttributes::builder()
+            .message(Message::Registered(()))
+            .build();
+        assert!(matches!(
+            Range::try_new(attr),
+            Err(NvtxError::RegisteredStringInGlobalContext)
+        ));
+    }
+
+    #[test]
+    fn local_range_try_new_rejects_registered_message_in_attributes() {
+        let attr = EventAttributes::builder()
+            .message(Message::Registered(()))
+            .build();
+        assert!(matches!(
+            LocalRange::try_new(attr),
+            Err(NvtxError::RegisteredStringInGlobalContext)
+        ));
     }
 }

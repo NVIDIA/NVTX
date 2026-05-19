@@ -1,7 +1,7 @@
 // SPDX-FileCopyrightText: Copyright (c) 2025-2026 NVIDIA CORPORATION & AFFILIATES. All rights reserved.
 // SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception
 
-use crate::{domain::RegisteredString, Str, TypeValueEncodable};
+use crate::{domain::RegisteredString, NvtxError, Str, TypeValueEncodable};
 use alloc::borrow::ToOwned;
 use alloc::ffi::CString;
 use alloc::string::String;
@@ -79,7 +79,13 @@ trait Encodable {
 
 impl Encodable for () {
     fn encode(&self) -> (nvtx_sys::MessageType, nvtx_sys::MessageValue) {
-        unreachable!("Registered strings are not valid in the global context")
+        debug_assert!(false, "{}", NvtxError::RegisteredStringInGlobalContext);
+        (
+            nvtx_sys::MessageType::NVTX_MESSAGE_UNKNOWN,
+            nvtx_sys::MessageValue {
+                ascii: core::ptr::null(),
+            },
+        )
     }
 }
 
