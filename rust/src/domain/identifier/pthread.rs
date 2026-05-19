@@ -1,3 +1,6 @@
+// SPDX-FileCopyrightText: Copyright (c) 2024-2026 NVIDIA CORPORATION & AFFILIATES. All rights reserved.
+// SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception
+
 use super::Identifier;
 use crate::{
     native_types::{pthread_cond_t, pthread_mutex_t, pthread_once_t, pthread_rwlock_t},

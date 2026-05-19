@@ -1,4 +1,6 @@
 @ECHO OFF
+REM SPDX-FileCopyrightText: Copyright (c) 2020-2026 NVIDIA CORPORATION & AFFILIATES. All rights reserved.
+REM SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception
 
 pushd %~dp0
 

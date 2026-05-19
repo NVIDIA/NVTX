@@ -1,3 +1,6 @@
+// SPDX-FileCopyrightText: Copyright (c) 2025-2026 NVIDIA CORPORATION & AFFILIATES. All rights reserved.
+// SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception
+
 use crate::common::event_attributes::GenericEventAttributes;
 
 /// Generic event argument type that can be used in both global and domain contexts

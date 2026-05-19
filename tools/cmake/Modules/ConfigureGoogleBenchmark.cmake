@@ -1,3 +1,6 @@
+# SPDX-FileCopyrightText: Copyright (c) 2022-2026 NVIDIA CORPORATION & AFFILIATES. All rights reserved.
+# SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception
+
 set(GBENCH_ROOT "${CMAKE_BINARY_DIR}/googlebenchmark")
 
 set(GBENCH_CMAKE_ARGS " -DCMAKE_BUILD_TYPE=Release")

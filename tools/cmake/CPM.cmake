@@ -1,3 +1,6 @@
+# SPDX-FileCopyrightText: Copyright (c) 2022-2026 NVIDIA CORPORATION & AFFILIATES. All rights reserved.
+# SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception
+
 set(CPM_DOWNLOAD_VERSION 3b404296b539e596f39421c4e92bc803b299d964) # 0.27.5
 
 if(CPM_SOURCE_CACHE)

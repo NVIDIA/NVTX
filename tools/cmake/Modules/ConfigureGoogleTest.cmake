@@ -1,3 +1,6 @@
+# SPDX-FileCopyrightText: Copyright (c) 2022-2026 NVIDIA CORPORATION & AFFILIATES. All rights reserved.
+# SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception
+
 set(GTEST_ROOT "${CMAKE_BINARY_DIR}/googletest")
 
 set(GTEST_CMAKE_ARGS "")

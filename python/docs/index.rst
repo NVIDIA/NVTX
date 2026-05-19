@@ -1,3 +1,6 @@
+.. SPDX-FileCopyrightText: Copyright (c) 2020-2026 NVIDIA CORPORATION & AFFILIATES. All rights reserved.
+.. SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception
+
 .. nvtx documentation master file, created by
    sphinx-quickstart on Wed May  6 16:27:08 2020.
    You can adapt this file completely to your liking, but it should at least

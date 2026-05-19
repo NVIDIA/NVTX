@@ -1,3 +1,6 @@
+// SPDX-FileCopyrightText: Copyright (c) 2024-2026 NVIDIA CORPORATION & AFFILIATES. All rights reserved.
+// SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception
+
 use crate::{domain::EventAttributes, Color, Domain, Payload};
 use std::{collections::HashMap, marker::PhantomData, sync::Mutex};
 use tracing_core::{

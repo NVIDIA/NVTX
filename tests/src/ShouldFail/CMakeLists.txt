@@ -1,3 +1,6 @@
+# SPDX-FileCopyrightText: Copyright (c) 2025-2026 NVIDIA CORPORATION & AFFILIATES. All rights reserved.
+# SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception
+
 function(add_should_fail_test SOURCE_FILE COMPILE_DEFINITION)
     # Creates a target given a source file and a compile definition
     # that should fail to compile
