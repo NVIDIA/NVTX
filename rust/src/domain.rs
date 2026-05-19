@@ -6,7 +6,7 @@ use crate::{
         event_attributes::GenericEventAttributesBuilder, GenericEventArgument,
         GenericEventAttributes,
     },
-    Color, Payload, Str, TypeValueEncodable,
+    Color, NvtxError, Payload, Str, TypeValueEncodable,
 };
 #[cfg(all(feature = "alloc", not(feature = "std")))]
 // `HashMap` depends on `std`'s hasher support. In `no_std + alloc`, `BTreeMap`
@@ -60,12 +60,26 @@ pub struct EventAttributesBuilder<'a> {
 }
 
 impl<'a> EventAttributesBuilder<'a> {
-    /// Update the attribute's category. An assertion will be thrown if a Category is
-    /// passed in whose domain is not the same as this builder.
+    fn resolve_registered_message(
+        &self,
+        message: impl Into<Message<'a>>,
+    ) -> Result<RegisteredString<'a>, NvtxError> {
+        // implementation optimization: always prefer registered strings
+        let msg = match message.into() {
+            Message::Ascii(s) => self.domain.register_string(s.to_string_lossy().to_string()),
+            Message::Unicode(s) => self.domain.register_string(s.to_string_lossy().clone()),
+            Message::Registered(r) => r,
+        };
+        if !core::ptr::eq(msg.domain(), self.domain) {
+            return Err(NvtxError::DomainMismatch);
+        }
+        Ok(msg)
+    }
+
+    /// Update the attribute's category.
     ///
-    /// # Panics
-    ///
-    /// Panics if `category` belongs to a different [`Domain`].
+    /// If `category` belongs to a different [`Domain`], this method leaves the
+    /// builder unchanged. Use [`Self::try_category`] to receive an explicit error.
     ///
     /// ```
     /// let domain = nvtx::Domain::new("Domain");
@@ -77,12 +91,29 @@ impl<'a> EventAttributesBuilder<'a> {
     /// ```
     #[must_use]
     pub fn category(mut self, category: Category<'a>) -> EventAttributesBuilder<'a> {
-        assert!(
-            core::ptr::eq(category.domain(), self.domain),
-            "EventAttributesBuilder's Domain differs from Category's Domain"
-        );
+        if !core::ptr::eq(category.domain(), self.domain) {
+            debug_assert!(false, "{:?}", NvtxError::DomainMismatch);
+            return self;
+        }
         self.inner = self.inner.category(category);
         self
+    }
+
+    /// Fallible variant of [`Self::category`].
+    ///
+    /// # Errors
+    ///
+    /// Returns [`NvtxError::DomainMismatch`] when `category` belongs to a
+    /// different domain.
+    pub fn try_category(
+        mut self,
+        category: Category<'a>,
+    ) -> Result<EventAttributesBuilder<'a>, NvtxError> {
+        if !core::ptr::eq(category.domain(), self.domain) {
+            return Err(NvtxError::DomainMismatch);
+        }
+        self.inner = self.inner.category(category);
+        Ok(self)
     }
 
     /// Update the attribute's category. An assertion will be thrown if a Category is
@@ -130,13 +161,11 @@ impl<'a> EventAttributesBuilder<'a> {
         self
     }
 
-    /// Update the attribute's message. An assertion will be thrown if a
-    /// [`super::RegisteredString`] is passed in whose domain is not the same as this
-    /// builder.
+    /// Update the attribute's message.
     ///
-    /// # Panics
-    ///
-    /// Panics if `message` resolves to a registered string from a different [`Domain`].
+    /// If `message` resolves to a registered string from a different [`Domain`],
+    /// this method leaves the builder unchanged. Use [`Self::try_message`] for
+    /// explicit error handling.
     ///
     /// ```
     /// let domain = nvtx::Domain::new("Domain");
@@ -146,18 +175,30 @@ impl<'a> EventAttributesBuilder<'a> {
     /// ```
     #[must_use]
     pub fn message(mut self, message: impl Into<Message<'a>>) -> EventAttributesBuilder<'a> {
-        // implementation optimization: always prefer registered strings
-        let msg = match message.into() {
-            Message::Ascii(s) => self.domain.register_string(s.to_string_lossy().to_string()),
-            Message::Unicode(s) => self.domain.register_string(s.to_string_lossy().clone()),
-            Message::Registered(r) => r,
-        };
-        assert!(
-            core::ptr::eq(msg.domain(), self.domain),
-            "EventAttributesBuilder's Domain differs from RegisteredString's Domain"
-        );
-        self.inner = self.inner.message(Message::Registered(msg));
+        match self.resolve_registered_message(message) {
+            Ok(msg) => {
+                self.inner = self.inner.message(Message::Registered(msg));
+            }
+            Err(error) => {
+                debug_assert!(false, "{error}");
+            }
+        }
         self
+    }
+
+    /// Fallible variant of [`Self::message`].
+    ///
+    /// # Errors
+    ///
+    /// Returns [`NvtxError::DomainMismatch`] when `message` resolves to a
+    /// registered string owned by a different domain.
+    pub fn try_message(
+        mut self,
+        message: impl Into<Message<'a>>,
+    ) -> Result<EventAttributesBuilder<'a>, NvtxError> {
+        let msg = self.resolve_registered_message(message)?;
+        self.inner = self.inner.message(Message::Registered(msg));
+        Ok(self)
     }
 
     /// Construct an [`EventAttributes`] from the builder's held state.
@@ -360,6 +401,30 @@ impl Domain {
         names.map(|name| self.register_category(name))
     }
 
+    fn validate_event_argument<'a>(&'a self, arg: &EventArgument<'a>) -> Result<(), NvtxError> {
+        match arg {
+            EventArgument::Attributes(attr) => {
+                if let Some(category) = &attr.category {
+                    if !core::ptr::eq(category.domain(), self) {
+                        return Err(NvtxError::DomainMismatch);
+                    }
+                }
+                if let Some(Message::Registered(reg_str)) = &attr.message {
+                    if !core::ptr::eq(reg_str.domain(), self) {
+                        return Err(NvtxError::DomainMismatch);
+                    }
+                }
+            }
+            EventArgument::Message(Message::Registered(reg_str)) => {
+                if !core::ptr::eq(reg_str.domain(), self) {
+                    return Err(NvtxError::DomainMismatch);
+                }
+            }
+            EventArgument::Message(_) => {}
+        }
+        Ok(())
+    }
+
     /// Marks an instantaneous event in the application belonging to a domain.
     ///
     /// A marker can contain a text message or specify information using the event
@@ -383,34 +448,27 @@ impl Domain {
     /// domain.mark(reg_str);
     /// ```
     ///
-    /// # Panics
-    ///
-    /// Panics if `arg` contains a category or registered string owned by another [`Domain`].
     pub fn mark<'a>(&'a self, arg: impl Into<EventArgument<'a>>) {
-        match arg.into() {
+        if let Err(error) = self.try_mark(arg) {
+            debug_assert!(false, "{error}");
+        }
+    }
+
+    /// Fallible variant of [`Domain::mark`].
+    ///
+    /// # Errors
+    ///
+    /// Returns [`NvtxError::DomainMismatch`] when `arg` references domain-owned
+    /// values from a different domain.
+    pub fn try_mark<'a>(&'a self, arg: impl Into<EventArgument<'a>>) -> Result<(), NvtxError> {
+        let event_arg = arg.into();
+        self.validate_event_argument(&event_arg)?;
+        match event_arg {
             EventArgument::Attributes(attr) => {
-                if let Some(category) = &attr.category {
-                    assert!(
-                        core::ptr::eq(category.domain(), self),
-                        "EventAttributes' Domain does not match current Domain"
-                    );
-                }
-                if let Some(Message::Registered(reg_str)) = &attr.message {
-                    assert!(
-                        core::ptr::eq(reg_str.domain(), self),
-                        "EventAttributes' Domain does not match current Domain"
-                    );
-                }
                 let encoded = attr.encode();
                 nvtx_sys::domain_mark_ex(self.handle, &encoded);
             }
             EventArgument::Message(m) => {
-                if let Message::Registered(reg_str) = m {
-                    assert!(
-                        core::ptr::eq(reg_str.domain(), self),
-                        "EventAttributes' Domain does not match current Domain"
-                    );
-                }
                 let attr = EventAttributes {
                     category: None,
                     color: None,
@@ -421,6 +479,7 @@ impl Domain {
                 nvtx_sys::domain_mark_ex(self.handle, &encoded);
             }
         }
+        Ok(())
     }
 
     /// Create an RAII-friendly, domain-owned range type which (1) cannot be moved across
@@ -447,7 +506,28 @@ impl Domain {
     /// drop(range)
     /// ```
     pub fn local_range<'a>(&'a self, arg: impl Into<EventArgument<'a>>) -> LocalRange<'a> {
-        LocalRange::new(arg, self)
+        match self.try_local_range(arg) {
+            Ok(range) => range,
+            Err(error) => {
+                debug_assert!(false, "{error}");
+                LocalRange::noop(self)
+            }
+        }
+    }
+
+    /// Fallible variant of [`Domain::local_range`].
+    ///
+    /// # Errors
+    ///
+    /// Returns [`NvtxError::DomainMismatch`] when `arg` references domain-owned
+    /// values from a different domain.
+    pub fn try_local_range<'a>(
+        &'a self,
+        arg: impl Into<EventArgument<'a>>,
+    ) -> Result<LocalRange<'a>, NvtxError> {
+        let event_arg = arg.into();
+        self.validate_event_argument(&event_arg)?;
+        Ok(LocalRange::new(event_arg, self))
     }
 
     /// Create an RAII-friendly, domain-owned range type which (1) can be moved across
@@ -474,38 +554,29 @@ impl Domain {
     /// drop(range)
     /// ```
     ///
-    /// # Panics
-    ///
-    /// Panics if `arg` contains a category or registered string owned by another [`Domain`].
     pub fn range<'a>(&'a self, arg: impl Into<EventArgument<'a>>) -> Range<'a> {
-        let event_arg = arg.into();
-        match &event_arg {
-            EventArgument::Attributes(attr) => {
-                // Validate that all categories and messages belong to this domain
-                if let Some(category) = &attr.category {
-                    assert!(
-                        core::ptr::eq(category.domain(), self),
-                        "EventAttributes' Domain does not match current Domain"
-                    );
-                }
-                if let Some(Message::Registered(reg_str)) = &attr.message {
-                    assert!(
-                        core::ptr::eq(reg_str.domain(), self),
-                        "EventAttributes' Domain does not match current Domain"
-                    );
-                }
-            }
-            EventArgument::Message(m) => {
-                // NEW: Add validation here
-                if let Message::Registered(reg_str) = m {
-                    assert!(
-                        core::ptr::eq(reg_str.domain(), self),
-                        "EventAttributes' Domain does not match current Domain"
-                    );
-                }
+        match self.try_range(arg) {
+            Ok(range) => range,
+            Err(error) => {
+                debug_assert!(false, "{error}");
+                Range::noop(self)
             }
         }
-        Range::new(event_arg, self)
+    }
+
+    /// Fallible variant of [`Domain::range`].
+    ///
+    /// # Errors
+    ///
+    /// Returns [`NvtxError::DomainMismatch`] when `arg` references domain-owned
+    /// values from a different domain.
+    pub fn try_range<'a>(
+        &'a self,
+        arg: impl Into<EventArgument<'a>>,
+    ) -> Result<Range<'a>, NvtxError> {
+        let event_arg = arg.into();
+        self.validate_event_argument(&event_arg)?;
+        Ok(Range::new(event_arg, self))
     }
 
     /// Internal function for starting a range and returning a raw Range Id
@@ -750,89 +821,94 @@ mod tests {
     }
 
     #[test]
-    #[should_panic(expected = "EventAttributes' Domain does not match current Domain")]
-    fn test_unowned_category_panic_mark() {
+    fn test_unowned_category_try_mark_error() {
         let d1 = Domain::new("Domain1");
         let c1 = d1.register_category("category");
         let d2 = Domain::new("Domain2");
-        d2.mark(d1.event_attributes_builder().category(c1).build());
+        let attr = d1.event_attributes_builder().category(c1).build();
+        assert!(matches!(d2.try_mark(attr), Err(NvtxError::DomainMismatch)));
     }
 
     #[test]
-    #[should_panic(expected = "EventAttributesBuilder's Domain differs from Category's Domain")]
-    fn test_unowned_category_panic_in_builder_mark() {
+    fn test_unowned_category_try_builder_error() {
         let d1 = Domain::new("Domain1");
         let c1 = d1.register_category("category");
         let d2 = Domain::new("Domain2");
-        d2.mark(d2.event_attributes_builder().category(c1).build());
+        assert!(matches!(
+            d2.event_attributes_builder().try_category(c1),
+            Err(NvtxError::DomainMismatch)
+        ));
     }
 
     #[test]
-    #[should_panic(expected = "EventAttributes' Domain does not match current Domain")]
-    fn test_unowned_category_panic_range() {
+    fn test_unowned_category_try_range_error() {
         let d1 = Domain::new("Domain1");
         let c1 = d1.register_category("category");
         let d2 = Domain::new("Domain2");
-        d2.range(d1.event_attributes_builder().category(c1).build());
+        let attr = d1.event_attributes_builder().category(c1).build();
+        assert!(matches!(d2.try_range(attr), Err(NvtxError::DomainMismatch)));
     }
 
     #[test]
-    #[should_panic(expected = "EventAttributesBuilder's Domain differs from Category's Domain")]
-    fn test_unowned_category_panic_in_builder_range() {
+    fn test_unowned_category_try_local_range_error() {
         let d1 = Domain::new("Domain1");
         let c1 = d1.register_category("category");
         let d2 = Domain::new("Domain2");
-        d2.range(d2.event_attributes_builder().category(c1).build());
+        let attr = d1.event_attributes_builder().category(c1).build();
+        assert!(matches!(
+            d2.try_local_range(attr),
+            Err(NvtxError::DomainMismatch)
+        ));
     }
 
     #[test]
-    #[should_panic(expected = "EventAttributes' Domain does not match current Domain")]
-    fn test_unowned_string_panic_mark() {
+    fn test_unowned_string_try_mark_error() {
         let d1 = Domain::new("Domain1");
         let s1 = d1.register_string("test string");
         let d2 = Domain::new("Domain2");
-        d2.mark(d1.event_attributes_builder().message(s1).build());
+        let attr = d1.event_attributes_builder().message(s1).build();
+        assert!(matches!(d2.try_mark(attr), Err(NvtxError::DomainMismatch)));
     }
 
     #[test]
-    #[should_panic(
-        expected = "EventAttributesBuilder's Domain differs from RegisteredString's Domain"
-    )]
-    fn test_unowned_string_panic_in_builder_mark() {
+    fn test_unowned_string_try_builder_error() {
         let d1 = Domain::new("Domain1");
         let s1 = d1.register_string("test string");
         let d2 = Domain::new("Domain2");
-        d2.mark(d2.event_attributes_builder().message(s1).build());
+        assert!(matches!(
+            d2.event_attributes_builder().try_message(s1),
+            Err(NvtxError::DomainMismatch)
+        ));
     }
 
     #[test]
-    #[should_panic(expected = "EventAttributes' Domain does not match current Domain")]
-    fn test_unowned_string_panic_range() {
+    fn test_unowned_string_try_range_error() {
         let d1 = Domain::new("Domain1");
         let s1 = d1.register_string("test string");
         let d2 = Domain::new("Domain2");
-        d2.range(d1.event_attributes_builder().message(s1).build());
+        let attr = d1.event_attributes_builder().message(s1).build();
+        assert!(matches!(d2.try_range(attr), Err(NvtxError::DomainMismatch)));
     }
 
     #[test]
-    #[should_panic(
-        expected = "EventAttributesBuilder's Domain differs from RegisteredString's Domain"
-    )]
-    fn test_unowned_string_panic_in_builder_range() {
+    fn test_unowned_string_try_local_range_error() {
         let d1 = Domain::new("Domain1");
         let s1 = d1.register_string("test string");
         let d2 = Domain::new("Domain2");
-        d2.range(d2.event_attributes_builder().message(s1).build());
+        let attr = d1.event_attributes_builder().message(s1).build();
+        assert!(matches!(
+            d2.try_local_range(attr),
+            Err(NvtxError::DomainMismatch)
+        ));
     }
 
     #[test]
-    #[should_panic(expected = "EventAttributes' Domain does not match current Domain")]
     fn test_simple_domain_validation() {
         let d1 = Domain::new("Domain1");
         let s1 = d1.register_string("test string");
         let d2 = Domain::new("Domain2");
         // Create attributes with a string from d1, then use them with d2
         let attr = d1.event_attributes_builder().message(s1).build();
-        d2.mark(attr);
+        assert!(matches!(d2.try_mark(attr), Err(NvtxError::DomainMismatch)));
     }
 }

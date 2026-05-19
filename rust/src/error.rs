@@ -8,6 +8,9 @@ pub enum NvtxError {
     /// A registered string was supplied where global-context APIs only support
     /// ASCII or Unicode messages.
     RegisteredStringInGlobalContext,
+    /// A domain-owned value (for example category or registered string) was
+    /// used with a different domain.
+    DomainMismatch,
 }
 
 impl core::fmt::Display for NvtxError {
@@ -16,6 +19,7 @@ impl core::fmt::Display for NvtxError {
             Self::RegisteredStringInGlobalContext => {
                 write!(f, "registered strings are not valid in the global context")
             }
+            Self::DomainMismatch => write!(f, "domain-owned value used with a different domain"),
         }
     }
 }
