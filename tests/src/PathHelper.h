@@ -62,10 +62,18 @@
 
 #include "DllHelper.h"
 
-#if defined(_WIN32)
-constexpr char pathSep = '\\';
+#if !defined(NVTX_NULLPTR)
+#if defined(__cplusplus) && __cplusplus >= 201103L
+#define NVTX_NULLPTR nullptr
 #else
-constexpr char pathSep = '/';
+#define NVTX_NULLPTR NULL
+#endif
+#endif
+
+#if defined(_WIN32)
+static const char pathSep = '\\';
+#else
+static const char pathSep = '/';
 #endif
 
 // Adapted from C functions in NVTXW implementation
@@ -77,15 +85,15 @@ static std::string GetCurrentProcessPath(void)
     {
         DWORD size = MAX_PATH;
         DWORD newSize;
-        buf = nullptr;
+        buf = NVTX_NULLPTR;
         while (1)
         {
             buf = static_cast<char*>(realloc(buf, size));
             if (!buf)
             {
-                return std::string{};
+                return std::string();
             }
-            newSize = GetModuleFileNameA(nullptr, buf, size);
+            newSize = GetModuleFileNameA(NVTX_NULLPTR, buf, size);
             if (newSize < size)
             {
                 break;
@@ -100,13 +108,13 @@ static std::string GetCurrentProcessPath(void)
         buf = static_cast<char*>(malloc(NVTX_PROC_PIDPATHINFO_MAXSIZE));
         if (!buf)
         {
-            return std::string{};
+            return std::string();
         }
         ret = nvtx_proc_pidpath(pid, buf, NVTX_PROC_PIDPATHINFO_MAXSIZE);
         if (ret == 0)
         {
             free(buf);
-            return std::string{};
+            return std::string();
         }
     }
 #elif defined(__QNX__)
@@ -130,19 +138,19 @@ static std::string GetCurrentProcessPath(void)
         ssize_t bytesReadSigned;
         size_t bytesRead;
         static const char linkName[] = "/proc/self/exe";
-        buf = nullptr;
+        buf = NVTX_NULLPTR;
         while (1)
         {
             buf = static_cast<char*>(realloc(buf, size));
             if (!buf)
             {
-                return std::string{};
+                return std::string();
             }
             bytesReadSigned = readlink(linkName, buf, size);
             if (bytesReadSigned < 0)
             {
                 free(buf);
-                return std::string{};
+                return std::string();
             }
             bytesRead = static_cast<size_t>(bytesReadSigned);
             if (bytesRead < size) break;
@@ -201,7 +209,7 @@ static std::string GetCurrentProcessDirWithSep(void)
  */
 static std::string AbsolutePathToLibraryInCurrentProcessPath(
     std::string libraryBaseName,
-    std::vector<std::string> subDirs = {},
+    std::vector<std::string> subDirs = std::vector<std::string>(),
     std::string libSuffix = DLL_SUFFIX);
 static std::string AbsolutePathToLibraryInCurrentProcessPath(
     std::string libraryBaseName,
@@ -210,9 +218,11 @@ static std::string AbsolutePathToLibraryInCurrentProcessPath(
 {
     std::string result = GetCurrentProcessDirWithSep();
 
-    for (auto const& subDir : subDirs)
+    for (std::vector<std::string>::const_iterator it = subDirs.begin();
+         it != subDirs.end();
+         ++it)
     {
-        result += subDir;
+        result += *it;
         result += pathSep;
     }
 

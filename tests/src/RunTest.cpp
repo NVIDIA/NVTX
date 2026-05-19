@@ -28,9 +28,9 @@
 static bool SetEnvVar(const char* name, const char* value)
 {
 #if defined(_WIN32)
-    auto result = _putenv_s(name, value);
+    int result = _putenv_s(name, value);
 #else
-    auto result = setenv(name, value, 1);
+    int result = setenv(name, value, 1);
 #endif
     return result == 0;
 }
@@ -42,7 +42,7 @@ static int MainInternal(int argc, const char** argv)
     std::string testName;
     std::string injectionName;
 
-    auto oldArgv = argv;
+    const char** oldArgv = argv;
     ++argv;
     while (*argv)
     {
@@ -84,9 +84,9 @@ static int MainInternal(int argc, const char** argv)
     DLL_HANDLE hDll = DLL_OPEN(test.c_str());
     if (!hDll) return 104;
 
-    using pfnRunTest_t = int(*)(int, const char**);
+    typedef int(*pfnRunTest_t)(int, const char**);
 
-    auto pfnRunTest = reinterpret_cast<pfnRunTest_t>(GET_DLL_FUNC(hDll, "RunTest"));
+    pfnRunTest_t pfnRunTest = reinterpret_cast<pfnRunTest_t>(GET_DLL_FUNC(hDll, "RunTest"));
     if (!pfnRunTest) return 105;
 
     int result = pfnRunTest(argc, argv); // Forward remaining args
