@@ -1,0 +1,70 @@
+---
+name: Source Validation
+
+'on':
+  push:
+    paths:
+      - .github/*.yml
+      - .github/workflows/*.yml
+      - .gitlab-ci.yml
+      - '**/*.bat'
+      - '**/*.c'
+      - '**/*.cmake'
+      - '**/*.cpp'
+      - '**/*.cu'
+      - '**/*.h'
+      - '**/*.hpp'
+      - '**/*.in'
+      - '**/*.md'
+      - '**/*.ps1'
+      - '**/*.py'
+      - '**/*.rs'
+      - '**/*.rst'
+      - '**/*.sh'
+      - '**/*.toml'
+      - '**/CMakeLists.txt'
+      - '!docs/**'
+  pull_request:
+    paths:
+      - .github/*.yml
+      - .github/workflows/*.yml
+      - .gitlab-ci.yml
+      - '**/*.bat'
+      - '**/*.c'
+      - '**/*.cmake'
+      - '**/*.cpp'
+      - '**/*.cu'
+      - '**/*.h'
+      - '**/*.hpp'
+      - '**/*.in'
+      - '**/*.md'
+      - '**/*.ps1'
+      - '**/*.py'
+      - '**/*.rs'
+      - '**/*.rst'
+      - '**/*.sh'
+      - '**/*.toml'
+      - '**/CMakeLists.txt'
+      - '!docs/**'
+
+permissions:
+  contents: read
+
+jobs:
+  validate-source:
+    name: Validate Source Files
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          fetch-depth: 0
+
+      - name: Aptitude - Update Package Lists
+        run: sudo apt-get update
+        timeout-minutes: 5
+      - name: Aptitude - Install yamllint
+        run: sudo apt-get -y install yamllint
+        timeout-minutes: 5
+
+      - name: Validate Source Files
+        run: tests/scripts/validate-source-files.sh

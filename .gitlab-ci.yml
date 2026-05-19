@@ -55,6 +55,37 @@
       when: always
     - when: never
 
+'Source Validation (Linux, x64)':
+  tags: [linux, x64]
+  timeout: 10m
+  variables:
+    GIT_DEPTH: 0
+  rules:
+    - changes:
+        - .gitlab-ci.yml
+        - .github/*.yml
+        - .github/workflows/*.yml
+        - '**/*.bat'
+        - '**/*.c'
+        - '**/*.cmake'
+        - '**/*.cpp'
+        - '**/*.cu'
+        - '**/*.h'
+        - '**/*.hpp'
+        - '**/*.in'
+        - '**/*.md'
+        - '**/*.ps1'
+        - '**/*.py'
+        - '**/*.rs'
+        - '**/*.rst'
+        - '**/*.sh'
+        - '**/*.toml'
+        - '**/CMakeLists.txt'
+      when: always
+    - when: never
+  script:
+    - tests/scripts/validate-source-files.sh
+
 'Core (Linux, x64, NVHPC)':
   tags: [linux, x64]
   extends: .core-template
