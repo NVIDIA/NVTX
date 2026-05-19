@@ -141,7 +141,7 @@ def test_start_end(nvtx_events, message, color, domain, category, payload):
     range_id = domain_obj.start_range(domain_obj.get_event_attributes(),
         message=message, color=color, category=category, payload=payload)
     domain_obj.end_range(range_id)
-    range_ids.append(range_id)    
+    range_ids.append(range_id)
 
     if nvtx_events:
         verify_registration_events(nvtx_events, domain, message, category)

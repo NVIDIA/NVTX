@@ -715,5 +715,3 @@ struct Callbacks
 };
 
 extern Callbacks g_callbacks;
-
-

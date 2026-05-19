@@ -380,7 +380,7 @@ size_t NvtxPayloadParser::EmitNestedSchemaField(
     }
 
     // Static schemas have a fixed element size; arrays use it as stride.
-    // Dynamic schemas (always scalar — arrays are rejected at finalization)
+    // Dynamic schemas (always scalar - arrays are rejected at finalization)
     // need the actual consumed bytes from the nested parse.
     if (nestedSchema.type == NVTX_PAYLOAD_SCHEMA_TYPE_DYNAMIC)
     {

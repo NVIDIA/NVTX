@@ -4,8 +4,8 @@
 set(GBENCH_ROOT "${CMAKE_BINARY_DIR}/googlebenchmark")
 
 set(GBENCH_CMAKE_ARGS " -DCMAKE_BUILD_TYPE=Release")
-                     #" -Dgtest_build_samples=ON"
-                     #" -DCMAKE_VERBOSE_MAKEFILE=ON")
+                      # " -Dgtest_build_samples=ON"
+                      # " -DCMAKE_VERBOSE_MAKEFILE=ON")
 
 configure_file("${CMAKE_SOURCE_DIR}/cmake/Templates/GoogleBenchmark.CMakeLists.txt.cmake"
                "${GBENCH_ROOT}/CMakeLists.txt")
@@ -49,4 +49,3 @@ message(STATUS "Google Benchmark installed here: " ${GBENCH_ROOT}/install)
 set(GBENCH_INCLUDE_DIR "${GBENCH_ROOT}/install/include")
 set(GBENCH_LIBRARY_DIR "${GBENCH_ROOT}/install/lib" "${GBENCH_ROOT}/install/lib64")
 set(GBENCH_FOUND TRUE)
-

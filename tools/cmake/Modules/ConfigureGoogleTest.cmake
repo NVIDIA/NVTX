@@ -4,7 +4,7 @@
 set(GTEST_ROOT "${CMAKE_BINARY_DIR}/googletest")
 
 set(GTEST_CMAKE_ARGS "")
-		     # " -Dgtest_build_samples=ON"
+                     # " -Dgtest_build_samples=ON"
                      # " -DCMAKE_VERBOSE_MAKEFILE=ON")
 
 configure_file("${CMAKE_SOURCE_DIR}/cmake/Templates/GoogleTest.CMakeLists.txt.cmake"
@@ -49,4 +49,3 @@ message(STATUS "GoogleTest installed here: " ${GTEST_ROOT}/install)
 set(GTEST_INCLUDE_DIR "${GTEST_ROOT}/install/include")
 set(GTEST_LIBRARY_DIR "${GTEST_ROOT}/install/lib")
 set(GTEST_FOUND TRUE)
-

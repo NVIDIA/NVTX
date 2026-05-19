@@ -153,4 +153,3 @@ NVTX_DECLSPEC void NVTX_API nvtxNameCuEventW(CUevent event, const wchar_t* name)
 #ifdef __cplusplus
 } /* extern "C" */
 #endif /* __cplusplus */
-

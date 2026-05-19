@@ -252,7 +252,7 @@ This example shows a program that imports multiple third-party libraries, which 
         target_link_libraries(my_program PRIVATE foo bar)
         ```
 
-Note that in this example, Foo uses an older version of NVTX than Bar, and Foo is added before Bar.  Since the NVTX CMake target definitions are local within the Foo and Bar directories, both libraries will use their own copies.  Bar can safely use NVTX version 3.2 features, even though Foo used version 3.1 earlier.  There will be no warnings printed that an older NVTX version was added before a newer one, unlike the case with global (non-IMPORTED) target definitions (see above). 
+Note that in this example, Foo uses an older version of NVTX than Bar, and Foo is added before Bar.  Since the NVTX CMake target definitions are local within the Foo and Bar directories, both libraries will use their own copies.  Bar can safely use NVTX version 3.2 features, even though Foo used version 3.1 earlier.  There will be no warnings printed that an older NVTX version was added before a newer one, unlike the case with global (non-IMPORTED) target definitions (see above).
 
 ## Python
 

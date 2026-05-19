@@ -235,4 +235,3 @@
  */
 #define NVTX_PAYLOAD_SCHEMA_REGISTER(domain, struct_id) \
     nvtxPayloadSchemaRegister(domain, &struct_id##Attr)
-

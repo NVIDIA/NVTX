@@ -24,7 +24,7 @@ project(nvtx_sample_injection C CXX)
 
 set(NVTX_INCLUDE_PATH ${CMAKE_SOURCE_DIR}/Import/NVTX/include)
 
-# NVTX Payload Parser — self-contained decode/format module, reusable for
+# NVTX Payload Parser - self-contained decode/format module, reusable for
 # post-processing (e.g. trace readers) without any injection dependencies.
 add_library(nvtx_payload_parser OBJECT
     Source/Payload/NvtxPayloadRegistry.cpp

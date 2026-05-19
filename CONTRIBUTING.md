@@ -1,4 +1,3 @@
-
 ## NVTX Open Source Software Contribution Rules
 
 #### Signing Your Work
