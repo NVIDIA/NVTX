@@ -39,7 +39,7 @@ jobs:
     steps:
       - uses: actions/checkout@v6
 
-      - uses: >
+      - uses: >-
           conda-incubator/setup-miniconda@8ee1f361103df19b6f8c8655fd3967a8ecb162d5
         with:
           auto-update-conda: true
@@ -138,7 +138,7 @@ jobs:
     steps:
       - uses: actions/checkout@v6
 
-      - uses: >
+      - uses: >-
           conda-incubator/setup-miniconda@8ee1f361103df19b6f8c8655fd3967a8ecb162d5
         with:
           auto-update-conda: true
@@ -233,7 +233,7 @@ jobs:
     steps:
       - uses: actions/checkout@v6
 
-      - uses: >
+      - uses: >-
           conda-incubator/setup-miniconda@8ee1f361103df19b6f8c8655fd3967a8ecb162d5
         with:
           auto-update-conda: true
