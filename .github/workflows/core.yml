@@ -39,7 +39,8 @@ jobs:
     steps:
       - uses: actions/checkout@v6
 
-      - uses: conda-incubator/setup-miniconda@fc2d68f6413eb2d87b895e92f8584b5b94a10167
+      - uses: >
+          conda-incubator/setup-miniconda@fc2d68f6413eb2d87b895e92f8584b5b94a10167
         with:
           auto-update-conda: true
           conda-remove-defaults: true
@@ -137,7 +138,8 @@ jobs:
     steps:
       - uses: actions/checkout@v6
 
-      - uses: conda-incubator/setup-miniconda@fc2d68f6413eb2d87b895e92f8584b5b94a10167
+      - uses: >
+          conda-incubator/setup-miniconda@fc2d68f6413eb2d87b895e92f8584b5b94a10167
         with:
           auto-update-conda: true
           conda-remove-defaults: true
@@ -231,7 +233,8 @@ jobs:
     steps:
       - uses: actions/checkout@v6
 
-      - uses: conda-incubator/setup-miniconda@fc2d68f6413eb2d87b895e92f8584b5b94a10167
+      - uses: >
+          conda-incubator/setup-miniconda@fc2d68f6413eb2d87b895e92f8584b5b94a10167
         with:
           auto-update-conda: true
           conda-remove-defaults: true
