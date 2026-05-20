@@ -26,6 +26,7 @@
 #include <cstring>
 #include <iostream>
 #include <stdexcept>
+#include <string>
 #include <vector>
 
 static int g_failures = 0;
@@ -208,9 +209,30 @@ int RunTest(int argc, const char** argv)
     std::cout << "-------------------------------------\n";
 
     {
+        std::cout << "Counter with std::string name:\n";
+        std::string name{"string_named_counter"};
+        nvtx3::counter_in<int64_t, counters_domain> string_named{name};
+        string_named.sample(7);
+        std::cout << "  counter id: " << string_named.id() << "\n";
+    }
+    std::cout << "-------------------------------------\n";
+
+    {
+        std::cout << "Counter with std::string name and description:\n";
+        std::string name{"string_described_counter"};
+        std::string description{"Counter constructed from std::string arguments"};
+        nvtx3::counter_in<int64_t, counters_domain> string_described{
+            name, description, nvtx3::scope::current_sw_thread()};
+        string_described.sample(11);
+        std::cout << "  counter id: " << string_described.id() << "\n";
+    }
+    std::cout << "-------------------------------------\n";
+
+    {
         std::cout << "Counter with full semantics (int64) and sample_no_value reasons:\n";
         nvtx3::counter_semantic sem;
-        sem.unit("bytes")
+        std::string unit{"bytes"};
+        sem.unit(unit)
             .unit_scale(1024)
             .limits(int64_t{0}, int64_t{1} << 20)
             .interpolation_linear()
@@ -233,8 +255,8 @@ int RunTest(int argc, const char** argv)
         CHECK_U64("heap_size", c.header.next != nullptr, 0);
 
         nvtx3::counter_in<int64_t, counters_domain> heap_size{
-            "heap_size",
-            "Process heap size",
+            std::string{"heap_size"},
+            std::string{"Process heap size"},
             nvtx3::scope::current_sw_process(),
             sem};
         heap_size.sample(256);

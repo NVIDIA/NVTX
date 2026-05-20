@@ -121,4 +121,23 @@ add_should_fail_test(
     START_RANGE_IN_FROM_MESSAGE_FROM_TEMPORARY_WSTRING
 )
 
+add_library(borrowed_strings-baseline BorrowedStrings.cpp)
+target_link_libraries(borrowed_strings-baseline PRIVATE nvtx3-cpp)
+
+add_test(
+    NAME "ShouldFail borrowed_strings-baseline"
+    COMMAND ${CMAKE_COMMAND} --build . --target borrowed_strings-baseline --config $<CONFIGURATION>
+    WORKING_DIRECTORY ${CMAKE_BINARY_DIR}
+)
+
+add_should_fail_test(
+    BorrowedStrings.cpp
+    COUNTER_SEMANTIC_UNIT_FROM_TEMPORARY_STRING
+)
+
+add_should_fail_test(
+    BorrowedStrings.cpp
+    CORRELATION_SEMANTIC_DISPLAY_NAME_FROM_TEMPORARY_STRING
+)
+
 endif()

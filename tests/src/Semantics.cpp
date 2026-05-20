@@ -26,6 +26,7 @@
 #include <cstdint>
 #include <cstring>
 #include <iostream>
+#include <string>
 
 static int g_failures = 0;
 
@@ -227,8 +228,9 @@ int RunTest(int argc, const char** argv)
             0x01, 0x23, 0x45, 0x67, 0x89, 0xab, 0xcd, 0xef,
             0xfe, 0xdc, 0xba, 0x98, 0x76, 0x54, 0x32, 0x10};
         nvtx3::correlation_semantic sem;
+        std::string display_name{"ExampleCorrelationDomain"};
         sem.domain_uuid(example_uuid)
-            .display_name("ExampleCorrelationDomain")
+            .display_name(display_name)
             .role(uint64_t{42});
         auto const& c = as_correlation(sem);
         CHECK_U64("corr_full", c.role, 42);
@@ -274,6 +276,17 @@ int RunTest(int argc, const char** argv)
         sem.scope(gpu0);
         auto const& c = *reinterpret_cast<nvtxSemanticsScope_v1 const*>(sem.get());
         CHECK_U64("scope_in_sem", c.scopeId, gpu0.id());
+    }
+    std::cout << "-------------------------------------\n";
+
+    {
+        std::cout << "scope_in: register a dynamic scope from std::string\n";
+        std::string path{"GPU[CUDAID:0]/stream[copy]"};
+        nvtx3::scope_in<scopes_domain> stream{path};
+        std::cout << "  scope id: " << stream.id() << "\n";
+
+        nvtx3::scope s = stream;
+        CHECK_U64("scope_in_string_conv", s.get(), stream.id());
     }
     std::cout << "-------------------------------------\n";
 

@@ -1637,6 +1637,19 @@ class named_category_in final : public category {
    * @param[in] id The category id to name
    * @param[in] name The name to associated with `id`
    */
+  named_category_in(id_type id, std::string const& name) noexcept
+    : named_category_in{id, name.c_str()} {}
+
+  /**
+   * @brief Construct a `named_category_in` with the specified `id` and `name`.
+   *
+   * The name `name` will be registered with `id`.
+   *
+   * Every unique value of `id` should only be named once.
+   *
+   * @param[in] id The category id to name
+   * @param[in] name The name to associated with `id`
+   */
   named_category_in(id_type id, wchar_t const* name) noexcept : category{id}
   {
 #ifndef NVTX_DISABLE
@@ -1646,6 +1659,19 @@ class named_category_in final : public category {
     (void)name;
 #endif
   }
+
+  /**
+   * @brief Construct a `named_category_in` with the specified `id` and `name`.
+   *
+   * The name `name` will be registered with `id`.
+   *
+   * Every unique value of `id` should only be named once.
+   *
+   * @param[in] id The category id to name
+   * @param[in] name The name to associated with `id`
+   */
+  named_category_in(id_type id, std::wstring const& name) noexcept
+    : named_category_in{id, name.c_str()} {}
 };
 
 /**
@@ -3432,6 +3458,21 @@ public:
   }
 
   /**
+   * @brief Set the unit string for the counter (e.g., "bytes", "ms", "%").
+   * @param unit_name Unit string (must remain valid for the lifetime of this object).
+   * @return Reference to this object for chaining.
+   */
+  counter_semantic& unit(std::string const& unit_name) noexcept
+  {
+    return unit(unit_name.c_str());
+  }
+
+  /**
+   * @brief Disallow setting the borrowed unit string from a temporary string.
+   */
+  counter_semantic& unit(std::string&& unit_name) = delete;
+
+  /**
    * @brief Set the unit scale as a fraction (numerator/denominator).
    *
    * @param numerator Scale numerator (should be 1 if not used).
@@ -3745,6 +3786,24 @@ public:
     id_ = NVTX_SCOPE_NONE;
 #endif
   }
+
+  /**
+   * @brief Register a scope in the given domain from the specified path string.
+   *
+   * @param path Path delimited by '/' characters, relative to \p parent.
+   *             See \c nvtxScopeAttr_t for the full syntax. `""` is treated
+   *             equivalently to `nullptr`.
+   * @param parent Parent scope. Defaults to \c scope::none() (which the
+   *               tool treats as root).
+   * @param static_id Optional static scope ID, which must be in
+   *                  [\c NVTX_SCOPE_ID_STATIC_START, \c NVTX_SCOPE_ID_DYNAMIC_START).
+   *                  Defaults to \c NVTX_SCOPE_NONE, which lets the tool
+   *                  assign a dynamic ID.
+   */
+  explicit scope_in(std::string const& path,
+                    nvtx3::scope parent = nvtx3::scope::none(),
+                    uint64_t static_id = NVTX_SCOPE_NONE) noexcept
+    : scope_in{path.c_str(), parent, static_id} {}
 
   /** @brief The registered scope ID (\c NVTX_SCOPE_NONE on failure). */
   uint64_t id() const noexcept { return id_; }
@@ -4085,6 +4144,22 @@ public:
   }
 
   /**
+   * @brief Set the optional display name for the correlation domain.
+   * @param name String copied by the tool at schema registration; must remain
+   *             valid until then.
+   * @return Reference to this object for chaining.
+   */
+  correlation_semantic& display_name(std::string const& name) noexcept
+  {
+    return display_name(name.c_str());
+  }
+
+  /**
+   * @brief Disallow setting the borrowed display name from a temporary string.
+   */
+  correlation_semantic& display_name(std::string&& name) = delete;
+
+  /**
    * @brief Set the role this entry plays in the correlation.
    * @param role_id One of the \c NVTX_CORRELATION_ROLE_* values.
    * @return Reference to this object for chaining.
@@ -4197,6 +4272,31 @@ public:
   }
 
   /**
+   * @brief Construct a counter with a name and scope.
+   *
+   * @param name The counter name.
+   * @param s The scope for this counter.
+   */
+  counter_in(std::string const& name, scope s = scope::none()) noexcept
+    : counter_in{name.c_str(), nullptr, s, nullptr}
+  {
+  }
+
+  /**
+   * @brief Construct a counter with a name, description, and scope.
+   *
+   * @param name The counter name.
+   * @param description The counter description.
+   * @param s The scope for this counter.
+   */
+  counter_in(std::string const& name,
+             std::string const& description,
+             scope s = scope::none()) noexcept
+    : counter_in{name.c_str(), description.c_str(), s, nullptr}
+  {
+  }
+
+  /**
    * @brief Construct a counter with name, description, scope, and semantics.
    *
    * @param name The counter name.
@@ -4206,6 +4306,22 @@ public:
    */
   counter_in(const char* name, const char* description, scope s, const counter_semantic& semantic) noexcept
     : counter_in{name, description, s, &semantic}
+  {
+  }
+
+  /**
+   * @brief Construct a counter with name, description, scope, and semantics.
+   *
+   * @param name The counter name.
+   * @param description The counter description.
+   * @param s The scope for this counter.
+   * @param semantic The counter semantics.
+   */
+  counter_in(std::string const& name,
+             std::string const& description,
+             scope s,
+             const counter_semantic& semantic) noexcept
+    : counter_in{name.c_str(), description.c_str(), s, &semantic}
   {
   }
 
