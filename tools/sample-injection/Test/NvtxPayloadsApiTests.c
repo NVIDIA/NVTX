@@ -485,6 +485,13 @@ static int PredefinedTypePayloads(nvtxDomainHandle_t domain)
         nvtxPayloadMark(domain, &evtAttr, NVTX_PAYLOAD_ENTRY_TYPE_CSTRING, str, strlen(str) + 1);
     }
 
+    /* Empty C string: encoded as a single null code unit (size = 1 byte for CSTRING),
+     * not size 0. The parser reads the one null byte and decodes it as "". */
+    {
+        nvtxEventAttributes_t evtAttr = GetNvtxEventAttributes(domain, "PredefinedEmptyCString");
+        nvtxPayloadMark(domain, &evtAttr, NVTX_PAYLOAD_ENTRY_TYPE_CSTRING, "", 1);
+    }
+
     /* Array of int32: payload size is a multiple of element size, so the parser
      * auto-detects it as a fixed-size array of 3 elements. */
     {
