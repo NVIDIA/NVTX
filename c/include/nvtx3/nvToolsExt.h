@@ -799,7 +799,10 @@ NVTX_DECLSPEC void NVTX_API nvtxMarkW(const wchar_t* message);
 * \param eventAttrib - The event attribute structure defining the range's
 * attribute types and attribute values.
 *
-* \return The unique ID used to correlate a pair of Start and End events.
+* \return A non-zero unique ID used to correlate a pair of Start and End
+* events. A return value of 0 is a null range ID and does not represent a
+* started range. Applications may initialize nvtxRangeId_t variables to 0 and
+* compare them with 0 to determine whether they reference a started range.
 *
 * \remarks Ranges defined by Start/End can overlap.
 *
@@ -831,7 +834,10 @@ NVTX_DECLSPEC nvtxRangeId_t NVTX_API nvtxDomainRangeStartEx(nvtxDomainHandle_t d
  * \param eventAttrib - The event attribute structure defining the range's
  * attribute types and attribute values.
  *
- * \return The unique ID used to correlate a pair of Start and End events.
+ * \return A non-zero unique ID used to correlate a pair of Start and End
+ * events. A return value of 0 is a null range ID and does not represent a
+ * started range. Applications may initialize nvtxRangeId_t variables to 0 and
+ * compare them with 0 to determine whether they reference a started range.
  *
  * \remarks Ranges defined by Start/End can overlap.
  *
@@ -865,7 +871,10 @@ NVTX_DECLSPEC nvtxRangeId_t NVTX_API nvtxRangeStartEx(const nvtxEventAttributes_
  *
  * \param message     - The event message associated to this range event.
  *
- * \return The unique ID used to correlate a pair of Start and End events.
+ * \return A non-zero unique ID used to correlate a pair of Start and End
+ * events. A return value of 0 is a null range ID and does not represent a
+ * started range. Applications may initialize nvtxRangeId_t variables to 0 and
+ * compare them with 0 to determine whether they reference a started range.
  *
  * \remarks Ranges defined by Start/End can overlap.
  *
