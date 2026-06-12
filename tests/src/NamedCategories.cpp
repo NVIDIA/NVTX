@@ -32,6 +32,7 @@
 #include <nvtx3/nvtx3.hpp>
 
 #include <iostream>
+#include <string>
 
 // Domain description types
 struct d { static constexpr const char*    name{"Test domain"}; };
@@ -77,6 +78,16 @@ int RunTest(int argc, const char** argv)
     auto& c2 = named_category_in<d>::get<cat_wchar_test>();
     std::cout << c2.get_id() << "\n";
     mark_in<d>("Mark in cat_wchar_test category", named_category_in<d>::get<cat_wchar_test>());
+
+    std::cout << "- Named category (std::string): ";
+    std::string cat_string_name{"Cat string"};
+    named_category_in<d> c_string{14, cat_string_name};
+    std::cout << c_string.get_id() << "\n";
+
+    std::cout << "- Named category (std::wstring): ";
+    std::wstring cat_wstring_name{L"Cat wstring"};
+    named_category_in<d> c_wstring{15, cat_wstring_name};
+    std::cout << c_wstring.get_id() << "\n";
 #endif
 
 #if 1
