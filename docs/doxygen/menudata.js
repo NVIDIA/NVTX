@@ -71,7 +71,9 @@ var menudata={children:[
 {text:"Globals",url:"globals.html",children:[
 {text:"All",url:"globals.html",children:[
 {text:"n",url:"globals.html#index_n"}]},
-{text:"Functions",url:"globals_func.html"},
+{text:"Functions",url:"globals_func.html",children:[
+{text:"n",url:"globals_func.html#index_n"}]},
 {text:"Enumerations",url:"globals_enum.html"},
 {text:"Enumerator",url:"globals_eval.html"},
-{text:"Macros",url:"globals_defs.html"}]}]}]}
+{text:"Macros",url:"globals_defs.html",children:[
+{text:"n",url:"globals_defs.html#index_n"}]}]}]}]}

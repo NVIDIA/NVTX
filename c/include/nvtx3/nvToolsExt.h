@@ -153,6 +153,9 @@
  * \section EXTENSIONS Optional Extensions
  * Optional extensions will either appear within the existing sections the extend or appear
  * in the "Related Pages" when they introduce new concepts.
+ *
+ * - \ref NVTX_EXTENDED_PAYLOADS "Extended Payloads": binary payload schemas, entry types,
+ *   and registration for attaching custom data to NVTX events.
  */
 
  /**

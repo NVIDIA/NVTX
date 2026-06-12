@@ -1,14 +1,22 @@
 var searchData=
 [
-  ['ranges_0',['ranges',['../group___m_a_r_k_e_r_s___a_n_d___r_a_n_g_e_s.html',1,'Markers and Ranges'],['../index.html#MARKERS_AND_RANGES',1,'Markers and Ranges'],['../index.html#PROCESS_RANGES',1,'Process Ranges'],['../index.html#THREAD_RANGES',1,'Thread Ranges']]],
-  ['ref_20nvtxextmoduleinfo_5ft_1',['@ref nvtxExtModuleInfo_t.',['../nv_tools_ext_payload_8h.html#autotoc_md5',1,'']]],
-  ['ref_20nvtxpayloadschemaentry_5ft_3a_3aflags_2',['Payload schema entry flags. Used for @ref nvtxPayloadSchemaEntry_t::flags.',['../nv_tools_ext_payload_8h.html#autotoc_md3',1,'']]],
-  ['reference_3',['NVTX C API Reference',['../index.html',1,'']]],
-  ['registration_4',['String Registration',['../group___s_t_r_i_n_g___r_e_g_i_s_t_r_a_t_i_o_n.html',1,'']]],
-  ['reserved_5',['reserved',['../structnvtx_payload_schema_entry__t.html#ae8091f5c48af11c8de5353fa4a949d84',1,'nvtxPayloadSchemaEntry_t']]],
-  ['resource_20naming_6',['resource naming',['../group___r_e_s_o_u_r_c_e___n_a_m_i_n_g.html#RESOURCE_NAMING_CUDA',1,'CUDA Resource Naming'],['../group___r_e_s_o_u_r_c_e___n_a_m_i_n_g.html#RESOURCE_NAMING_CUDART',1,'CUDA Runtime Resource Naming'],['../group___r_e_s_o_u_r_c_e___n_a_m_i_n_g.html#RESOURCE_NAMING_OPENCL',1,'OpenCL Resource Naming'],['../group___r_e_s_o_u_r_c_e___n_a_m_i_n_g.html',1,'Resource Naming'],['../index.html#RESOURCE_NAMING',1,'Resource Naming'],['../index.html#RESOURCE_NAMING_OS',1,'Resource Naming']]],
-  ['resource_20objects_7',['Resource Objects',['../index.html#RESOURCE_OBJECTS',1,'']]],
-  ['role_8',['role',['../structnvtx_semantics_correlation__t.html#adfa233dff15c8ba6455ec2a4122b0442',1,'nvtxSemanticsCorrelation_t']]],
-  ['runtime_9',['Memory CUDA Runtime',['../group___m_e_m_o_r_y___c_u_d_a_r_t.html',1,'']]],
-  ['runtime_20resource_20naming_10',['CUDA Runtime Resource Naming',['../group___r_e_s_o_u_r_c_e___n_a_m_i_n_g.html#RESOURCE_NAMING_CUDART',1,'']]]
+  ['packalign_0',['packAlign',['../structnvtx_payload_schema_attr__t.html#ab7098a38ce30d775c9ce245108ff64db',1,'nvtxPayloadSchemaAttr_t']]],
+  ['parentscope_1',['parentScope',['../structnvtx_scope_attr__t.html#a48eeeed47ef503c114af84c40d39ef98',1,'nvtxScopeAttr_t']]],
+  ['path_2',['path',['../structnvtx_scope_attr__t.html#af4db5037a7c7970861688d47db6c0f2a',1,'nvtxScopeAttr_t']]],
+  ['payload_3',['payload',['../structnvtx_payload_data__t.html#ad4ecf00bae9cf3ccd26b75b20cc38019',1,'nvtxPayloadData_t']]],
+  ['payload_20event_20apis_4',['Payload Event APIs',['../md__n_v_t_x___e_x_t_e_n_d_e_d___p_a_y_l_o_a_d_s.html#NVTX_EXTENDED_PAYLOADS_EVENT_APIS',1,'']]],
+  ['payload_20schema_20entry_20flags_5',['END: Payload schema entry flags.',['../nv_tools_ext_payload_8h.html#autotoc_md4',1,'']]],
+  ['payload_20schema_20entry_20flags_20used_20for_20ref_20nvtxpayloadschemaentry_5ft_3a_3aflags_6',['Payload schema entry flags. Used for @ref nvtxPayloadSchemaEntry_t::flags.',['../nv_tools_ext_payload_8h.html#autotoc_md3',1,'']]],
+  ['payload_20schema_20entry_20types_7',['END: Payload schema entry types.',['../nv_tools_ext_payload_8h.html#autotoc_md6',1,'']]],
+  ['payload_20types_8',['Payload Types',['../group___e_v_e_n_t___a_t_t_r_i_b_u_t_e_s.html#autotoc_md2',1,'']]],
+  ['payload_5ft_9',['payload_t',['../unionnvtx_event_attributes__v2_1_1payload__t.html',1,'nvtxEventAttributes_v2']]],
+  ['payloads_10',['When to Use Extended Payloads',['../md__n_v_t_x___e_x_t_e_n_d_e_d___p_a_y_l_o_a_d_s.html#NVTX_EXTENDED_PAYLOADS_WHEN',1,'']]],
+  ['payloads_20to_20event_20attributes_11',['Attaching Payloads to Event Attributes',['../md__n_v_t_x___e_x_t_e_n_d_e_d___p_a_y_l_o_a_d_s.html#NVTX_EXTENDED_PAYLOADS_ATTACH',1,'']]],
+  ['payloads_3a_20user_20guide_12',['Extended Payloads: User Guide',['../md__n_v_t_x___e_x_t_e_n_d_e_d___p_a_y_l_o_a_d_s.html#NVTX_EXTENDED_PAYLOADS',1,'']]],
+  ['payloadstaticsize_13',['payloadStaticSize',['../structnvtx_payload_schema_attr__t.html#a30c5c448071bcc470f99ff3b76c29a47',1,'nvtxPayloadSchemaAttr_t']]],
+  ['payloadtype_14',['payloadType',['../structnvtx_event_attributes__v2.html#ab92717e2aed2888cd99ecdf6c4681e45',1,'nvtxEventAttributes_v2']]],
+  ['portability_20mechanism_15',['@ref nvtxPayloadEntryTypeInfo_t for the portability mechanism.',['../nv_tools_ext_payload_8h.html#autotoc_md5',1,'']]],
+  ['practices_16',['Best Practices',['../md__n_v_t_x___e_x_t_e_n_d_e_d___p_a_y_l_o_a_d_s.html#NVTX_EXTENDED_PAYLOADS_BEST_PRACTICES',1,'']]],
+  ['precedence_17',['Event Attribute Precedence',['../md__n_v_t_x___e_x_t_e_n_d_e_d___p_a_y_l_o_a_d_s.html#NVTX_EXTENDED_PAYLOADS_EVENT_ATTRIBUTE_PRECEDENCE',1,'']]],
+  ['process_20ranges_18',['Process Ranges',['../index.html#PROCESS_RANGES',1,'']]]
 ];

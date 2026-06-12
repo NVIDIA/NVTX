@@ -116,7 +116,7 @@ Macros</h2></td></tr>
 <tr class="memitem:a9920df0c0458522c3216bace6e607b3d" id="r_a9920df0c0458522c3216bace6e607b3d"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="nv_tools_ext_payload_helper_8h.html#a9920df0c0458522c3216bace6e607b3d">NVTX_DEFINE_STRUCT</a>(struct_id, ...)&#160;&#160;&#160;    _NVTX_PAYLOAD_TYPEDEF_STRUCT(struct_id, __VA_ARGS__)</td></tr>
 <tr class="memdesc:a9920df0c0458522c3216bace6e607b3d"><td class="mdescLeft">&#160;</td><td class="mdescRight">Create a type definition for the given struct ID and members.  <br /></td></tr>
 <tr class="separator:a9920df0c0458522c3216bace6e607b3d"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aeca862f839f536316e52992526174343" id="r_aeca862f839f536316e52992526174343"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="nv_tools_ext_payload_helper_8h.html#aeca862f839f536316e52992526174343">NVTX_PAYLOAD_SCHEMA_REGISTER</a>(domain,  struct_id)&#160;&#160;&#160;    nvtxPayloadSchemaRegister(domain, &amp;struct_id##Attr)</td></tr>
+<tr class="memitem:aeca862f839f536316e52992526174343" id="r_aeca862f839f536316e52992526174343"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="nv_tools_ext_payload_helper_8h.html#aeca862f839f536316e52992526174343">NVTX_PAYLOAD_SCHEMA_REGISTER</a>(domain,  struct_id)&#160;&#160;&#160;    <a class="el" href="nv_tools_ext_payload_8h.html#a7b9e5221764eb87caeba7d8cc6be7f03">nvtxPayloadSchemaRegister</a>(domain, &amp;struct_id##Attr)</td></tr>
 <tr class="memdesc:aeca862f839f536316e52992526174343"><td class="mdescLeft">&#160;</td><td class="mdescRight">Register an NVTX binary payload schema.  <br /></td></tr>
 <tr class="separator:aeca862f839f536316e52992526174343"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
@@ -221,7 +221,8 @@ Macros</h2></td></tr>
       </table>
 </div><div class="memdoc">
 <b>Value:</b><div class="fragment"><div class="line">    _NVTX_DEFINE_SCHEMA_FOR_STRUCT(struct_id, __VA_ARGS__) \</div>
-<div class="line">    <span class="keyword">const</span> uint64_t struct_id##_schemaId = nvtxPayloadSchemaRegister(domain, &amp;struct_id##Attr);</div>
+<div class="line">    <span class="keyword">const</span> uint64_t struct_id##_schemaId = <a class="code hl_function" href="nv_tools_ext_payload_8h.html#a7b9e5221764eb87caeba7d8cc6be7f03">nvtxPayloadSchemaRegister</a>(domain, &amp;struct_id##Attr);</div>
+<div class="ttc" id="anv_tools_ext_payload_8h_html_a7b9e5221764eb87caeba7d8cc6be7f03"><div class="ttname"><a href="nv_tools_ext_payload_8h.html#a7b9e5221764eb87caeba7d8cc6be7f03">nvtxPayloadSchemaRegister</a></div><div class="ttdeci">NVTX_DECLSPEC uint64_t NVTX_API nvtxPayloadSchemaRegister(nvtxDomainHandle_t domain, const nvtxPayloadSchemaAttr_t *attr)</div><div class="ttdoc">Register a payload schema.</div></div>
 </div><!-- fragment -->
 <p>Define payload schema for an existing <code>struct</code> and register the schema. </p>
 <p>This does essentially the same as <code>NVTX_PAYLOAD_STATIC_SCHEMA_DEFINE</code>, but in addition, the schema is registered and <code>uint64_t struct_id##_schemaId</code> set.</p>
@@ -361,7 +362,7 @@ Macros</h2></td></tr>
       </table>
 </div><div class="memdoc">
 <b>Value:</b><div class="fragment"><div class="line">    _NVTX_DEFINE_STRUCT_WITH_SCHEMA(struct_id, __VA_ARGS__) \</div>
-<div class="line">    <span class="keyword">const</span> uint64_t struct_id##_schemaId = nvtxPayloadSchemaRegister(domain, &amp;struct_id##Attr);</div>
+<div class="line">    <span class="keyword">const</span> uint64_t struct_id##_schemaId = <a class="code hl_function" href="nv_tools_ext_payload_8h.html#a7b9e5221764eb87caeba7d8cc6be7f03">nvtxPayloadSchemaRegister</a>(domain, &amp;struct_id##Attr);</div>
 </div><!-- fragment -->
 <p>Initialize and register the NVTX binary payload schema. </p>
 <p>This does essentially the same as <code>NVTX_DEFINE_STRUCT_WITH_SCHEMA</code>, but in addition the schema is registered. The schema ID will be defined as follows: <code>const uint64_t struct_id##_schemaId</code>.</p>
@@ -435,7 +436,7 @@ Macros</h2></td></tr>
         <tr>
           <td></td>
           <td>)</td>
-          <td></td><td>&#160;&#160;&#160;    nvtxPayloadSchemaRegister(domain, &amp;struct_id##Attr)</td>
+          <td></td><td>&#160;&#160;&#160;    <a class="el" href="nv_tools_ext_payload_8h.html#a7b9e5221764eb87caeba7d8cc6be7f03">nvtxPayloadSchemaRegister</a>(domain, &amp;struct_id##Attr)</td>
         </tr>
       </table>
 </div><div class="memdoc">

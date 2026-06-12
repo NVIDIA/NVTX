@@ -42,7 +42,7 @@ typedef struct nvtxSemanticsTime_v1
 {
     struct nvtxSemanticsHeader_v1 header;
 
-    /** Time domain ID or predefined `NVTX_TIMESTAMP_TYPE_*`. */
+    /** Time domain ID or predefined `NVTX_TIMESTAMP_TYPE_*`, if unambiguous. */
     uint64_t timeDomainId;
 } nvtxSemanticsTime_t;
 

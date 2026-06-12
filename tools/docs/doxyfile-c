@@ -174,7 +174,8 @@ FULL_PATH_NAMES        = NO
 # will be relative from the directory where doxygen is started.
 # This tag requires that the tag FULL_PATH_NAMES is set to YES.
 
-STRIP_FROM_PATH        = ../../c/include
+STRIP_FROM_PATH        = ../../c/include \
+                         ../../tools/docs
 
 # The STRIP_FROM_INC_PATH tag can be used to strip a user-defined part of the
 # path mentioned in the documentation of a class, which tells the reader which
@@ -941,6 +942,7 @@ INPUT                  = ../../c/include/nvtx3/nvToolsExt.h \
                          ../../c/include/nvtx3/nvToolsExtMem.h \
                          ../../c/include/nvtx3/nvToolsExtMemCudaRt.h \
                          ../../c/include/nvtx3/nvToolsExtPayload.h \
+                         ./NVTX_EXTENDED_PAYLOADS.md \
                          ../../c/include/nvtx3/nvToolsExtPayloadHelper.h \
                          ../../c/include/nvtx3/nvToolsExtCounters.h \
                          ../../c/include/nvtx3/nvToolsExtSemanticsCounters.h \
