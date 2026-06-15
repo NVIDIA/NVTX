@@ -184,7 +184,7 @@ dependencies = [
 ]
 
 [[package]]
-name = "nvidia-nvtx"
+name = "nvtx"
 version = "2.0.0"
 dependencies = [
  "color-name",

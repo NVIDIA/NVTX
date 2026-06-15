@@ -54,7 +54,7 @@ cast_possible_wrap = "allow"
 cast_sign_loss = "allow"
 
 [package]
-name = "nvidia-nvtx"
+name = "nvtx"
 version.workspace = true
 authors.workspace = true
 edition.workspace = true
