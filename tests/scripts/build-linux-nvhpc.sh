@@ -19,9 +19,16 @@ cd "$LOCATION/$NAME"
 
 NVHPC_PATH="$NVHPC_ROOT/$VER/compilers/bin"
 
-cmake .. -G Ninja -DCMAKE_BUILD_TYPE=Release \
-    -DCMAKE_C_COMPILER="$NVHPC_PATH/nvc" \
-    -DCMAKE_CXX_COMPILER="$NVHPC_PATH/nvc++" \
+CMAKE_ARGS=(
+    ..
+    -G
+    Ninja
+    -DCMAKE_BUILD_TYPE=Release
+    -DCMAKE_C_COMPILER="$NVHPC_PATH/nvc"
+    -DCMAKE_CXX_COMPILER="$NVHPC_PATH/nvc++"
     -DCMAKE_CUDA_COMPILER="$NVHPC_PATH/nvcc"
+)
+
+cmake "${CMAKE_ARGS[@]}"
 
 ninja

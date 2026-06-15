@@ -10,6 +10,13 @@ LOCATION="$(cd "$(dirname "$0")/.." ; pwd)"
 mkdir "$LOCATION/$NAME"
 cd "$LOCATION/$NAME"
 
-cmake .. -G Ninja -DCMAKE_BUILD_TYPE=Release
+CMAKE_ARGS=(
+    ..
+    -G
+    Ninja
+    -DCMAKE_BUILD_TYPE=Release
+)
+
+cmake "${CMAKE_ARGS[@]}"
 
 ninja

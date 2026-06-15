@@ -10,8 +10,15 @@ LOCATION="$(cd "$(dirname "$0")/.." ; pwd)"
 mkdir "$LOCATION/$NAME"
 cd "$LOCATION/$NAME"
 
-cmake .. -G Ninja -DCMAKE_BUILD_TYPE=Release \
-    -DCMAKE_TOOLCHAIN_FILE=../mingw-w64-x86_64.cmake \
+CMAKE_ARGS=(
+    ..
+    -G
+    Ninja
+    -DCMAKE_BUILD_TYPE=Release
+    -DCMAKE_TOOLCHAIN_FILE=../mingw-w64-x86_64.cmake
     -DENABLE_CUDA=False
+)
+
+cmake "${CMAKE_ARGS[@]}"
 
 ninja

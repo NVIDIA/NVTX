@@ -61,7 +61,14 @@ if ($Arch -eq "x64") {
     }
 }
 
-& "$env:VSPATH\Common7\IDE\CommonExtensions\Microsoft\CMake\CMake\bin\cmake.exe" .. -G Ninja -DCMAKE_BUILD_TYPE=Release @CudaArgs
+$CMakeArgs = @(
+    "..",
+    "-G",
+    "Ninja",
+    "-DCMAKE_BUILD_TYPE=Release"
+) + $CudaArgs
+
+& "$env:VSPATH\Common7\IDE\CommonExtensions\Microsoft\CMake\CMake\bin\cmake.exe" @CMakeArgs
 if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
 
 & "$env:VSPATH\Common7\IDE\CommonExtensions\Microsoft\CMake\Ninja\ninja.exe"

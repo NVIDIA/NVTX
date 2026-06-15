@@ -28,11 +28,18 @@ else
     ENABLE_CUDA='False'
 fi
 
-cmake .. -G Ninja -DCMAKE_BUILD_TYPE=Release \
-    -DENABLE_CUDA:BOOL="$ENABLE_CUDA" \
-    -DCMAKE_C_COMPILER="clang$SUFFIX" \
-    -DCMAKE_CXX_COMPILER="clang++$SUFFIX" \
-    -DCMAKE_LINKER="ld.lld$SUFFIX" \
+CMAKE_ARGS=(
+    ..
+    -G
+    Ninja
+    -DCMAKE_BUILD_TYPE=Release
+    -DENABLE_CUDA:BOOL="$ENABLE_CUDA"
+    -DCMAKE_C_COMPILER="clang$SUFFIX"
+    -DCMAKE_CXX_COMPILER="clang++$SUFFIX"
+    -DCMAKE_LINKER="ld.lld$SUFFIX"
     -DCMAKE_CUDA_COMPILER="$NVCC"
+)
+
+cmake "${CMAKE_ARGS[@]}"
 
 ninja

@@ -42,7 +42,18 @@ Set-Location $NAME
 
 $VsForward = $env:VSPATH -replace '\\', '/'
 
-& "$env:VSPATH\Common7\IDE\CommonExtensions\Microsoft\CMake\CMake\bin\cmake.exe" .. -G Ninja -DCMAKE_BUILD_TYPE=Release -DENABLE_CUDA=False -DCMAKE_C_COMPILER="$VsForward/VC/Tools/Llvm/$Arch/bin/clang-cl.exe" -DCMAKE_CXX_COMPILER="$VsForward/VC/Tools/Llvm/$Arch/bin/clang-cl.exe" -DCMAKE_LINKER="$VsForward/VC/Tools/Llvm/$Arch/bin/lld-link.exe"
+$CMakeArgs = @(
+    "..",
+    "-G",
+    "Ninja",
+    "-DCMAKE_BUILD_TYPE=Release",
+    "-DENABLE_CUDA=False",
+    "-DCMAKE_C_COMPILER=$VsForward/VC/Tools/Llvm/$Arch/bin/clang-cl.exe",
+    "-DCMAKE_CXX_COMPILER=$VsForward/VC/Tools/Llvm/$Arch/bin/clang-cl.exe",
+    "-DCMAKE_LINKER=$VsForward/VC/Tools/Llvm/$Arch/bin/lld-link.exe"
+)
+
+& "$env:VSPATH\Common7\IDE\CommonExtensions\Microsoft\CMake\CMake\bin\cmake.exe" @CMakeArgs
 if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
 
 & "$env:VSPATH\Common7\IDE\CommonExtensions\Microsoft\CMake\Ninja\ninja.exe"

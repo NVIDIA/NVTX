@@ -15,9 +15,16 @@ export PATH="$HOMEBREWPREFIX/opt/llvm/bin:$PATH"
 export LDFLAGS="-L$HOMEBREWPREFIX/opt/llvm/lib"
 export CPPFLAGS="-I$HOMEBREWPREFIX/opt/llvm/include"
 
-cmake .. -G Ninja -DCMAKE_BUILD_TYPE=Release \
-    -DCMAKE_C_COMPILER="$HOMEBREWPREFIX/opt/llvm/bin/clang" \
-    -DCMAKE_CXX_COMPILER="$HOMEBREWPREFIX/opt/llvm/bin/clang++" \
+CMAKE_ARGS=(
+    ..
+    -G
+    Ninja
+    -DCMAKE_BUILD_TYPE=Release
+    -DCMAKE_C_COMPILER="$HOMEBREWPREFIX/opt/llvm/bin/clang"
+    -DCMAKE_CXX_COMPILER="$HOMEBREWPREFIX/opt/llvm/bin/clang++"
     -DCMAKE_LINKER="ld64.lld"
+)
+
+cmake "${CMAKE_ARGS[@]}"
 
 ninja

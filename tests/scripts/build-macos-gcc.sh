@@ -12,8 +12,15 @@ cd "$LOCATION/$NAME"
 
 GCC_VERSION="$(brew list --versions gcc | cut '-d ' -f2 | cut '-d.' -f1)"
 
-cmake .. -G Ninja -DCMAKE_BUILD_TYPE=Release \
-    -DCMAKE_C_COMPILER="gcc-$GCC_VERSION" \
+CMAKE_ARGS=(
+    ..
+    -G
+    Ninja
+    -DCMAKE_BUILD_TYPE=Release
+    -DCMAKE_C_COMPILER="gcc-$GCC_VERSION"
     -DCMAKE_CXX_COMPILER="g++-$GCC_VERSION"
+)
+
+cmake "${CMAKE_ARGS[@]}"
 
 ninja
