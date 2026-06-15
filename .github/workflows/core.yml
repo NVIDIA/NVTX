@@ -25,6 +25,105 @@ permissions:
   contents: read
 
 jobs:
+  test-ubuntu-26-04:
+    name: Test (Ubuntu 26.04, ${{ matrix.arch }})
+    runs-on: ubuntu-26.04${{ matrix.runner }}
+    strategy:
+      matrix:
+        include:
+          - arch: x64
+            runner:
+          - arch: Arm64
+            runner: -arm
+      fail-fast: false
+    steps:
+      - uses: actions/checkout@v6
+
+      - uses: >-
+          conda-incubator/setup-miniconda@8ee1f361103df19b6f8c8655fd3967a8ecb162d5
+        with:
+          auto-update-conda: true
+          conda-remove-defaults: true
+
+      - name: Aptitude - Update Package Lists
+        run: sudo apt-get update
+        timeout-minutes: 5
+      - name: Aptitude - Install Toolchain
+        run: >
+          sudo apt-get -y install
+          {gcc,g++}-{11,12,13,14,15,mingw-w64-x86-64}
+          {clang,lld}-{17,18,19,20,21,22}
+          ninja-build
+        timeout-minutes: 10
+
+      - name: Conda - Create Environment
+        run: conda create -y --name cuda-env
+        timeout-minutes: 5
+      - name: Conda - Install CUDA Toolchain
+        run: |
+          conda install -y --name cuda-env -c conda-forge cuda-minimal-build
+          rm -f "$CONDA/envs/cuda-env/bin/ld"
+        timeout-minutes: 10
+
+      - name: Build (GCC 11)
+        run: tests/scripts/build-linux-gcc.sh 11
+      - name: Build (GCC 12)
+        run: tests/scripts/build-linux-gcc.sh 12
+      - name: Build (GCC 13)
+        run: tests/scripts/build-linux-gcc.sh 13
+      - name: Build (GCC 14)
+        run: tests/scripts/build-linux-gcc.sh 14
+      - name: Build (GCC 15)
+        run: tests/scripts/build-linux-gcc.sh 15
+
+      - name: Build (Clang 17)
+        run: tests/scripts/build-linux-clang.sh 17
+      - name: Build (Clang 18)
+        run: tests/scripts/build-linux-clang.sh 18
+      - name: Build (Clang 19)
+        run: tests/scripts/build-linux-clang.sh 19
+      - name: Build (Clang 20)
+        run: tests/scripts/build-linux-clang.sh 20
+      - name: Build (Clang 21)
+        run: tests/scripts/build-linux-clang.sh 21
+      - name: Build (Clang 22)
+        run: tests/scripts/build-linux-clang.sh 22
+
+      - name: Build (MinGW-w64 GCC)
+        run: tests/scripts/build-linux-mingw-w64-gcc.sh
+
+      - name: Aptitude - Install GCC 16
+        run: sudo apt-get -y install {gcc,g++}-16
+        timeout-minutes: 10
+      - name: Build (GCC 16)
+        run: tests/scripts/build-linux-gcc.sh 16
+
+      - name: Run (GCC 11)
+        run: cd tests/build-linux-gcc-11 && ctest --output-on-failure
+      - name: Run (GCC 12)
+        run: cd tests/build-linux-gcc-12 && ctest --output-on-failure
+      - name: Run (GCC 13)
+        run: cd tests/build-linux-gcc-13 && ctest --output-on-failure
+      - name: Run (GCC 14)
+        run: cd tests/build-linux-gcc-14 && ctest --output-on-failure
+      - name: Run (GCC 15)
+        run: cd tests/build-linux-gcc-15 && ctest --output-on-failure
+      - name: Run (GCC 16)
+        run: cd tests/build-linux-gcc-16 && ctest --output-on-failure
+
+      - name: Run (Clang 17)
+        run: cd tests/build-linux-clang-17 && ctest --output-on-failure
+      - name: Run (Clang 18)
+        run: cd tests/build-linux-clang-18 && ctest --output-on-failure
+      - name: Run (Clang 19)
+        run: cd tests/build-linux-clang-19 && ctest --output-on-failure
+      - name: Run (Clang 20)
+        run: cd tests/build-linux-clang-20 && ctest --output-on-failure
+      - name: Run (Clang 21)
+        run: cd tests/build-linux-clang-21 && ctest --output-on-failure
+      - name: Run (Clang 22)
+        run: cd tests/build-linux-clang-22 && ctest --output-on-failure
+
   test-ubuntu-24-04:
     name: Test (Ubuntu 24.04, ${{ matrix.arch }})
     runs-on: ubuntu-24.04${{ matrix.runner }}
@@ -219,10 +318,6 @@ jobs:
             vsyear: 2022
             vspath: 2022
           - os: 2025
-            runner:
-            vsyear: 2022
-            vspath: 2022
-          - os: 2025
             runner: -vs2026
             vsyear: 2026
             vspath: 18
@@ -264,10 +359,6 @@ jobs:
             vsyear: 2022
             vspath: 2022
           - os: 2025
-            runner:
-            vsyear: 2022
-            vspath: 2022
-          - os: 2025
             runner: -vs2026
             vsyear: 2026
             vspath: 18
@@ -295,12 +386,17 @@ jobs:
 
   test-windows-11-arm64:
     name: Test (Windows 11, Arm64, VS ${{ matrix.vsyear }})
-    runs-on: windows-11-arm
+    runs-on: windows-11${{ matrix.runner }}-arm
     strategy:
       matrix:
         include:
-          - vsyear: 2022
+          - runner:
+            vsyear: 2022
             vspath: 2022
+          - runner: -vs2026
+            vsyear: 2026
+            vspath: 18
+      fail-fast: false
     env:
       VSPATH: >-
         C:\Program Files\Microsoft Visual Studio\${{ matrix.vspath }}\Enterprise
@@ -354,7 +450,11 @@ jobs:
       - uses: actions/checkout@v6
 
       - name: Homebrew - Install Toolchain
-        run: brew install --force-bottle llvm lld mingw-w64
+        run: |
+          export HOMEBREW_REQUIRE_TAP_TRUST=1
+          brew uninstall --force bicep
+          brew untap aws/tap azure/bicep
+          brew install --force-bottle gcc llvm lld mingw-w64
         timeout-minutes: 10
 
       - name: Build (Apple Clang)
