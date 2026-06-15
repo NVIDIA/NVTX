@@ -102,6 +102,10 @@ elseif(CMAKE_C_COMPILER_ID STREQUAL "AppleClang")
         list(APPEND _appleclang_warn -Wno-pre-c2x-compat)
     endif()
 
+    if(NOT CMAKE_C_COMPILER_VERSION VERSION_LESS "21")
+        list(APPEND _appleclang_warn -Wno-c++-keyword)
+    endif()
+
     add_compile_options(${_appleclang_warn} $<$<COMPILE_LANGUAGE:C,CXX>:-Werror>)
 
 elseif(CMAKE_C_COMPILER_ID MATCHES "Clang")
@@ -145,7 +149,7 @@ elseif(CMAKE_C_COMPILER_ID MATCHES "Clang")
             list(APPEND _clang_warn -Wno-pre-c11-compat)
         endif()
 
-        if(WIN32 OR APPLE)
+        if(WIN32 OR APPLE OR NOT CMAKE_C_COMPILER_VERSION VERSION_LESS "21")
             list(APPEND _clang_warn -Wno-c++-keyword)
         endif()
 
@@ -158,7 +162,11 @@ elseif(CMAKE_C_COMPILER_ID MATCHES "Clang")
                 -Wno-unused-template -Wno-zero-as-null-pointer-constant
                 -Wno-used-but-marked-unused -Wno-extra-semi-stmt
                 -Wno-disabled-macro-expansion -Wno-duplicate-enum -Wno-unused-function
+                -Wno-nested-anon-types -Wno-shift-sign-overflow
             )
+            if(CMAKE_C_COMPILER_VERSION VERSION_LESS "13")
+                list(APPEND _cuda_host_extras -Wno-unknown-warning-option)
+            endif()
             if(NOT CMAKE_C_COMPILER_VERSION VERSION_LESS "15")
                 list(APPEND _cuda_host_extras -Wno-gnu-line-marker)
             endif()
