@@ -18,7 +18,15 @@ mkdir "$LOCATION/$NAME"
 cd "$LOCATION/$NAME"
 
 NVCC="$CONDA/envs/cuda-env/bin/nvcc"
-[[ -x "$NVCC" ]] && ENABLE_CUDA='True' || ENABLE_CUDA='False'
+CUDA_MAX_CLANG_VER=21
+if [[ ! "$VER" =~ ^[0-9]+$ || "$VER" -gt "$CUDA_MAX_CLANG_VER" ]]; then
+    echo "CUDA disabled: Clang version '$VER' is not supported; CUDA requires Clang <= $CUDA_MAX_CLANG_VER."
+    ENABLE_CUDA='False'
+elif [[ -x "$NVCC" ]]; then
+    ENABLE_CUDA='True'
+else
+    ENABLE_CUDA='False'
+fi
 
 cmake .. -G Ninja -DCMAKE_BUILD_TYPE=Release \
     -DENABLE_CUDA:BOOL="$ENABLE_CUDA" \

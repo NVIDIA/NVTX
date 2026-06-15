@@ -42,15 +42,22 @@ New-Item -ItemType Directory -Force -Path $NAME | Out-Null
 Set-Location $NAME
 
 $CudaArgs = @("-DENABLE_CUDA=False")
-if ($Arch -eq "x64" -and [int]$VsYear -ge 2017 -and [int]$VsYear -le 2026) {
-    $CondaEnv = switch ($VsYear) {
-        "2017" { "cuda-12-9-env" }
-        default { "cuda-env" }
-    }
-    $NVCC = "$env:CONDA\envs\$CondaEnv\Library\bin\nvcc.exe"
-    if (Test-Path $NVCC) {
-        $NvccForward = $NVCC -replace '\\', '/'
-        $CudaArgs = @("-DENABLE_CUDA:BOOL=True", "-DCMAKE_CUDA_COMPILER=$NvccForward")
+$VsYearInt = [int]$VsYear
+$MinCudaVsYear = 2017
+$MaxCudaVsYear = 2026
+if ($Arch -eq "x64") {
+    if ($VsYearInt -lt $MinCudaVsYear -or $VsYearInt -gt $MaxCudaVsYear) {
+        Write-Host "CUDA disabled: Visual Studio $VsYear is not supported; CUDA requires VS >= $MinCudaVsYear and <= $MaxCudaVsYear."
+    } else {
+        $CondaEnv = switch ($VsYear) {
+            "2017" { "cuda-12-9-env" }
+            default { "cuda-env" }
+        }
+        $NVCC = "$env:CONDA\envs\$CondaEnv\Library\bin\nvcc.exe"
+        if (Test-Path $NVCC) {
+            $NvccForward = $NVCC -replace '\\', '/'
+            $CudaArgs = @("-DENABLE_CUDA:BOOL=True", "-DCMAKE_CUDA_COMPILER=$NvccForward")
+        }
     }
 }
 
