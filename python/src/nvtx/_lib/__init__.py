@@ -27,4 +27,5 @@ from nvtx._lib.lib import (
     start_range,
     end_range,
     mark,
+    NvtxWarning,
 )

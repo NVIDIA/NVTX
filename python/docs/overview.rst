@@ -11,5 +11,6 @@ Overview
    annotate.rst
    annotation_types.rst
    annotation_attributes.rst
+   counters.rst
    best_practices.rst
    automatic_annotations.rst

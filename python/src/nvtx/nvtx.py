@@ -18,9 +18,15 @@
 
 import contextlib
 import os
+import warnings
 
 from functools import wraps, lru_cache
-from typing import Optional, Union, Tuple, TYPE_CHECKING
+from typing import Optional, Union, Tuple
+
+try:
+    import numpy as np
+except ImportError:
+    np = None
 
 from nvtx._lib import (
     Domain,
@@ -31,15 +37,70 @@ from nvtx._lib import (
     push_range as libnvtx_push_range,
     start_range as libnvtx_start_range,
     end_range as libnvtx_end_range,
+    NvtxWarning,
 )
 
-if TYPE_CHECKING:
-    import numpy as np
+from nvtx._lib.counters import CounterSemantics
+from nvtx._metadata import NVTX_DTYPE_METADATA_KEY_NAME, _PayloadMetadata
 
 
 PayloadTypeAlias = Union[int, float, list, tuple, range, bytes, "np.ndarray"]
 _immutable_payload_types = {int, float, tuple, range, bytes}
 _ENABLED = not os.getenv("NVTX_DISABLE", False)
+
+
+def numpy_dtype(
+    *args, counter_semantics: Optional[CounterSemantics] = None, **kwargs
+) -> "np.dtype":
+    """
+    Construct a NumPy dtype, optionally carrying NVTX counter semantics.
+
+    This function accepts the same arguments as :func:`numpy.dtype`. When
+    ``counter_semantics`` is provided, the returned dtype carries metadata
+    for use as a flat structured counter field. For a top-level scalar counter,
+    pass semantics to :meth:`nvtx.Domain.get_counter` instead.
+
+    Parameters
+    ----------
+    *args
+        Positional arguments passed to :func:`numpy.dtype`.
+    counter_semantics : CounterSemantics, optional
+        Semantics to attach to the dtype for use as a payload schema entry,
+        typically a field in a structured counter dtype. If the NVTX metadata
+        key is already present in ``metadata``, the existing value is preserved
+        and a warning is emitted.
+    **kwargs
+        Keyword arguments passed to :func:`numpy.dtype`.
+
+    Returns
+    -------
+        The constructed dtype.
+
+    Raises
+    ------
+    RuntimeError
+        If NumPy is not installed.
+    """
+    if np is None:
+        raise RuntimeError("Install numpy to construct NVTX NumPy dtypes.")
+
+    base_dtype = np.dtype(*args, **kwargs)
+    if counter_semantics is None:
+        return base_dtype
+
+    metadata = dict(base_dtype.metadata or {})
+    if NVTX_DTYPE_METADATA_KEY_NAME in metadata:
+        warnings.warn(
+            "NVTX dtype metadata key already exists; leaving it unchanged.",
+            NvtxWarning,
+            stacklevel=2,
+        )
+        return base_dtype
+
+    metadata[NVTX_DTYPE_METADATA_KEY_NAME] = _PayloadMetadata(
+        counter_semantics=counter_semantics
+    )
+    return np.dtype(base_dtype, metadata=metadata)
 
 
 @lru_cache(maxsize=None)

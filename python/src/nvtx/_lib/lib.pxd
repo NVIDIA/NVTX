@@ -126,6 +126,8 @@ cdef extern from "nvtx3/nvToolsExtPayload.h" nogil:
 
     cdef int NVTX_PAYLOAD_TYPE_EXT
 
+    cdef int NVTX_SCOPE_NONE
+
     cdef int NVTX_PAYLOAD_ENTRY_TYPE_INVALID
     cdef int NVTX_PAYLOAD_ENTRY_TYPE_INT8
     cdef int NVTX_PAYLOAD_ENTRY_TYPE_UINT8
@@ -143,9 +145,13 @@ cdef extern from "nvtx3/nvToolsExtPayload.h" nogil:
     cdef int NVTX_PAYLOAD_ENTRY_TYPE_CSTRING_UTF32
 
     cdef int NVTX_PAYLOAD_SCHEMA_ATTR_FIELD_TYPE
+    cdef int NVTX_PAYLOAD_SCHEMA_ATTR_FIELD_NAME
+    cdef int NVTX_PAYLOAD_SCHEMA_ATTR_FIELD_FLAGS
     cdef int NVTX_PAYLOAD_SCHEMA_ATTR_FIELD_ENTRIES
     cdef int NVTX_PAYLOAD_SCHEMA_ATTR_FIELD_NUM_ENTRIES
     cdef int NVTX_PAYLOAD_SCHEMA_ATTR_FIELD_STATIC_SIZE
+
+    cdef int NVTX_PAYLOAD_SCHEMA_FLAG_COUNTER_GROUP
 
     cdef int NVTX_PAYLOAD_SCHEMA_TYPE_STATIC
     cdef int NVTX_PAYLOAD_SCHEMA_TYPE_DYNAMIC
@@ -191,6 +197,17 @@ cdef extern from "nvtx3/nvToolsExtPayload.h" nogil:
         const nvtxPayloadSchemaAttr_t* attr
     )
 
+    ctypedef struct nvtxScopeAttr_t:
+        size_t structSize
+        const char* path
+        uint64_t parentScope
+        uint64_t scopeId
+
+    cdef uint64_t nvtxScopeRegister(
+        nvtxDomainHandle_t domain,
+        const nvtxScopeAttr_t* attr
+    )
+
 cdef class EventAttributes:
     cdef object domain
     cdef object _message
@@ -217,3 +234,5 @@ cdef class DomainHandle:
 cdef class StringHandle:
     cdef bytes _string
     cdef nvtxStringHandle_t c_obj
+
+cpdef bytes _to_bytes(object s)

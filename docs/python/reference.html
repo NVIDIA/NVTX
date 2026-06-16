@@ -28,46 +28,61 @@
   </noscript>
   
   <!-- Loaded before other Sphinx assets -->
-  <link href="_static/styles/theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
-<link href="_static/styles/pydata-sphinx-theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
+  <link href="_static/styles/theme.css?digest=55c26ed414f5f8a31ebb" rel="stylesheet" />
+<link href="_static/styles/pydata-sphinx-theme.css?digest=55c26ed414f5f8a31ebb" rel="stylesheet" />
 
     <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=8f2a1f02" />
-    <link rel="stylesheet" type="text/css" href="_static/styles/nvidia-sphinx-theme.css?v=df3ac72c" />
+    <link rel="stylesheet" type="text/css" href="_static/styles/nvidia-sphinx-theme.css?v=933278ad" />
   
   <!-- So that users can add custom icons -->
-  <script src="_static/scripts/fontawesome.js?digest=8878045cc6db502f8baf"></script>
+  <script defer src="_static/scripts/fontawesome.js?digest=55c26ed414f5f8a31ebb"></script>
   <!-- Pre-loaded scripts that we'll load fully later -->
-  <link rel="preload" as="script" href="_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf" />
-<link rel="preload" as="script" href="_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf" />
+  <link rel="preload" as="script" href="_static/scripts/bootstrap.js?digest=55c26ed414f5f8a31ebb" />
+<link rel="preload" as="script" href="_static/scripts/pydata-sphinx-theme.js?digest=55c26ed414f5f8a31ebb" />
 
-    <script src="_static/documentation_options.js?v=71c180b9"></script>
+
+
+    <script src="_static/documentation_options.js?v=d5b904a0"></script>
     <script src="_static/doctools.js?v=fd6eb6e6"></script>
     <script src="_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script>DOCUMENTATION_OPTIONS.pagename = 'reference';</script>
+    <script>DOCUMENTATION_OPTIONS.search_as_you_type = false;</script>
+
     <link rel="icon" href="_static/favicon.png"/>
+
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
     <link rel="prev" title="Automatic function annotation" href="automatic_annotations.html" />
 
+
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
   <meta name="docsearch:version" content="" />
+  
+    
+    <script src="_static/searchtools.js"></script>
+    <script src="_static/language_data.js"></script>
+    <script src="searchindex.js"></script>
+  
 
 
   </head>
-  
-  
-  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="">
+
+  <body data-default-mode="">
+
 
   
   
   <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+
   
   <div id="pst-scroll-pixel-helper"></div>
   
   <button type="button" class="btn rounded-pill" id="pst-back-to-top">
     <i class="fa-solid fa-arrow-up"></i>Back to top</button>
-
+  
+  
+  
   
   <dialog id="pst-search-dialog">
     
@@ -93,7 +108,7 @@
 </div>
 
   
-    <header class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+    <header id="pst-header" class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
 <div class="bd-header__inner bd-page-width">
   <button class="pst-navbar-icon sidebar-toggle primary-toggle" aria-label="Site navigation">
     <span class="fa-solid fa-bars"></span>
@@ -246,6 +261,7 @@
 <li class="toctree-l2"><a class="reference internal" href="annotate.html">Function Decorator and Context Manager</a></li>
 <li class="toctree-l2"><a class="reference internal" href="annotation_types.html">Annotation Types</a></li>
 <li class="toctree-l2"><a class="reference internal" href="annotation_attributes.html">Annotation Attributes</a></li>
+<li class="toctree-l2"><a class="reference internal" href="counters.html">Counters</a></li>
 <li class="toctree-l2"><a class="reference internal" href="best_practices.html">Best practices</a></li>
 <li class="toctree-l2"><a class="reference internal" href="automatic_annotations.html">Automatic function annotation</a></li>
 </ul>
@@ -322,7 +338,7 @@
 <dd><em class="sig-param"><span class="n"><span class="pre">color</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">int</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>,</dd>
 <dd><em class="sig-param"><span class="n"><span class="pre">domain</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>,</dd>
 <dd><em class="sig-param"><span class="n"><span class="pre">category</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">int</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>,</dd>
-<dd><em class="sig-param"><span class="n"><span class="pre">payload</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">float</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">list</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">tuple</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">range</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">bytes</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">np.ndarray</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>,</dd>
+<dd><em class="sig-param"><span class="n"><span class="pre">payload</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">float</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">list</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">tuple</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">range</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">bytes</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">ndarray</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>,</dd>
 </dl>
 
 <span class="sig-paren">)</span><a class="headerlink" href="#nvtx.annotate" title="Link to this definition">#</a></dt>
@@ -383,7 +399,7 @@ NumPy to be installed (not installed with <code class="docutils literal notransl
 <dd><em class="sig-param"><span class="n"><span class="pre">color</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">int</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'blue'</span></span></em>,</dd>
 <dd><em class="sig-param"><span class="n"><span class="pre">domain</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>,</dd>
 <dd><em class="sig-param"><span class="n"><span class="pre">category</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">int</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>,</dd>
-<dd><em class="sig-param"><span class="n"><span class="pre">payload</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">float</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">list</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">tuple</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">range</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">bytes</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">np.ndarray</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>,</dd>
+<dd><em class="sig-param"><span class="n"><span class="pre">payload</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">float</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">list</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">tuple</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">range</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">bytes</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">ndarray</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>,</dd>
 </dl>
 
 <span class="sig-paren">)</span><a class="headerlink" href="#nvtx.push_range" title="Link to this definition">#</a></dt>
@@ -449,7 +465,7 @@ domain is “NVTX”.</p>
 <dd><em class="sig-param"><span class="n"><span class="pre">color</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">int</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>,</dd>
 <dd><em class="sig-param"><span class="n"><span class="pre">domain</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>,</dd>
 <dd><em class="sig-param"><span class="n"><span class="pre">category</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">int</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>,</dd>
-<dd><em class="sig-param"><span class="n"><span class="pre">payload</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">float</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">list</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">tuple</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">range</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">bytes</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">np.ndarray</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>,</dd>
+<dd><em class="sig-param"><span class="n"><span class="pre">payload</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">float</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">list</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">tuple</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">range</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">bytes</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">ndarray</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>,</dd>
 </dl>
 
 <span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#nvtx.start_range" title="Link to this definition">#</a></dt>
@@ -516,7 +532,7 @@ NumPy to be installed (not installed with <code class="docutils literal notransl
 <dd><em class="sig-param"><span class="n"><span class="pre">color</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">int</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'blue'</span></span></em>,</dd>
 <dd><em class="sig-param"><span class="n"><span class="pre">domain</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>,</dd>
 <dd><em class="sig-param"><span class="n"><span class="pre">category</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">int</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>,</dd>
-<dd><em class="sig-param"><span class="n"><span class="pre">payload</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">float</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">list</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">tuple</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">range</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">bytes</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">np.ndarray</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>,</dd>
+<dd><em class="sig-param"><span class="n"><span class="pre">payload</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">float</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">list</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">tuple</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">range</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">bytes</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">ndarray</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>,</dd>
 </dl>
 
 <span class="sig-paren">)</span><a class="headerlink" href="#nvtx.mark" title="Link to this definition">#</a></dt>
@@ -569,6 +585,42 @@ NumPy to be installed (not installed with <code class="docutils literal notransl
 <dd><p>Get or create a <a class="reference internal" href="#nvtx.Domain" title="nvtx.Domain"><code class="xref py py-class docutils literal notranslate"><span class="pre">Domain</span></code></a> object for a domain name.</p>
 </dd></dl>
 
+<dl class="py function">
+<dt class="sig sig-object py" id="nvtx.numpy_dtype">
+<span class="sig-prename descclassname"><span class="pre">nvtx.</span></span><span class="sig-name descname"><span class="pre">numpy_dtype</span></span><span class="sig-paren">(</span>
+
+<dl>
+<dd><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>,</dd>
+<dd><em class="sig-param"><span class="n"><span class="pre">counter_semantics</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#nvtx.CounterSemantics" title="nvtx._lib.counters.CounterSemantics"><span class="pre">CounterSemantics</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>,</dd>
+<dd><em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em>,</dd>
+</dl>
+
+<span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">dtype</span></span></span><a class="headerlink" href="#nvtx.numpy_dtype" title="Link to this definition">#</a></dt>
+<dd><p>Construct a NumPy dtype, optionally carrying NVTX counter semantics.</p>
+<p>This function accepts the same arguments as <code class="xref py py-func docutils literal notranslate"><span class="pre">numpy.dtype()</span></code>. When
+<code class="docutils literal notranslate"><span class="pre">counter_semantics</span></code> is provided, the returned dtype carries metadata
+for use as a flat structured counter field. For a top-level scalar counter,
+pass semantics to <a class="reference internal" href="#nvtx.Domain.get_counter" title="nvtx.Domain.get_counter"><code class="xref py py-meth docutils literal notranslate"><span class="pre">nvtx.Domain.get_counter()</span></code></a> instead.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>*args</strong> – Positional arguments passed to <code class="xref py py-func docutils literal notranslate"><span class="pre">numpy.dtype()</span></code>.</p></li>
+<li><p><strong>counter_semantics</strong> (<a class="reference internal" href="#nvtx.CounterSemantics" title="nvtx.CounterSemantics"><em>CounterSemantics</em></a><em>, </em><em>optional</em>) – Semantics to attach to the dtype for use as a payload schema entry,
+typically a field in a structured counter dtype. If the NVTX metadata
+key is already present in <code class="docutils literal notranslate"><span class="pre">metadata</span></code>, the existing value is preserved
+and a warning is emitted.</p></li>
+<li><p><strong>**kwargs</strong> – Keyword arguments passed to <code class="xref py py-func docutils literal notranslate"><span class="pre">numpy.dtype()</span></code>.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>The constructed dtype.</p>
+</dd>
+<dt class="field-odd">Raises<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>RuntimeError</strong> – If NumPy is not installed.</p>
+</dd>
+</dl>
+</dd></dl>
+
 <dl class="py class">
 <dt class="sig sig-object py" id="nvtx.Domain">
 <span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">nvtx.</span></span><span class="sig-name descname"><span class="pre">Domain</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#nvtx.Domain" title="Link to this definition">#</a></dt>
@@ -599,6 +651,55 @@ On first use with a specific <cite>name</cite>, a new ID is assigned with the gi
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><p><strong>name</strong> (<em>str</em>) – The name of the category.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="nvtx.Domain.get_counter">
+<span class="sig-name descname"><span class="pre">get_counter</span></span><span class="sig-paren">(</span>
+
+<dl>
+<dd><em class="sig-param"><span class="n"><span class="pre">self</span></span></em>,</dd>
+<dd><em class="sig-param"><span class="n"><span class="pre">name</span></span></em>,</dd>
+<dd><em class="sig-param"><span class="n"><span class="pre">dtype</span></span></em>,</dd>
+<dd><em class="sig-param"><span class="keyword-only-separator o"><abbr title="Keyword-only parameters separator (PEP 3102)"><span class="pre">*</span></abbr></span></em>,</dd>
+<dd><em class="sig-param"><span class="n"><span class="pre">description</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>,</dd>
+<dd><em class="sig-param"><span class="n"><span class="pre">scope</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>,</dd>
+<dd><em class="sig-param"><span class="n"><span class="pre">semantics</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>,</dd>
+<dd><em class="sig-param"><span class="n"><span class="pre">time_domain</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">TimestampType.TOOL_PROVIDED</span></span></em>,</dd>
+</dl>
+
+<span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="#nvtx.Counter" title="nvtx.Counter"><span class="pre">Counter</span></a></span></span><a class="headerlink" href="#nvtx.Domain.get_counter" title="Link to this definition">#</a></dt>
+<dd><p>Get an NVTX counter in this domain.</p>
+<p>For enabled domains, the counter is created on first use and cached.
+Subsequent calls with the same arguments return the same counter
+object.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>name</strong> (<em>str</em><em> or </em><em>bytes</em>) – Display name for the counter.</p></li>
+<li><p><strong>dtype</strong> (<em>int</em><em>, </em><em>float</em><em>, or </em><em>numpy.dtype</em>) – Counter value type. <code class="docutils literal notranslate"><span class="pre">int</span></code> records signed 64-bit integer
+samples, <code class="docutils literal notranslate"><span class="pre">float</span></code> records double-precision samples, and a
+NumPy dtype-like object records samples with that dtype.
+Structured dtypes represent flat counter groups.</p></li>
+<li><p><strong>description</strong> (<em>str</em><em> or </em><em>bytes</em><em>, </em><em>optional</em>) – Longer description for the counter.</p></li>
+<li><p><strong>scope</strong> (<em>str</em><em> or </em><em>bytes</em><em>, </em><em>optional</em>) – Scope path for the counter.</p></li>
+<li><p><strong>semantics</strong> (<a class="reference internal" href="#nvtx.CounterSemantics" title="nvtx.CounterSemantics"><em>CounterSemantics</em></a><em>, </em><em>optional</em>) – Semantics for the counter as a whole. For per-field semantics
+in a structured dtype, build the field dtype with
+<a class="reference internal" href="#nvtx.numpy_dtype" title="nvtx.numpy_dtype"><code class="xref py py-func docutils literal notranslate"><span class="pre">nvtx.numpy_dtype()</span></code></a>. Dtype metadata applies to schema entries,
+so top-level scalar counters should use this argument instead
+of <code class="docutils literal notranslate"><span class="pre">nvtx.numpy_dtype(...,</span> <span class="pre">counter_semantics=...)</span></code>.</p></li>
+<li><p><strong>time_domain</strong> (<a class="reference internal" href="#nvtx.TimestampType" title="nvtx.TimestampType"><em>TimestampType</em></a><em>, </em><em>optional</em>) – Timestamp domain used for batched samples.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>A counter whose concrete sample type is determined by <code class="docutils literal notranslate"><span class="pre">dtype</span></code>,
+one of <a class="reference internal" href="#nvtx.Int64Counter" title="nvtx.Int64Counter"><code class="xref py py-class docutils literal notranslate"><span class="pre">Int64Counter</span></code></a>, <a class="reference internal" href="#nvtx.Float64Counter" title="nvtx.Float64Counter"><code class="xref py py-class docutils literal notranslate"><span class="pre">Float64Counter</span></code></a>, or
+<a class="reference internal" href="#nvtx.ExtCounter" title="nvtx.ExtCounter"><code class="xref py py-class docutils literal notranslate"><span class="pre">ExtCounter</span></code></a>.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference internal" href="#nvtx.Counter" title="nvtx.Counter">Counter</a></p>
 </dd>
 </dl>
 </dd></dl>
@@ -643,6 +744,12 @@ which is often useful for analysis.</p></li>
 <dd class="field-odd"><p><strong>string</strong> (<em>str</em>) – The string to be registered.</p>
 </dd>
 </dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="nvtx.Domain.get_timestamp">
+<span class="sig-name descname"><span class="pre">get_timestamp</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">self</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#nvtx.Domain.get_timestamp" title="Link to this definition">#</a></dt>
+<dd><p>Return an NVTX timestamp for use with batched counter samples.</p>
 </dd></dl>
 
 <dl class="py method">
@@ -912,6 +1019,621 @@ Use <a class="reference internal" href="#nvtx.Domain.get_registered_string" titl
 </dd></dl>
 
 <dl class="py class">
+<dt class="sig sig-object py" id="nvtx._lib.counters.DummyCounter">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">nvtx._lib.counters.</span></span><span class="sig-name descname"><span class="pre">DummyCounter</span></span><a class="headerlink" href="#nvtx._lib.counters.DummyCounter" title="Link to this definition">#</a></dt>
+<dd><p>A replacement for <a class="reference internal" href="#nvtx.Counter" title="nvtx._lib.counters.Counter"><code class="xref py py-class docutils literal notranslate"><span class="pre">Counter</span></code></a> when the domain is disabled.
+(e.g., when no tool is attached).</p>
+<p><code class="docutils literal notranslate"><span class="pre">DummyCounter</span></code> implements the same public methods as <code class="docutils literal notranslate"><span class="pre">Counter</span></code> as
+no-ops.</p>
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="nvtx.Counter">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">nvtx.</span></span><span class="sig-name descname"><span class="pre">Counter</span></span><a class="headerlink" href="#nvtx.Counter" title="Link to this definition">#</a></dt>
+<dd><p>Base class for <a class="reference internal" href="#nvtx.Int64Counter" title="nvtx.Int64Counter"><code class="xref py py-class docutils literal notranslate"><span class="pre">Int64Counter</span></code></a>, <a class="reference internal" href="#nvtx.Float64Counter" title="nvtx.Float64Counter"><code class="xref py py-class docutils literal notranslate"><span class="pre">Float64Counter</span></code></a>, and
+<a class="reference internal" href="#nvtx.ExtCounter" title="nvtx.ExtCounter"><code class="xref py py-class docutils literal notranslate"><span class="pre">ExtCounter</span></code></a> representing a registered NVTX counter.</p>
+<p>Use <a class="reference internal" href="#nvtx.Domain.get_counter" title="nvtx.Domain.get_counter"><code class="xref py py-meth docutils literal notranslate"><span class="pre">Domain.get_counter</span></code></a>
+to create a concrete counter.</p>
+<p>Use <a class="reference internal" href="#nvtx.Counter.sample" title="nvtx.Counter.sample"><code class="xref py py-meth docutils literal notranslate"><span class="pre">sample()</span></code></a> to record one value, <a class="reference internal" href="#nvtx.Counter.sample_no_value" title="nvtx.Counter.sample_no_value"><code class="xref py py-meth docutils literal notranslate"><span class="pre">sample_no_value()</span></code></a> to
+record a missing value, or <a class="reference internal" href="#nvtx.Counter.batch_submit" title="nvtx.Counter.batch_submit"><code class="xref py py-meth docutils literal notranslate"><span class="pre">batch_submit()</span></code></a> to record timestamped
+batches.</p>
+<p class="rubric">Examples</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span><span class="w"> </span><span class="nn">nvtx</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">domain</span> <span class="o">=</span> <span class="n">nvtx</span><span class="o">.</span><span class="n">get_domain</span><span class="p">(</span><span class="s2">&quot;Training&quot;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">loss_counter</span> <span class="o">=</span> <span class="n">domain</span><span class="o">.</span><span class="n">get_counter</span><span class="p">(</span><span class="s2">&quot;loss&quot;</span><span class="p">,</span> <span class="nb">float</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">loss_counter</span><span class="o">.</span><span class="n">sample</span><span class="p">(</span><span class="mf">0.42</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Optionally add semantics to describe units, bounds,
+and how tools should interpret the recorded values:</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">loss_counter</span> <span class="o">=</span> <span class="n">domain</span><span class="o">.</span><span class="n">get_counter</span><span class="p">(</span>
+<span class="gp">... </span>    <span class="s2">&quot;loss&quot;</span><span class="p">,</span>
+<span class="gp">... </span>    <span class="nb">float</span><span class="p">,</span>
+<span class="gp">... </span>    <span class="n">semantics</span><span class="o">=</span><span class="n">nvtx</span><span class="o">.</span><span class="n">CounterSemantics</span><span class="p">(</span><span class="nb">min</span><span class="o">=</span><span class="mf">0.0</span><span class="p">),</span>
+<span class="gp">... </span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">loss_counter</span><span class="o">.</span><span class="n">sample</span><span class="p">(</span><span class="mf">0.42</span><span class="p">)</span>
+</pre></div>
+</div>
+<dl class="py method">
+<dt class="sig sig-object py" id="nvtx.Counter.sample">
+<span class="sig-name descname"><span class="pre">sample</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">self</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">value</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#nvtx.Counter.sample" title="Link to this definition">#</a></dt>
+<dd><p>Record one counter sample.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>value</strong> – Sample value. The accepted type depends on the concrete counter
+subclass returned by <a class="reference internal" href="#nvtx.Domain.get_counter" title="nvtx.Domain.get_counter"><code class="xref py py-meth docutils literal notranslate"><span class="pre">nvtx.Domain.get_counter()</span></code></a>.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="nvtx.Counter.sample_no_value">
+<span class="sig-name descname"><span class="pre">sample_no_value</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">self</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">reason</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#nvtx.CounterNoValueReason" title="nvtx.CounterNoValueReason"><span class="pre">CounterNoValueReason</span></a></span></em><span class="sig-paren">)</span><a class="headerlink" href="#nvtx.Counter.sample_no_value" title="Link to this definition">#</a></dt>
+<dd><p>Record that a counter sample has no explicit value.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>reason</strong> – Reason why the value is not present.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="nvtx.Counter.batch_submit">
+<span class="sig-name descname"><span class="pre">batch_submit</span></span><span class="sig-paren">(</span>
+
+<dl>
+<dd><em class="sig-param"><span class="n"><span class="pre">self</span></span></em>,</dd>
+<dd><em class="sig-param"><span class="n"><span class="pre">values</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Iterable</span></span></em>,</dd>
+<dd><em class="sig-param"><span class="n"><span class="pre">timestamps</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Iterable</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></span></em>,</dd>
+</dl>
+
+<span class="sig-paren">)</span><a class="headerlink" href="#nvtx.Counter.batch_submit" title="Link to this definition">#</a></dt>
+<dd><p>Record a batch of timestamped counter samples.</p>
+<p>Use this to reduce overhead when values are produced in a hot path
+but do not need to be submitted immediately.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>values</strong> – Sample values. The accepted type depends on the concrete counter
+subclass returned by <a class="reference internal" href="#nvtx.Domain.get_counter" title="nvtx.Domain.get_counter"><code class="xref py py-meth docutils literal notranslate"><span class="pre">nvtx.Domain.get_counter()</span></code></a>.</p></li>
+<li><p><strong>timestamps</strong> – Timestamp for each sample. The number of timestamps must match
+the number of values.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="nvtx.Int64Counter">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">nvtx.</span></span><span class="sig-name descname"><span class="pre">Int64Counter</span></span><a class="headerlink" href="#nvtx.Int64Counter" title="Link to this definition">#</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#nvtx.Counter" title="nvtx._lib.counters.Counter"><code class="xref py py-class docutils literal notranslate"><span class="pre">Counter</span></code></a></p>
+<p>Counter for signed 64-bit integer samples.</p>
+<p class="rubric">Examples</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span><span class="w"> </span><span class="nn">nvtx</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">domain</span> <span class="o">=</span> <span class="n">nvtx</span><span class="o">.</span><span class="n">get_domain</span><span class="p">(</span><span class="s2">&quot;Example&quot;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">bytes_processed_counter</span> <span class="o">=</span> <span class="n">domain</span><span class="o">.</span><span class="n">get_counter</span><span class="p">(</span>
+<span class="gp">... </span>    <span class="s2">&quot;bytes processed&quot;</span><span class="p">,</span>
+<span class="gp">... </span>    <span class="nb">int</span><span class="p">,</span>
+<span class="gp">... </span>    <span class="n">semantics</span><span class="o">=</span><span class="n">nvtx</span><span class="o">.</span><span class="n">CounterSemantics</span><span class="p">(</span><span class="n">unit</span><span class="o">=</span><span class="s2">&quot;bytes&quot;</span><span class="p">,</span> <span class="nb">min</span><span class="o">=</span><span class="mi">0</span><span class="p">),</span>
+<span class="gp">... </span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">bytes_processed_counter</span><span class="o">.</span><span class="n">sample</span><span class="p">(</span><span class="mi">4096</span><span class="p">)</span>
+</pre></div>
+</div>
+<dl class="py method">
+<dt class="sig sig-object py" id="nvtx.Int64Counter.sample">
+<span class="sig-name descname"><span class="pre">sample</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">self</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">int64_t</span> <span class="pre">value</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#nvtx.Int64Counter.sample" title="Link to this definition">#</a></dt>
+<dd><p>Record one signed 64-bit integer counter sample.</p>
+<p>This is a low-overhead path and does not perform runtime schema
+validation. Passing a value that does not match the registered
+counter type is undefined.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>value</strong> (<em>int</em>) – Sample value. It must fit in a signed 64-bit integer.</p>
+</dd>
+</dl>
+<p class="rubric">Examples</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span><span class="w"> </span><span class="nn">nvtx</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">domain</span> <span class="o">=</span> <span class="n">nvtx</span><span class="o">.</span><span class="n">get_domain</span><span class="p">(</span><span class="s2">&quot;Example&quot;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">bytes_processed_counter</span> <span class="o">=</span> <span class="n">domain</span><span class="o">.</span><span class="n">get_counter</span><span class="p">(</span><span class="s2">&quot;bytes processed&quot;</span><span class="p">,</span> <span class="nb">int</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">bytes_processed_counter</span><span class="o">.</span><span class="n">sample</span><span class="p">(</span><span class="mi">4096</span><span class="p">)</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="nvtx.Int64Counter.batch_submit">
+<span class="sig-name descname"><span class="pre">batch_submit</span></span><span class="sig-paren">(</span>
+
+<dl>
+<dd><em class="sig-param"><span class="n"><span class="pre">self</span></span></em>,</dd>
+<dd><em class="sig-param"><span class="n"><span class="pre">values</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Iterable</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></span></em>,</dd>
+<dd><em class="sig-param"><span class="n"><span class="pre">timestamps</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Iterable</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></span></em>,</dd>
+</dl>
+
+<span class="sig-paren">)</span><a class="headerlink" href="#nvtx.Int64Counter.batch_submit" title="Link to this definition">#</a></dt>
+<dd><p>Record a batch of signed 64-bit integer counter samples.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>values</strong> (<em>iterable</em><em> of </em><em>int</em>) – Sample values. Each value must fit in a signed 64-bit integer.</p></li>
+<li><p><strong>timestamps</strong> (<em>iterable</em><em> of </em><em>int</em>) – Timestamp for each value. The number of timestamps must match
+the number of values.</p></li>
+</ul>
+</dd>
+</dl>
+<p class="rubric">Examples</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span><span class="w"> </span><span class="nn">nvtx</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">domain</span> <span class="o">=</span> <span class="n">nvtx</span><span class="o">.</span><span class="n">get_domain</span><span class="p">(</span><span class="s2">&quot;Example&quot;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">bytes_processed_counter</span> <span class="o">=</span> <span class="n">domain</span><span class="o">.</span><span class="n">get_counter</span><span class="p">(</span><span class="s2">&quot;bytes processed&quot;</span><span class="p">,</span> <span class="nb">int</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">values</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">1024</span><span class="p">,</span> <span class="mi">2048</span><span class="p">,</span> <span class="mi">4096</span><span class="p">])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">timestamps</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">domain</span><span class="o">.</span><span class="n">get_timestamp</span><span class="p">()</span> <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="n">values</span><span class="p">])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">bytes_processed_counter</span><span class="o">.</span><span class="n">batch_submit</span><span class="p">(</span><span class="n">values</span><span class="p">,</span> <span class="n">timestamps</span><span class="p">)</span>
+</pre></div>
+</div>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="nvtx.Float64Counter">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">nvtx.</span></span><span class="sig-name descname"><span class="pre">Float64Counter</span></span><a class="headerlink" href="#nvtx.Float64Counter" title="Link to this definition">#</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#nvtx.Counter" title="nvtx._lib.counters.Counter"><code class="xref py py-class docutils literal notranslate"><span class="pre">Counter</span></code></a></p>
+<p>Counter for double-precision floating-point samples.</p>
+<p class="rubric">Examples</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span><span class="w"> </span><span class="nn">nvtx</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">domain</span> <span class="o">=</span> <span class="n">nvtx</span><span class="o">.</span><span class="n">get_domain</span><span class="p">(</span><span class="s2">&quot;Training&quot;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">loss_counter</span> <span class="o">=</span> <span class="n">domain</span><span class="o">.</span><span class="n">get_counter</span><span class="p">(</span><span class="s2">&quot;loss&quot;</span><span class="p">,</span> <span class="nb">float</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">loss_counter</span><span class="o">.</span><span class="n">sample</span><span class="p">(</span><span class="mf">0.42</span><span class="p">)</span>
+</pre></div>
+</div>
+<dl class="py method">
+<dt class="sig sig-object py" id="nvtx.Float64Counter.sample">
+<span class="sig-name descname"><span class="pre">sample</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">self</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">double</span> <span class="pre">value</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#nvtx.Float64Counter.sample" title="Link to this definition">#</a></dt>
+<dd><p>Record one double-precision floating-point counter sample.</p>
+<p>This is a low-overhead path and does not perform runtime schema
+validation. Passing a value that does not match the registered
+counter type is undefined.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>value</strong> (<em>float</em>) – Sample value.</p>
+</dd>
+</dl>
+<p class="rubric">Examples</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span><span class="w"> </span><span class="nn">nvtx</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">domain</span> <span class="o">=</span> <span class="n">nvtx</span><span class="o">.</span><span class="n">get_domain</span><span class="p">(</span><span class="s2">&quot;Training&quot;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">loss_counter</span> <span class="o">=</span> <span class="n">domain</span><span class="o">.</span><span class="n">get_counter</span><span class="p">(</span><span class="s2">&quot;loss&quot;</span><span class="p">,</span> <span class="nb">float</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">loss_counter</span><span class="o">.</span><span class="n">sample</span><span class="p">(</span><span class="mf">0.42</span><span class="p">)</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="nvtx.Float64Counter.batch_submit">
+<span class="sig-name descname"><span class="pre">batch_submit</span></span><span class="sig-paren">(</span>
+
+<dl>
+<dd><em class="sig-param"><span class="n"><span class="pre">self</span></span></em>,</dd>
+<dd><em class="sig-param"><span class="n"><span class="pre">values</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Iterable</span><span class="p"><span class="pre">[</span></span><span class="pre">float</span><span class="p"><span class="pre">]</span></span></span></em>,</dd>
+<dd><em class="sig-param"><span class="n"><span class="pre">timestamps</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Iterable</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></span></em>,</dd>
+</dl>
+
+<span class="sig-paren">)</span><a class="headerlink" href="#nvtx.Float64Counter.batch_submit" title="Link to this definition">#</a></dt>
+<dd><p>Record a batch of double-precision floating-point samples.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>values</strong> (<em>iterable</em><em> of </em><em>float</em>) – Sample values.</p></li>
+<li><p><strong>timestamps</strong> (<em>iterable</em><em> of </em><em>int</em>) – Timestamp for each value. The number of timestamps must match
+the number of values.</p></li>
+</ul>
+</dd>
+</dl>
+<p class="rubric">Examples</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span><span class="w"> </span><span class="nn">nvtx</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">domain</span> <span class="o">=</span> <span class="n">nvtx</span><span class="o">.</span><span class="n">get_domain</span><span class="p">(</span><span class="s2">&quot;Training&quot;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">loss_counter</span> <span class="o">=</span> <span class="n">domain</span><span class="o">.</span><span class="n">get_counter</span><span class="p">(</span><span class="s2">&quot;loss&quot;</span><span class="p">,</span> <span class="nb">float</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">values</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">0.9</span><span class="p">,</span> <span class="mf">0.7</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">timestamps</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">domain</span><span class="o">.</span><span class="n">get_timestamp</span><span class="p">()</span> <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="n">values</span><span class="p">])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">loss_counter</span><span class="o">.</span><span class="n">batch_submit</span><span class="p">(</span><span class="n">values</span><span class="p">,</span> <span class="n">timestamps</span><span class="p">)</span>
+</pre></div>
+</div>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="nvtx.ExtCounter">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">nvtx.</span></span><span class="sig-name descname"><span class="pre">ExtCounter</span></span><a class="headerlink" href="#nvtx.ExtCounter" title="Link to this definition">#</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#nvtx.Counter" title="nvtx._lib.counters.Counter"><code class="xref py py-class docutils literal notranslate"><span class="pre">Counter</span></code></a></p>
+<p>Counter for NumPy dtype-based samples and counter groups.</p>
+<p>The counter dtype defines the binary layout of each sample. Structured
+dtypes can be used to represent flat counter groups.</p>
+<p class="rubric">Examples</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span><span class="w"> </span><span class="nn">nvtx</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">domain</span> <span class="o">=</span> <span class="n">nvtx</span><span class="o">.</span><span class="n">get_domain</span><span class="p">(</span><span class="s2">&quot;CUDA&quot;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">memory_dtype</span> <span class="o">=</span> <span class="n">nvtx</span><span class="o">.</span><span class="n">numpy_dtype</span><span class="p">([</span>
+<span class="gp">... </span>    <span class="p">(</span><span class="s2">&quot;allocated&quot;</span><span class="p">,</span> <span class="nb">int</span><span class="p">),</span>
+<span class="gp">... </span>    <span class="p">(</span><span class="s2">&quot;reserved&quot;</span><span class="p">,</span> <span class="nb">int</span><span class="p">),</span>
+<span class="gp">... </span><span class="p">])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">memory_counter</span> <span class="o">=</span> <span class="n">domain</span><span class="o">.</span><span class="n">get_counter</span><span class="p">(</span><span class="s2">&quot;memory&quot;</span><span class="p">,</span> <span class="n">memory_dtype</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">memory_counter</span><span class="o">.</span><span class="n">sample</span><span class="p">((</span><span class="mi">1024</span><span class="p">,</span> <span class="mi">2048</span><span class="p">))</span>
+</pre></div>
+</div>
+<dl class="py method">
+<dt class="sig sig-object py" id="nvtx.ExtCounter.sample">
+<span class="sig-name descname"><span class="pre">sample</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">self</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">value</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#nvtx.ExtCounter.sample" title="Link to this definition">#</a></dt>
+<dd><p>Record one dtype-compatible counter sample.</p>
+<p>This is a low-overhead path and does not perform runtime schema
+validation. Passing data that does not match the registered dtype
+schema is undefined.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>value</strong> – A value accepted by <code class="docutils literal notranslate"><span class="pre">numpy.ascontiguousarray(value,</span> <span class="pre">dtype=self.dtype)</span></code>.
+For a structured dtype, pass one tuple containing the field
+values for a single sample. Prefer to pass values “as-is”
+for avoiding memory allocations when no tool is attached.</p>
+</dd>
+</dl>
+<p class="rubric">Examples</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span><span class="w"> </span><span class="nn">nvtx</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">domain</span> <span class="o">=</span> <span class="n">nvtx</span><span class="o">.</span><span class="n">get_domain</span><span class="p">(</span><span class="s2">&quot;CUDA&quot;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">memory_dtype</span> <span class="o">=</span> <span class="n">nvtx</span><span class="o">.</span><span class="n">numpy_dtype</span><span class="p">([</span>
+<span class="gp">... </span>    <span class="p">(</span><span class="s2">&quot;allocated&quot;</span><span class="p">,</span> <span class="nb">int</span><span class="p">),</span>
+<span class="gp">... </span>    <span class="p">(</span><span class="s2">&quot;reserved&quot;</span><span class="p">,</span> <span class="nb">int</span><span class="p">),</span>
+<span class="gp">... </span><span class="p">])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">memory_counter</span> <span class="o">=</span> <span class="n">domain</span><span class="o">.</span><span class="n">get_counter</span><span class="p">(</span><span class="s2">&quot;memory&quot;</span><span class="p">,</span> <span class="n">memory_dtype</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">memory_counter</span><span class="o">.</span><span class="n">sample</span><span class="p">((</span><span class="mi">1024</span><span class="p">,</span> <span class="mi">2048</span><span class="p">))</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="nvtx.ExtCounter.batch_submit">
+<span class="sig-name descname"><span class="pre">batch_submit</span></span><span class="sig-paren">(</span>
+
+<dl>
+<dd><em class="sig-param"><span class="n"><span class="pre">self</span></span></em>,</dd>
+<dd><em class="sig-param"><span class="n"><span class="pre">values</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Iterable</span></span></em>,</dd>
+<dd><em class="sig-param"><span class="n"><span class="pre">timestamps</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Iterable</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></span></em>,</dd>
+</dl>
+
+<span class="sig-paren">)</span><a class="headerlink" href="#nvtx.ExtCounter.batch_submit" title="Link to this definition">#</a></dt>
+<dd><p>Record a batch of dtype-compatible counter samples.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>values</strong> – Values accepted by <code class="docutils literal notranslate"><span class="pre">numpy.ascontiguousarray(values,</span> <span class="pre">dtype=self.dtype)</span></code>.
+For a structured dtype, pass an iterable of tuples, with one
+tuple per sample. As a rule of thumb: if you would assemble the
+batch yourself, build it as a NumPy array matching <code class="docutils literal notranslate"><span class="pre">self.dtype</span></code>
+to avoid a copy; if the data already exists as native Python, pass
+it as-is so no array is allocated when no tool is attached.</p></li>
+<li><p><strong>timestamps</strong> (<em>iterable</em><em> of </em><em>int</em>) – Timestamp for each sample. The number of timestamps must match
+the number of samples represented by <code class="docutils literal notranslate"><span class="pre">values</span></code>.</p></li>
+</ul>
+</dd>
+</dl>
+<p class="rubric">Examples</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span><span class="w"> </span><span class="nn">nvtx</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">domain</span> <span class="o">=</span> <span class="n">nvtx</span><span class="o">.</span><span class="n">get_domain</span><span class="p">(</span><span class="s2">&quot;CUDA&quot;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">memory_dtype</span> <span class="o">=</span> <span class="n">nvtx</span><span class="o">.</span><span class="n">numpy_dtype</span><span class="p">([</span>
+<span class="gp">... </span>    <span class="p">(</span><span class="s2">&quot;allocated&quot;</span><span class="p">,</span> <span class="nb">int</span><span class="p">),</span>
+<span class="gp">... </span>    <span class="p">(</span><span class="s2">&quot;reserved&quot;</span><span class="p">,</span> <span class="nb">int</span><span class="p">),</span>
+<span class="gp">... </span><span class="p">])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">memory_counter</span> <span class="o">=</span> <span class="n">domain</span><span class="o">.</span><span class="n">get_counter</span><span class="p">(</span><span class="s2">&quot;memory&quot;</span><span class="p">,</span> <span class="n">memory_dtype</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">values</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([(</span><span class="mi">1024</span><span class="p">,</span> <span class="mi">2048</span><span class="p">),</span> <span class="p">(</span><span class="mi">2048</span><span class="p">,</span> <span class="mi">4096</span><span class="p">)],</span> <span class="n">dtype</span><span class="o">=</span><span class="n">memory_dtype</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">timestamps</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">domain</span><span class="o">.</span><span class="n">get_timestamp</span><span class="p">()</span> <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="n">values</span><span class="p">])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">memory_counter</span><span class="o">.</span><span class="n">batch_submit</span><span class="p">(</span><span class="n">values</span><span class="p">,</span> <span class="n">timestamps</span><span class="p">)</span>
+</pre></div>
+</div>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="nvtx.CounterSemantics">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">nvtx.</span></span><span class="sig-name descname"><span class="pre">CounterSemantics</span></span><span class="sig-paren">(</span>
+
+<dl>
+<dd><em class="sig-param"><span class="n"><span class="pre">unit</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">bytes</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>,</dd>
+<dd><em class="sig-param"><span class="n"><span class="pre">value_type</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#nvtx.CounterValueType" title="nvtx._lib.counters.CounterValueType"><span class="pre">CounterValueType</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">CounterValueType.ABSOLUTE</span></span></em>,</dd>
+<dd><em class="sig-param"><span class="n"><span class="pre">interpolation</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#nvtx.CounterInterpolation" title="nvtx._lib.counters.CounterInterpolation"><span class="pre">CounterInterpolation</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">CounterInterpolation.POINT</span></span></em>,</dd>
+<dd><em class="sig-param"><span class="n"><span class="pre">min</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">float</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>,</dd>
+<dd><em class="sig-param"><span class="n"><span class="pre">max</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">float</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>,</dd>
+<dd><em class="sig-param"><span class="n"><span class="pre">unit_scale_numerator</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">1</span></span></em>,</dd>
+<dd><em class="sig-param"><span class="n"><span class="pre">unit_scale_denominator</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">1</span></span></em>,</dd>
+</dl>
+
+<span class="sig-paren">)</span><a class="headerlink" href="#nvtx.CounterSemantics" title="Link to this definition">#</a></dt>
+<dd><p>Metadata that describes how a counter value should be interpreted.</p>
+<p>This class represents the <code class="docutils literal notranslate"><span class="pre">nvtxSemanticsCounter_t</span></code> struct from the
+NVTX C counter semantics header.</p>
+<p>Use this with <a class="reference internal" href="#nvtx.Domain.get_counter" title="nvtx.Domain.get_counter"><code class="xref py py-meth docutils literal notranslate"><span class="pre">nvtx.Domain.get_counter()</span></code></a> for whole-counter
+semantics, or with <a class="reference internal" href="#nvtx.numpy_dtype" title="nvtx.numpy_dtype"><code class="xref py py-func docutils literal notranslate"><span class="pre">nvtx.numpy_dtype()</span></code></a> for per-field semantics in a
+flat structured counter group.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>unit</strong> (<em>str</em><em>, </em><em>bytes</em><em>, </em><em>optional</em>) – Unit name for the counter value, such as <code class="docutils literal notranslate"><span class="pre">&quot;bytes&quot;</span></code> or
+<code class="docutils literal notranslate"><span class="pre">&quot;objects&quot;</span></code>. String units are encoded and stored as bytes.</p></li>
+<li><p><strong>value_type</strong> (<a class="reference internal" href="#nvtx.CounterValueType" title="nvtx.CounterValueType"><em>CounterValueType</em></a><em>, </em><em>optional</em>) – Whether samples represent absolute values or deltas.</p></li>
+<li><p><strong>interpolation</strong> (<a class="reference internal" href="#nvtx.CounterInterpolation" title="nvtx.CounterInterpolation"><em>CounterInterpolation</em></a><em>, </em><em>optional</em>) – How values should be interpreted between adjacent samples.</p></li>
+<li><p><strong>min</strong> (<em>int</em><em>, </em><em>float</em><em>, </em><em>optional</em>) – Optional value bounds. If both are provided, they must have the
+same numeric type and <code class="docutils literal notranslate"><span class="pre">min</span></code> must not exceed <code class="docutils literal notranslate"><span class="pre">max</span></code>.</p></li>
+<li><p><strong>max</strong> (<em>int</em><em>, </em><em>float</em><em>, </em><em>optional</em>) – Optional value bounds. If both are provided, they must have the
+same numeric type and <code class="docutils literal notranslate"><span class="pre">min</span></code> must not exceed <code class="docutils literal notranslate"><span class="pre">max</span></code>.</p></li>
+<li><p><strong>unit_scale_numerator</strong> (<em>int</em><em>, </em><em>optional</em>) – Positive scale factors applied to <code class="docutils literal notranslate"><span class="pre">unit</span></code>.</p></li>
+<li><p><strong>unit_scale_denominator</strong> (<em>int</em><em>, </em><em>optional</em>) – Positive scale factors applied to <code class="docutils literal notranslate"><span class="pre">unit</span></code>.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="nvtx.CounterValueType">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">nvtx.</span></span><span class="sig-name descname"><span class="pre">CounterValueType</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">values</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#nvtx.CounterValueType" title="Link to this definition">#</a></dt>
+<dd><p>How counter sample values relate to previous samples.</p>
+<p>This enum represents the <code class="docutils literal notranslate"><span class="pre">NVTX_COUNTER_FLAG_VALUETYPE_*</span></code> macros
+from the NVTX C counter semantics header.</p>
+<p>Values are used with <a class="reference internal" href="#nvtx.CounterSemantics" title="nvtx.CounterSemantics"><code class="xref py py-class docutils literal notranslate"><span class="pre">CounterSemantics</span></code></a>.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="nvtx.CounterValueType.ABSOLUTE">
+<span class="sig-name descname"><span class="pre">ABSOLUTE</span></span><a class="headerlink" href="#nvtx.CounterValueType.ABSOLUTE" title="Link to this definition">#</a></dt>
+<dd><p>Each sample is an absolute value.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="nvtx.CounterValueType.DELTA">
+<span class="sig-name descname"><span class="pre">DELTA</span></span><a class="headerlink" href="#nvtx.CounterValueType.DELTA" title="Link to this definition">#</a></dt>
+<dd><p>Each sample is a delta relative to the previous sample. The value
+for the first sample (with no predecessor) is tool-defined.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="nvtx.CounterValueType.DELTA_SINCE_START">
+<span class="sig-name descname"><span class="pre">DELTA_SINCE_START</span></span><a class="headerlink" href="#nvtx.CounterValueType.DELTA_SINCE_START" title="Link to this definition">#</a></dt>
+<dd><p>Each sample is a delta relative to the first sample.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="nvtx.CounterInterpolation">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">nvtx.</span></span><span class="sig-name descname"><span class="pre">CounterInterpolation</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">values</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#nvtx.CounterInterpolation" title="Link to this definition">#</a></dt>
+<dd><p>How tools should interpolate counter values between samples.</p>
+<p>This enum represents the <code class="docutils literal notranslate"><span class="pre">NVTX_COUNTER_FLAG_INTERPOLATION_*</span></code> macros
+from the NVTX C counter semantics header.</p>
+<p>Values are used with <a class="reference internal" href="#nvtx.CounterSemantics" title="nvtx.CounterSemantics"><code class="xref py py-class docutils literal notranslate"><span class="pre">CounterSemantics</span></code></a>.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="nvtx.CounterInterpolation.POINT">
+<span class="sig-name descname"><span class="pre">POINT</span></span><a class="headerlink" href="#nvtx.CounterInterpolation.POINT" title="Link to this definition">#</a></dt>
+<dd><p>No interpolation between samples.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="nvtx.CounterInterpolation.SINCE_LAST">
+<span class="sig-name descname"><span class="pre">SINCE_LAST</span></span><a class="headerlink" href="#nvtx.CounterInterpolation.SINCE_LAST" title="Link to this definition">#</a></dt>
+<dd><p>Piecewise constant interpolation between the current and the
+previous sample.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="nvtx.CounterInterpolation.UNTIL_NEXT">
+<span class="sig-name descname"><span class="pre">UNTIL_NEXT</span></span><a class="headerlink" href="#nvtx.CounterInterpolation.UNTIL_NEXT" title="Link to this definition">#</a></dt>
+<dd><p>Piecewise constant interpolation between the current and the
+next sample.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="nvtx.CounterInterpolation.LINEAR">
+<span class="sig-name descname"><span class="pre">LINEAR</span></span><a class="headerlink" href="#nvtx.CounterInterpolation.LINEAR" title="Link to this definition">#</a></dt>
+<dd><p>Piecewise linear interpolation between samples.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="nvtx.CounterNoValueReason">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">nvtx.</span></span><span class="sig-name descname"><span class="pre">CounterNoValueReason</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">values</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#nvtx.CounterNoValueReason" title="Link to this definition">#</a></dt>
+<dd><p>Reasons for recording a counter sample without a value.</p>
+<p>This enum represents the <code class="docutils literal notranslate"><span class="pre">NVTX_COUNTER_SAMPLE_*</span></code> macros from the
+NVTX C counters header.</p>
+<p>Pass one of these values to <a class="reference internal" href="#nvtx.Counter.sample_no_value" title="nvtx.Counter.sample_no_value"><code class="xref py py-meth docutils literal notranslate"><span class="pre">Counter.sample_no_value()</span></code></a> when a
+counter sample is known to be zero, unchanged, or unavailable.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="nvtx.CounterNoValueReason.ZERO">
+<span class="sig-name descname"><span class="pre">ZERO</span></span><a class="headerlink" href="#nvtx.CounterNoValueReason.ZERO" title="Link to this definition">#</a></dt>
+<dd><p>The counter value at this sample is zero.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="nvtx.CounterNoValueReason.UNCHANGED">
+<span class="sig-name descname"><span class="pre">UNCHANGED</span></span><a class="headerlink" href="#nvtx.CounterNoValueReason.UNCHANGED" title="Link to this definition">#</a></dt>
+<dd><p>The counter value is the same as the previous sample.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="nvtx.CounterNoValueReason.UNAVAILABLE">
+<span class="sig-name descname"><span class="pre">UNAVAILABLE</span></span><a class="headerlink" href="#nvtx.CounterNoValueReason.UNAVAILABLE" title="Link to this definition">#</a></dt>
+<dd><p>A sample could not be obtained; only the timestamp is recorded.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="nvtx.TimestampType">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">nvtx.</span></span><span class="sig-name descname"><span class="pre">TimestampType</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">values</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#nvtx.TimestampType" title="Link to this definition">#</a></dt>
+<dd><p>Timestamp domains that can be associated with batched counter samples.</p>
+<p>This enum represents the <code class="docutils literal notranslate"><span class="pre">NVTX_TIMESTAMP_TYPE_*</span></code> macros from the
+NVTX C payload header.</p>
+<p>Use these values as the <code class="docutils literal notranslate"><span class="pre">time_domain</span></code> argument to
+<a class="reference internal" href="#nvtx.Domain.get_counter" title="nvtx.Domain.get_counter"><code class="xref py py-meth docutils literal notranslate"><span class="pre">nvtx.Domain.get_counter()</span></code></a>. For batched counters, timestamps
+passed to <a class="reference internal" href="#nvtx.Counter.batch_submit" title="nvtx.Counter.batch_submit"><code class="xref py py-meth docutils literal notranslate"><span class="pre">Counter.batch_submit</span></code></a>
+should come from the same timestamp domain.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="nvtx.TimestampType.NONE">
+<span class="sig-name descname"><span class="pre">NONE</span></span><a class="headerlink" href="#nvtx.TimestampType.NONE" title="Link to this definition">#</a></dt>
+<dd><p>No timestamp domain is specified.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="nvtx.TimestampType.TOOL_PROVIDED">
+<span class="sig-name descname"><span class="pre">TOOL_PROVIDED</span></span><a class="headerlink" href="#nvtx.TimestampType.TOOL_PROVIDED" title="Link to this definition">#</a></dt>
+<dd><p>The timestamp is provided by the NVTX handler (tool).</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="nvtx.TimestampType.CPU_TSC">
+<span class="sig-name descname"><span class="pre">CPU_TSC</span></span><a class="headerlink" href="#nvtx.TimestampType.CPU_TSC" title="Link to this definition">#</a></dt>
+<dd><p>CPU timestamp counter (RDTSC on x86, CNTVCT on ARM).</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="nvtx.TimestampType.CPU_TSC_NONVIRTUALIZED">
+<span class="sig-name descname"><span class="pre">CPU_TSC_NONVIRTUALIZED</span></span><a class="headerlink" href="#nvtx.TimestampType.CPU_TSC_NONVIRTUALIZED" title="Link to this definition">#</a></dt>
+<dd><p>Non-virtualized CPU timestamp counter (CNTPCT on ARM).</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="nvtx.TimestampType.CPU_CLOCK_GETTIME_REALTIME">
+<span class="sig-name descname"><span class="pre">CPU_CLOCK_GETTIME_REALTIME</span></span><a class="headerlink" href="#nvtx.TimestampType.CPU_CLOCK_GETTIME_REALTIME" title="Link to this definition">#</a></dt>
+<dd><p>POSIX <code class="docutils literal notranslate"><span class="pre">clock_gettime</span></code> with <code class="docutils literal notranslate"><span class="pre">CLOCK_REALTIME</span></code>.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="nvtx.TimestampType.CPU_CLOCK_GETTIME_REALTIME_COARSE">
+<span class="sig-name descname"><span class="pre">CPU_CLOCK_GETTIME_REALTIME_COARSE</span></span><a class="headerlink" href="#nvtx.TimestampType.CPU_CLOCK_GETTIME_REALTIME_COARSE" title="Link to this definition">#</a></dt>
+<dd><p>POSIX <code class="docutils literal notranslate"><span class="pre">clock_gettime</span></code> with <code class="docutils literal notranslate"><span class="pre">CLOCK_REALTIME_COARSE</span></code>.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="nvtx.TimestampType.CPU_CLOCK_GETTIME_MONOTONIC">
+<span class="sig-name descname"><span class="pre">CPU_CLOCK_GETTIME_MONOTONIC</span></span><a class="headerlink" href="#nvtx.TimestampType.CPU_CLOCK_GETTIME_MONOTONIC" title="Link to this definition">#</a></dt>
+<dd><p>POSIX <code class="docutils literal notranslate"><span class="pre">clock_gettime</span></code> with <code class="docutils literal notranslate"><span class="pre">CLOCK_MONOTONIC</span></code>.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="nvtx.TimestampType.CPU_CLOCK_GETTIME_MONOTONIC_RAW">
+<span class="sig-name descname"><span class="pre">CPU_CLOCK_GETTIME_MONOTONIC_RAW</span></span><a class="headerlink" href="#nvtx.TimestampType.CPU_CLOCK_GETTIME_MONOTONIC_RAW" title="Link to this definition">#</a></dt>
+<dd><p>POSIX <code class="docutils literal notranslate"><span class="pre">clock_gettime</span></code> with <code class="docutils literal notranslate"><span class="pre">CLOCK_MONOTONIC_RAW</span></code>.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="nvtx.TimestampType.CPU_CLOCK_GETTIME_MONOTONIC_COARSE">
+<span class="sig-name descname"><span class="pre">CPU_CLOCK_GETTIME_MONOTONIC_COARSE</span></span><a class="headerlink" href="#nvtx.TimestampType.CPU_CLOCK_GETTIME_MONOTONIC_COARSE" title="Link to this definition">#</a></dt>
+<dd><p>POSIX <code class="docutils literal notranslate"><span class="pre">clock_gettime</span></code> with <code class="docutils literal notranslate"><span class="pre">CLOCK_MONOTONIC_COARSE</span></code>.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="nvtx.TimestampType.CPU_CLOCK_GETTIME_BOOTTIME">
+<span class="sig-name descname"><span class="pre">CPU_CLOCK_GETTIME_BOOTTIME</span></span><a class="headerlink" href="#nvtx.TimestampType.CPU_CLOCK_GETTIME_BOOTTIME" title="Link to this definition">#</a></dt>
+<dd><p>POSIX <code class="docutils literal notranslate"><span class="pre">clock_gettime</span></code> with <code class="docutils literal notranslate"><span class="pre">CLOCK_BOOTTIME</span></code>.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="nvtx.TimestampType.CPU_CLOCK_GETTIME_PROCESS_CPUTIME_ID">
+<span class="sig-name descname"><span class="pre">CPU_CLOCK_GETTIME_PROCESS_CPUTIME_ID</span></span><a class="headerlink" href="#nvtx.TimestampType.CPU_CLOCK_GETTIME_PROCESS_CPUTIME_ID" title="Link to this definition">#</a></dt>
+<dd><p>POSIX <code class="docutils literal notranslate"><span class="pre">clock_gettime</span></code> with <code class="docutils literal notranslate"><span class="pre">CLOCK_PROCESS_CPUTIME_ID</span></code>.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="nvtx.TimestampType.CPU_CLOCK_GETTIME_THREAD_CPUTIME_ID">
+<span class="sig-name descname"><span class="pre">CPU_CLOCK_GETTIME_THREAD_CPUTIME_ID</span></span><a class="headerlink" href="#nvtx.TimestampType.CPU_CLOCK_GETTIME_THREAD_CPUTIME_ID" title="Link to this definition">#</a></dt>
+<dd><p>POSIX <code class="docutils literal notranslate"><span class="pre">clock_gettime</span></code> with <code class="docutils literal notranslate"><span class="pre">CLOCK_THREAD_CPUTIME_ID</span></code>.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="nvtx.TimestampType.WIN_QPC">
+<span class="sig-name descname"><span class="pre">WIN_QPC</span></span><a class="headerlink" href="#nvtx.TimestampType.WIN_QPC" title="Link to this definition">#</a></dt>
+<dd><p>Windows <code class="docutils literal notranslate"><span class="pre">QueryPerformanceCounter</span></code>.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="nvtx.TimestampType.WIN_GSTAFT">
+<span class="sig-name descname"><span class="pre">WIN_GSTAFT</span></span><a class="headerlink" href="#nvtx.TimestampType.WIN_GSTAFT" title="Link to this definition">#</a></dt>
+<dd><p>Windows <code class="docutils literal notranslate"><span class="pre">GetSystemTimeAsFileTime</span></code>.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="nvtx.TimestampType.WIN_GSTAFTP">
+<span class="sig-name descname"><span class="pre">WIN_GSTAFTP</span></span><a class="headerlink" href="#nvtx.TimestampType.WIN_GSTAFTP" title="Link to this definition">#</a></dt>
+<dd><p>Windows <code class="docutils literal notranslate"><span class="pre">GetSystemTimePreciseAsFileTime</span></code>.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="nvtx.TimestampType.C_TIME">
+<span class="sig-name descname"><span class="pre">C_TIME</span></span><a class="headerlink" href="#nvtx.TimestampType.C_TIME" title="Link to this definition">#</a></dt>
+<dd><p>C <code class="docutils literal notranslate"><span class="pre">time()</span></code>.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="nvtx.TimestampType.C_CLOCK">
+<span class="sig-name descname"><span class="pre">C_CLOCK</span></span><a class="headerlink" href="#nvtx.TimestampType.C_CLOCK" title="Link to this definition">#</a></dt>
+<dd><p>C <code class="docutils literal notranslate"><span class="pre">clock()</span></code>.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="nvtx.TimestampType.C_TIMESPEC_GET">
+<span class="sig-name descname"><span class="pre">C_TIMESPEC_GET</span></span><a class="headerlink" href="#nvtx.TimestampType.C_TIMESPEC_GET" title="Link to this definition">#</a></dt>
+<dd><p>C <code class="docutils literal notranslate"><span class="pre">timespec_get()</span></code>.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="nvtx.TimestampType.CPP_STEADY_CLOCK">
+<span class="sig-name descname"><span class="pre">CPP_STEADY_CLOCK</span></span><a class="headerlink" href="#nvtx.TimestampType.CPP_STEADY_CLOCK" title="Link to this definition">#</a></dt>
+<dd><p>C++ <code class="docutils literal notranslate"><span class="pre">std::chrono::steady_clock</span></code>.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="nvtx.TimestampType.CPP_HIGH_RESOLUTION_CLOCK">
+<span class="sig-name descname"><span class="pre">CPP_HIGH_RESOLUTION_CLOCK</span></span><a class="headerlink" href="#nvtx.TimestampType.CPP_HIGH_RESOLUTION_CLOCK" title="Link to this definition">#</a></dt>
+<dd><p>C++ <code class="docutils literal notranslate"><span class="pre">std::chrono::high_resolution_clock</span></code>.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="nvtx.TimestampType.CPP_SYSTEM_CLOCK">
+<span class="sig-name descname"><span class="pre">CPP_SYSTEM_CLOCK</span></span><a class="headerlink" href="#nvtx.TimestampType.CPP_SYSTEM_CLOCK" title="Link to this definition">#</a></dt>
+<dd><p>C++ <code class="docutils literal notranslate"><span class="pre">std::chrono::system_clock</span></code>.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="nvtx.TimestampType.CPP_UTC_CLOCK">
+<span class="sig-name descname"><span class="pre">CPP_UTC_CLOCK</span></span><a class="headerlink" href="#nvtx.TimestampType.CPP_UTC_CLOCK" title="Link to this definition">#</a></dt>
+<dd><p>C++ <code class="docutils literal notranslate"><span class="pre">std::chrono::utc_clock</span></code>.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="nvtx.TimestampType.CPP_TAI_CLOCK">
+<span class="sig-name descname"><span class="pre">CPP_TAI_CLOCK</span></span><a class="headerlink" href="#nvtx.TimestampType.CPP_TAI_CLOCK" title="Link to this definition">#</a></dt>
+<dd><p>C++ <code class="docutils literal notranslate"><span class="pre">std::chrono::tai_clock</span></code>.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="nvtx.TimestampType.CPP_GPS_CLOCK">
+<span class="sig-name descname"><span class="pre">CPP_GPS_CLOCK</span></span><a class="headerlink" href="#nvtx.TimestampType.CPP_GPS_CLOCK" title="Link to this definition">#</a></dt>
+<dd><p>C++ <code class="docutils literal notranslate"><span class="pre">std::chrono::gps_clock</span></code>.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="nvtx.TimestampType.CPP_FILE_CLOCK">
+<span class="sig-name descname"><span class="pre">CPP_FILE_CLOCK</span></span><a class="headerlink" href="#nvtx.TimestampType.CPP_FILE_CLOCK" title="Link to this definition">#</a></dt>
+<dd><p>C++ <code class="docutils literal notranslate"><span class="pre">std::chrono::file_clock</span></code>.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="nvtx.TimestampType.GPU_GLOBALTIMER">
+<span class="sig-name descname"><span class="pre">GPU_GLOBALTIMER</span></span><a class="headerlink" href="#nvtx.TimestampType.GPU_GLOBALTIMER" title="Link to this definition">#</a></dt>
+<dd><p>GPU global timer (e.g. PTIMER).</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
 <dt class="sig sig-object py" id="nvtx.Profile">
 <span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">nvtx.</span></span><span class="sig-name descname"><span class="pre">Profile</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">bool</span> <span class="pre">linenos</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">bool</span> <span class="pre">annotate_cfuncs</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#nvtx.Profile" title="Link to this definition">#</a></dt>
 <dd><p>Class for programmatically controlling NVTX automatic annotations.</p>
@@ -975,8 +1697,8 @@ Use <a class="reference internal" href="#nvtx.Domain.get_registered_string" titl
     class="page-toc tocsection onthispage">
     <i class="fa-solid fa-list"></i> On this page
   </div>
-  <nav class="bd-toc-nav page-toc" aria-labelledby="pst-page-navigation-heading-2">
-    <ul class="visible nav section-nav flex-column">
+  <nav id="pst-page-toc-nav" class="page-toc" aria-labelledby="pst-page-navigation-heading-2">
+    <ul class="pst-show_toc_level nav section-nav flex-column">
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#nvtx.annotate"><code class="docutils literal notranslate"><span class="pre">annotate</span></code></a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#nvtx.push_range"><code class="docutils literal notranslate"><span class="pre">push_range()</span></code></a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#nvtx.pop_range"><code class="docutils literal notranslate"><span class="pre">pop_range()</span></code></a></li>
@@ -984,11 +1706,14 @@ Use <a class="reference internal" href="#nvtx.Domain.get_registered_string" titl
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#nvtx.end_range"><code class="docutils literal notranslate"><span class="pre">end_range()</span></code></a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#nvtx.mark"><code class="docutils literal notranslate"><span class="pre">mark()</span></code></a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#nvtx.get_domain"><code class="docutils literal notranslate"><span class="pre">get_domain()</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#nvtx.numpy_dtype"><code class="docutils literal notranslate"><span class="pre">numpy_dtype()</span></code></a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#nvtx.Domain"><code class="docutils literal notranslate"><span class="pre">Domain</span></code></a><ul class="nav section-nav flex-column">
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#nvtx.Domain.end_range"><code class="docutils literal notranslate"><span class="pre">end_range()</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#nvtx.Domain.get_category_id"><code class="docutils literal notranslate"><span class="pre">get_category_id()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#nvtx.Domain.get_counter"><code class="docutils literal notranslate"><span class="pre">get_counter()</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#nvtx.Domain.get_event_attributes"><code class="docutils literal notranslate"><span class="pre">get_event_attributes()</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#nvtx.Domain.get_registered_string"><code class="docutils literal notranslate"><span class="pre">get_registered_string()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#nvtx.Domain.get_timestamp"><code class="docutils literal notranslate"><span class="pre">get_timestamp()</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#nvtx.Domain.mark"><code class="docutils literal notranslate"><span class="pre">mark()</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#nvtx.Domain.pop_range"><code class="docutils literal notranslate"><span class="pre">pop_range()</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#nvtx.Domain.push_range"><code class="docutils literal notranslate"><span class="pre">push_range()</span></code></a></li>
@@ -1005,6 +1730,77 @@ Use <a class="reference internal" href="#nvtx.Domain.get_registered_string" titl
 </li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#nvtx._lib.lib.RegisteredString"><code class="docutils literal notranslate"><span class="pre">RegisteredString</span></code></a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#nvtx._lib.lib.DummyDomain"><code class="docutils literal notranslate"><span class="pre">DummyDomain</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#nvtx._lib.counters.DummyCounter"><code class="docutils literal notranslate"><span class="pre">DummyCounter</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#nvtx.Counter"><code class="docutils literal notranslate"><span class="pre">Counter</span></code></a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#nvtx.Counter.sample"><code class="docutils literal notranslate"><span class="pre">sample()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#nvtx.Counter.sample_no_value"><code class="docutils literal notranslate"><span class="pre">sample_no_value()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#nvtx.Counter.batch_submit"><code class="docutils literal notranslate"><span class="pre">batch_submit()</span></code></a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#nvtx.Int64Counter"><code class="docutils literal notranslate"><span class="pre">Int64Counter</span></code></a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#nvtx.Int64Counter.sample"><code class="docutils literal notranslate"><span class="pre">sample()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#nvtx.Int64Counter.batch_submit"><code class="docutils literal notranslate"><span class="pre">batch_submit()</span></code></a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#nvtx.Float64Counter"><code class="docutils literal notranslate"><span class="pre">Float64Counter</span></code></a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#nvtx.Float64Counter.sample"><code class="docutils literal notranslate"><span class="pre">sample()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#nvtx.Float64Counter.batch_submit"><code class="docutils literal notranslate"><span class="pre">batch_submit()</span></code></a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#nvtx.ExtCounter"><code class="docutils literal notranslate"><span class="pre">ExtCounter</span></code></a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#nvtx.ExtCounter.sample"><code class="docutils literal notranslate"><span class="pre">sample()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#nvtx.ExtCounter.batch_submit"><code class="docutils literal notranslate"><span class="pre">batch_submit()</span></code></a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#nvtx.CounterSemantics"><code class="docutils literal notranslate"><span class="pre">CounterSemantics</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#nvtx.CounterValueType"><code class="docutils literal notranslate"><span class="pre">CounterValueType</span></code></a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#nvtx.CounterValueType.ABSOLUTE"><code class="docutils literal notranslate"><span class="pre">ABSOLUTE</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#nvtx.CounterValueType.DELTA"><code class="docutils literal notranslate"><span class="pre">DELTA</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#nvtx.CounterValueType.DELTA_SINCE_START"><code class="docutils literal notranslate"><span class="pre">DELTA_SINCE_START</span></code></a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#nvtx.CounterInterpolation"><code class="docutils literal notranslate"><span class="pre">CounterInterpolation</span></code></a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#nvtx.CounterInterpolation.POINT"><code class="docutils literal notranslate"><span class="pre">POINT</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#nvtx.CounterInterpolation.SINCE_LAST"><code class="docutils literal notranslate"><span class="pre">SINCE_LAST</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#nvtx.CounterInterpolation.UNTIL_NEXT"><code class="docutils literal notranslate"><span class="pre">UNTIL_NEXT</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#nvtx.CounterInterpolation.LINEAR"><code class="docutils literal notranslate"><span class="pre">LINEAR</span></code></a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#nvtx.CounterNoValueReason"><code class="docutils literal notranslate"><span class="pre">CounterNoValueReason</span></code></a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#nvtx.CounterNoValueReason.ZERO"><code class="docutils literal notranslate"><span class="pre">ZERO</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#nvtx.CounterNoValueReason.UNCHANGED"><code class="docutils literal notranslate"><span class="pre">UNCHANGED</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#nvtx.CounterNoValueReason.UNAVAILABLE"><code class="docutils literal notranslate"><span class="pre">UNAVAILABLE</span></code></a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#nvtx.TimestampType"><code class="docutils literal notranslate"><span class="pre">TimestampType</span></code></a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#nvtx.TimestampType.NONE"><code class="docutils literal notranslate"><span class="pre">NONE</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#nvtx.TimestampType.TOOL_PROVIDED"><code class="docutils literal notranslate"><span class="pre">TOOL_PROVIDED</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#nvtx.TimestampType.CPU_TSC"><code class="docutils literal notranslate"><span class="pre">CPU_TSC</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#nvtx.TimestampType.CPU_TSC_NONVIRTUALIZED"><code class="docutils literal notranslate"><span class="pre">CPU_TSC_NONVIRTUALIZED</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#nvtx.TimestampType.CPU_CLOCK_GETTIME_REALTIME"><code class="docutils literal notranslate"><span class="pre">CPU_CLOCK_GETTIME_REALTIME</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#nvtx.TimestampType.CPU_CLOCK_GETTIME_REALTIME_COARSE"><code class="docutils literal notranslate"><span class="pre">CPU_CLOCK_GETTIME_REALTIME_COARSE</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#nvtx.TimestampType.CPU_CLOCK_GETTIME_MONOTONIC"><code class="docutils literal notranslate"><span class="pre">CPU_CLOCK_GETTIME_MONOTONIC</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#nvtx.TimestampType.CPU_CLOCK_GETTIME_MONOTONIC_RAW"><code class="docutils literal notranslate"><span class="pre">CPU_CLOCK_GETTIME_MONOTONIC_RAW</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#nvtx.TimestampType.CPU_CLOCK_GETTIME_MONOTONIC_COARSE"><code class="docutils literal notranslate"><span class="pre">CPU_CLOCK_GETTIME_MONOTONIC_COARSE</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#nvtx.TimestampType.CPU_CLOCK_GETTIME_BOOTTIME"><code class="docutils literal notranslate"><span class="pre">CPU_CLOCK_GETTIME_BOOTTIME</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#nvtx.TimestampType.CPU_CLOCK_GETTIME_PROCESS_CPUTIME_ID"><code class="docutils literal notranslate"><span class="pre">CPU_CLOCK_GETTIME_PROCESS_CPUTIME_ID</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#nvtx.TimestampType.CPU_CLOCK_GETTIME_THREAD_CPUTIME_ID"><code class="docutils literal notranslate"><span class="pre">CPU_CLOCK_GETTIME_THREAD_CPUTIME_ID</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#nvtx.TimestampType.WIN_QPC"><code class="docutils literal notranslate"><span class="pre">WIN_QPC</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#nvtx.TimestampType.WIN_GSTAFT"><code class="docutils literal notranslate"><span class="pre">WIN_GSTAFT</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#nvtx.TimestampType.WIN_GSTAFTP"><code class="docutils literal notranslate"><span class="pre">WIN_GSTAFTP</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#nvtx.TimestampType.C_TIME"><code class="docutils literal notranslate"><span class="pre">C_TIME</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#nvtx.TimestampType.C_CLOCK"><code class="docutils literal notranslate"><span class="pre">C_CLOCK</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#nvtx.TimestampType.C_TIMESPEC_GET"><code class="docutils literal notranslate"><span class="pre">C_TIMESPEC_GET</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#nvtx.TimestampType.CPP_STEADY_CLOCK"><code class="docutils literal notranslate"><span class="pre">CPP_STEADY_CLOCK</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#nvtx.TimestampType.CPP_HIGH_RESOLUTION_CLOCK"><code class="docutils literal notranslate"><span class="pre">CPP_HIGH_RESOLUTION_CLOCK</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#nvtx.TimestampType.CPP_SYSTEM_CLOCK"><code class="docutils literal notranslate"><span class="pre">CPP_SYSTEM_CLOCK</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#nvtx.TimestampType.CPP_UTC_CLOCK"><code class="docutils literal notranslate"><span class="pre">CPP_UTC_CLOCK</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#nvtx.TimestampType.CPP_TAI_CLOCK"><code class="docutils literal notranslate"><span class="pre">CPP_TAI_CLOCK</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#nvtx.TimestampType.CPP_GPS_CLOCK"><code class="docutils literal notranslate"><span class="pre">CPP_GPS_CLOCK</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#nvtx.TimestampType.CPP_FILE_CLOCK"><code class="docutils literal notranslate"><span class="pre">CPP_FILE_CLOCK</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#nvtx.TimestampType.GPU_GLOBALTIMER"><code class="docutils literal notranslate"><span class="pre">GPU_GLOBALTIMER</span></code></a></li>
+</ul>
+</li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#nvtx.Profile"><code class="docutils literal notranslate"><span class="pre">Profile</span></code></a></li>
 </ul>
   </nav></div>
@@ -1022,9 +1818,11 @@ Use <a class="reference internal" href="#nvtx.Domain.get_registered_string" titl
     </div>
   </div>
   
+
   <!-- Scripts loaded after <body> so the DOM is not blocked -->
-  <script defer src="_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf"></script>
-<script defer src="_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf"></script>
+  <script defer src="_static/scripts/bootstrap.js?digest=55c26ed414f5f8a31ebb"></script>
+<script defer src="_static/scripts/pydata-sphinx-theme.js?digest=55c26ed414f5f8a31ebb"></script>
+
 
   <footer class="bd-footer">
 <div class="bd-footer__inner bd-page-width">
@@ -1047,12 +1845,7 @@ Use <a class="reference internal" href="#nvtx.Domain.get_registered_string" titl
   
   
   
-  <a class="external" href="https://www.nvidia.com/en-us/about-nvidia/privacy-center/">Manage My Privacy</a>
-   | 
-  
-  
-  
-  <a class="external" href="https://www.nvidia.com/en-us/preferences/start/">Do Not Sell or Share My Data</a>
+  <a class="external" href="https://www.nvidia.com/en-us/about-nvidia/privacy-center/">Your Privacy Choices</a>
    | 
   
   
