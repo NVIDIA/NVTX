@@ -412,6 +412,9 @@ typedef struct nvtxDomainRegistration_st nvtxDomainRegistration;
 * This structure is opaque to the user and is used as a handle to reference
 * a domain.  This type is returned from tools when using the NVTX API to
 * create a domain.
+* A value of 0 (or NULL) is a null handle and does not reference a created
+* domain. Applications may initialize handle variables to 0 and compare them
+* with 0 to determine whether they reference a created domain.
 *
 */
 typedef nvtxDomainRegistration* nvtxDomainHandle_t;
@@ -426,6 +429,9 @@ typedef struct nvtxStringRegistration_st nvtxStringRegistration;
 * This structure is opaque to the user and is used as a handle to reference
 * a registered string.  This type is returned from tools when using the NVTX
 * API to create a registered string.
+* A value of 0 (or NULL) is a null handle and does not reference a created
+* registered string. Applications may initialize handle variables to 0 and
+* compare them with 0 to determine whether they reference a registered string.
 *
 */
 typedef nvtxStringRegistration* nvtxStringHandle_t;
@@ -793,7 +799,10 @@ NVTX_DECLSPEC void NVTX_API nvtxMarkW(const wchar_t* message);
 * \param eventAttrib - The event attribute structure defining the range's
 * attribute types and attribute values.
 *
-* \return The unique ID used to correlate a pair of Start and End events.
+* \return A non-zero unique ID used to correlate a pair of Start and End
+* events. A return value of 0 is a null range ID and does not represent a
+* started range. Applications may initialize nvtxRangeId_t variables to 0 and
+* compare them with 0 to determine whether they reference a started range.
 *
 * \remarks Ranges defined by Start/End can overlap.
 *
@@ -825,7 +834,10 @@ NVTX_DECLSPEC nvtxRangeId_t NVTX_API nvtxDomainRangeStartEx(nvtxDomainHandle_t d
  * \param eventAttrib - The event attribute structure defining the range's
  * attribute types and attribute values.
  *
- * \return The unique ID used to correlate a pair of Start and End events.
+ * \return A non-zero unique ID used to correlate a pair of Start and End
+ * events. A return value of 0 is a null range ID and does not represent a
+ * started range. Applications may initialize nvtxRangeId_t variables to 0 and
+ * compare them with 0 to determine whether they reference a started range.
  *
  * \remarks Ranges defined by Start/End can overlap.
  *
@@ -859,7 +871,10 @@ NVTX_DECLSPEC nvtxRangeId_t NVTX_API nvtxRangeStartEx(const nvtxEventAttributes_
  *
  * \param message     - The event message associated to this range event.
  *
- * \return The unique ID used to correlate a pair of Start and End events.
+ * \return A non-zero unique ID used to correlate a pair of Start and End
+ * events. A return value of 0 is a null range ID and does not represent a
+ * started range. Applications may initialize nvtxRangeId_t variables to 0 and
+ * compare them with 0 to determine whether they reference a started range.
  *
  * \remarks Ranges defined by Start/End can overlap.
  *
@@ -1300,7 +1315,9 @@ typedef struct nvtxResourceHandle* nvtxResourceHandle_t;
 * \param domain - Domain to own the resource object
 * \param attribs - Attributes to be associated with the resource
 *
-* \return A handle that represents the newly created resource object.
+* \return A non-zero handle that represents the newly created resource object.
+* A return value of 0 (or NULL) is a null handle and does not represent a
+* created resource object.
 *
 * \par Example
 * Register a resource:
@@ -1517,7 +1534,8 @@ NVTX_DECLSPEC void NVTX_API nvtxNameOsThreadW(uint32_t threadId, const wchar_t* 
 * \param domain  - Domain handle. If NULL then the global domain is used.
 * \param string    - A unique pointer to a sequence of characters.
 *
-* \return A handle representing the registered string.
+* \return A non-zero handle representing the registered string. A return value
+* of 0 (or NULL) is a null handle and does not represent a registered string.
 *
 * \par Example
 * Register a string:
@@ -1568,7 +1586,8 @@ NVTX_DECLSPEC nvtxStringHandle_t NVTX_API nvtxDomainRegisterStringW(nvtxDomainHa
 *
 * \param name - A unique string representing the domain.
 *
-* \return A handle representing the domain.
+* \return A non-zero handle representing the domain. A return value of 0 (or
+* NULL) is a null handle and does not represent a created domain.
 *
 * \par Example
 * Create a domain:

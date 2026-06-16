@@ -1408,7 +1408,10 @@ nvtxRangePopPayload(nvtxDomainHandle_t domain, const nvtxPayloadData_t* payloadD
  * @param payloadData pointer to an array of structured payloads.
  * @param count number of payload BLOBs.
  *
- * @return The range ID for the started range.
+ * @return A non-zero unique ID used to correlate a pair of Start and End
+ * events. A return value of 0 is a null range ID and does not represent a
+ * started range. Applications may initialize nvtxRangeId_t variables to 0 and
+ * compare them with 0 to determine whether they reference a started range.
  */
 NVTX_DECLSPEC nvtxRangeId_t NVTX_API nvtxRangeStartPayload(
     nvtxDomainHandle_t domain, const nvtxPayloadData_t* payloadData, size_t count);
