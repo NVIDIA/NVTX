@@ -17,7 +17,7 @@ $VcVarsVer = switch ($VsYear) {
     "2017" { "14.16" }
     "2019" { "14.29" }
     "2022" { "14.44" }
-    "2026" { "14.50" }
+    "2026" { "14.51" }
     default { throw "Unknown VS year: $VsYear" }
 }
 
