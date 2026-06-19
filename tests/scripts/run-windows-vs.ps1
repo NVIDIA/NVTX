@@ -34,6 +34,9 @@ if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
 
 Pop-Location
 
+if ($null -eq (Get-Command cl.exe -ErrorAction SilentlyContinue)) {
+    throw "cl.exe not found in PATH after running vcvarsall.bat for '$Arch'."
+}
 
 Push-Location "$PSScriptRoot\.."
 
