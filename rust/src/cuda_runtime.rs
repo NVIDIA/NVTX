@@ -34,9 +34,9 @@ impl From<nvtx_sys::CudaStream> for CudaRuntimeResource {
 /// Name a CUDA Runtime Resource (one of: Device, Event, or Stream).
 ///
 /// ```
-/// nvtx::name_cudart_resource(nvtx::CudaRuntimeResource::Device(0), "GPU 0");
+/// nvtx::name_cudart_resource(nvtx::CudaRuntimeResource::Device(0), c"GPU 0");
 /// /// or implicitly:
-/// nvtx::name_cudart_resource(0, "GPU 0");
+/// nvtx::name_cudart_resource(0, c"GPU 0");
 /// ```
 pub fn name_cudart_resource(resource: impl Into<CudaRuntimeResource>, name: impl Into<Str>) {
     match resource.into() {

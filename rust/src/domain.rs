@@ -43,14 +43,14 @@ pub type EventAttributes<'a> = GenericEventAttributes<Category<'a>, Message<'a>>
 /// Builder to facilitate easier construction of [`EventAttributes`].
 ///
 /// ```
-/// let domain = nvtx::Domain::new("Domain");
-/// let cat = domain.register_category("Category1");
+/// let domain = nvtx::Domain::new(c"Domain");
+/// let cat = domain.register_category(c"Category1");
 ///
 /// let attr = domain.event_attributes_builder()
 ///                .category(cat)
 ///                .color([20, 192, 240])
 ///                .payload(3.141592)
-///                .message("Hello")
+///                .message(c"Hello")
 ///                .build();
 /// ```
 #[derive(Clone)]
@@ -66,8 +66,8 @@ impl<'a> EventAttributesBuilder<'a> {
     ) -> Result<RegisteredString<'a>, NvtxError> {
         // implementation optimization: always prefer registered strings
         let msg = match message.into() {
-            Message::Ascii(s) => self.domain.register_string(s.to_string_lossy().to_string()),
-            Message::Unicode(s) => self.domain.register_string(s.to_string_lossy().clone()),
+            Message::Ascii(s) => self.domain.register_string(s),
+            Message::Unicode(s) => self.domain.register_string(s),
             Message::Registered(r) => r,
         };
         if !core::ptr::eq(msg.domain(), self.domain) {
@@ -82,8 +82,8 @@ impl<'a> EventAttributesBuilder<'a> {
     /// builder unchanged. Use [`Self::try_category`] to receive an explicit error.
     ///
     /// ```
-    /// let domain = nvtx::Domain::new("Domain");
-    /// let cat = domain.register_category("Category1");
+    /// let domain = nvtx::Domain::new(c"Domain");
+    /// let cat = domain.register_category(c"Category1");
     /// // ...
     /// let builder = domain.event_attributes_builder();
     /// // ...
@@ -120,11 +120,11 @@ impl<'a> EventAttributesBuilder<'a> {
     /// passed in whose domain is not the same as this builder.
     ///
     /// ```
-    /// let domain = nvtx::Domain::new("Domain");
+    /// let domain = nvtx::Domain::new(c"Domain");
     /// // ...
     /// let builder = domain.event_attributes_builder();
     /// // ...
-    /// let builder = builder.category_name("Category2");
+    /// let builder = builder.category_name(c"Category2");
     /// ```
     #[must_use]
     pub fn category_name(mut self, name: impl Into<Str>) -> EventAttributesBuilder<'a> {
@@ -136,7 +136,7 @@ impl<'a> EventAttributesBuilder<'a> {
     /// Update the builder's held [`Color`]. See [`Color`] for valid conversions.
     ///
     /// ```
-    /// let domain = nvtx::Domain::new("Domain");
+    /// let domain = nvtx::Domain::new(c"Domain");
     /// let builder = domain.event_attributes_builder();
     /// // ...
     /// let builder = builder.color([255, 255, 255]);
@@ -150,7 +150,7 @@ impl<'a> EventAttributesBuilder<'a> {
     /// Update the builder's held [`Payload`]. See [`Payload`] for valid conversions.
     ///
     /// ```
-    /// let domain = nvtx::Domain::new("Domain");
+    /// let domain = nvtx::Domain::new(c"Domain");
     /// let builder = domain.event_attributes_builder();
     /// // ...
     /// let builder = builder.payload(3.1415926535);
@@ -168,10 +168,10 @@ impl<'a> EventAttributesBuilder<'a> {
     /// explicit error handling.
     ///
     /// ```
-    /// let domain = nvtx::Domain::new("Domain");
+    /// let domain = nvtx::Domain::new(c"Domain");
     /// let builder = domain.event_attributes_builder();
     /// // ...
-    /// let builder = builder.message("test");
+    /// let builder = builder.message(c"test");
     /// ```
     #[must_use]
     pub fn message(mut self, message: impl Into<Message<'a>>) -> EventAttributesBuilder<'a> {
@@ -204,10 +204,10 @@ impl<'a> EventAttributesBuilder<'a> {
     /// Construct an [`EventAttributes`] from the builder's held state.
     ///
     /// ```
-    /// let domain = nvtx::Domain::new("Domain");
-    /// let cat = domain.register_category("Category1");
+    /// let domain = nvtx::Domain::new(c"Domain");
+    /// let cat = domain.register_category(c"Category1");
     /// let attr = domain.event_attributes_builder()
-    ///                 .message("Example Range")
+    ///                 .message(c"Example Range")
     ///                 .color([224, 192, 128])
     ///                 .category(cat)
     ///                 .payload(1234567)
@@ -275,7 +275,7 @@ impl Domain {
     /// See [`Str`] for valid conversions.
     ///
     /// ```
-    /// let domain = nvtx::Domain::new("Domain");
+    /// let domain = nvtx::Domain::new(c"Domain");
     /// ```
     pub fn new(name: impl Into<Str>) -> Self {
         Domain {
@@ -293,7 +293,7 @@ impl Domain {
     /// Gets a new builder instance for event attributes in the current domain.
     ///
     /// ```
-    /// let domain = nvtx::Domain::new("Domain");
+    /// let domain = nvtx::Domain::new(c"Domain");
     /// // ...
     /// let builder = domain.event_attributes_builder();
     /// ```
@@ -311,15 +311,23 @@ impl Domain {
     /// See [`Str`] for valid conversions.
     ///
     /// ```
-    /// let domain = nvtx::Domain::new("Domain");
+    /// let domain = nvtx::Domain::new(c"Domain");
     /// // ...
-    /// let my_str = domain.register_string("My immutable string");
+    /// let my_str = domain.register_string(c"My immutable string");
     /// ```
     pub fn register_string(&self, string: impl Into<Str>) -> RegisteredString<'_> {
         let into_string: Str = string.into();
         let owned_string = match &into_string {
-            Str::Ascii(s) => s.to_string_lossy().to_string(),
-            Str::Unicode(s) => s.to_string_lossy().clone(),
+            Str::Ascii(s) => {
+                let mut key = String::from("Ascii:");
+                key.push_str(&s.to_string_lossy());
+                key
+            }
+            Str::Unicode(s) => {
+                let mut key = String::from("Unicode:");
+                key.push_str(&s.to_string_lossy());
+                key
+            }
         };
         let (handle, uid) = *lock_unpoison(&self.strings)
             .entry(owned_string)
@@ -341,9 +349,9 @@ impl Domain {
     /// See [`Str`] for valid conversions.
     ///
     /// ```
-    /// let domain = nvtx::Domain::new("Domain");
+    /// let domain = nvtx::Domain::new(c"Domain");
     /// // ...
-    /// let [a, b, c] = domain.register_strings(["A", "B", "C"]);
+    /// let [a, b, c] = domain.register_strings([c"A", c"B", c"C"]);
     /// ```
     pub fn register_strings<const N: usize>(
         &self,
@@ -359,9 +367,9 @@ impl Domain {
     /// See [`Str`] for valid conversions.
     ///
     /// ```
-    /// let domain = nvtx::Domain::new("Domain");
+    /// let domain = nvtx::Domain::new(c"Domain");
     /// // ...
-    /// let cat = domain.register_category("Category");
+    /// let cat = domain.register_category(c"Category");
     /// ```
     pub fn register_category(&self, name: impl Into<Str>) -> Category<'_> {
         let into_name: Str = name.into();
@@ -390,9 +398,9 @@ impl Domain {
     /// See [`Str`] for valid conversions.
     ///
     /// ```
-    /// let domain = nvtx::Domain::new("Domain");
+    /// let domain = nvtx::Domain::new(c"Domain");
     /// // ...
-    /// let [cat_a, cat_b] = domain.register_categories(["CatA", "CatB"]);
+    /// let [cat_a, cat_b] = domain.register_categories([c"CatA", c"CatB"]);
     /// ```
     pub fn register_categories<const N: usize>(
         &self,
@@ -432,19 +440,19 @@ impl Domain {
     /// and a payload. Each of the attributes is optional.
     ///
     /// ```
-    /// let domain = nvtx::Domain::new("Domain");
+    /// let domain = nvtx::Domain::new(c"Domain");
     /// // ...
-    /// domain.mark("Sample mark");
+    /// domain.mark(c"Sample mark");
     ///
     /// domain.mark(c"Another example");
     ///
     /// domain.mark(
     ///   domain.event_attributes_builder()
-    ///     .message("Interesting example")
+    ///     .message(c"Interesting example")
     ///     .color([255, 0, 0])
     ///     .build());
     ///
-    /// let reg_str = domain.register_string("Registered String");
+    /// let reg_str = domain.register_string(c"Registered String");
     /// domain.mark(reg_str);
     /// ```
     ///
@@ -486,10 +494,10 @@ impl Domain {
     /// thread boundaries and (2) automatically ended when dropped.
     ///
     /// ```
-    /// let domain = nvtx::Domain::new("Domain");
+    /// let domain = nvtx::Domain::new(c"Domain");
     ///
     /// // creation from Rust string
-    /// let range = domain.local_range("simple name");
+    /// let range = domain.local_range(nvtx::Str::from_str_lossy("simple name"));
     ///
     /// // creation from C string (since 1.77)
     /// let range = domain.local_range(c"simple name");
@@ -498,7 +506,7 @@ impl Domain {
     /// let attr = domain
     ///     .event_attributes_builder()
     ///     .payload(1)
-    ///     .message("complex range")
+    ///     .message(c"complex range")
     ///     .build();
     /// let range = domain.local_range(attr);
     ///
@@ -534,10 +542,10 @@ impl Domain {
     /// thread boundaries and (2) automatically ended when dropped.
     ///
     /// ```
-    /// let domain = nvtx::Domain::new("Domain");
+    /// let domain = nvtx::Domain::new(c"Domain");
     ///
     /// // creation from a unicode string
-    /// let range = domain.range("simple name");
+    /// let range = domain.range(nvtx::Str::from_str_lossy("simple name"));
     ///
     /// // creation from a c string (from rust 1.77+)
     /// let range = domain.range(c"simple name");
@@ -546,7 +554,7 @@ impl Domain {
     /// let attr = domain
     ///     .event_attributes_builder()
     ///     .payload(1)
-    ///     .message("complex range")
+    ///     .message(c"complex range")
     ///     .build();
     /// let range = domain.range(attr);
     ///
@@ -601,15 +609,15 @@ impl Domain {
     /// Name a resource
     ///
     /// ```
-    /// let domain = nvtx::Domain::new("Domain");
+    /// let domain = nvtx::Domain::new(c"Domain");
     /// let pthread_id = 13854;
     /// domain.name_resource(
     ///     nvtx::domain::GenericIdentifier::PosixThread(pthread_id),
-    ///     "My custom name");
+    ///     c"My custom name");
     /// #[cfg(feature = "cuda")]
-    /// domain.name_resource(nvtx::domain::CudaIdentifier::Device(0), "My device");
+    /// domain.name_resource(nvtx::domain::CudaIdentifier::Device(0), c"My device");
     /// #[cfg(feature = "cuda_runtime")]
-    /// domain.name_resource(nvtx::domain::CudaRuntimeIdentifier::Device(1), "My device");
+    /// domain.name_resource(nvtx::domain::CudaRuntimeIdentifier::Device(1), c"My device");
     /// ```
     pub fn name_resource<'a>(
         &'a self,
@@ -672,40 +680,46 @@ mod tests {
     use std::ffi::CString;
     use widestring::WideCString;
 
+    fn lossy_str(value: &str) -> Str {
+        Str::from_str_lossy(value)
+    }
+
     #[test]
     fn test_register_string() {
-        let d = Domain::new("d");
+        let d = Domain::new(lossy_str("d"));
         TestUtils::assert_domain_string_registration(&d, "hello");
 
         // Test different strings are different
-        let s1 = d.register_string("hello");
-        let s2 = d.register_string("hello2");
+        let s1 = d.register_string(lossy_str("hello"));
+        let s2 = d.register_string(lossy_str("hello2"));
         assert_ne!(s1, s2);
     }
 
     #[test]
     fn test_register_strings() {
-        let d = Domain::new("d");
-        let [s1, s2, s3] = d.register_strings(["hello", "hello2", "hello"]);
+        let d = Domain::new(lossy_str("d"));
+        let [s1, s2, s3] =
+            d.register_strings([lossy_str("hello"), lossy_str("hello2"), lossy_str("hello")]);
         assert_eq!(s1, s3);
         assert_ne!(s1, s2);
     }
 
     #[test]
     fn test_register_category() {
-        let d = Domain::new("d");
+        let d = Domain::new(lossy_str("d"));
         TestUtils::assert_domain_category_registration(&d, "hello");
 
         // Test different categories are different
-        let c1 = d.register_category("hello");
-        let c2 = d.register_category("hello2");
+        let c1 = d.register_category(lossy_str("hello"));
+        let c2 = d.register_category(lossy_str("hello2"));
         assert_ne!(c1, c2);
     }
 
     #[test]
     fn test_register_categories() {
-        let d = Domain::new("d");
-        let [c1, c2, c3] = d.register_categories(["hello", "hello2", "hello"]);
+        let d = Domain::new(lossy_str("d"));
+        let [c1, c2, c3] =
+            d.register_categories([lossy_str("hello"), lossy_str("hello2"), lossy_str("hello")]);
         assert_eq!(c1, c3);
         assert_ne!(c1, c2);
     }
@@ -727,8 +741,8 @@ mod tests {
 
     #[test]
     fn test_message_registered() {
-        let d = Domain::new("d");
-        let reg = d.register_string("test");
+        let d = Domain::new(lossy_str("d"));
+        let reg = d.register_string(lossy_str("test"));
         let m = Message::Registered(reg);
         assert!(matches!(m, Message::Registered(s) if s == reg));
     }
@@ -750,8 +764,8 @@ mod tests {
 
     #[test]
     fn test_encode_registered() {
-        let domain = Domain::new("d");
-        let registered_message = domain.register_string("test");
+        let domain = Domain::new(lossy_str("d"));
+        let registered_message = domain.register_string(lossy_str("test"));
         let message = Message::Registered(registered_message);
         let (message_type, message_value) = message.encode();
         assert_eq!(
@@ -768,7 +782,7 @@ mod tests {
 
     #[test]
     fn test_builder_color() {
-        let d = Domain::new("d");
+        let d = Domain::new(lossy_str("d"));
         let builder = d.event_attributes_builder();
         let color = Color::new(0x11, 0x22, 0x44, 0x88);
         let attr = builder.color(color).build();
@@ -777,8 +791,8 @@ mod tests {
 
     #[test]
     fn test_builder_category() {
-        let d = Domain::new("d");
-        let cat = d.register_category("cat");
+        let d = Domain::new(lossy_str("d"));
+        let cat = d.register_category(lossy_str("cat"));
         let builder = d.event_attributes_builder();
         let attr = builder.category(cat).build();
         assert!(matches!(attr.category, Some(c) if c == cat));
@@ -786,16 +800,16 @@ mod tests {
 
     #[test]
     fn test_builder_category_name() {
-        let d = Domain::new("d");
+        let d = Domain::new(lossy_str("d"));
         let builder = d.event_attributes_builder();
-        let attr = builder.category_name("cat").build();
-        let cat = d.register_category("cat");
+        let attr = builder.category_name(lossy_str("cat")).build();
+        let cat = d.register_category(lossy_str("cat"));
         assert!(matches!(attr.category, Some(c) if c == cat));
     }
 
     #[test]
     fn test_builder_payload() {
-        let d = Domain::new("d");
+        let d = Domain::new(lossy_str("d"));
         let builder = d.event_attributes_builder();
         let attr = builder.clone().payload(1_i32).build();
         assert!(matches!(attr.payload, Some(Payload::Int32(i)) if i == 1_i32));
@@ -813,27 +827,27 @@ mod tests {
 
     #[test]
     fn test_builder_message() {
-        let d = Domain::new("d");
+        let d = Domain::new(lossy_str("d"));
         let builder = d.event_attributes_builder();
-        let attr = builder.message("This is a message").build();
-        let registered = d.register_string("This is a message");
+        let attr = builder.message(lossy_str("This is a message")).build();
+        let registered = d.register_string(lossy_str("This is a message"));
         assert!(matches!(attr.message, Some(Message::Registered(r)) if r == registered));
     }
 
     #[test]
     fn test_unowned_category_try_mark_error() {
-        let d1 = Domain::new("Domain1");
-        let c1 = d1.register_category("category");
-        let d2 = Domain::new("Domain2");
+        let d1 = Domain::new(lossy_str("Domain1"));
+        let c1 = d1.register_category(lossy_str("category"));
+        let d2 = Domain::new(lossy_str("Domain2"));
         let attr = d1.event_attributes_builder().category(c1).build();
         assert!(matches!(d2.try_mark(attr), Err(NvtxError::DomainMismatch)));
     }
 
     #[test]
     fn test_unowned_category_try_builder_error() {
-        let d1 = Domain::new("Domain1");
-        let c1 = d1.register_category("category");
-        let d2 = Domain::new("Domain2");
+        let d1 = Domain::new(lossy_str("Domain1"));
+        let c1 = d1.register_category(lossy_str("category"));
+        let d2 = Domain::new(lossy_str("Domain2"));
         assert!(matches!(
             d2.event_attributes_builder().try_category(c1),
             Err(NvtxError::DomainMismatch)
@@ -842,18 +856,18 @@ mod tests {
 
     #[test]
     fn test_unowned_category_try_range_error() {
-        let d1 = Domain::new("Domain1");
-        let c1 = d1.register_category("category");
-        let d2 = Domain::new("Domain2");
+        let d1 = Domain::new(lossy_str("Domain1"));
+        let c1 = d1.register_category(lossy_str("category"));
+        let d2 = Domain::new(lossy_str("Domain2"));
         let attr = d1.event_attributes_builder().category(c1).build();
         assert!(matches!(d2.try_range(attr), Err(NvtxError::DomainMismatch)));
     }
 
     #[test]
     fn test_unowned_category_try_local_range_error() {
-        let d1 = Domain::new("Domain1");
-        let c1 = d1.register_category("category");
-        let d2 = Domain::new("Domain2");
+        let d1 = Domain::new(lossy_str("Domain1"));
+        let c1 = d1.register_category(lossy_str("category"));
+        let d2 = Domain::new(lossy_str("Domain2"));
         let attr = d1.event_attributes_builder().category(c1).build();
         assert!(matches!(
             d2.try_local_range(attr),
@@ -863,18 +877,18 @@ mod tests {
 
     #[test]
     fn test_unowned_string_try_mark_error() {
-        let d1 = Domain::new("Domain1");
-        let s1 = d1.register_string("test string");
-        let d2 = Domain::new("Domain2");
+        let d1 = Domain::new(lossy_str("Domain1"));
+        let s1 = d1.register_string(lossy_str("test string"));
+        let d2 = Domain::new(lossy_str("Domain2"));
         let attr = d1.event_attributes_builder().message(s1).build();
         assert!(matches!(d2.try_mark(attr), Err(NvtxError::DomainMismatch)));
     }
 
     #[test]
     fn test_unowned_string_try_builder_error() {
-        let d1 = Domain::new("Domain1");
-        let s1 = d1.register_string("test string");
-        let d2 = Domain::new("Domain2");
+        let d1 = Domain::new(lossy_str("Domain1"));
+        let s1 = d1.register_string(lossy_str("test string"));
+        let d2 = Domain::new(lossy_str("Domain2"));
         assert!(matches!(
             d2.event_attributes_builder().try_message(s1),
             Err(NvtxError::DomainMismatch)
@@ -883,18 +897,18 @@ mod tests {
 
     #[test]
     fn test_unowned_string_try_range_error() {
-        let d1 = Domain::new("Domain1");
-        let s1 = d1.register_string("test string");
-        let d2 = Domain::new("Domain2");
+        let d1 = Domain::new(lossy_str("Domain1"));
+        let s1 = d1.register_string(lossy_str("test string"));
+        let d2 = Domain::new(lossy_str("Domain2"));
         let attr = d1.event_attributes_builder().message(s1).build();
         assert!(matches!(d2.try_range(attr), Err(NvtxError::DomainMismatch)));
     }
 
     #[test]
     fn test_unowned_string_try_local_range_error() {
-        let d1 = Domain::new("Domain1");
-        let s1 = d1.register_string("test string");
-        let d2 = Domain::new("Domain2");
+        let d1 = Domain::new(lossy_str("Domain1"));
+        let s1 = d1.register_string(lossy_str("test string"));
+        let d2 = Domain::new(lossy_str("Domain2"));
         let attr = d1.event_attributes_builder().message(s1).build();
         assert!(matches!(
             d2.try_local_range(attr),
@@ -904,9 +918,9 @@ mod tests {
 
     #[test]
     fn test_simple_domain_validation() {
-        let d1 = Domain::new("Domain1");
-        let s1 = d1.register_string("test string");
-        let d2 = Domain::new("Domain2");
+        let d1 = Domain::new(lossy_str("Domain1"));
+        let s1 = d1.register_string(lossy_str("test string"));
+        let d2 = Domain::new(lossy_str("Domain2"));
         // Create attributes with a string from d1, then use them with d2
         let attr = d1.event_attributes_builder().message(s1).build();
         assert!(matches!(d2.try_mark(attr), Err(NvtxError::DomainMismatch)));

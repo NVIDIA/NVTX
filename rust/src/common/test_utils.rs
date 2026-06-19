@@ -2,7 +2,7 @@
 // SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception
 
 #[cfg(all(test, feature = "std"))]
-use crate::{common::CategoryEncodable, Color, Payload, TypeValueEncodable};
+use crate::{common::CategoryEncodable, Color, Payload, Str, TypeValueEncodable};
 use widestring::{WideCStr, WideCString};
 
 /// Utility struct for common test assertions and helpers.
@@ -69,15 +69,15 @@ impl TestUtils {
 
     /// Assert that domain string registration works correctly
     pub fn assert_domain_string_registration(domain: &crate::Domain, name: &str) {
-        let registered = domain.register_string(name);
-        let registered2 = domain.register_string(name);
+        let registered = domain.register_string(Str::from_str_lossy(name));
+        let registered2 = domain.register_string(Str::from_str_lossy(name));
         assert_eq!(registered, registered2); // Should be cached
     }
 
     /// Assert that domain category registration works correctly
     pub fn assert_domain_category_registration(domain: &crate::Domain, name: &str) {
-        let registered = domain.register_category(name);
-        let registered2 = domain.register_category(name);
+        let registered = domain.register_category(Str::from_str_lossy(name));
+        let registered2 = domain.register_category(Str::from_str_lossy(name));
         assert_eq!(registered, registered2); // Should be cached
     }
 

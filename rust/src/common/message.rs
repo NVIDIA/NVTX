@@ -28,24 +28,32 @@ impl<T> From<Str> for GenericMessage<T> {
     }
 }
 
+impl<T> GenericMessage<T> {
+    /// Convert an owned Rust string into a message, removing interior NULs.
+    ///
+    /// Use this constructor only when losing interior NULs is the intended
+    /// behavior.
+    #[must_use]
+    pub fn from_string_lossy(value: String) -> Self {
+        Self::from(Str::from_string_lossy(value))
+    }
+
+    /// Convert a borrowed Rust string into a message, removing interior NULs.
+    ///
+    /// Use this constructor only when losing interior NULs is the intended
+    /// behavior.
+    #[must_use]
+    pub fn from_str_lossy(value: &str) -> Self {
+        Self::from(Str::from_str_lossy(value))
+    }
+}
+
 impl<'a, T> From<RegisteredString<'a>> for GenericMessage<T>
 where
     T: From<RegisteredString<'a>>,
 {
     fn from(v: RegisteredString<'a>) -> Self {
         Self::Registered(v.into())
-    }
-}
-
-impl<T> From<String> for GenericMessage<T> {
-    fn from(value: String) -> Self {
-        GenericMessage::from(Str::from(value))
-    }
-}
-
-impl<T> From<&str> for GenericMessage<T> {
-    fn from(value: &str) -> Self {
-        GenericMessage::from(Str::from(value))
     }
 }
 

@@ -1,7 +1,7 @@
 // SPDX-FileCopyrightText: Copyright (c) 2024-2026 NVIDIA CORPORATION & AFFILIATES. All rights reserved.
 // SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception
 
-use crate::{domain::EventAttributes, Color, Domain, Payload};
+use crate::{domain::EventAttributes, Color, Domain, Payload, Str};
 use std::{collections::HashMap, marker::PhantomData, sync::Mutex};
 use tracing_core::{
     field::{Field, Visit},
@@ -80,9 +80,9 @@ impl NvtxData {
     fn event_attributes<'a>(&'a self, domain: &'a Domain) -> EventAttributes<'a> {
         let mut builder = domain.event_attributes_builder();
         if let Some(c) = &self.category {
-            builder = builder.category_name(c.clone());
+            builder = builder.category_name(Str::from_str_lossy(c));
         }
-        builder = builder.message(self.message.clone());
+        builder = builder.message(Str::from_str_lossy(&self.message));
         if let Some(c) = &self.color {
             builder = builder.color(*c);
         }
@@ -108,7 +108,7 @@ where
             .unwrap_or_else(std::sync::PoisonError::into_inner);
         let domain = lock
             .entry(domain_name.to_string())
-            .or_insert_with(|| Domain::new(domain_name));
+            .or_insert_with(|| Domain::new(Str::from_str_lossy(domain_name)));
 
         let mut data = NvtxData::default();
         let mut visitor = NvtxVisitor::<'_, S>::new(&mut data);
@@ -153,7 +153,7 @@ where
                 .unwrap_or_else(std::sync::PoisonError::into_inner);
             let domain = lock
                 .entry(domain_name.clone())
-                .or_insert_with(|| Domain::new(domain_name));
+                .or_insert_with(|| Domain::new(Str::from_string_lossy(domain_name)));
 
             range_id = Some(domain.range_start(data.event_attributes(domain)));
         }
@@ -177,7 +177,7 @@ where
             .unwrap_or_else(std::sync::PoisonError::into_inner);
         let domain = lock
             .entry(domain_name.clone())
-            .or_insert_with(|| Domain::new(domain_name));
+            .or_insert_with(|| Domain::new(Str::from_string_lossy(domain_name)));
 
         if let Some(NvtxId(id)) = maybe_id {
             domain.range_end(id);

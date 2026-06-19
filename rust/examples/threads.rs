@@ -27,23 +27,27 @@ fn log_thread_panic(name: &str, payload: &(dyn Any + Send)) {
     }
 }
 
+fn s(value: &str) -> nvtx::Str {
+    nvtx::Str::from_str_lossy(value)
+}
+
 fn main() {
-    nvtx::name_current_thread("Main Thread");
-    let r = nvtx::Range::new("Start on main thread");
+    nvtx::name_current_thread(s("Main Thread"));
+    let r = nvtx::Range::new(s("Start on main thread"));
     let t1 = thread::spawn(move || {
-        nvtx::name_current_thread("Fork 1");
+        nvtx::name_current_thread(s("Fork 1"));
         sleep(Duration::from_millis(10));
         drop(r);
     });
     let t2 = thread::spawn(move || {
-        nvtx::name_current_thread("Fork 2");
-        let r = nvtx::Range::new("Start on Fork 2");
+        nvtx::name_current_thread(s("Fork 2"));
+        let r = nvtx::Range::new(s("Start on Fork 2"));
         sleep(Duration::from_millis(20));
         r
     });
     let t3 = thread::spawn(move || {
-        nvtx::name_current_thread("Fork 3");
-        let _r = nvtx::Range::new("Start and end on Fork 3");
+        nvtx::name_current_thread(s("Fork 3"));
+        let _r = nvtx::Range::new(s("Start and end on Fork 3"));
         sleep(Duration::from_millis(30));
     });
 

@@ -28,8 +28,8 @@ impl Range {
     /// boundaries and (2) automatically ended when dropped.
     ///
     /// ```
-    /// // creation from a unicode string
-    /// let range = nvtx::Range::new("simple name");
+    /// // creation from a Rust string, explicitly allowing NUL-stripping
+    /// let range = nvtx::Range::new(nvtx::Str::from_str_lossy("simple name"));
     ///
     /// // creation from a c string (from rust 1.77+)
     /// let range = nvtx::Range::new(c"simple name");
@@ -37,7 +37,7 @@ impl Range {
     /// // creation from EventAttributes
     /// let attr = nvtx::EventAttributes::builder()
     ///     .payload(1)
-    ///     .message("complex range")
+    ///     .message(c"complex range")
     ///     .build();
     /// let range = nvtx::Range::new(attr);
     ///
@@ -94,8 +94,8 @@ impl LocalRange {
     /// boundaries and (2) automatically ended when dropped.
     ///
     /// ```
-    /// // creation from Rust string
-    /// let range = nvtx::LocalRange::new("simple name");
+    /// // creation from a Rust string, explicitly allowing NUL-stripping
+    /// let range = nvtx::LocalRange::new(nvtx::Str::from_str_lossy("simple name"));
     ///
     /// // creation from C string (since 1.77)
     /// let range = nvtx::LocalRange::new(c"simple name");
@@ -103,7 +103,7 @@ impl LocalRange {
     /// // creation from EventAttributes
     /// let attr = nvtx::EventAttributes::builder()
     ///     .payload(1)
-    ///     .message("complex range")
+    ///     .message(c"complex range")
     ///     .build();
     /// let range = nvtx::LocalRange::new(attr);
     ///

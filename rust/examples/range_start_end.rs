@@ -3,13 +3,17 @@
 
 use std::{thread, time};
 
+fn s(value: &str) -> nvtx::Str {
+    nvtx::Str::from_str_lossy(value)
+}
+
 fn main() {
     // we must hold ranges with a proper name
     // _ will not work since drop() is called immediately
     let mut app = Some(nvtx::Range::new(
         nvtx::EventAttributes::builder()
             .color(nvtx::color::salmon)
-            .message("Start 🦀")
+            .message(s("Start 🦀"))
             .build(),
     ));
     thread::sleep(time::Duration::from_millis(5));
@@ -18,7 +22,9 @@ fn main() {
             let mut iter = Some(nvtx::Range::new(
                 nvtx::EventAttributes::builder()
                     .color(nvtx::color::cornflowerblue)
-                    .message(format!("Iteration Number {i}"))
+                    .message(nvtx::Str::from_string_lossy(format!(
+                        "Iteration Number {i}"
+                    )))
                     .payload(i)
                     .build(),
             ));
@@ -28,7 +34,7 @@ fn main() {
                         nvtx::EventAttributes::builder()
                             .color(nvtx::color::beige)
                             .payload(j)
-                            .message("Inner")
+                            .message(s("Inner"))
                             .build(),
                     );
                     thread::sleep(time::Duration::from_millis(10));

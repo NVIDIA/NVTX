@@ -13,8 +13,8 @@ impl<'a> UserSync<'a> {
     /// Signal to tools that an attempt to acquire a user defined synchronization object.
     ///
     /// ```
-    /// let d = nvtx::Domain::new("domain");
-    /// let us = d.user_sync("custom object");
+    /// let d = nvtx::Domain::new(c"domain");
+    /// let us = d.user_sync(c"custom object");
     /// // ...
     /// let started = us.acquire();
     /// ```
@@ -40,8 +40,8 @@ impl<'a> UserSyncAcquireStart<'a> {
     /// Signal to tools of failure in acquiring a user defined synchronization object.
     ///
     /// ```
-    /// let d = nvtx::Domain::new("domain");
-    /// let us = d.user_sync("custom object");
+    /// let d = nvtx::Domain::new(c"domain");
+    /// let us = d.user_sync(c"custom object");
     /// // ...
     /// let started = us.acquire();
     /// // ...
@@ -56,8 +56,8 @@ impl<'a> UserSyncAcquireStart<'a> {
     /// Signal to tools of success in acquiring a user defined synchronization object.
     ///
     /// ```
-    /// let d = nvtx::Domain::new("domain");
-    /// let us = d.user_sync("custom object");
+    /// let d = nvtx::Domain::new(c"domain");
+    /// let us = d.user_sync(c"custom object");
     /// // ...
     /// let started = us.acquire();
     /// // ...
@@ -81,8 +81,8 @@ impl<'a> UserSyncSuccess<'a> {
     /// Signal to tools of releasing a reservation on user defined synchronization object.
     ///
     /// ```
-    /// let d = nvtx::Domain::new("domain");
-    /// let us = d.user_sync("custom object");
+    /// let d = nvtx::Domain::new(c"domain");
+    /// let us = d.user_sync(c"custom object");
     /// // ...
     /// let started = us.acquire();
     /// // ...

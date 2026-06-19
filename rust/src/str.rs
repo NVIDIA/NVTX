@@ -3,6 +3,7 @@
 
 use alloc::{ffi::CString, string::String};
 use core::ffi::CStr;
+use widestring::error::ContainsNul;
 use widestring::{WideCStr, WideCString};
 
 /// A convenience wrapper for various string types.
@@ -17,37 +18,106 @@ pub enum Str {
     Unicode(WideCString),
 }
 
-/// Convert an owned Rust string into [`Str`].
-///
-/// This first attempts [`WideCString::from_str`], then removes interior NUL
-/// characters and retries. If conversion still fails, debug builds trigger a
-/// `debug_assert!`; non-debug builds fall back to an empty [`Str::Ascii`].
-/// Interior NULs are removed and malformed input may be lost. Callers that need
-/// lossless conversion should use an API that reports conversion errors.
-impl From<String> for Str {
-    fn from(v: String) -> Self {
-        if let Ok(wide) = WideCString::from_str(v.as_str()) {
-            Self::Unicode(wide)
-        } else {
-            // Strip interior NULs so string conversion never panics.
-            let sanitized: String = v.chars().filter(|c| *c != '\0').collect();
-            if let Ok(wide) = WideCString::from_str(sanitized.as_str()) {
-                Self::Unicode(wide)
-            } else {
-                debug_assert!(
-                    false,
-                    "WideCString conversion failed even after NUL-stripping: {v:?}"
-                );
-                // Fallback to an empty ASCII string if wide conversion unexpectedly fails.
-                Self::Ascii(CString::default())
-            }
+/// Error returned when converting a Rust string into [`Str`] fails.
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub struct StrError {
+    nul_position: usize,
+}
+
+impl StrError {
+    /// Return the position of the interior NUL that made conversion fail.
+    #[must_use]
+    pub fn nul_position(&self) -> usize {
+        self.nul_position
+    }
+}
+
+impl<C> From<ContainsNul<C>> for StrError {
+    fn from(value: ContainsNul<C>) -> Self {
+        Self {
+            nul_position: value.nul_position(),
         }
     }
 }
 
-impl From<&str> for Str {
-    fn from(v: &str) -> Self {
-        String::from(v).into()
+impl core::fmt::Display for StrError {
+    fn fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result {
+        write!(
+            f,
+            "interior NUL found while converting string at position {}",
+            self.nul_position
+        )
+    }
+}
+
+#[cfg(feature = "std")]
+impl std::error::Error for StrError {}
+
+impl Str {
+    /// Convert an owned Rust string into [`Str`], rejecting interior NULs.
+    ///
+    /// # Errors
+    ///
+    /// Returns [`StrError`] when `value` contains an interior NUL.
+    #[allow(clippy::needless_pass_by_value)]
+    pub fn try_from_string(value: String) -> Result<Self, StrError> {
+        Self::try_from_str(value.as_str())
+    }
+
+    /// Convert a borrowed Rust string into [`Str`], rejecting interior NULs.
+    ///
+    /// # Errors
+    ///
+    /// Returns [`StrError`] when `value` contains an interior NUL.
+    pub fn try_from_str(value: &str) -> Result<Self, StrError> {
+        WideCString::from_str(value)
+            .map(Self::Unicode)
+            .map_err(StrError::from)
+    }
+
+    /// Convert an owned Rust string into [`Str`], removing interior NULs.
+    ///
+    /// Use this constructor only when losing interior NULs is the intended
+    /// behavior. Use [`Str::try_from_string`] when conversion must be lossless.
+    #[must_use]
+    pub fn from_string_lossy(mut value: String) -> Self {
+        if let Ok(str_value) = Self::try_from_str(value.as_str()) {
+            return str_value;
+        }
+        value.retain(|c| c != '\0');
+        // SAFETY: The sanitized string was built by removing every NUL character.
+        Self::Unicode(unsafe { WideCString::from_str_unchecked(value) })
+    }
+
+    /// Convert a borrowed Rust string into [`Str`], removing interior NULs.
+    ///
+    /// Use this constructor only when losing interior NULs is the intended
+    /// behavior. Use [`Str::try_from_str`] when conversion must be lossless.
+    #[must_use]
+    pub fn from_str_lossy(value: &str) -> Self {
+        if let Ok(str_value) = Self::try_from_str(value) {
+            str_value
+        } else {
+            let sanitized: String = value.chars().filter(|c| *c != '\0').collect();
+            // SAFETY: The sanitized string was built by removing every NUL character.
+            Self::Unicode(unsafe { WideCString::from_str_unchecked(sanitized) })
+        }
+    }
+}
+
+impl TryFrom<String> for Str {
+    type Error = StrError;
+
+    fn try_from(value: String) -> Result<Self, Self::Error> {
+        Self::try_from_string(value)
+    }
+}
+
+impl TryFrom<&str> for Str {
+    type Error = StrError;
+
+    fn try_from(value: &str) -> Result<Self, Self::Error> {
+        Self::try_from_str(value)
     }
 }
 
@@ -72,5 +142,35 @@ impl From<WideCString> for Str {
 impl From<&WideCStr> for Str {
     fn from(v: &WideCStr) -> Self {
         WideCString::from(v).into()
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::{Str, StrError};
+    use alloc::string::ToString;
+
+    #[test]
+    fn try_from_str_rejects_interior_nul() {
+        let error = Str::try_from_str("abc\0def").unwrap_err();
+        assert_eq!(error.nul_position(), 3);
+        assert_eq!(
+            error.to_string(),
+            "interior NUL found while converting string at position 3"
+        );
+    }
+
+    #[test]
+    fn from_str_lossy_removes_interior_nuls() {
+        let value = Str::from_str_lossy("abc\0def\0ghi");
+        assert!(matches!(value, Str::Unicode(s) if s.to_string_lossy() == "abcdefghi"));
+    }
+
+    #[test]
+    fn str_error_can_be_constructed_from_widestring_error() {
+        let error: StrError = widestring::WideCString::from_str("a\0b")
+            .unwrap_err()
+            .into();
+        assert_eq!(error.nul_position(), 1);
     }
 }

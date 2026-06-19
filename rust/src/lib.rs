@@ -166,7 +166,7 @@ pub use ranges::{LocalRange, Range};
 mod str;
 /// Transparent string type (ASCII or Unicode).
 #[cfg(feature = "alloc")]
-pub use crate::str::Str;
+pub use crate::str::{Str, StrError};
 
 #[cfg(all(feature = "tracing", feature = "std"))]
 /// Support for tracing.
@@ -213,13 +213,13 @@ pub fn mark_unicode(message: &widestring::WideCStr) {
 /// [`try_mark`] when invalid input must be handled explicitly.
 ///
 /// ```
-/// nvtx::mark("Sample mark");
+/// nvtx::mark(c"Sample mark");
 ///
 /// nvtx::mark(c"Another example");
 ///
 /// nvtx::mark(
 ///   nvtx::EventAttributes::builder()
-///     .message("Interesting example")
+///     .message(c"Interesting example")
 ///     .color([255, 0, 0])
 ///     .build());
 /// ```
@@ -266,7 +266,7 @@ pub fn try_mark(argument: impl Into<EventArgument>) -> Result<(), NvtxError> {
 /// if you are trying to name the current thread.
 ///
 /// ```
-/// nvtx::name_thread(12345, "My custom name");
+/// nvtx::name_thread(12345, c"My custom name");
 /// ```
 #[cfg(feature = "alloc")]
 pub fn name_thread(native_tid: u32, name: impl Into<Str>) {
@@ -292,7 +292,7 @@ pub fn name_thread_unicode(native_tid: u32, name: &widestring::WideCStr) {
 /// See [`Str`] for valid conversions.
 ///
 /// ```
-/// nvtx::name_current_thread("Main thread");
+/// nvtx::name_current_thread(c"Main thread");
 /// ```
 pub fn name_current_thread(name: impl Into<Str>) {
     let raw_tid = gettid::gettid();
@@ -307,7 +307,7 @@ pub fn name_current_thread(name: impl Into<Str>) {
 ///
 /// See [`Str`] for valid conversions.
 /// ```
-/// let cat_a = nvtx::register_category("Category A");
+/// let cat_a = nvtx::register_category(c"Category A");
 /// ```
 #[cfg(feature = "alloc")]
 pub fn register_category(name: impl Into<Str>) -> Category {
@@ -318,7 +318,7 @@ pub fn register_category(name: impl Into<Str>) -> Category {
 ///
 /// See [`Str`] for valid conversions
 /// ```
-/// let [cat_a, cat_b] = nvtx::register_categories(["Category A", "Category B"]);
+/// let [cat_a, cat_b] = nvtx::register_categories([c"Category A", c"Category B"]);
 /// ```
 #[cfg(feature = "alloc")]
 pub fn register_categories<const C: usize>(names: [impl Into<Str>; C]) -> [Category; C] {
@@ -331,6 +331,10 @@ mod tests {
     use crate::common::TestUtils;
     use std::ffi::CString;
     use widestring::WideCString;
+
+    fn lossy_str(value: &str) -> Str {
+        Str::from_str_lossy(value)
+    }
 
     #[test]
     fn test_message_ascii() {
@@ -364,14 +368,15 @@ mod tests {
 
     #[test]
     fn register_category_test() {
-        let cat1 = crate::register_category("category 1");
-        let cat2 = crate::register_category("category 2");
+        let cat1 = crate::register_category(lossy_str("category 1"));
+        let cat2 = crate::register_category(lossy_str("category 2"));
         assert_ne!(cat1, cat2);
     }
 
     #[test]
     fn register_categories() {
-        let [cat1, cat2] = crate::register_categories(["category 1", "category 2"]);
+        let [cat1, cat2] =
+            crate::register_categories([lossy_str("category 1"), lossy_str("category 2")]);
         assert_ne!(cat1, cat2);
     }
     #[test]
@@ -385,7 +390,7 @@ mod tests {
     #[test]
     fn test_builder_category() {
         let builder = EventAttributes::builder();
-        let cat = register_category("cat");
+        let cat = register_category(lossy_str("cat"));
         let attr = builder.category(cat).build();
         assert!(matches!(attr.category, Some(c) if c == cat));
     }
@@ -410,7 +415,7 @@ mod tests {
     fn test_builder_message() {
         let builder = EventAttributes::builder();
         let string = "This is a message";
-        let attr = builder.message(string).build();
+        let attr = builder.message(lossy_str(string)).build();
         assert!(
             matches!(attr.message, Some(Message::Unicode(s)) if s.to_string().unwrap() == string)
         );
