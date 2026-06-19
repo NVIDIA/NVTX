@@ -3,7 +3,7 @@
 
 use crate::{
     common::{
-        event_attributes::GenericEventAttributesBuilder, GenericEventArgument,
+        event_attributes::GenericEventAttributesBuilder, CategoryEncodable, GenericEventArgument,
         GenericEventAttributes,
     },
     Color, NvtxError, Payload, Str, TypeValueEncodable,
@@ -60,6 +60,14 @@ pub struct EventAttributesBuilder<'a> {
 }
 
 impl<'a> EventAttributesBuilder<'a> {
+    fn category_in_builder_domain(&self, category: Category<'a>) -> Category<'a> {
+        if core::ptr::eq(category.domain(), self.domain) {
+            category
+        } else {
+            Category::new(category.encode_id(), self.domain)
+        }
+    }
+
     fn resolve_registered_message(
         &self,
         message: impl Into<Message<'a>>,
@@ -78,8 +86,9 @@ impl<'a> EventAttributesBuilder<'a> {
 
     /// Update the attribute's category.
     ///
-    /// If `category` belongs to a different [`Domain`], this method leaves the
-    /// builder unchanged. Use [`Self::try_category`] to receive an explicit error.
+    /// If `category` belongs to a different [`Domain`], this method preserves
+    /// the category ID in this builder's domain. Use [`Self::try_category`] to
+    /// receive an explicit error.
     ///
     /// ```
     /// let domain = nvtx::Domain::new(c"Domain");
@@ -91,11 +100,13 @@ impl<'a> EventAttributesBuilder<'a> {
     /// ```
     #[must_use]
     pub fn category(mut self, category: Category<'a>) -> EventAttributesBuilder<'a> {
-        if !core::ptr::eq(category.domain(), self.domain) {
+        if core::ptr::eq(category.domain(), self.domain) {
+            self.inner = self.inner.category(category);
+        } else {
             debug_assert!(false, "{:?}", NvtxError::DomainMismatch);
-            return self;
+            let category = self.category_in_builder_domain(category);
+            self.inner = self.inner.category(category);
         }
-        self.inner = self.inner.category(category);
         self
     }
 
@@ -164,7 +175,7 @@ impl<'a> EventAttributesBuilder<'a> {
     /// Update the attribute's message.
     ///
     /// If `message` resolves to a registered string from a different [`Domain`],
-    /// this method leaves the builder unchanged. Use [`Self::try_message`] for
+    /// this method clears the message field. Use [`Self::try_message`] for
     /// explicit error handling.
     ///
     /// ```
@@ -181,6 +192,7 @@ impl<'a> EventAttributesBuilder<'a> {
             }
             Err(error) => {
                 debug_assert!(false, "{error}");
+                self.inner = self.inner.clear_message();
             }
         }
         self
@@ -433,6 +445,56 @@ impl Domain {
         Ok(())
     }
 
+    fn strip_foreign_domain_values<'a>(&'a self, arg: EventArgument<'a>) -> EventArgument<'a> {
+        match arg {
+            EventArgument::Attributes(mut attr) => {
+                if attr
+                    .category
+                    .as_ref()
+                    .is_some_and(|category| !core::ptr::eq(category.domain(), self))
+                {
+                    attr.category = None;
+                }
+                if attr.message.as_ref().is_some_and(|message| {
+                    matches!(message, Message::Registered(reg_str) if !core::ptr::eq(reg_str.domain(), self))
+                }) {
+                    attr.message = None;
+                }
+                EventArgument::Attributes(attr)
+            }
+            EventArgument::Message(Message::Registered(reg_str))
+                if !core::ptr::eq(reg_str.domain(), self) =>
+            {
+                EventArgument::Attributes(EventAttributes {
+                    category: None,
+                    color: None,
+                    message: None,
+                    payload: None,
+                })
+            }
+            arg @ EventArgument::Message(_) => arg,
+        }
+    }
+
+    fn mark_event_argument<'a>(&'a self, event_arg: EventArgument<'a>) {
+        match event_arg {
+            EventArgument::Attributes(attr) => {
+                let encoded = attr.encode();
+                nvtx_sys::domain_mark_ex(self.handle, &encoded);
+            }
+            EventArgument::Message(m) => {
+                let attr = EventAttributes {
+                    category: None,
+                    color: None,
+                    message: Some(m),
+                    payload: None,
+                };
+                let encoded = attr.encode();
+                nvtx_sys::domain_mark_ex(self.handle, &encoded);
+            }
+        }
+    }
+
     /// Marks an instantaneous event in the application belonging to a domain.
     ///
     /// A marker can contain a text message or specify information using the event
@@ -457,8 +519,13 @@ impl Domain {
     /// ```
     ///
     pub fn mark<'a>(&'a self, arg: impl Into<EventArgument<'a>>) {
-        if let Err(error) = self.try_mark(arg) {
-            debug_assert!(false, "{error}");
+        let event_arg = arg.into();
+        match self.validate_event_argument(&event_arg) {
+            Ok(()) => self.mark_event_argument(event_arg),
+            Err(error) => {
+                debug_assert!(false, "{error}");
+                self.mark_event_argument(self.strip_foreign_domain_values(event_arg));
+            }
         }
     }
 
@@ -471,22 +538,7 @@ impl Domain {
     pub fn try_mark<'a>(&'a self, arg: impl Into<EventArgument<'a>>) -> Result<(), NvtxError> {
         let event_arg = arg.into();
         self.validate_event_argument(&event_arg)?;
-        match event_arg {
-            EventArgument::Attributes(attr) => {
-                let encoded = attr.encode();
-                nvtx_sys::domain_mark_ex(self.handle, &encoded);
-            }
-            EventArgument::Message(m) => {
-                let attr = EventAttributes {
-                    category: None,
-                    color: None,
-                    message: Some(m),
-                    payload: None,
-                };
-                let encoded = attr.encode();
-                nvtx_sys::domain_mark_ex(self.handle, &encoded);
-            }
-        }
+        self.mark_event_argument(event_arg);
         Ok(())
     }
 
@@ -514,11 +566,12 @@ impl Domain {
     /// drop(range)
     /// ```
     pub fn local_range<'a>(&'a self, arg: impl Into<EventArgument<'a>>) -> LocalRange<'a> {
-        match self.try_local_range(arg) {
-            Ok(range) => range,
+        let event_arg = arg.into();
+        match self.validate_event_argument(&event_arg) {
+            Ok(()) => LocalRange::new(event_arg, self),
             Err(error) => {
                 debug_assert!(false, "{error}");
-                LocalRange::noop(self)
+                LocalRange::new(self.strip_foreign_domain_values(event_arg), self)
             }
         }
     }
@@ -563,11 +616,12 @@ impl Domain {
     /// ```
     ///
     pub fn range<'a>(&'a self, arg: impl Into<EventArgument<'a>>) -> Range<'a> {
-        match self.try_range(arg) {
-            Ok(range) => range,
+        let event_arg = arg.into();
+        match self.validate_event_argument(&event_arg) {
+            Ok(()) => Range::new(event_arg, self),
             Err(error) => {
                 debug_assert!(false, "{error}");
-                Range::noop(self)
+                Range::new(self.strip_foreign_domain_values(event_arg), self)
             }
         }
     }
@@ -799,6 +853,18 @@ mod tests {
     }
 
     #[test]
+    fn test_builder_category_rebinds_foreign_category_id_for_best_effort_use() {
+        let d1 = Domain::new(lossy_str("Domain1"));
+        let c1 = d1.register_category(lossy_str("category"));
+        let d2 = Domain::new(lossy_str("Domain2"));
+
+        let rebound = d2.event_attributes_builder().category_in_builder_domain(c1);
+
+        assert_eq!(rebound.encode_id(), c1.encode_id());
+        assert!(core::ptr::eq(rebound.domain(), &d2));
+    }
+
+    #[test]
     fn test_builder_category_name() {
         let d = Domain::new(lossy_str("d"));
         let builder = d.event_attributes_builder();
@@ -844,6 +910,29 @@ mod tests {
     }
 
     #[test]
+    fn test_unowned_category_mark_strips_foreign_category() {
+        let d1 = Domain::new(lossy_str("Domain1"));
+        let c1 = d1.register_category(lossy_str("category"));
+        let d2 = Domain::new(lossy_str("Domain2"));
+        let attr = EventAttributes {
+            category: Some(c1),
+            color: None,
+            message: Some(Message::from(lossy_str("message"))),
+            payload: Some(Payload::Int32(1)),
+        };
+
+        let EventArgument::Attributes(sanitized) =
+            d2.strip_foreign_domain_values(EventArgument::Attributes(attr))
+        else {
+            unreachable!("expected sanitized attributes");
+        };
+
+        assert!(sanitized.category.is_none());
+        assert!(matches!(sanitized.message, Some(Message::Unicode(_))));
+        assert!(matches!(sanitized.payload, Some(Payload::Int32(1))));
+    }
+
+    #[test]
     fn test_unowned_category_try_builder_error() {
         let d1 = Domain::new(lossy_str("Domain1"));
         let c1 = d1.register_category(lossy_str("category"));
@@ -864,6 +953,24 @@ mod tests {
     }
 
     #[test]
+    fn test_unowned_category_range_can_start_from_sanitized_attributes() {
+        let d1 = Domain::new(lossy_str("Domain1"));
+        let c1 = d1.register_category(lossy_str("category"));
+        let d2 = Domain::new(lossy_str("Domain2"));
+        let attr = EventAttributes {
+            category: Some(c1),
+            color: None,
+            message: Some(Message::from(lossy_str("message"))),
+            payload: Some(Payload::Int32(1)),
+        };
+
+        let event_arg = d2.strip_foreign_domain_values(EventArgument::Attributes(attr));
+        let range = Range::new(event_arg, &d2);
+
+        assert!(range.id.is_some());
+    }
+
+    #[test]
     fn test_unowned_category_try_local_range_error() {
         let d1 = Domain::new(lossy_str("Domain1"));
         let c1 = d1.register_category(lossy_str("category"));
@@ -876,12 +983,47 @@ mod tests {
     }
 
     #[test]
+    fn test_unowned_category_local_range_can_start_from_sanitized_attributes() {
+        let d1 = Domain::new(lossy_str("Domain1"));
+        let c1 = d1.register_category(lossy_str("category"));
+        let d2 = Domain::new(lossy_str("Domain2"));
+        let attr = EventAttributes {
+            category: Some(c1),
+            color: None,
+            message: Some(Message::from(lossy_str("message"))),
+            payload: Some(Payload::Int32(1)),
+        };
+
+        let event_arg = d2.strip_foreign_domain_values(EventArgument::Attributes(attr));
+        let range = LocalRange::new(event_arg, &d2);
+
+        assert!(range.active);
+    }
+
+    #[test]
     fn test_unowned_string_try_mark_error() {
         let d1 = Domain::new(lossy_str("Domain1"));
         let s1 = d1.register_string(lossy_str("test string"));
         let d2 = Domain::new(lossy_str("Domain2"));
         let attr = d1.event_attributes_builder().message(s1).build();
         assert!(matches!(d2.try_mark(attr), Err(NvtxError::DomainMismatch)));
+    }
+
+    #[test]
+    fn test_unowned_string_mark_strips_foreign_registered_message() {
+        let d1 = Domain::new(lossy_str("Domain1"));
+        let s1 = d1.register_string(lossy_str("test string"));
+        let d2 = Domain::new(lossy_str("Domain2"));
+
+        let EventArgument::Attributes(sanitized) =
+            d2.strip_foreign_domain_values(EventArgument::Message(Message::Registered(s1)))
+        else {
+            unreachable!("expected sanitized attributes");
+        };
+
+        assert!(sanitized.category.is_none());
+        assert!(sanitized.message.is_none());
+        assert!(sanitized.payload.is_none());
     }
 
     #[test]

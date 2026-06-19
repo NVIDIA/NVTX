@@ -3,7 +3,7 @@
 
 use core::marker::PhantomData;
 
-use crate::{EventArgument, Message, NvtxError};
+use crate::{strip_registered_message_for_global_context, EventArgument, Message, NvtxError};
 
 fn reject_registered_in_global_context(arg: &EventArgument) -> Result<(), NvtxError> {
     match arg {
@@ -24,6 +24,16 @@ pub struct Range {
 }
 
 impl Range {
+    fn start(arg: EventArgument) -> Range {
+        let id = match arg {
+            EventArgument::Message(Message::Ascii(s)) => nvtx_sys::range_start_ascii(&s),
+            EventArgument::Message(Message::Unicode(s)) => nvtx_sys::range_start_unicode(&s),
+            EventArgument::Message(Message::Registered(())) => unreachable!("validated above"),
+            EventArgument::Attributes(a) => nvtx_sys::range_start_ex(&a.encode()),
+        };
+        Range { id: Some(id) }
+    }
+
     /// Create an RAII-friendly range type which (1) can be moved across thread
     /// boundaries and (2) automatically ended when dropped.
     ///
@@ -45,11 +55,12 @@ impl Range {
     /// drop(range)
     /// ```
     pub fn new(arg: impl Into<EventArgument>) -> Range {
-        match Self::try_new(arg) {
-            Ok(range) => range,
+        let arg = arg.into();
+        match reject_registered_in_global_context(&arg) {
+            Ok(()) => Self::start(arg),
             Err(error) => {
                 debug_assert!(false, "{error}");
-                Self { id: None }
+                Self::start(strip_registered_message_for_global_context(arg))
             }
         }
     }
@@ -63,13 +74,7 @@ impl Range {
     pub fn try_new(arg: impl Into<EventArgument>) -> Result<Range, NvtxError> {
         let arg = arg.into();
         reject_registered_in_global_context(&arg)?;
-        let id = match arg {
-            EventArgument::Message(Message::Ascii(s)) => nvtx_sys::range_start_ascii(&s),
-            EventArgument::Message(Message::Unicode(s)) => nvtx_sys::range_start_unicode(&s),
-            EventArgument::Message(Message::Registered(())) => unreachable!("validated above"),
-            EventArgument::Attributes(a) => nvtx_sys::range_start_ex(&a.encode()),
-        };
-        Ok(Range { id: Some(id) })
+        Ok(Self::start(arg))
     }
 }
 
@@ -90,6 +95,19 @@ pub struct LocalRange {
 }
 
 impl LocalRange {
+    fn push(arg: EventArgument) -> LocalRange {
+        match arg {
+            EventArgument::Message(Message::Ascii(s)) => nvtx_sys::range_push_ascii(&s),
+            EventArgument::Message(Message::Unicode(s)) => nvtx_sys::range_push_unicode(&s),
+            EventArgument::Message(Message::Registered(())) => unreachable!("validated above"),
+            EventArgument::Attributes(a) => nvtx_sys::range_push_ex(&a.encode()),
+        };
+        LocalRange {
+            active: true,
+            _phantom: PhantomData,
+        }
+    }
+
     /// Create an RAII-friendly range type which (1) cannot be moved across thread
     /// boundaries and (2) automatically ended when dropped.
     ///
@@ -111,14 +129,12 @@ impl LocalRange {
     /// drop(range)
     /// ```
     pub fn new(arg: impl Into<EventArgument>) -> LocalRange {
-        match Self::try_new(arg) {
-            Ok(range) => range,
+        let arg = arg.into();
+        match reject_registered_in_global_context(&arg) {
+            Ok(()) => Self::push(arg),
             Err(error) => {
                 debug_assert!(false, "{error}");
-                LocalRange {
-                    active: false,
-                    _phantom: PhantomData,
-                }
+                Self::push(strip_registered_message_for_global_context(arg))
             }
         }
     }
@@ -132,16 +148,7 @@ impl LocalRange {
     pub fn try_new(arg: impl Into<EventArgument>) -> Result<LocalRange, NvtxError> {
         let arg = arg.into();
         reject_registered_in_global_context(&arg)?;
-        match arg {
-            EventArgument::Message(Message::Ascii(s)) => nvtx_sys::range_push_ascii(&s),
-            EventArgument::Message(Message::Unicode(s)) => nvtx_sys::range_push_unicode(&s),
-            EventArgument::Message(Message::Registered(())) => unreachable!("validated above"),
-            EventArgument::Attributes(a) => nvtx_sys::range_push_ex(&a.encode()),
-        };
-        Ok(LocalRange {
-            active: true,
-            _phantom: PhantomData,
-        })
+        Ok(Self::push(arg))
     }
 }
 
@@ -185,6 +192,23 @@ mod tests {
             Range::try_new(attr),
             Err(NvtxError::RegisteredStringInGlobalContext)
         ));
+    }
+
+    #[test]
+    fn registered_message_attributes_can_be_sanitized_for_global_ranges() {
+        let attr = EventAttributes::builder()
+            .message(Message::Registered(()))
+            .payload(1_i32)
+            .build();
+
+        let EventArgument::Attributes(sanitized) =
+            strip_registered_message_for_global_context(EventArgument::Attributes(attr))
+        else {
+            unreachable!("expected sanitized attributes");
+        };
+
+        assert!(sanitized.message.is_none());
+        assert!(matches!(sanitized.payload, Some(crate::Payload::Int32(1))));
     }
 
     #[test]

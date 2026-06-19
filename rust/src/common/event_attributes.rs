@@ -57,6 +57,13 @@ impl<C, M> GenericEventAttributesBuilder<C, M> {
         self
     }
 
+    /// Clear the event message.
+    #[must_use]
+    pub(crate) fn clear_message(mut self) -> Self {
+        self.message = None;
+        self
+    }
+
     /// Set the event payload.
     #[must_use]
     pub fn payload(mut self, payload: impl Into<Payload>) -> Self {

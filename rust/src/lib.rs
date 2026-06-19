@@ -146,6 +146,27 @@ impl EventAttributes {
 #[cfg(feature = "alloc")]
 pub type Message = crate::common::GenericMessage<()>;
 
+#[cfg(feature = "alloc")]
+fn strip_registered_message_for_global_context(arg: EventArgument) -> EventArgument {
+    match arg {
+        EventArgument::Attributes(mut attr) => {
+            if matches!(attr.message, Some(Message::Registered(()))) {
+                attr.message = None;
+            }
+            EventArgument::Attributes(attr)
+        }
+        EventArgument::Message(Message::Registered(())) => {
+            EventArgument::Attributes(EventAttributes {
+                category: None,
+                color: None,
+                message: None,
+                payload: None,
+            })
+        }
+        arg @ EventArgument::Message(_) => arg,
+    }
+}
+
 /// Platform-native types.
 pub mod native_types;
 
@@ -225,8 +246,13 @@ pub fn mark_unicode(message: &widestring::WideCStr) {
 /// ```
 #[cfg(feature = "alloc")]
 pub fn mark(argument: impl Into<EventArgument>) {
-    if let Err(error) = try_mark(argument) {
-        debug_assert!(false, "{error}");
+    let argument = argument.into();
+    match try_mark(argument.clone()) {
+        Ok(()) => {}
+        Err(error) => {
+            debug_assert!(false, "{error}");
+            let _ = try_mark(strip_registered_message_for_global_context(argument));
+        }
     }
 }
 

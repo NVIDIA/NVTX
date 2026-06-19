@@ -24,10 +24,6 @@ impl<'a> Range<'a> {
             domain,
         }
     }
-
-    pub(super) fn noop(domain: &'a Domain) -> Self {
-        Range { id: None, domain }
-    }
 }
 
 impl Drop for Range<'_> {
@@ -57,14 +53,6 @@ impl<'a> LocalRange<'a> {
         LocalRange {
             domain,
             active: true,
-            _phantom: PhantomData,
-        }
-    }
-
-    pub(super) fn noop(domain: &'a Domain) -> LocalRange<'a> {
-        LocalRange {
-            domain,
-            active: false,
             _phantom: PhantomData,
         }
     }
