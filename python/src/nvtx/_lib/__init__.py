@@ -22,6 +22,7 @@ from nvtx._lib.lib import (
     dummy_domain,
     RegisteredString,
     EventAttributes,
+    PredefinedScope,
     pop_range,
     push_range,
     start_range,

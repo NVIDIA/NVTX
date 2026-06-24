@@ -16,6 +16,7 @@
 # Licensed under the Apache License v2.0 with LLVM Exceptions.
 # See https://nvidia.github.io/NVTX/LICENSE.txt for license information.
 
+import enum
 import warnings
 from nvtx._lib.counters import (
     Counter,
@@ -124,6 +125,26 @@ def _counter_semantics_from_metadata(metadata):
     if metadata is None:
         return None
     return getattr(metadata, "counter_semantics", None)
+
+
+class PredefinedScope(enum.Enum):
+    """Predefined NVTX execution scopes."""
+
+    NONE = NVTX_SCOPE_NONE
+    ROOT = NVTX_SCOPE_ROOT
+    CURRENT_HW_MACHINE = NVTX_SCOPE_CURRENT_HW_MACHINE
+    CURRENT_HW_SOCKET = NVTX_SCOPE_CURRENT_HW_SOCKET
+    CURRENT_HW_CPU_PHYSICAL = NVTX_SCOPE_CURRENT_HW_CPU_PHYSICAL
+    CURRENT_HW_CPU_LOGICAL = NVTX_SCOPE_CURRENT_HW_CPU_LOGICAL
+    CURRENT_HW_INNERMOST = NVTX_SCOPE_CURRENT_HW_INNERMOST
+    CURRENT_HYPERVISOR = NVTX_SCOPE_CURRENT_HYPERVISOR
+    CURRENT_VM = NVTX_SCOPE_CURRENT_VM
+    CURRENT_KERNEL = NVTX_SCOPE_CURRENT_KERNEL
+    CURRENT_CONTAINER = NVTX_SCOPE_CURRENT_CONTAINER
+    CURRENT_OS = NVTX_SCOPE_CURRENT_OS
+    CURRENT_SW_PROCESS = NVTX_SCOPE_CURRENT_SW_PROCESS
+    CURRENT_SW_THREAD = NVTX_SCOPE_CURRENT_SW_THREAD
+    CURRENT_SW_INNERMOST = NVTX_SCOPE_CURRENT_SW_INNERMOST
 
 
 _payload_setters = {}

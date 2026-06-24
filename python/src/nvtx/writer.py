@@ -29,11 +29,32 @@ integration; see the `Nsight Systems documentation
 usage.
 """
 
-from nvtx._lib.writer import Backend, WriterError, load_backend
-
+from nvtx._lib.writer import (
+    Backend,
+    Domain,
+    PredefinedScope,
+    RegisteredString,
+    Scope,
+    Session,
+    Stream,
+    StreamInterleaving,
+    StreamOrdering,
+    StreamSkid,
+    WriterError,
+    load_backend,
+)
 
 __all__ = [
     "Backend",
+    "Domain",
+    "PredefinedScope",
+    "RegisteredString",
+    "Scope",
+    "Session",
+    "Stream",
+    "StreamInterleaving",
+    "StreamOrdering",
+    "StreamSkid",
     "WriterError",
     "load_backend",
 ]

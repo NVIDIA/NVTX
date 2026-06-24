@@ -17,15 +17,44 @@
 # See https://nvidia.github.io/NVTX/LICENSE.txt for license information.
 
 import ctypes
+import enum
+import functools
+import itertools
 import os
 import threading
 from pathlib import Path
+
+from nvtx import (
+    PredefinedScope,
+    TimestampType,
+)
 
 
 _GET_INTERFACE_SYMBOL_NAME = NVTXW_GET_INTERFACE_SYMBOL_NAME.decode()
 _FINALIZE_SYMBOL_NAME = NVTXW_FINALIZE_SYMBOL_NAME.decode()
 _BACKEND_MODULES = {}
 _BACKEND_MODULES_LOCK = threading.RLock()
+
+
+class StreamInterleaving(enum.Enum):
+    """Whether ordering guarantees apply across the whole stream or per scope."""
+    NONE = NVTXW_STREAM_ORDER_INTERLEAVING_NONE
+    SCOPE = NVTXW_STREAM_ORDER_INTERLEAVING_SCOPE
+
+
+class StreamOrdering(enum.Enum):
+    """How fully events are sorted in the stream."""
+    UNKNOWN = NVTXW_STREAM_ORDERING_TYPE_UNKNOWN
+    STRICT = NVTXW_STREAM_ORDERING_TYPE_STRICT
+    PACKED_RANGE_START = NVTXW_STREAM_ORDERING_TYPE_PACKED_RANGE_START
+    PACKED_RANGE_END = NVTXW_STREAM_ORDERING_TYPE_PACKED_RANGE_END
+
+
+class StreamSkid(enum.Enum):
+    """How partial-sort "skid" is quantified (paired with ``skid_amount``)."""
+    NONE = NVTXW_STREAM_ORDERING_SKID_NONE
+    TIME_NS = NVTXW_STREAM_ORDERING_SKID_TIME_NS
+    EVENT_COUNT = NVTXW_STREAM_ORDERING_SKID_EVENT_COUNT
 
 
 _RESULT_MESSAGES = {
@@ -82,6 +111,68 @@ cdef bytes _as_bytes(object s):
     if isinstance(s, str):
         return (<str>s).encode("utf-8")
     raise TypeError("expected a str or bytes")
+
+
+cdef object _as_str(object s):
+    if s is None or isinstance(s, str):
+        return s
+    if isinstance(s, bytes):
+        return (<bytes>s).decode("utf-8")
+    raise TypeError("expected a str or bytes")
+
+
+cdef uint32_t _resolve_category(Domain domain, object category) except? 0:
+    # None -> 0 (no category); str/bytes are named via the domain; ints pass
+    # through.
+    if category is None:
+        return 0
+    if isinstance(category, (str, bytes)):
+        return <uint32_t>domain.get_category_id(category)
+    if isinstance(category, int):
+        if category < 0 or category > 0xFFFFFFFF:
+            raise ValueError("category must be in [0, 2**32 - 1]")
+        return <uint32_t>category
+    raise TypeError("category must be a str, bytes, int, or None")
+
+
+cdef uint64_t _resolve_scope_id(Domain domain, object scope) except? 0:
+    if scope is None:
+        return NVTX_SCOPE_NONE
+    if isinstance(scope, PredefinedScope):
+        return <uint64_t>scope.value
+    if isinstance(scope, Scope):
+        if domain is None:
+            raise ValueError("scope requires a registered stream domain")
+        if (<Scope>scope)._domain is not domain:
+            raise ValueError("scope is not registered in this domain")
+        return (<Scope>scope)._scope_id
+    if isinstance(scope, int) and not isinstance(scope, bool):
+        if not (
+            NVTX_SCOPE_ID_STATIC_START
+            <= scope
+            < NVTX_SCOPE_ID_DYNAMIC_START
+        ):
+            raise ValueError(
+                "integer scope must be in the NVTX static scope ID range "
+                f"[{NVTX_SCOPE_ID_STATIC_START}, "
+                f"{NVTX_SCOPE_ID_DYNAMIC_START})"
+            )
+        return <uint64_t>scope
+    raise TypeError(
+        "scope must be None, a PredefinedScope, a Scope, or an int"
+    )
+
+
+cdef uint64_t _resolve_stream_scope_id(
+    Domain domain, object scope
+) except? 0:
+    if isinstance(scope, PredefinedScope):
+        if scope is PredefinedScope.NONE or scope is PredefinedScope.ROOT:
+            return <uint64_t>scope.value
+        raise ValueError(
+            "runtime-resolved scopes are not valid as stream defaults"
+        )
+    return _resolve_scope_id(domain, scope)
 
 
 def _canonical_backend_path(path):
@@ -155,10 +246,18 @@ cdef class Backend:
             )
         self._iface = (<_BackendModule>module)._iface
         self._module = module
+        self._lock = threading.RLock()
+        self._active_sessions = set()
+
+    cdef void _ensure_open(self) except *:
+        if self._iface == NULL or self._module is None:
+            raise RuntimeError("backend is closed")
 
     def close(self):
         """
         Finalize and release the backend.
+
+        Active sessions, and their open streams, are ended first.
 
         Calling this method is optional because backends normally remain
         loaded until the process exits. Calling it more than once has no
@@ -171,11 +270,25 @@ cdef class Backend:
         WriterError
             If the backend fails to end an active session.
         """
-        if self._module is None:
-            return
-        module = self._module
-        self._iface = NULL
-        self._module = None
+        # Best-effort teardown: mark the backend closed and re-raise the first
+        # session failure at the end. Only finalize after every session ends.
+        error = None
+        module = None
+        with self._lock:
+            if self._module is None:
+                return
+            for session in list(self._active_sessions):
+                try:
+                    (<Session>session).end()
+                except Exception as exc:
+                    if error is None:
+                        error = exc
+            if error is None:
+                module = self._module
+                self._iface = NULL
+                self._module = None
+        if error is not None:
+            raise error
         _release_backend_module(module)
 
 
@@ -225,3 +338,662 @@ def load_backend(path):
         except Exception:
             _release_backend_module(module)
             raise
+
+
+cdef class Session:
+    """
+    An NVTXW session: the top-level container data is written into.
+
+    Use as a context manager (recommended) or call :meth:`begin` and
+    :meth:`end` explicitly.
+
+    Parameters
+    ----------
+    name : str or bytes
+        Session name. Tools may display it or use it to name a file or
+        directory representing the session.
+    backend : Backend
+        Backend the session writes to, from :func:`load_backend`.
+    config : str or bytes, optional
+        Backend-specific configuration options, one ``key=value`` pair per
+        line. Backends use reasonable defaults for options not provided and
+        ignore keys they do not support.
+
+    Notes
+    -----
+    Writes to distinct streams may proceed concurrently. Calls on the same
+    stream must not overlap unless the caller synchronizes them. Registration
+    and lifecycle operations must not overlap writes: complete setup before
+    starting writer threads, and stop them before closing streams or ending
+    the session.
+    """
+
+    def __init__(self, name, *, backend, config=None):
+        if not isinstance(backend, Backend):
+            raise TypeError("backend must be an nvtx.writer.Backend")
+        self._backend = backend
+        self._name = _as_bytes(name)
+        self._config = _as_bytes(config)
+        self._handle = NULL
+        self._lock = threading.RLock()
+        self._open_streams = set()
+        self._domains = {}
+
+    def begin(self):
+        """
+        Start the session.
+
+        When applicable, prefer using a context manager
+        (``with Session("my session", backend=backend) as session:``) over
+        calling this method explicitly.
+
+        Raises
+        ------
+        RuntimeError
+            If the session is already active or the backend is closed.
+        WriterError
+            If the backend fails to begin the session.
+        """
+        cdef nvtxwSessionAttributes_t attr
+        cdef const char* name = NULL
+        cdef const char* config = NULL
+        cdef nvtxwResultCode_t rc
+        # When both are needed, always acquire the backend lock first.
+        with self._backend._lock:
+            with self._lock:
+                if self._handle != NULL:
+                    raise RuntimeError("session is already active")
+                self._backend._ensure_open()
+                if self._name is not None:
+                    name = self._name
+                if self._config is not None:
+                    config = self._config
+                attr.structSize = sizeof(nvtxwSessionAttributes_t)
+                attr.name = name
+                attr.configString = config
+                self._backend._active_sessions.add(self)
+                rc = self._backend._iface.SessionBegin(
+                    &attr, &self._handle)
+                if rc != NVTXW_RESULT_SUCCESS:
+                    self._backend._active_sessions.discard(self)
+                    self._handle = NULL
+                    raise WriterError(rc, "SessionBegin")
+
+    def end(self):
+        """
+        End the session.
+
+        Streams still open in this session are closed first. Objects created
+        from the session (domains, streams, registered strings, and scopes)
+        become invalid when it ends.
+
+        When applicable, prefer using a context manager
+        (``with Session("my session", backend=backend) as session:``) over
+        calling this method explicitly.
+
+        Raises
+        ------
+        RuntimeError
+            If the session is not active or the backend is closed.
+        WriterError
+            If the backend fails to close a stream or end the session.
+        """
+        cdef nvtxwSessionHandle_t handle
+        cdef nvtxwResultCode_t rc
+        # Best-effort teardown: always reach SessionEnd and leave the session
+        # in a consistent terminal state, re-raising the first failure at the
+        # end.
+        error = None
+        with self._backend._lock:
+            with self._lock:
+                if self._handle == NULL:
+                    raise RuntimeError("session is not active")
+                self._backend._ensure_open()
+                for stream in list(self._open_streams):
+                    try:
+                        stream.close()
+                    except Exception as exc:
+                        if error is None:
+                            error = exc
+                self._open_streams.clear()
+                handle = self._handle
+                self._handle = NULL
+                for domain in self._domains.values():
+                    (<Domain>domain)._invalidate()
+                self._domains.clear()
+                self._backend._active_sessions.discard(self)
+                rc = self._backend._iface.SessionEnd(handle)
+                if rc != NVTXW_RESULT_SUCCESS:
+                    raise WriterError(rc, "SessionEnd") from error
+        if error is not None:
+            raise error
+
+    def _register_domain(self, name):
+        cdef nvtxwDomainAttributes_t attr
+        cdef nvtxDomainHandle_t handle = NULL
+        cdef nvtxwResultCode_t rc
+        cdef bytes encoded = _as_bytes(name)
+        cdef const char* c_name = NULL
+        if encoded is not None:
+            c_name = encoded
+        self._backend._ensure_open()
+        attr.structSize = sizeof(nvtxwDomainAttributes_t)
+        attr.name = c_name
+        rc = self._backend._iface.DomainRegister(self._handle, &attr, &handle)
+        _check(rc, "DomainRegister")
+        return Domain(self, <uintptr_t>handle)
+
+    def get_domain(self, name=None):
+        """
+        Get or create a domain within this session.
+
+        Parameters
+        ----------
+        name : str or bytes, optional
+            Domain name. ``None`` or an empty name selects the session's
+            default domain.
+
+        Returns
+        -------
+        Domain
+            The requested domain. Repeated calls with the same name return
+            the same object.
+
+        Raises
+        ------
+        RuntimeError
+            If the session is not active.
+        TypeError
+            If ``name`` is not a str, bytes, or None.
+        WriterError
+            If the backend fails to register the domain.
+        """
+        cdef Domain domain
+        with self._lock:
+            if self._handle == NULL:
+                raise RuntimeError("session is not active")
+            name = _as_str(name) or None
+            domain = self._domains.get(name)
+            if domain is None:
+                domain = self._register_domain(name)
+                self._domains[name] = domain
+            return domain
+
+    def create_stream(
+        self,
+        name,
+        *,
+        domain=None,
+        scope=None,
+        time_domain_id=NVTX_TIME_DOMAIN_ID_NONE,
+        interleaving=StreamInterleaving.NONE,
+        ordering=StreamOrdering.UNKNOWN,
+        skid=StreamSkid.NONE,
+        skid_amount=0,
+    ):
+        """
+        Create a stream associated with this session.
+
+        This method configures the stream but does not open it. Use the stream
+        as a context manager or call :meth:`Stream.open` before writing events.
+
+        Parameters
+        ----------
+        name : str or bytes
+            Stream name.
+        domain : Domain, str, bytes, optional
+            Domain object or domain name. ``None`` selects the session default
+            domain. Names and ``None`` are resolved with :meth:`get_domain`.
+        scope : PredefinedScope, Scope, int, or None, optional
+            Default scope associated with the stream. Pass
+            :attr:`PredefinedScope.NONE`, :attr:`PredefinedScope.ROOT`, or a
+            dynamic scope returned by :meth:`Domain.get_scope` for this
+            stream's domain. An integer must be in the NVTX static scope ID
+            range.
+        time_domain_id : TimestampType or int, optional
+            Time domain used by event timestamps.
+        interleaving : StreamInterleaving, optional
+            Whether ordering guarantees apply across the stream or per scope.
+        ordering : StreamOrdering, optional
+            Ordering guarantee for events in the stream.
+        skid : StreamSkid, optional
+            Unit used to express the partial-sort skid.
+        skid_amount : int, optional
+            Maximum partial-sort skid in the unit selected by ``skid``.
+
+        Returns
+        -------
+        Stream
+            A configured, unopened stream.
+
+        Raises
+        ------
+        RuntimeError
+            If the session is not active or the domain is no longer valid.
+        TypeError
+            If ``interleaving``, ``ordering``, ``skid``, or
+            ``time_domain_id`` has an unsupported type, or ``scope`` is not a
+            supported stream scope.
+        ValueError
+            If ``domain`` belongs to a different session, ``scope`` is
+            registered in a different domain, or a runtime-resolved
+            predefined scope or an integer outside the static scope ID range
+            is provided.
+        """
+        if not isinstance(interleaving, StreamInterleaving):
+            raise TypeError(
+                "interleaving must be an nvtx.writer.StreamInterleaving")
+        if not isinstance(ordering, StreamOrdering):
+            raise TypeError("ordering must be an nvtx.writer.StreamOrdering")
+        if not isinstance(skid, StreamSkid):
+            raise TypeError("skid must be an nvtx.writer.StreamSkid")
+        if not isinstance(time_domain_id, (TimestampType, int)):
+            raise TypeError(
+                "time_domain_id must be an nvtx.TimestampType or an int")
+        with self._lock:
+            if self._handle == NULL:
+                raise RuntimeError("session is not active")
+            if not isinstance(domain, Domain):
+                domain = self.get_domain(domain)
+            elif (<Domain>domain)._session is not self:
+                raise ValueError("domain belongs to a different session")
+            else:
+                (<Domain>domain)._ensure_valid()
+            return Stream(
+                self,
+                name,
+                domain,
+                scope,
+                time_domain_id,
+                interleaving,
+                ordering,
+                skid,
+                skid_amount,
+            )
+
+    def __enter__(self):
+        self.begin()
+        return self
+
+    def __exit__(self, *_):
+        # Backend.close() may already have ended this session.
+        with self._backend._lock:
+            with self._lock:
+                if self._handle != NULL:
+                    self.end()
+
+
+cdef class RegisteredString:
+    """
+    Wrapper for ``nvtxStringHandle_t``, created by
+    :meth:`Domain.get_registered_string`.
+
+    Pass to the single-event range/mark write methods in place of a ``str``
+    message to emit a registered-string handle instead of an inline UTF-8
+    message.  Valid until the owning session ends.
+    """
+
+    def __cinit__(self, Domain domain, string, handle_addr):
+        self._domain = domain
+        self._string = string
+        self._handle = \
+            <nvtxStringHandle_t><void*><uintptr_t>handle_addr
+
+    def __repr__(self):
+        return f"RegisteredString({self._string!r})"
+
+
+cdef class Scope:
+    """
+    Wrapper for a registered scope ID.
+    Created by :meth:`Domain.get_scope`.
+    Valid until the owning session ends.
+    """
+
+    def __cinit__(self, uint64_t scope_id, path=None, domain=None):
+        self._scope_id = scope_id
+        self._path = path
+        self._domain = domain
+
+    def __repr__(self):
+        return f"Scope(scope_id={self._scope_id}, path={self._path!r})"
+
+    @property
+    def scope_id(self):
+        """Registered scope ID within the domain."""
+        return self._scope_id
+
+    @property
+    def path(self):
+        """The path the scope was registered with (``None`` if unnamed)."""
+        return self._path
+
+
+cdef class Domain:
+    """
+    Session-owned NVTX domain. Created by :meth:`Session.get_domain`.
+    Valid until the owning session ends.
+    """
+
+    def __cinit__(self, Session session, handle_addr):
+        self._session = session
+        self._backend = session._backend
+        self._valid = True
+        self._handle = <nvtxDomainHandle_t><void*><uintptr_t>handle_addr
+        self._get_string_cached = functools.cache(self._register_string)
+        self._get_scope_cached = functools.cache(self._register_scope)
+        self._categories = {}
+        # 0 is reserved for "no category", so IDs start at 1.
+        self._category_ids = itertools.count(1)
+
+    cdef _invalidate(self):
+        self._valid = False
+
+    cdef _ensure_valid(self):
+        if not self._valid:
+            raise RuntimeError(
+                "domain is no longer valid: its owning session has ended")
+
+    cdef _get_event_schema_ids(
+        self, nvtxwEventHelperSchemaIds_t* schema_ids_out
+    ):
+        cdef nvtxwResultCode_t rc
+        with self._session._lock:
+            self._ensure_valid()
+            if not self._event_schemas_registered:
+                rc = nvtxwEventSchemasRegister(
+                    self._backend._iface,
+                    self._handle,
+                    NVTXW_EVENT_HELPER_SCHEMA_ALL,
+                    &self._event_schema_ids,
+                )
+                _check(rc, "nvtxwEventSchemasRegister")
+                self._event_schemas_registered = True
+            schema_ids_out[0] = self._event_schema_ids
+
+    def get_registered_string(self, string):
+        """
+        Get or create a registered string in this domain.
+
+        Parameters
+        ----------
+        string : str or bytes
+            String to register.
+
+        Returns
+        -------
+        RegisteredString
+            The registered string. Results are cached per domain; str and
+            bytes spellings of the same string share one registration.
+
+        Raises
+        ------
+        RuntimeError
+            If the domain is no longer valid.
+        TypeError
+            If ``string`` is not a string or bytes object.
+        WriterError
+            If the backend fails to register the string.
+        """
+        if not isinstance(string, (str, bytes)):
+            raise TypeError("string must be a str or bytes")
+        with self._session._lock:
+            self._ensure_valid()
+            return self._get_string_cached(_as_str(string))
+
+    def _register_string(self, string):
+        cdef bytes encoded = _as_bytes(string)
+        cdef const char* c_string = encoded
+        cdef nvtxStringHandle_t handle = NULL
+        cdef nvtxwResultCode_t rc = self._backend._iface.StringRegister(
+            self._handle, c_string, &handle)
+        _check(rc, "StringRegister")
+        return RegisteredString(self, string, <uintptr_t>handle)
+
+    def get_category_id(self, name: str | bytes):
+        """
+        Get or create a named category in this domain.
+
+        Parameters
+        ----------
+        name : str or bytes
+            Category name.
+
+        Returns
+        -------
+        int
+            The category ID. IDs start at 1 because 0 represents no category.
+            Results are cached per domain.
+
+        Raises
+        ------
+        RuntimeError
+            If the domain is no longer valid.
+        TypeError
+            If ``name`` is not a string or bytes object.
+        WriterError
+            If the backend fails to register the category.
+        """
+        if not isinstance(name, (str, bytes)):
+            raise TypeError("category name must be a str or bytes")
+        self._ensure_valid()
+        name = _as_str(name)
+        category_id = self._categories.get(name)
+        if category_id is not None:
+            return category_id
+        return self._register_category(name)
+
+    def _register_category(self, name):
+        cdef uint32_t category_id
+        cdef bytes encoded
+        cdef const char* c_name
+        cdef nvtxwResultCode_t rc
+        cached = None
+        with self._session._lock:
+            self._ensure_valid()
+            cached = self._categories.get(name)
+            if cached is not None:
+                return cached
+            category_id = next(self._category_ids)
+            encoded = _as_bytes(name)
+            c_name = encoded
+            rc = self._backend._iface.CategoryRegister(
+                self._handle, category_id, c_name)
+            _check(rc, "CategoryRegister")
+            self._categories[name] = category_id
+            return category_id
+
+    def get_scope(self, path, *, parent=None):
+        """
+        Get or create a scope in this domain.
+
+        Parameters
+        ----------
+        path : str or bytes
+            Path of the scope relative to ``parent``.
+        parent : PredefinedScope or Scope, optional
+            Parent scope. ``None`` places the scope at the domain root. The
+            predefined parents may be :attr:`PredefinedScope.NONE`,
+            :attr:`PredefinedScope.ROOT`,
+            :attr:`PredefinedScope.CURRENT_HW_MACHINE`, or
+            :attr:`PredefinedScope.CURRENT_VM`.
+
+        Returns
+        -------
+        Scope
+            The registered scope. Results are cached for each ``path`` and
+            parent pair.
+
+        Raises
+        ------
+        RuntimeError
+            If the domain is no longer valid.
+        TypeError
+            If ``parent`` is not a :class:`PredefinedScope`, a
+            :class:`Scope`, or ``None``.
+        ValueError
+            If ``parent`` is registered in a different domain or is not a
+            supported predefined parent scope.
+        WriterError
+            If the backend fails to register the scope.
+        """
+        cdef uint64_t parent_id
+        if parent is None:
+            parent_id = NVTX_SCOPE_CURRENT_VM
+        elif isinstance(parent, PredefinedScope):
+            if parent not in (
+                PredefinedScope.NONE,
+                PredefinedScope.ROOT,
+                PredefinedScope.CURRENT_HW_MACHINE,
+                PredefinedScope.CURRENT_VM,
+            ):
+                raise ValueError(
+                    "predefined parent scope must be NONE, ROOT, "
+                    "CURRENT_HW_MACHINE, or CURRENT_VM"
+                )
+            parent_id = <uint64_t>parent.value
+        elif isinstance(parent, Scope):
+            if (<Scope>parent)._domain is not self:
+                raise ValueError(
+                    "parent scope is registered in a different domain")
+            parent_id = (<Scope>parent)._scope_id
+        else:
+            raise TypeError(
+                "parent must be a PredefinedScope, a Scope, or None"
+            )
+        with self._session._lock:
+            self._ensure_valid()
+            return self._get_scope_cached(_as_str(path), parent_id)
+
+    def _register_scope(self, path, uint64_t parent_id):
+        cdef bytes encoded = _as_bytes(path)
+        cdef const char* c_path = NULL
+        cdef nvtxScopeAttr_t attr
+        cdef uint64_t scope_id = 0
+        cdef nvtxwResultCode_t rc
+        if encoded is not None:
+            c_path = encoded
+        attr.structSize = sizeof(nvtxScopeAttr_t)
+        attr.path = c_path
+        attr.parentScope = parent_id
+        attr.scopeId = NVTX_SCOPE_NONE
+        rc = self._backend._iface.ScopeRegister(self._handle, &attr, &scope_id)
+        _check(rc, "ScopeRegister")
+        return Scope(scope_id, path, self)
+
+
+cdef class Stream:
+    """
+    NVTXW stream: the object events and counter samples are written to.
+
+    Created by :meth:`Session.create_stream`.  Use as a context manager
+    (recommended) or call :meth:`open` and :meth:`close` explicitly before and
+    after writing data.
+    """
+
+    def __cinit__(
+        self,
+        Session session,
+        name,
+        Domain domain,
+        scope,
+        time_domain_id,
+        interleaving,
+        ordering,
+        skid,
+        skid_amount,
+    ):
+        if domain._session is not session:
+            raise RuntimeError(
+                f"domain '{domain}' is not registered in this session. "
+                "Do not construct streams directly; "
+                "use Session.create_stream()."
+            )
+        self._session = session
+        self._backend = session._backend
+        self._domain = domain
+        self._name = _as_bytes(name)
+        self._scope_id = _resolve_stream_scope_id(domain, scope)
+        if isinstance(time_domain_id, TimestampType):
+            time_domain_id = time_domain_id.value
+        self._time_domain_id = time_domain_id
+        self._order_interleaving = interleaving.value
+        self._ordering_type = ordering.value
+        self._ordering_skid = skid.value
+        self._ordering_skid_amount = skid_amount
+        # ``iface`` is constant for the stream's lifetime; the stream handle is
+        # set in open()/close() and the schema IDs lazily on the first write.
+        self._writer.iface = self._backend._iface
+
+    def open(self):
+        """
+        Open the stream for writing.
+
+        Raises
+        ------
+        RuntimeError
+            If the stream is already open or its domain is no longer valid.
+        WriterError
+            If the backend fails to open the stream.
+        """
+        cdef nvtxwStreamAttributes_t attr
+        cdef const char* name = NULL
+        cdef nvtxDomainHandle_t domain_handle = NULL
+        cdef nvtxwResultCode_t rc
+        with self._session._lock:
+            if self._writer.stream != NULL:
+                raise RuntimeError("stream is already open")
+            if self._session._handle == NULL:
+                raise RuntimeError("session is not active")
+            if self._domain is not None:
+                self._domain._ensure_valid()
+                domain_handle = self._domain._handle
+            if self._name is not None:
+                name = self._name
+            attr.structSize = sizeof(nvtxwStreamAttributes_t)
+            attr.name = name
+            attr.domain = domain_handle
+            attr.scopeId = self._scope_id
+            attr.timeDomainId = self._time_domain_id
+            attr.orderInterleaving = self._order_interleaving
+            attr.orderingType = self._ordering_type
+            attr.orderingSkid = self._ordering_skid
+            attr.orderingSkidAmount = self._ordering_skid_amount
+            rc = self._backend._iface.StreamOpen(
+                self._session._handle, &attr, &self._writer.stream)
+            if rc != NVTXW_RESULT_SUCCESS:
+                self._writer.stream = NULL
+                raise WriterError(rc, "StreamOpen")
+            self._session._open_streams.add(self)
+
+    def close(self):
+        """
+        Close the stream without ending its session.
+
+        Raises
+        ------
+        RuntimeError
+            If the stream is not open or the backend is closed.
+        WriterError
+            If the backend fails to close the stream.
+        """
+        cdef nvtxwStreamHandle_t handle
+        cdef nvtxwResultCode_t rc
+        with self._session._lock:
+            if self._writer.stream == NULL:
+                raise RuntimeError("stream is not open")
+            self._backend._ensure_open()
+            handle = self._writer.stream
+            self._writer.stream = NULL
+            self._session._open_streams.discard(self)
+            rc = self._backend._iface.StreamClose(handle)
+            _check(rc, "StreamClose")
+
+    def __enter__(self):
+        self.open()
+        return self
+
+    def __exit__(self, *_):
+        with self._session._lock:
+            if self._writer.stream != NULL:
+                self.close()

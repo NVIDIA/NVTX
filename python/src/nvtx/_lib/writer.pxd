@@ -56,6 +56,8 @@ cdef extern from "nvtxw3/nvtxw3.h" nogil:
     uint64_t NVTX_SCOPE_NONE
     uint64_t NVTX_SCOPE_ROOT
     uint64_t NVTX_SCOPE_CURRENT_VM
+    uint64_t NVTX_SCOPE_ID_STATIC_START
+    uint64_t NVTX_SCOPE_ID_DYNAMIC_START
     uint64_t NVTX_TIME_DOMAIN_ID_NONE
 
     int NVTXW_STREAM_ORDER_INTERLEAVING_NONE
@@ -228,6 +230,110 @@ cdef extern from "nvtxw3/nvtxw3.h" nogil:
         void (*reserved[43])()
 
 
+cdef extern from "nvtxw3/nvtxw3_event_helpers.h" nogil:
+
+    ctypedef uint64_t nvtxRangeId_t
+
+    ctypedef struct nvtxwEventAttributes_t:
+        uint32_t color
+        uint32_t category
+        nvtxStringHandle_t message
+
+    ctypedef struct nvtxwEventAttributesUtf8_t:
+        uint32_t color
+        uint32_t category
+        uint32_t messageLength
+        const char* message
+
+    ctypedef struct nvtxwEventHelperSchemaIds_t:
+        uint64_t markUtf8
+        uint64_t markRegString
+        uint64_t rangePushPopUtf8
+        uint64_t rangePushPopRegString
+        uint64_t rangeStartEndUtf8
+        uint64_t rangeStartEndRegString
+        uint64_t rangePushUtf8
+        uint64_t rangePushRegString
+        uint64_t rangePop
+        uint64_t rangeStartUtf8
+        uint64_t rangeStartRegString
+        uint64_t rangeEnd
+        uint64_t eventMessageUtf8
+
+    ctypedef struct nvtxwEventWriter_t:
+        const nvtxwInterface_v2_t* iface
+        nvtxwStreamHandle_t stream
+        nvtxwEventHelperSchemaIds_t schemaIds
+
+    int NVTXW_EVENT_HELPER_SCHEMA_ALL
+
+    nvtxwResultCode_t nvtxwEventSchemasRegister(
+        const nvtxwInterface_v2_t* iface,
+        nvtxDomainHandle_t domain,
+        uint32_t schemaMask,
+        nvtxwEventHelperSchemaIds_t* schemaIdsOut)
+
+    nvtxwResultCode_t nvtxwMarkWriteUtf8(
+        const nvtxwEventWriter_t* writer,
+        int64_t timestamp,
+        nvtxwEventAttributesUtf8_t attr)
+    nvtxwResultCode_t nvtxwMarkWrite(
+        const nvtxwEventWriter_t* writer,
+        int64_t timestamp,
+        nvtxwEventAttributes_t attr)
+
+    nvtxwResultCode_t nvtxwRangePushPopWriteUtf8(
+        const nvtxwEventWriter_t* writer,
+        int64_t timestampBegin,
+        int64_t timestampEnd,
+        nvtxwEventAttributesUtf8_t attr)
+    nvtxwResultCode_t nvtxwRangePushPopWrite(
+        const nvtxwEventWriter_t* writer,
+        int64_t timestampBegin,
+        int64_t timestampEnd,
+        nvtxwEventAttributes_t attr)
+
+    nvtxwResultCode_t nvtxwRangeStartEndWriteUtf8(
+        const nvtxwEventWriter_t* writer,
+        int64_t timestampBegin,
+        int64_t timestampEnd,
+        nvtxwEventAttributesUtf8_t attr)
+    nvtxwResultCode_t nvtxwRangeStartEndWrite(
+        const nvtxwEventWriter_t* writer,
+        int64_t timestampBegin,
+        int64_t timestampEnd,
+        nvtxwEventAttributes_t attr)
+
+    nvtxwResultCode_t nvtxwRangePushWriteUtf8(
+        const nvtxwEventWriter_t* writer,
+        int64_t timestamp,
+        nvtxwEventAttributesUtf8_t attr)
+    nvtxwResultCode_t nvtxwRangePushWrite(
+        const nvtxwEventWriter_t* writer,
+        int64_t timestamp,
+        nvtxwEventAttributes_t attr)
+
+    nvtxwResultCode_t nvtxwRangePopWrite(
+        const nvtxwEventWriter_t* writer,
+        int64_t timestamp)
+
+    nvtxwResultCode_t nvtxwRangeStartWriteUtf8(
+        const nvtxwEventWriter_t* writer,
+        int64_t timestamp,
+        nvtxRangeId_t rangeId,
+        nvtxwEventAttributesUtf8_t attr)
+    nvtxwResultCode_t nvtxwRangeStartWrite(
+        const nvtxwEventWriter_t* writer,
+        int64_t timestamp,
+        nvtxRangeId_t rangeId,
+        nvtxwEventAttributes_t attr)
+
+    nvtxwResultCode_t nvtxwRangeEndWrite(
+        const nvtxwEventWriter_t* writer,
+        int64_t timestamp,
+        nvtxRangeId_t rangeId)
+
+
 cdef class _BackendModule:
     cdef const nvtxwInterface_v2_t* _iface
     cdef object _lib
@@ -239,6 +345,65 @@ cdef class _BackendModule:
 cdef class Backend:
     cdef const nvtxwInterface_v2_t* _iface
     cdef object _module
+    cdef object _lock
+    cdef set _active_sessions
+    cdef void _ensure_open(self) except *
+
+
+cdef class Session:
+    cdef Backend _backend
+    cdef bytes _name
+    cdef bytes _config
+    cdef nvtxwSessionHandle_t _handle
+    cdef object _lock
+    cdef set _open_streams
+    cdef dict _domains
+
+
+cdef class RegisteredString:
+    cdef nvtxStringHandle_t _handle
+    cdef str _string
+    cdef object _domain
+
+
+cdef class Scope:
+    cdef uint64_t _scope_id
+    cdef object _path
+    cdef object _domain
+
+
+cdef class Domain:
+    cdef Backend _backend
+    cdef Session _session
+    cdef bint _valid
+    cdef nvtxDomainHandle_t _handle
+    cdef bint _event_schemas_registered
+    cdef nvtxwEventHelperSchemaIds_t _event_schema_ids
+    cdef object _get_string_cached
+    cdef object _get_scope_cached
+    cdef dict _categories
+    cdef object _category_ids
+    cdef _invalidate(self)
+    cdef _ensure_valid(self)
+    cdef _get_event_schema_ids(
+        self, nvtxwEventHelperSchemaIds_t* schema_ids_out
+    )
+
+
+cdef class Stream:
+    cdef Backend _backend
+    cdef Session _session
+    cdef Domain _domain
+    cdef bytes _name
+    cdef uint64_t _scope_id
+    cdef uint64_t _time_domain_id
+    cdef int16_t _order_interleaving
+    cdef int16_t _ordering_type
+    cdef int32_t _ordering_skid
+    cdef int64_t _ordering_skid_amount
+    cdef bint _writer_ready
+    cdef nvtxwEventWriter_t _writer
 
 
 cdef bytes _as_bytes(object s)
+cdef object _as_str(object s)

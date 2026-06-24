@@ -156,6 +156,21 @@ cdef extern from "nvtx3/nvToolsExtPayload.h" nogil:
     cdef int NVTX_PAYLOAD_SCHEMA_TYPE_STATIC
     cdef int NVTX_PAYLOAD_SCHEMA_TYPE_DYNAMIC
 
+    cdef int NVTX_SCOPE_ROOT
+    cdef int NVTX_SCOPE_CURRENT_HW_MACHINE
+    cdef int NVTX_SCOPE_CURRENT_HW_SOCKET
+    cdef int NVTX_SCOPE_CURRENT_HW_CPU_PHYSICAL
+    cdef int NVTX_SCOPE_CURRENT_HW_CPU_LOGICAL
+    cdef int NVTX_SCOPE_CURRENT_HW_INNERMOST
+    cdef int NVTX_SCOPE_CURRENT_HYPERVISOR
+    cdef int NVTX_SCOPE_CURRENT_VM
+    cdef int NVTX_SCOPE_CURRENT_KERNEL
+    cdef int NVTX_SCOPE_CURRENT_CONTAINER
+    cdef int NVTX_SCOPE_CURRENT_OS
+    cdef int NVTX_SCOPE_CURRENT_SW_PROCESS
+    cdef int NVTX_SCOPE_CURRENT_SW_THREAD
+    cdef int NVTX_SCOPE_CURRENT_SW_INNERMOST
+
     ctypedef struct nvtxPayloadData_v1:
         uint64_t schemaId
         size_t size
