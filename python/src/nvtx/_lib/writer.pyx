@@ -28,6 +28,7 @@ from nvtx import (
     PredefinedScope,
     TimestampType,
 )
+from nvtx.colors import color_to_hex
 
 
 _GET_INTERFACE_SYMBOL_NAME = NVTXW_GET_INTERFACE_SYMBOL_NAME.decode()
@@ -121,9 +122,17 @@ cdef object _as_str(object s):
     raise TypeError("expected a str or bytes")
 
 
+cdef uint32_t _resolve_color(object color) except? 0:
+    # NVTXW event attributes use 0 for "no explicit color", so ``None`` maps to
+    # 0 rather than the instrumentation default (blue).
+    if color is None:
+        return 0
+    return <uint32_t>color_to_hex(color)
+
+
 cdef uint32_t _resolve_category(Domain domain, object category) except? 0:
     # None -> 0 (no category); str/bytes are named via the domain; ints pass
-    # through.
+    # through and are reserved so the named-category allocator skips them.
     if category is None:
         return 0
     if isinstance(category, (str, bytes)):
@@ -131,6 +140,13 @@ cdef uint32_t _resolve_category(Domain domain, object category) except? 0:
     if isinstance(category, int):
         if category < 0 or category > 0xFFFFFFFF:
             raise ValueError("category must be in [0, 2**32 - 1]")
+        # Reserving an integer category only needs the lifecycle lock once.
+        # The second check handles another thread reserving it first.
+        if category not in domain._user_category_ids:
+            with domain._session._lock:
+                domain._ensure_valid()
+                if category not in domain._user_category_ids:
+                    domain._user_category_ids.add(category)
         return <uint32_t>category
     raise TypeError("category must be a str, bytes, int, or None")
 
@@ -685,6 +701,7 @@ cdef class Domain:
         self._categories = {}
         # 0 is reserved for "no category", so IDs start at 1.
         self._category_ids = itertools.count(1)
+        self._user_category_ids = set()
 
     cdef _invalidate(self):
         self._valid = False
@@ -762,8 +779,9 @@ cdef class Domain:
         Returns
         -------
         int
-            The category ID. IDs start at 1 because 0 represents no category.
-            Results are cached per domain.
+            The category ID. IDs start at 1 because 0 represents no category,
+            and skip integer category values already passed to this domain's
+            event write methods. Results are cached per domain.
 
         Raises
         ------
@@ -795,6 +813,10 @@ cdef class Domain:
             if cached is not None:
                 return cached
             category_id = next(self._category_ids)
+            # Skip IDs the user already claimed by passing raw integer
+            # categories to event writes.
+            while category_id in self._user_category_ids:
+                category_id = next(self._category_ids)
             encoded = _as_bytes(name)
             c_name = encoded
             rc = self._backend._iface.CategoryRegister(
@@ -997,3 +1019,331 @@ cdef class Stream:
         with self._session._lock:
             if self._writer.stream != NULL:
                 self.close()
+
+    cdef void _ensure_writable(self) except *:
+        if self._writer.stream == NULL:
+            raise RuntimeError("stream is not open")
+        self._backend._ensure_open()
+
+    cdef nvtxwEventWriter_t* _get_writer(self) except NULL:
+        # ``iface`` is set at construction and the stream handle in
+        # open()/close().  The domain's event schema IDs are registered lazily,
+        # on the first event write into the domain (``_get_event_schema_ids`` is
+        # memoized and shared by every stream in the domain), and copied into
+        # the writer once.  They are stable for the rest of the session, so the
+        # copy never needs repeating or invalidating on close.
+        self._ensure_writable()
+        if self._domain is None:
+            raise ValueError(
+                "event helpers require a registered stream domain"
+            )
+        if not self._writer_ready:
+            self._domain._get_event_schema_ids(&self._writer.schemaIds)
+            self._writer_ready = True
+        return &self._writer
+
+    cdef object _resolve_event_attrs(
+        self,
+        object message,
+        object color,
+        object category,
+        nvtxwEventAttributes_t* attr,
+        nvtxwEventAttributesUtf8_t* uattr,
+    ):
+        cdef uint32_t color_argb = _resolve_color(color)
+        cdef uint32_t category_id = _resolve_category(self._domain, category)
+        cdef bytes message_bytes
+        cdef const char* message_ptr
+        if message is None:
+            message = b""
+        if isinstance(message, RegisteredString):
+            # Registered-string form: the handle is owned by the domain, so
+            # nothing needs to be kept alive past the call.
+            if (<RegisteredString>message)._domain is not self._domain:
+                raise ValueError(
+                    "message is a RegisteredString from a different domain")
+            attr.color = color_argb
+            attr.category = category_id
+            attr.message = (<RegisteredString>message)._handle
+            return None
+        if isinstance(message, (str, bytes)):
+            message_bytes = _as_bytes(message)
+            message_ptr = message_bytes
+            uattr.color = color_argb
+            uattr.category = category_id
+            uattr.messageLength = <uint32_t>len(message_bytes)
+            uattr.message = message_ptr
+            return message_bytes
+        raise TypeError(
+            "message must be a str, bytes, RegisteredString, or None")
+
+    cdef void _emit_at(
+        self, int64_t timestamp, object message, object color, object category,
+        _at_bin_fn bin_fn, _at_utf8_fn utf8_fn, str op, str utf8_op,
+    ) except *:
+        cdef nvtxwEventWriter_t* writer = self._get_writer()
+        cdef nvtxwEventAttributes_t attr
+        cdef nvtxwEventAttributesUtf8_t uattr
+        cdef bytes owner = self._resolve_event_attrs(
+            message, color, category, &attr, &uattr)
+        if owner is None:
+            _check(bin_fn(writer, timestamp, attr), op)
+        else:
+            _check(utf8_fn(writer, timestamp, uattr), utf8_op)
+
+    cdef void _emit_span(
+        self, int64_t begin, int64_t end, object message, object color,
+        object category, _span_bin_fn bin_fn, _span_utf8_fn utf8_fn,
+        str op, str utf8_op,
+    ) except *:
+        cdef nvtxwEventWriter_t* writer = self._get_writer()
+        cdef nvtxwEventAttributes_t attr
+        cdef nvtxwEventAttributesUtf8_t uattr
+        cdef bytes owner = self._resolve_event_attrs(
+            message, color, category, &attr, &uattr)
+        if owner is None:
+            _check(bin_fn(writer, begin, end, attr), op)
+        else:
+            _check(utf8_fn(writer, begin, end, uattr), utf8_op)
+
+    def write_mark(
+        self, timestamp, *, message=None, color=None, category=None
+    ):
+        """
+        Write a mark event.
+
+        Parameters
+        ----------
+        timestamp : int
+            Event timestamp in the stream's time domain.
+        message : str, bytes, or RegisteredString, optional
+            Message associated with the event.
+        color : int or color-like, optional
+            Event color. Integers are interpreted as ARGB values.
+        category : str, bytes, or int, optional
+            Event category. A name is registered in the stream's domain.
+
+        Raises
+        ------
+        RuntimeError
+            If the stream is not open or the backend is closed.
+        TypeError
+            If ``message`` or ``category`` has an unsupported type.
+        ValueError
+            If an integer ``category`` is outside ``[0, 2**32 - 1]``, or
+            ``message`` is a :class:`RegisteredString` from a different domain.
+        WriterError
+            If the backend fails to write the event.
+        """
+        self._emit_at(timestamp, message, color, category,
+                      nvtxwMarkWrite, nvtxwMarkWriteUtf8,
+                      "nvtxwMarkWrite", "nvtxwMarkWriteUtf8")
+
+    def write_pushpop(
+        self, start, end, *, message=None, color=None, category=None
+    ):
+        """
+        Write a complete push/pop range event.
+
+        Parameters
+        ----------
+        start : int
+            Range start timestamp in the stream's time domain.
+        end : int
+            Range end timestamp in the stream's time domain.
+        message : str, bytes, or RegisteredString, optional
+            Message associated with the range.
+        color : int or color-like, optional
+            Range color. Integers are interpreted as ARGB values.
+        category : str, bytes, or int, optional
+            Range category. A name is registered in the stream's domain.
+
+        Raises
+        ------
+        RuntimeError
+            If the stream is not open or the backend is closed.
+        TypeError
+            If ``message`` or ``category`` has an unsupported type.
+        ValueError
+            If an integer ``category`` is outside ``[0, 2**32 - 1]``, or
+            ``message`` is a :class:`RegisteredString` from a different domain.
+        WriterError
+            If the backend fails to write the event.
+        """
+        self._emit_span(start, end, message, color, category,
+                        nvtxwRangePushPopWrite, nvtxwRangePushPopWriteUtf8,
+                        "nvtxwRangePushPopWrite",
+                        "nvtxwRangePushPopWriteUtf8")
+
+    def write_startend(
+        self, start, end, *, message=None, color=None, category=None
+    ):
+        """
+        Write a complete start/end range event.
+
+        Parameters
+        ----------
+        start : int
+            Range start timestamp in the stream's time domain.
+        end : int
+            Range end timestamp in the stream's time domain.
+        message : str, bytes, or RegisteredString, optional
+            Message associated with the range.
+        color : int or color-like, optional
+            Range color. Integers are interpreted as ARGB values.
+        category : str, bytes, or int, optional
+            Range category. A name is registered in the stream's domain.
+
+        Raises
+        ------
+        RuntimeError
+            If the stream is not open or the backend is closed.
+        TypeError
+            If ``message`` or ``category`` has an unsupported type.
+        ValueError
+            If an integer ``category`` is outside ``[0, 2**32 - 1]``, or
+            ``message`` is a :class:`RegisteredString` from a different domain.
+        WriterError
+            If the backend fails to write the event.
+        """
+        self._emit_span(start, end, message, color, category,
+                        nvtxwRangeStartEndWrite, nvtxwRangeStartEndWriteUtf8,
+                        "nvtxwRangeStartEndWrite",
+                        "nvtxwRangeStartEndWriteUtf8")
+
+    def write_push(
+        self, timestamp, *, message=None, color=None, category=None
+    ):
+        """
+        Write the beginning of a push/pop range.
+
+        Push/pop ranges are nested and pair in last-in, first-out order.
+
+        Parameters
+        ----------
+        timestamp : int
+            Range start timestamp in the stream's time domain.
+        message : str, bytes, or RegisteredString, optional
+            Message associated with the range.
+        color : int or color-like, optional
+            Range color. Integers are interpreted as ARGB values.
+        category : str, bytes, or int, optional
+            Range category. A name is registered in the stream's domain.
+
+        Raises
+        ------
+        RuntimeError
+            If the stream is not open or the backend is closed.
+        TypeError
+            If ``message`` or ``category`` has an unsupported type.
+        ValueError
+            If an integer ``category`` is outside ``[0, 2**32 - 1]``, or
+            ``message`` is a :class:`RegisteredString` from a different domain.
+        WriterError
+            If the backend fails to write the event.
+        """
+        self._emit_at(timestamp, message, color, category,
+                      nvtxwRangePushWrite, nvtxwRangePushWriteUtf8,
+                      "nvtxwRangePushWrite", "nvtxwRangePushWriteUtf8")
+
+    def write_pop(self, timestamp):
+        """
+        Write the end of the most recently pushed range.
+
+        Parameters
+        ----------
+        timestamp : int
+            Range end timestamp in the stream's time domain.
+
+        Raises
+        ------
+        RuntimeError
+            If the stream is not open or the backend is closed.
+        WriterError
+            If the backend fails to write the event.
+        """
+        _check(
+            nvtxwRangePopWrite(self._get_writer(), timestamp),
+            "nvtxwRangePopWrite")
+
+    def write_start(
+        self,
+        timestamp,
+        range_id,
+        *,
+        message=None,
+        color=None,
+        category=None,
+    ):
+        """
+        Write the beginning of a start/end range.
+
+        The range is paired with a subsequent :meth:`write_end` call that
+        uses the same ``range_id``.
+
+        Parameters
+        ----------
+        timestamp : int
+            Range start timestamp in the stream's time domain.
+        range_id : int
+            Nonzero identifier used to pair the start with its end.
+        message : str, bytes, or RegisteredString, optional
+            Message associated with the range.
+        color : int or color-like, optional
+            Range color. Integers are interpreted as ARGB values.
+        category : str, bytes, or int, optional
+            Range category. A name is registered in the stream's domain.
+
+        Raises
+        ------
+        RuntimeError
+            If the stream is not open or the backend is closed.
+        TypeError
+            If ``message`` or ``category`` has an unsupported type.
+        ValueError
+            If ``range_id`` is zero, an integer ``category`` is outside
+            ``[0, 2**32 - 1]``, or ``message`` is a :class:`RegisteredString`
+            from a different domain.
+        WriterError
+            If the backend fails to write the event.
+        """
+        cdef nvtxwEventWriter_t* writer
+        cdef nvtxRangeId_t rid
+        cdef nvtxwEventAttributes_t attr
+        cdef nvtxwEventAttributesUtf8_t uattr
+        if range_id == 0:
+            raise ValueError("range_id must be non-zero")
+        rid = range_id
+        writer = self._get_writer()
+        cdef bytes owner = self._resolve_event_attrs(
+            message, color, category, &attr, &uattr)
+        if owner is None:
+            _check(nvtxwRangeStartWrite(writer, timestamp, rid, attr),
+                   "nvtxwRangeStartWrite")
+        else:
+            _check(nvtxwRangeStartWriteUtf8(writer, timestamp, rid, uattr),
+                   "nvtxwRangeStartWriteUtf8")
+
+    def write_end(self, timestamp, range_id):
+        """
+        Write the end of a start/end range.
+
+        Parameters
+        ----------
+        timestamp : int
+            Range end timestamp in the stream's time domain.
+        range_id : int
+            Identifier passed to the matching :meth:`write_start` call.
+
+        Raises
+        ------
+        RuntimeError
+            If the stream is not open or the backend is closed.
+        WriterError
+            If the backend fails to write the event.
+        """
+        if range_id == 0:
+            raise ValueError("range_id must be non-zero")
+        _check(
+            nvtxwRangeEndWrite(self._get_writer(), timestamp, range_id),
+            "nvtxwRangeEndWrite")

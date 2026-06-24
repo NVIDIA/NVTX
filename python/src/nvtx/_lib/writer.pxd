@@ -383,11 +383,25 @@ cdef class Domain:
     cdef object _get_scope_cached
     cdef dict _categories
     cdef object _category_ids
+    cdef set _user_category_ids
     cdef _invalidate(self)
     cdef _ensure_valid(self)
     cdef _get_event_schema_ids(
         self, nvtxwEventHelperSchemaIds_t* schema_ids_out
     )
+
+
+# Signatures of the bin/utf8 nvtxw write functions, grouped by event shape
+# (single timestamp, begin/end span), so the Stream._emit_* helpers can
+# dispatch to a function pair instead of duplicating each call.
+ctypedef nvtxwResultCode_t (*_at_bin_fn)(
+    const nvtxwEventWriter_t*, int64_t, nvtxwEventAttributes_t)
+ctypedef nvtxwResultCode_t (*_at_utf8_fn)(
+    const nvtxwEventWriter_t*, int64_t, nvtxwEventAttributesUtf8_t)
+ctypedef nvtxwResultCode_t (*_span_bin_fn)(
+    const nvtxwEventWriter_t*, int64_t, int64_t, nvtxwEventAttributes_t)
+ctypedef nvtxwResultCode_t (*_span_utf8_fn)(
+    const nvtxwEventWriter_t*, int64_t, int64_t, nvtxwEventAttributesUtf8_t)
 
 
 cdef class Stream:
@@ -403,6 +417,25 @@ cdef class Stream:
     cdef int64_t _ordering_skid_amount
     cdef bint _writer_ready
     cdef nvtxwEventWriter_t _writer
+    cdef void _ensure_writable(self) except *
+    cdef nvtxwEventWriter_t* _get_writer(self) except NULL
+    cdef object _resolve_event_attrs(
+        self,
+        object message,
+        object color,
+        object category,
+        nvtxwEventAttributes_t* attr,
+        nvtxwEventAttributesUtf8_t* uattr,
+    )
+    cdef void _emit_at(
+        self, int64_t timestamp, object message, object color, object category,
+        _at_bin_fn bin_fn, _at_utf8_fn utf8_fn, str op, str utf8_op,
+    ) except *
+    cdef void _emit_span(
+        self, int64_t begin, int64_t end, object message, object color,
+        object category, _span_bin_fn bin_fn, _span_utf8_fn utf8_fn,
+        str op, str utf8_op,
+    ) except *
 
 
 cdef bytes _as_bytes(object s)
