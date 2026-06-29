@@ -27,8 +27,10 @@ from pathlib import Path
 from nvtx import (
     PredefinedScope,
     TimestampType,
+    numpy_dtype,
 )
 from nvtx.colors import color_to_hex
+from nvtx._metadata import PayloadSchemaKey
 
 
 _GET_INTERFACE_SYMBOL_NAME = NVTXW_GET_INTERFACE_SYMBOL_NAME.decode()
@@ -102,6 +104,25 @@ class WriterError(Exception):
 cdef void _check(nvtxwResultCode_t rc, str op) except *:
     if rc != NVTXW_RESULT_SUCCESS:
         raise WriterError(rc, op)
+
+
+cdef class _WriterSchemaRegistrar(SchemaRegistrar):
+    """Registers schemas via the backend interface's ``SchemaRegister``."""
+
+    cdef Domain _domain
+
+    cdef uint64_t _do_register(
+        self, const nvtxPayloadSchemaAttr_t* attr
+    ) except *:
+        cdef uint64_t schema_id = 0
+        cdef Domain domain = self._domain
+        cdef nvtxwResultCode_t rc
+        with domain._session._lock:
+            domain._ensure_valid()
+            rc = domain._backend._iface.SchemaRegister(
+                domain._handle, attr, &schema_id)
+            _check(rc, "SchemaRegister")
+        return schema_id
 
 
 cdef bytes _as_bytes(object s):
@@ -702,6 +723,9 @@ cdef class Domain:
         # 0 is reserved for "no category", so IDs start at 1.
         self._category_ids = itertools.count(1)
         self._user_category_ids = set()
+        cdef _WriterSchemaRegistrar registrar = _WriterSchemaRegistrar()
+        registrar._domain = self
+        self._schema_registrar = registrar
 
     cdef _invalidate(self):
         self._valid = False
@@ -861,7 +885,7 @@ cdef class Domain:
         """
         cdef uint64_t parent_id
         if parent is None:
-            parent_id = NVTX_SCOPE_CURRENT_VM
+            parent_id = NVTX_SCOPE_ROOT
         elif isinstance(parent, PredefinedScope):
             if parent not in (
                 PredefinedScope.NONE,
@@ -903,6 +927,33 @@ cdef class Domain:
         _check(rc, "ScopeRegister")
         return Scope(scope_id, path, self)
 
+    def get_schema(self, dtype):
+        """
+        Get or create a payload schema in this domain.
+
+        Parameters
+        ----------
+        dtype : dtype-like
+            Structured NumPy dtype. Fields may define event roles with
+            :func:`nvtx.numpy_dtype` and its ``entry_kind`` argument.
+
+        Returns
+        -------
+        int
+            The schema ID, which is unique within this domain. Results are
+            cached per domain and dtype.
+
+        Raises
+        ------
+        RuntimeError
+            If numpy is not installed or the domain is no longer valid.
+        """
+        with self._session._lock:
+            self._ensure_valid()
+            # numpy_dtype normalizes the input and raises if numpy is missing.
+            return self._schema_registrar._get_numpy_dtype_schema(
+                PayloadSchemaKey(numpy_dtype(dtype))
+            )
 
 cdef class Stream:
     """

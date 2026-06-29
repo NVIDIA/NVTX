@@ -29,6 +29,7 @@ from libc.stdint cimport (
 
 from nvtx._lib.counters cimport nvtxCounterAttr_t, nvtxCounterBatch_t
 from nvtx._lib.lib cimport (
+    SchemaRegistrar,
     nvtxPayloadData_t,
     nvtxPayloadSchemaAttr_t,
 )
@@ -384,6 +385,7 @@ cdef class Domain:
     cdef dict _categories
     cdef object _category_ids
     cdef set _user_category_ids
+    cdef SchemaRegistrar _schema_registrar
     cdef _invalidate(self)
     cdef _ensure_valid(self)
     cdef _get_event_schema_ids(

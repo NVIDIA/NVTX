@@ -37,6 +37,8 @@ from nvtx._lib import (
     push_range as libnvtx_push_range,
     start_range as libnvtx_start_range,
     end_range as libnvtx_end_range,
+    EntryKind,
+    PayloadEntryType,
     NvtxWarning,
 )
 
@@ -50,15 +52,22 @@ _ENABLED = not os.getenv("NVTX_DISABLE", False)
 
 
 def numpy_dtype(
-    *args, counter_semantics: Optional[CounterSemantics] = None, **kwargs
+    *args,
+    counter_semantics: Optional[CounterSemantics] = None,
+    entry_kind: Optional[EntryKind] = None,
+    entry_type: Optional[PayloadEntryType] = None,
+    **kwargs,
 ) -> "np.dtype":
     """
-    Construct a NumPy dtype, optionally carrying NVTX counter semantics.
+    Construct a NumPy dtype, optionally carrying NVTX payload metadata.
 
     This function accepts the same arguments as :func:`numpy.dtype`. When
     ``counter_semantics`` is provided, the returned dtype carries metadata
     for use as a flat structured counter field. For a top-level scalar counter,
     pass semantics to :meth:`nvtx.Domain.get_counter` instead.
+
+    When ``entry_kind`` is provided, the dtype carries that field role for a
+    range/mark field (or a counter-group timestamp).
 
     Parameters
     ----------
@@ -69,11 +78,21 @@ def numpy_dtype(
         typically a field in a structured counter dtype. If the NVTX metadata
         key is already present in ``metadata``, the existing value is preserved
         and a warning is emitted.
+    entry_kind : EntryKind, optional
+        Role of the field in a range/mark or counter-group schema. The binding
+        adds the ``TIMESTAMP`` role bit for the event timestamp kinds, so the
+        caller states only intent (e.g. ``EntryKind.RANGE_BEGIN``).
+    entry_type : PayloadEntryType, optional
+        Special NVTX interpretation of the field's storage. This distinguishes
+        range IDs, category IDs, packed ARGB colors, scope IDs, and
+        :attr:`PayloadEntryType.REGISTERED_STRING` handles from ordinary
+        integers with the same storage width.
     **kwargs
         Keyword arguments passed to :func:`numpy.dtype`.
 
     Returns
     -------
+    numpy.dtype
         The constructed dtype.
 
     Raises
@@ -83,9 +102,24 @@ def numpy_dtype(
     """
     if np is None:
         raise RuntimeError("Install numpy to construct NVTX NumPy dtypes.")
+    if entry_kind is not None and not isinstance(entry_kind, EntryKind):
+        raise TypeError("entry_kind must be an nvtx.EntryKind or None")
+    if entry_type is not None and not isinstance(entry_type, PayloadEntryType):
+        raise TypeError("entry_type must be an nvtx.PayloadEntryType or None")
 
     base_dtype = np.dtype(*args, **kwargs)
-    if counter_semantics is None:
+    required_dtype = {
+        PayloadEntryType.RANGE_ID: np.dtype(np.uint64),
+        PayloadEntryType.CATEGORY: np.dtype(np.uint32),
+        PayloadEntryType.COLOR_ARGB: np.dtype(np.uint32),
+        PayloadEntryType.SCOPE_ID: np.dtype(np.uint64),
+    }.get(entry_type)
+    if required_dtype is not None and base_dtype != required_dtype:
+        raise TypeError(
+            f"PayloadEntryType.{entry_type.name} requires native "
+            f"{required_dtype.name} storage"
+        )
+    if counter_semantics is None and entry_kind is None and entry_type is None:
         return base_dtype
 
     metadata = dict(base_dtype.metadata or {})
@@ -98,7 +132,9 @@ def numpy_dtype(
         return base_dtype
 
     metadata[NVTX_DTYPE_METADATA_KEY_NAME] = _PayloadMetadata(
-        counter_semantics=counter_semantics
+        counter_semantics=counter_semantics,
+        entry_kind=entry_kind,
+        entry_type=entry_type,
     )
     return np.dtype(base_dtype, metadata=metadata)
 

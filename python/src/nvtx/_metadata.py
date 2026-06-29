@@ -17,7 +17,10 @@
 # See https://nvidia.github.io/NVTX/LICENSE.txt for license information.
 
 import dataclasses
-from typing import Optional
+from typing import TYPE_CHECKING, Optional
+
+if TYPE_CHECKING:
+    from nvtx._lib import EntryKind, PayloadEntryType
 
 try:
     import numpy as np
@@ -35,6 +38,8 @@ class _PayloadMetadata:
     """
 
     counter_semantics: Optional[object] = None
+    entry_kind: Optional["EntryKind"] = None
+    entry_type: Optional["PayloadEntryType"] = None
 
 
 def _nvtx_metadata_from_dtype(dtype):
@@ -54,15 +59,17 @@ def _dtype_metadata_key(dtype):
 
     metadata = _nvtx_metadata_from_dtype(dtype)
     subdtype_key = None
-    if getattr(dtype, "subdtype", None):
-        subdtype_key = _dtype_metadata_key(dtype.subdtype[0])
+    subdtype = dtype.subdtype
+    if subdtype:
+        subdtype_key = _dtype_metadata_key(subdtype[0])
 
     field_keys = ()
-    fields = getattr(dtype, "fields", None)
-    if fields:
+    fields = dtype.fields
+    if fields is not None and dtype.names is not None:
+        # Iterate dtype.names, not dtype.fields to avoid alias duplicates.
         field_keys = tuple(
-            (field_name, _dtype_metadata_key(field[0]))
-            for field_name, field in fields.items()
+            (field_name, _dtype_metadata_key(fields[field_name][0]))
+            for field_name in dtype.names
         )
     return metadata, subdtype_key, field_keys
 
@@ -75,6 +82,7 @@ class PayloadSchemaKey:
 
     dtype: object
     counter_group: bool = False
+    schema_flags: int = 0
     metadata_key: object = dataclasses.field(init=False, repr=False)
 
     def __post_init__(self):

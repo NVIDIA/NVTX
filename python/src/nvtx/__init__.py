@@ -30,6 +30,9 @@ from nvtx.nvtx import (
 )
 
 from nvtx._lib import (
+    EntryKind,
+    EventKind,
+    PayloadEntryType,
     PredefinedScope,
 )
 

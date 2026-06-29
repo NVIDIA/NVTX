@@ -123,6 +123,11 @@ cdef extern from "nvtx3/nvToolsExtPayload.h" nogil:
     cdef int NVTX_PAYLOAD_ENTRY_FLAG_UNUSED
     cdef int NVTX_PAYLOAD_ENTRY_FLAG_ARRAY_FIXED_SIZE
     cdef int NVTX_PAYLOAD_ENTRY_FLAG_ARRAY_LENGTH_INDEX
+    cdef int NVTX_PAYLOAD_ENTRY_FLAG_EVENT_MESSAGE
+    cdef int NVTX_PAYLOAD_ENTRY_FLAG_TIMESTAMP
+    cdef int NVTX_PAYLOAD_ENTRY_FLAG_RANGE_BEGIN
+    cdef int NVTX_PAYLOAD_ENTRY_FLAG_RANGE_END
+    cdef int NVTX_PAYLOAD_ENTRY_FLAG_MARK
 
     cdef int NVTX_PAYLOAD_TYPE_EXT
 
@@ -143,6 +148,11 @@ cdef extern from "nvtx3/nvToolsExtPayload.h" nogil:
     cdef int NVTX_PAYLOAD_ENTRY_TYPE_FLOAT128
     cdef int NVTX_PAYLOAD_ENTRY_TYPE_BYTE
     cdef int NVTX_PAYLOAD_ENTRY_TYPE_CSTRING_UTF32
+    cdef int NVTX_PAYLOAD_ENTRY_TYPE_RANGE_ID
+    cdef int NVTX_PAYLOAD_ENTRY_TYPE_CATEGORY
+    cdef int NVTX_PAYLOAD_ENTRY_TYPE_COLOR_ARGB
+    cdef int NVTX_PAYLOAD_ENTRY_TYPE_SCOPE_ID
+    cdef int NVTX_PAYLOAD_ENTRY_TYPE_NVTX_REGISTERED_STRING_HANDLE
 
     cdef int NVTX_PAYLOAD_SCHEMA_ATTR_FIELD_TYPE
     cdef int NVTX_PAYLOAD_SCHEMA_ATTR_FIELD_NAME
@@ -152,6 +162,14 @@ cdef extern from "nvtx3/nvToolsExtPayload.h" nogil:
     cdef int NVTX_PAYLOAD_SCHEMA_ATTR_FIELD_STATIC_SIZE
 
     cdef int NVTX_PAYLOAD_SCHEMA_FLAG_COUNTER_GROUP
+
+    cdef int NVTX_PAYLOAD_SCHEMA_FLAG_RANGE_PUSHPOP
+    cdef int NVTX_PAYLOAD_SCHEMA_FLAG_RANGE_STARTEND
+    cdef int NVTX_PAYLOAD_SCHEMA_FLAG_MARK
+    cdef int NVTX_PAYLOAD_SCHEMA_FLAG_RANGE_PUSH
+    cdef int NVTX_PAYLOAD_SCHEMA_FLAG_RANGE_POP
+    cdef int NVTX_PAYLOAD_SCHEMA_FLAG_RANGE_START
+    cdef int NVTX_PAYLOAD_SCHEMA_FLAG_RANGE_END
 
     cdef int NVTX_PAYLOAD_SCHEMA_TYPE_STATIC
     cdef int NVTX_PAYLOAD_SCHEMA_TYPE_DYNAMIC
@@ -240,6 +258,15 @@ cdef class EventAttributes:
 
     cdef _set_binary_payload(self, void* payload, uint64_t schema, size_t nbytes, size_t size)
     cdef _clear_payload(self)
+
+
+cdef class SchemaRegistrar:
+    cdef dict _dtype_cache
+    cdef dict _array_cache
+    cdef dict _fixed_cache
+    cdef uint64_t _do_register(
+        self, const nvtxPayloadSchemaAttr_t* attr
+    ) except *
 
 
 cdef class DomainHandle:
