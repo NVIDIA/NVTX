@@ -577,6 +577,9 @@ cdef class SchemaRegistrar:
         if schema_flags:
             schemaAttr.fieldMask |= NVTX_PAYLOAD_SCHEMA_ATTR_FIELD_FLAGS
             schemaAttr.flags = schema_flags
+        # Counter groups and writer event schemas are flat: scalar fields map
+        # to predefined entry types rather than nested per-field sub-schemas.
+        cdef bint flat = counter_group or schema_key.schema_flags != 0
         schemaAttr.type = NVTX_PAYLOAD_SCHEMA_TYPE_STATIC
         # dt.names, not dt.fields: the fields dict also contains title
         # aliases, which would duplicate titled fields in the schema.
@@ -601,7 +604,7 @@ cdef class SchemaRegistrar:
                 field_schema_key = PayloadSchemaKey(field_type)
                 semantics = NULL
 
-                if counter_group and field_type.subdtype:
+                if flat and field_type.subdtype:
                     subdtype, shape = field_type.subdtype
                     if subdtype.type in _dtype_to_entry_type:
                         entry_type = _dtype_to_entry_type[subdtype.type]
@@ -609,8 +612,17 @@ cdef class SchemaRegistrar:
                         flags = NVTX_PAYLOAD_ENTRY_FLAG_ARRAY_FIXED_SIZE
                     else:
                         entry_type = self._get_numpy_dtype_schema(field_schema_key)
-                elif counter_group and field_type.type in _dtype_to_entry_type:
-                    entry_type = _dtype_to_entry_type[field_type.type]
+                elif flat:
+                    entry_type = _entry_type_from_metadata(
+                        field_schema_key.metadata
+                    )
+                    if entry_type is None:
+                        if field_type.type in _dtype_to_entry_type:
+                            entry_type = _dtype_to_entry_type[field_type.type]
+                        else:
+                            entry_type = self._get_numpy_dtype_schema(
+                                field_schema_key
+                            )
                 else:
                     entry_type = self._get_numpy_dtype_schema(field_schema_key)
 

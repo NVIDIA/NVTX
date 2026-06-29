@@ -383,6 +383,7 @@ cdef class Domain:
     cdef object _get_string_cached
     cdef object _get_scope_cached
     cdef dict _categories
+    cdef dict _schemas
     cdef object _category_ids
     cdef set _user_category_ids
     cdef SchemaRegistrar _schema_registrar
@@ -391,6 +392,13 @@ cdef class Domain:
     cdef _get_event_schema_ids(
         self, nvtxwEventHelperSchemaIds_t* schema_ids_out
     )
+
+
+cdef class Schema:
+    cdef Domain _domain
+    cdef uint64_t _schema_id
+    cdef object _dtype
+    cdef object _kind
 
 
 # Signatures of the bin/utf8 nvtxw write functions, grouped by event shape

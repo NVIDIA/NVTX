@@ -25,12 +25,20 @@ import threading
 from pathlib import Path
 
 from nvtx import (
+    EntryKind,
+    EventKind,
+    PayloadEntryType,
     PredefinedScope,
     TimestampType,
     numpy_dtype,
 )
 from nvtx.colors import color_to_hex
-from nvtx._metadata import PayloadSchemaKey
+from nvtx._metadata import PayloadSchemaKey, _nvtx_metadata_from_dtype
+
+try:
+    import numpy as np
+except ImportError:
+    np = None
 
 
 _GET_INTERFACE_SYMBOL_NAME = NVTXW_GET_INTERFACE_SYMBOL_NAME.decode()
@@ -266,8 +274,122 @@ def _release_backend_module(module):
         loaded._refcount -= 1
         if loaded._refcount == 0:
             loaded._finalize()
+def _validate_event_kind(kind, operation, complete_only):
+    """Validate an event kind supported by a custom-schema write path."""
+    if not isinstance(kind, EventKind):
+        raise TypeError("kind must be an nvtx.EventKind")
+
+    complete_kinds = (
+        EventKind.MARK,
+        EventKind.RANGE_PUSHPOP,
+        EventKind.RANGE_STARTEND,
+    )
+    if complete_only:
+        if kind not in complete_kinds:
+            raise ValueError(
+                f"{operation} accepts only the complete-event kinds: "
+                "EventKind.MARK, EventKind.RANGE_PUSHPOP, "
+                "EventKind.RANGE_STARTEND"
+            )
+        return
+
+    if kind in (EventKind.RANGE_START, EventKind.RANGE_END):
+        raise ValueError(
+            f"{operation} cannot write {kind!s}: NumPy dtype metadata "
+            "cannot express the required range ID"
+        )
+    if kind not in complete_kinds + (
+        EventKind.RANGE_PUSH,
+        EventKind.RANGE_POP,
+    ):
+        raise ValueError(f"{operation} does not support {kind!s}")
 
 
+def _validate_native_byte_order(dt, operation):
+    subdtype = dt.subdtype
+    if subdtype is not None:
+        _validate_native_byte_order(subdtype[0], operation)
+        return
+    if dt.fields is not None:
+        for field_name in dt.names:
+            _validate_native_byte_order(dt.fields[field_name][0], operation)
+        return
+    if not dt.isnative:
+        raise TypeError(
+            f"{operation} requires native byte order; got dtype {dt}"
+        )
+
+
+def _validate_event_dtype(kind, dt, operation):
+    """Validate the static layout and event roles of an event dtype."""
+    if dt.fields is None:
+        raise TypeError(f"{operation} requires a structured dtype")
+    _validate_native_byte_order(dt, operation)
+
+    role_fields = {
+        entry_kind: []
+        for entry_kind in (
+            EntryKind.RANGE_BEGIN,
+            EntryKind.RANGE_END,
+            EntryKind.MARK,
+            EntryKind.COUNTER_TIMESTAMP,
+        )
+    }
+    range_id_fields = []
+
+    for field_name in dt.names:
+        field_dtype = dt.fields[field_name][0]
+        if field_dtype.hasobject:
+            raise TypeError(
+                f"{operation} requires fields with self-contained, "
+                f"fixed-width storage; field {field_name!r} uses managed storage"
+            )
+
+        metadata = _nvtx_metadata_from_dtype(field_dtype)
+        entry_kind = getattr(metadata, "entry_kind", None)
+        entry_type = getattr(metadata, "entry_type", None)
+        if entry_type is PayloadEntryType.RANGE_ID:
+            range_id_fields.append(field_name)
+        if entry_kind in role_fields:
+            if entry_type is not None:
+                raise ValueError(
+                    f"{operation} field {field_name!r} cannot combine the "
+                    f"EntryKind.{entry_kind.name} timestamp role with "
+                    f"PayloadEntryType.{entry_type.name}"
+                )
+            role_fields[entry_kind].append(field_name)
+
+    if kind is EventKind.MARK:
+        required_roles = (EntryKind.MARK,)
+    elif kind in (EventKind.RANGE_PUSH, EventKind.RANGE_START):
+        required_roles = (EntryKind.RANGE_BEGIN,)
+    elif kind in (EventKind.RANGE_POP, EventKind.RANGE_END):
+        required_roles = (EntryKind.RANGE_END,)
+    else:
+        required_roles = (EntryKind.RANGE_BEGIN, EntryKind.RANGE_END)
+
+    for entry_kind, fields in role_fields.items():
+        expected_count = 1 if entry_kind in required_roles else 0
+        if len(fields) != expected_count:
+            role = f"EntryKind.{entry_kind.name}"
+            if expected_count:
+                raise ValueError(
+                    f"{operation} dtype for {kind!s} must contain exactly one "
+                    f"{role} field"
+                )
+            raise ValueError(f"{role} is not valid for {kind!s}")
+
+    expected_range_ids = (
+        1 if kind in (EventKind.RANGE_START, EventKind.RANGE_END) else 0
+    )
+    if len(range_id_fields) != expected_range_ids:
+        role = "PayloadEntryType.RANGE_ID"
+        if expected_range_ids:
+            raise ValueError(
+                f"{operation} dtype for {kind!s} must contain exactly one "
+                f"{role} field"
+            )
+        raise ValueError(f"{role} is not valid for {kind!s}")
 cdef class Backend:
     """
     A loaded NVTXW backend: the module handle plus its interface table.
@@ -667,7 +789,9 @@ cdef class RegisteredString:
 
     Pass to the single-event range/mark write methods in place of a ``str``
     message to emit a registered-string handle instead of an inline UTF-8
-    message.  Valid until the owning session ends.
+    message. The numeric :attr:`handle` can also be stored in a payload field
+    annotated with :attr:`nvtx.PayloadEntryType.REGISTERED_STRING`. Valid until
+    the owning session ends.
     """
 
     def __cinit__(self, Domain domain, string, handle_addr):
@@ -678,6 +802,11 @@ cdef class RegisteredString:
 
     def __repr__(self):
         return f"RegisteredString({self._string!r})"
+
+    @property
+    def handle(self):
+        """Opaque numeric handle for a registered-string payload field."""
+        return <uintptr_t>self._handle
 
 
 cdef class Scope:
@@ -706,6 +835,42 @@ cdef class Scope:
         return self._path
 
 
+cdef class Schema:
+    """
+    Domain-owned payload schema handle. Created by :meth:`Domain.get_schema`.
+    Pass event schemas (created with a ``kind``) to
+    :meth:`Stream.write_event` and :meth:`Stream.write_event_batch`.
+    Valid until the owning session ends.
+    """
+
+    def __cinit__(self, Domain domain, uint64_t schema_id, dtype, kind):
+        self._domain = domain
+        self._schema_id = schema_id
+        self._dtype = dtype
+        self._kind = kind
+
+    def __repr__(self):
+        return (
+            f"Schema(schema_id={self._schema_id}, dtype={self._dtype!r}, "
+            f"kind={self._kind})"
+        )
+
+    @property
+    def schema_id(self):
+        """Registered schema ID within the domain."""
+        return self._schema_id
+
+    @property
+    def dtype(self):
+        """The NumPy dtype the schema was registered with."""
+        return self._dtype
+
+    @property
+    def kind(self):
+        """The schema's :class:`EventKind`, or ``None`` if generic."""
+        return self._kind
+
+
 cdef class Domain:
     """
     Session-owned NVTX domain. Created by :meth:`Session.get_domain`.
@@ -720,6 +885,7 @@ cdef class Domain:
         self._get_string_cached = functools.cache(self._register_string)
         self._get_scope_cached = functools.cache(self._register_scope)
         self._categories = {}
+        self._schemas = {}
         # 0 is reserved for "no category", so IDs start at 1.
         self._category_ids = itertools.count(1)
         self._user_category_ids = set()
@@ -927,33 +1093,67 @@ cdef class Domain:
         _check(rc, "ScopeRegister")
         return Scope(scope_id, path, self)
 
-    def get_schema(self, dtype):
+    def get_schema(self, dtype, *, kind=None):
         """
         Get or create a payload schema in this domain.
 
         Parameters
         ----------
         dtype : dtype-like
-            Structured NumPy dtype. Fields may define event roles with
-            :func:`nvtx.numpy_dtype` and its ``entry_kind`` argument.
+            NumPy dtype describing the payload layout. In an event schema,
+            fields define their roles with :func:`nvtx.numpy_dtype` and its
+            ``entry_kind`` argument, and may define specially interpreted
+            integer fields with its ``entry_type`` argument.
+        kind : EventKind, optional
+            Event family described by the schema; required for use with
+            :meth:`Stream.write_event` and :meth:`Stream.write_event_batch`.
+            The ID-correlated :attr:`EventKind.RANGE_START` and
+            :attr:`EventKind.RANGE_END` families require exactly one field
+            annotated with :attr:`PayloadEntryType.RANGE_ID`. ``None`` creates
+            a generic payload schema.
 
         Returns
         -------
-        int
-            The schema ID, which is unique within this domain. Results are
-            cached per domain and dtype.
+        Schema
+            The registered schema. Results are cached per domain, dtype,
+            and kind.
 
         Raises
         ------
         RuntimeError
             If numpy is not installed or the domain is no longer valid.
+        TypeError
+            If ``dtype`` is not dtype-like, or ``kind`` is not an
+            :class:`nvtx.EventKind` or ``None``. For event schemas, if the
+            dtype is not structured, a field uses managed storage or a
+            non-native byte order, or a timestamp role field is not a
+            64-bit integer.
+        ValueError
+            If ``kind`` cannot be described by a dtype, or the dtype's
+            timestamp roles do not match ``kind``.
+        WriterError
+            If the backend fails to register the schema.
         """
+        cdef uint64_t schema_id
+        if kind is not None and not isinstance(kind, EventKind):
+            raise TypeError("kind must be an nvtx.EventKind or None")
         with self._session._lock:
             self._ensure_valid()
             # numpy_dtype normalizes the input and raises if numpy is missing.
-            return self._schema_registrar._get_numpy_dtype_schema(
-                PayloadSchemaKey(numpy_dtype(dtype))
+            dt = numpy_dtype(dtype)
+            schema_key = PayloadSchemaKey(
+                dt, schema_flags=0 if kind is None else kind.value
             )
+            schema = self._schemas.get(schema_key)
+            if schema is None:
+                if kind is not None:
+                    _validate_event_dtype(kind, dt, "an event schema")
+                schema_id = self._schema_registrar._get_numpy_dtype_schema(
+                    schema_key
+                )
+                schema = Schema(self, schema_id, dt, kind)
+                self._schemas[schema_key] = schema
+            return schema
 
 cdef class Stream:
     """
@@ -1398,3 +1598,62 @@ cdef class Stream:
         _check(
             nvtxwRangeEndWrite(self._get_writer(), timestamp, range_id),
             "nvtxwRangeEndWrite")
+
+    def write_event(self, Schema schema not None, row):
+        """
+        Write an event described by a role-annotated dtype schema.
+
+        All event families are supported. The ID-correlated
+        :attr:`EventKind.RANGE_START` and :attr:`EventKind.RANGE_END` schemas
+        include a :attr:`PayloadEntryType.RANGE_ID` field.
+
+        Parameters
+        ----------
+        schema : Schema
+            Event schema returned by :meth:`Domain.get_schema` with a
+            ``kind``, for this stream's domain.
+        row : array-like
+            Values for one row of the schema's dtype, such as a tuple or a
+            NumPy scalar.
+
+        Raises
+        ------
+        RuntimeError
+            If the stream is not open or the backend is closed.
+        TypeError
+            If ``schema`` is not a :class:`Schema`.
+        ValueError
+            If ``schema`` belongs to another domain or is not an event
+            schema, or ``row`` does not contain exactly one event.
+        WriterError
+            If the backend fails to write the event.
+
+        Notes
+        -----
+        Each call converts ``row`` to a contiguous array. For high write
+        rates with a complete-event schema, prefer :meth:`write_event_batch`.
+        """
+        if schema._domain is not self._domain:
+            raise ValueError(
+                "schema is not registered in this stream's domain")
+        if schema._kind is None:
+            raise ValueError(
+                "write_event requires an event schema; pass kind= to "
+                "Domain.get_schema"
+            )
+        self._ensure_writable()
+        payload = np.ascontiguousarray(row, schema._dtype)
+        if payload.size != 1:
+            raise ValueError(
+                f"write_event expects one row of dtype {schema._dtype}; "
+                f"got {payload.size}"
+            )
+
+        cdef nvtxPayloadData_t data
+        data.schemaId = schema._schema_id
+        data.size = payload.nbytes
+        data.payload = <const void*><size_t>payload.ctypes.data
+
+        cdef nvtxwResultCode_t rc = self._backend._iface.EventWrite(
+            self._writer.stream, &data, 1)
+        _check(rc, "EventWrite")
