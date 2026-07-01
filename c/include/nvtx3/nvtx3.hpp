@@ -30,7 +30,7 @@
 
 /* Temporary helper #defines, #undef'ed at end of header */
 #define NVTX3_CPP_VERSION_MAJOR 1
-#define NVTX3_CPP_VERSION_MINOR 1
+#define NVTX3_CPP_VERSION_MINOR 2
 
 /*
  * NVTX C++ header versioning
@@ -119,7 +119,7 @@
      *
      * Not to be confused with the version number of the NVTX core library.
      */
-    #define NVTX3_CPP_INLINED_VERSION_MINOR 1  // NVTX3_CPP_VERSION_MINOR
+    #define NVTX3_CPP_INLINED_VERSION_MINOR 2  // NVTX3_CPP_VERSION_MINOR
   #elif NVTX3_CPP_INLINED_VERSION_MAJOR != NVTX3_CPP_VERSION_MAJOR
     /* Unsupported case -- cannot define unversioned symbols for different major versions
      * in the same translation unit.
@@ -133,7 +133,7 @@
      * redefine the minor version macro to this header's version.
      */
     #undef NVTX3_CPP_INLINED_VERSION_MINOR
-    #define NVTX3_CPP_INLINED_VERSION_MINOR 1  // NVTX3_CPP_VERSION_MINOR
+    #define NVTX3_CPP_INLINED_VERSION_MINOR 2  // NVTX3_CPP_VERSION_MINOR
     // else, already have this version or newer, nothing to do
   #endif
 #endif
