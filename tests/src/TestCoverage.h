@@ -284,6 +284,66 @@ static int RunTestCommon(int argc, const char** argv)
     if (verbose) std::cout << "-------------------------------------\n";
 
     {
+        std::cout << "Range push/pop\n";
+
+        // Global domain
+        event_attributes attr{
+            message{"Hello1"},
+            category{11},
+            payload{5.0f},
+            rgb{1,2,3}};
+        auto p1 = push_range(attr);
+
+        auto p2 = push_range(event_attributes{
+            message{"Hello2"},
+            category{11},
+            payload{5.0f},
+            rgb{0,255,0}});
+
+        auto p3 = push_range(
+            message{"Hello3"},
+            category{11},
+            payload{5.0f},
+            rgb{0,255,0});
+
+        // a_lib domain
+        event_attributes a_attr{
+            message{"a: Hello1"},
+            category{11},
+            payload{5.0f},
+            rgb{1,2,3}};
+        auto p4 = push_range_in<a_lib>(a_attr);
+
+        auto p5 = push_range_in<a_lib>(event_attributes{
+            message{"a: Hello2"},
+            category{11},
+            payload{5.0f},
+            rgb{0,255,0}});
+
+        auto p6 = push_range_in<a_lib>(
+            message{"a: Hello3"},
+            category{11},
+            payload{5.0f},
+            rgb{0,255,0});
+
+        if (verbose) std::cout << p1 << "\n"
+            << p2 << "\n"
+            << p3 << "\n"
+            << p4 << "\n"
+            << p5 << "\n"
+            << p6 << "\n";
+
+        pop_range_in<a_lib>();
+        pop_range_in<a_lib>();
+        pop_range_in<a_lib>();
+
+        pop_range();
+        pop_range();
+        pop_range();
+    }
+    if (verbose) std::cout << "-------------------------------------\n";
+
+    {
         std::cout << "Range start/end and range_handle\n";
 
         // Global domain

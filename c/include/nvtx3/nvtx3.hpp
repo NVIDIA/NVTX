@@ -320,6 +320,29 @@
  * There is extra overhead associated with `unique_range` constructs and therefore use of
  * `nvtx3::scoped_range_in` should be preferred.
  *
+ * \subsection push_pop_range Push/Pop Range
+ *
+ * `nvtx3::push_range_in` and `nvtx3::pop_range_in` manually begin and end a
+ * nested thread range. They wrap `nvtxDomainRangePushEx` and
+ * `nvtxDomainRangePop` for cases where the push and pop cannot share one C++
+ * object lifetime.
+ *
+ * Prefer `nvtx3::scoped_range_in` for normal scoped C++ code. Manual push/pop
+ * ranges are intended for callback-driven code or other control flows where
+ * range begin and end happen in separate scopes on the same thread.
+ *
+ * Example:
+ *
+ * \code{.cpp}
+ * void begin_callback() {
+ *    nvtx3::push_range_in<my_domain>("request");
+ * }
+ *
+ * void end_callback() {
+ *    nvtx3::pop_range_in<my_domain>();
+ * }
+ * \endcode
+ *
  * \section MARKS Marks
  *
  * `nvtx3::mark` annotates an instantaneous point in time with a "marker".
@@ -2699,6 +2722,210 @@ class NVTX3_MAYBE_UNUSED scoped_range_in {
  *
  */
 using scoped_range = scoped_range_in<domain::global>;
+
+/**
+ * @brief Manually begin a nested thread range in a domain.
+ *
+ * This function begins a nested range on the calling thread in the specified
+ * domain. End the range with a matching call to `pop_range_in<D>()` on the same
+ * thread.
+ *
+ * Prefer `nvtx3::scoped_range_in` when a range can be tied to a C++ object
+ * lifetime. Use this manual push/pop API for callback-driven code or other
+ * control flows where the range begin and end happen in separate C++ scopes.
+ *
+ * @warning Manual push/pop ranges are not RAII protected. The caller is
+ * responsible for ensuring each pushed range has exactly one matching pop,
+ * ranges are properly nested, and the matching pop is called on the same
+ * thread.
+ *
+ * Example:
+ * \code{.cpp}
+ * nvtx3::event_attributes attr{"msg", nvtx3::rgb{127,255,0}};
+ * nvtx3::push_range_in<my_domain>(attr);
+ * ...
+ * nvtx3::pop_range_in<my_domain>();
+ * \endcode
+ *
+ * @tparam D Type containing `name` member used to identify the `domain`
+ * to which the range belongs. Else, `domain::global` to indicate that the
+ * global NVTX domain should be used.
+ * @param[in] attr `event_attributes` that describes the desired attributes
+ * of the range.
+ * @return The 0-based level of the range being started, or a negative value
+ * if an error occurs.
+ */
+template <typename D = domain::global>
+inline int push_range_in(event_attributes const& attr) noexcept
+{
+#ifndef NVTX_DISABLE
+  return nvtxDomainRangePushEx(domain::get<D>(), attr.get());
+#else
+  (void)attr;
+  return 0;
+#endif
+}
+
+/**
+ * @brief Manually begin a nested thread range in a domain.
+ *
+ * This overload uses `args...` to construct an `event_attributes` object to
+ * associate with the range. For more detail, see `event_attributes`.
+ *
+ * Prefer `nvtx3::scoped_range_in` when a range can be tied to a C++ object
+ * lifetime. Use this manual push/pop API for callback-driven code or other
+ * control flows where the range begin and end happen in separate C++ scopes.
+ *
+ * @warning Manual push/pop ranges are not RAII protected. The caller is
+ * responsible for ensuring each pushed range has exactly one matching pop,
+ * ranges are properly nested, and the matching pop is called on the same
+ * thread.
+ *
+ * Example:
+ * \code{.cpp}
+ * nvtx3::push_range_in<my_domain>("msg", nvtx3::rgb{127,255,0});
+ * ...
+ * nvtx3::pop_range_in<my_domain>();
+ * \endcode
+ *
+ * @tparam D Type containing `name` member used to identify the `domain`
+ * to which the range belongs. Else, `domain::global` to indicate that the
+ * global NVTX domain should be used.
+ * @param[in] args Variadic parameter pack of the arguments for an `event_attributes`.
+ * @return The 0-based level of the range being started, or a negative value
+ * if an error occurs.
+ */
+template <typename D = domain::global, typename... Args>
+inline int push_range_in(Args const&... args) noexcept
+{
+#ifndef NVTX_DISABLE
+  return push_range_in<D>(event_attributes{args...});
+#else
+  detail::silence_unused(args...);
+  return 0;
+#endif
+}
+
+/**
+ * @brief Manually begin a nested thread range in the global domain.
+ *
+ * This function is equivalent to `nvtx3::push_range_in<>()` and
+ * `nvtx3::push_range_in<nvtx3::domain::global>()`.
+ *
+ * Prefer `nvtx3::scoped_range` when a range can be tied to a C++ object
+ * lifetime. Use this manual push/pop API for callback-driven code or other
+ * control flows where the range begin and end happen in separate C++ scopes.
+ *
+ * @warning Manual push/pop ranges are not RAII protected. The caller is
+ * responsible for ensuring each pushed range has exactly one matching pop,
+ * ranges are properly nested, and the matching pop is called on the same
+ * thread.
+ *
+ * @param[in] attr `event_attributes` that describes the desired attributes
+ * of the range.
+ * @return The 0-based level of the range being started, or a negative value
+ * if an error occurs.
+ */
+inline int push_range(event_attributes const& attr) noexcept
+{
+#ifndef NVTX_DISABLE
+  return push_range_in<domain::global>(attr);
+#else
+  (void)attr;
+  return 0;
+#endif
+}
+
+/**
+ * @brief Manually begin a nested thread range in the global domain.
+ *
+ * This function is equivalent to `nvtx3::push_range_in<>()` and
+ * `nvtx3::push_range_in<nvtx3::domain::global>()`.
+ *
+ * This overload uses `args...` to construct an `event_attributes` object to
+ * associate with the range. For more detail, see `event_attributes`.
+ *
+ * Prefer `nvtx3::scoped_range` when a range can be tied to a C++ object
+ * lifetime. Use this manual push/pop API for callback-driven code or other
+ * control flows where the range begin and end happen in separate C++ scopes.
+ *
+ * @warning Manual push/pop ranges are not RAII protected. The caller is
+ * responsible for ensuring each pushed range has exactly one matching pop,
+ * ranges are properly nested, and the matching pop is called on the same
+ * thread.
+ *
+ * @param[in] args Variadic parameter pack of the arguments for an `event_attributes`.
+ * @return The 0-based level of the range being started, or a negative value
+ * if an error occurs.
+ */
+template <typename... Args>
+inline int push_range(Args const&... args) noexcept
+{
+#ifndef NVTX_DISABLE
+  return push_range_in<domain::global>(args...);
+#else
+  detail::silence_unused(args...);
+  return 0;
+#endif
+}
+
+/**
+ * @brief Manually end the current nested thread range in a domain.
+ *
+ * Ends the innermost range previously started by `push_range_in<D>()` on the
+ * same thread.
+ *
+ * Prefer `nvtx3::scoped_range_in` when a range can be tied to a C++ object
+ * lifetime. Use this manual push/pop API for callback-driven code or other
+ * control flows where the range begin and end happen in separate C++ scopes.
+ *
+ * @warning Manual push/pop ranges are not RAII protected. The caller is
+ * responsible for ensuring each pushed range has exactly one matching pop,
+ * ranges are properly nested, and the matching pop is called on the same
+ * thread.
+ *
+ * @tparam D Type containing `name` member used to identify the `domain`
+ * to which the range belongs. Else, `domain::global` to indicate that the
+ * global NVTX domain should be used.
+ * @return The level of the range being ended, or a negative value if an error
+ * occurs.
+ */
+template <typename D = domain::global>
+inline int pop_range_in() noexcept
+{
+#ifndef NVTX_DISABLE
+  return nvtxDomainRangePop(domain::get<D>());
+#else
+  return 0;
+#endif
+}
+
+/**
+ * @brief Manually end the current nested thread range in the global domain.
+ *
+ * This function is equivalent to `nvtx3::pop_range_in<>()` and
+ * `nvtx3::pop_range_in<nvtx3::domain::global>()`.
+ *
+ * Prefer `nvtx3::scoped_range` when a range can be tied to a C++ object
+ * lifetime. Use this manual push/pop API for callback-driven code or other
+ * control flows where the range begin and end happen in separate C++ scopes.
+ *
+ * @warning Manual push/pop ranges are not RAII protected. The caller is
+ * responsible for ensuring each pushed range has exactly one matching pop,
+ * ranges are properly nested, and the matching pop is called on the same
+ * thread.
+ *
+ * @return The level of the range being ended, or a negative value if an error
+ * occurs.
+ */
+inline int pop_range() noexcept
+{
+#ifndef NVTX_DISABLE
+  return pop_range_in<domain::global>();
+#else
+  return 0;
+#endif
+}
 
 namespace detail {
 

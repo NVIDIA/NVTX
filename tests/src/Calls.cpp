@@ -435,6 +435,49 @@ int RunTest(int /*argc*/, const char** argv)
             CALL(CORE2, DomainRangePop,    hB),
         }, verbose)) return 1;
     }
+
+    {
+        CallbackTester t;
+        constexpr int N = 7;
+        auto hA = reinterpret_cast<nvtxDomainHandle_t>(1);
+
+        auto gPush1 = push_range("Global push 1");
+        auto gPush2 = push_range(event_attributes{"Global push 2", category(123)});
+        auto gPop2 = pop_range();
+        auto gPop1 = pop_range();
+
+        auto dPush1 = push_range_in<a_lib<N>>("Domain push 1");
+        auto dPush2 = push_range_in<a_lib<N>>(event_attributes{"Domain push 2", rgb(0x44, 0x66, 0xBB)});
+        auto dPop2 = pop_range_in<a_lib<N>>();
+        auto dPop1 = pop_range_in<a_lib<N>>();
+
+        bool hasDepthReturnValues = gPush1 > 0 || gPush2 > 0 || gPop2 > 0 || gPop1 > 0 ||
+            dPush1 > 0 || dPush2 > 0 || dPop2 > 0 || dPop1 > 0;
+        if (hasDepthReturnValues &&
+            (gPush1 != 1 || gPush2 != 2 || gPop2 != 2 || gPop1 != 1 ||
+             dPush1 != 1 || dPush2 != 2 || dPop2 != 2 || dPop1 != 1))
+        {
+            if (verbose)
+            {
+                std::cout << "Unexpected push/pop return values: "
+                    << gPush1 << ", " << gPush2 << ", " << gPop2 << ", " << gPop1 << ", "
+                    << dPush1 << ", " << dPush2 << ", " << dPop2 << ", " << dPop1 << "\n";
+            }
+            return 1;
+        }
+
+        if (!t.CallsMatch({
+            CALL(CORE2, DomainRangePushEx, nullptr, event_attributes{"Global push 1"}.get()),
+            CALL(CORE2, DomainRangePushEx, nullptr, event_attributes{"Global push 2", category(123)}.get()),
+            CALL(CORE2, DomainRangePop,    nullptr),
+            CALL(CORE2, DomainRangePop,    nullptr),
+            CALL(CORE2, DomainCreateA,     "LibA"),
+            CALL(CORE2, DomainRangePushEx, hA, event_attributes{"Domain push 1"}.get()),
+            CALL(CORE2, DomainRangePushEx, hA, event_attributes{"Domain push 2", rgb(0x44, 0x66, 0xBB)}.get()),
+            CALL(CORE2, DomainRangePop,    hA),
+            CALL(CORE2, DomainRangePop,    hA),
+        }, verbose)) return 1;
+    }
 #endif
 
     if (verbose) std::cout << "--------- Success!\n";
