@@ -30,6 +30,7 @@ from nvtx.nvtx import (
 )
 
 from nvtx._lib import (
+    BatchOrdering,
     EntryKind,
     EventKind,
     PayloadEntryType,

@@ -227,6 +227,15 @@ class EventKind(enum.Enum):
     RANGE_END = NVTX_PAYLOAD_SCHEMA_FLAG_RANGE_END
 
 
+class BatchOrdering(enum.Enum):
+    """Timestamp ordering within a batch of deferred events or counters."""
+
+    SORTED = NVTX_BATCH_FLAG_TIME_SORTED
+    PARTIALLY_SORTED = NVTX_BATCH_FLAG_TIME_SORTED_PARTIALLY
+    SORTED_PER_SCOPE = NVTX_BATCH_FLAG_TIME_SORTED_PER_SCOPE
+    UNSORTED = NVTX_BATCH_FLAG_UNSORTED
+
+
 _payload_setters = {}
 
 

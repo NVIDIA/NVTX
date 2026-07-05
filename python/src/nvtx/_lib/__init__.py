@@ -22,6 +22,7 @@ from nvtx._lib.lib import (
     dummy_domain,
     RegisteredString,
     EventAttributes,
+    BatchOrdering,
     EntryKind,
     EventKind,
     PayloadEntryType,

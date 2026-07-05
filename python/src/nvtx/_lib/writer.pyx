@@ -25,6 +25,7 @@ import threading
 from pathlib import Path
 
 from nvtx import (
+    BatchOrdering,
     EntryKind,
     EventKind,
     PayloadEntryType,
@@ -39,6 +40,11 @@ try:
     import numpy as np
 except ImportError:
     np = None
+
+try:
+    import pandas as pd
+except ImportError:
+    pd = None
 
 
 _GET_INTERFACE_SYMBOL_NAME = NVTXW_GET_INTERFACE_SYMBOL_NAME.decode()
@@ -220,89 +226,33 @@ cdef uint64_t _resolve_stream_scope_id(
     return _resolve_scope_id(domain, scope)
 
 
-def _canonical_backend_path(path):
-    """Return the canonical registry key and filename for a backend path."""
-    path = Path(os.fsdecode(path)).expanduser().resolve()
-    return os.path.normcase(os.fspath(path))
+def _batch_rows(data, dt):
+    """Return batch data as a flat, contiguous array of ``dt`` rows."""
+    if isinstance(data, np.ndarray):
+        if data.ndim != 1:
+            raise ValueError("batch data must be one-dimensional")
+        return np.ascontiguousarray(data, dtype=dt)
+
+    if pd is not None and isinstance(data, pd.DataFrame):
+        rows = np.empty(len(data), dtype=dt)
+        for name in dt.names:
+            try:
+                column = data[name]
+            except KeyError:
+                raise ValueError(
+                    f"batch data is missing a column for dtype field {name!r}"
+                )
+            rows[name] = column.to_numpy(copy=False)
+        return rows
+
+    return np.fromiter(data, dtype=dt)
 
 
-cdef class _BackendModule:
-    """One canonical backend module shared by all public wrappers."""
-
-    def __cinit__(self, lib):
-        self._iface = NULL
-        self._lib = lib
-        self._refcount = 0
-
-    cdef void _initialize(self) except *:
-        cdef nvtxwGetInterface_t get_interface
-        cdef const nvtxwInterface_v2_t* iface = NULL
-        cdef nvtxwResultCode_t rc
-        get_interface_obj = getattr(
-            self._lib, _GET_INTERFACE_SYMBOL_NAME, None)
-        if get_interface_obj is None:
-            raise WriterError(
-                NVTXW_RESULT_LIBRARY_SYMBOL_MISSING, "load_backend")
-        get_interface_addr = ctypes.cast(
-            get_interface_obj, ctypes.c_void_p).value
-        if not get_interface_addr:
-            raise WriterError(
-                NVTXW_RESULT_LIBRARY_SYMBOL_MISSING, "load_backend")
-        get_interface = \
-            <nvtxwGetInterface_t><void*><uintptr_t>get_interface_addr
-        rc = get_interface(
-            NVTXW_INTERFACE_VERSION, <const void**>&iface)
-        _check(rc, _GET_INTERFACE_SYMBOL_NAME)
-        if iface == NULL:
-            raise WriterError(NVTXW_RESULT_FAILED, _GET_INTERFACE_SYMBOL_NAME)
-        self._iface = iface
-
-    cdef void _finalize(self) except *:
-        self._iface = NULL
-        finalize = getattr(self._lib, _FINALIZE_SYMBOL_NAME, None)
-        if finalize is not None:
-            finalize.restype = None
-            finalize()
-
-
-def _release_backend_module(module):
-    """Drop one wrapper reference and finalize the module at zero."""
-    cdef _BackendModule loaded = module
-    with _BACKEND_MODULES_LOCK:
-        if loaded._refcount <= 0:
-            raise RuntimeError("backend module reference count underflow")
-        loaded._refcount -= 1
-        if loaded._refcount == 0:
-            loaded._finalize()
-def _validate_event_kind(kind, operation, complete_only):
-    """Validate an event kind supported by a custom-schema write path."""
-    if not isinstance(kind, EventKind):
-        raise TypeError("kind must be an nvtx.EventKind")
-
-    complete_kinds = (
-        EventKind.MARK,
-        EventKind.RANGE_PUSHPOP,
-        EventKind.RANGE_STARTEND,
-    )
-    if complete_only:
-        if kind not in complete_kinds:
-            raise ValueError(
-                f"{operation} accepts only the complete-event kinds: "
-                "EventKind.MARK, EventKind.RANGE_PUSHPOP, "
-                "EventKind.RANGE_STARTEND"
-            )
-        return
-
-    if kind in (EventKind.RANGE_START, EventKind.RANGE_END):
-        raise ValueError(
-            f"{operation} cannot write {kind!s}: NumPy dtype metadata "
-            "cannot express the required range ID"
-        )
-    if kind not in complete_kinds + (
-        EventKind.RANGE_PUSH,
-        EventKind.RANGE_POP,
-    ):
-        raise ValueError(f"{operation} does not support {kind!s}")
+_COMPLETE_EVENT_KINDS = (
+    EventKind.MARK,
+    EventKind.RANGE_PUSHPOP,
+    EventKind.RANGE_STARTEND,
+)
 
 
 def _validate_native_byte_order(dt, operation):
@@ -390,6 +340,64 @@ def _validate_event_dtype(kind, dt, operation):
                 f"{role} field"
             )
         raise ValueError(f"{role} is not valid for {kind!s}")
+
+
+def _canonical_backend_path(path):
+    """Return the canonical registry key and filename for a backend path."""
+    path = Path(os.fsdecode(path)).expanduser().resolve()
+    return os.path.normcase(os.fspath(path))
+
+
+cdef class _BackendModule:
+    """One canonical backend module shared by all public wrappers."""
+
+    def __cinit__(self, lib):
+        self._iface = NULL
+        self._lib = lib
+        self._refcount = 0
+
+    cdef void _initialize(self) except *:
+        cdef nvtxwGetInterface_t get_interface
+        cdef const nvtxwInterface_v2_t* iface = NULL
+        cdef nvtxwResultCode_t rc
+        get_interface_obj = getattr(
+            self._lib, _GET_INTERFACE_SYMBOL_NAME, None)
+        if get_interface_obj is None:
+            raise WriterError(
+                NVTXW_RESULT_LIBRARY_SYMBOL_MISSING, "load_backend")
+        get_interface_addr = ctypes.cast(
+            get_interface_obj, ctypes.c_void_p).value
+        if not get_interface_addr:
+            raise WriterError(
+                NVTXW_RESULT_LIBRARY_SYMBOL_MISSING, "load_backend")
+        get_interface = \
+            <nvtxwGetInterface_t><void*><uintptr_t>get_interface_addr
+        rc = get_interface(
+            NVTXW_INTERFACE_VERSION, <const void**>&iface)
+        _check(rc, _GET_INTERFACE_SYMBOL_NAME)
+        if iface == NULL:
+            raise WriterError(NVTXW_RESULT_FAILED, _GET_INTERFACE_SYMBOL_NAME)
+        self._iface = iface
+
+    cdef void _finalize(self) except *:
+        self._iface = NULL
+        finalize = getattr(self._lib, _FINALIZE_SYMBOL_NAME, None)
+        if finalize is not None:
+            finalize.restype = None
+            finalize()
+
+
+def _release_backend_module(module):
+    """Drop one wrapper reference and finalize the module at zero."""
+    cdef _BackendModule loaded = module
+    with _BACKEND_MODULES_LOCK:
+        if loaded._refcount <= 0:
+            raise RuntimeError("backend module reference count underflow")
+        loaded._refcount -= 1
+        if loaded._refcount == 0:
+            loaded._finalize()
+
+
 cdef class Backend:
     """
     A loaded NVTXW backend: the module handle plus its interface table.
@@ -1657,3 +1665,66 @@ cdef class Stream:
         cdef nvtxwResultCode_t rc = self._backend._iface.EventWrite(
             self._writer.stream, &data, 1)
         _check(rc, "EventWrite")
+
+    def write_event_batch(
+        self, Schema schema not None, rows, *,
+        ordering=BatchOrdering.SORTED,
+    ):
+        """
+        Write a batch of complete events.
+
+        Parameters
+        ----------
+        schema : Schema
+            Complete-event schema returned by :meth:`Domain.get_schema`
+            with a ``kind`` of :attr:`EventKind.MARK`,
+            :attr:`EventKind.RANGE_PUSHPOP`, or
+            :attr:`EventKind.RANGE_STARTEND`, for this stream's domain.
+        rows : numpy.ndarray, pandas.DataFrame, or iterable
+            Event rows. DataFrame columns are matched to fields by name.
+        ordering : BatchOrdering, optional
+            Timestamp ordering of the rows. The default is
+            :attr:`BatchOrdering.SORTED`.
+
+        Raises
+        ------
+        RuntimeError
+            If the stream is not open or the backend is closed.
+        TypeError
+            If ``schema`` is not a :class:`Schema` or ``ordering`` is not a
+            :class:`BatchOrdering`.
+        ValueError
+            If ``schema`` belongs to another domain or is not a
+            complete-event schema, or ``rows`` contains no events.
+        WriterError
+            If the backend fails to write the batch.
+        """
+        if not isinstance(ordering, BatchOrdering):
+            raise TypeError("ordering must be an nvtx.BatchOrdering")
+        if schema._domain is not self._domain:
+            raise ValueError(
+                "schema is not registered in this stream's domain")
+        if schema._kind not in _COMPLETE_EVENT_KINDS:
+            raise ValueError(
+                "write_event_batch accepts only complete-event schemas; "
+                "pass kind=EventKind.MARK, EventKind.RANGE_PUSHPOP, or "
+                "EventKind.RANGE_STARTEND to Domain.get_schema"
+            )
+        self._ensure_writable()
+        events = _batch_rows(rows, schema._dtype)
+        if events.size == 0:
+            raise ValueError("batch rows must contain at least one event")
+
+        cdef const void* event_data = <const void*><size_t>events.ctypes.data
+        cdef nvtxEventBatch_t batch
+        batch.eventSchemaId = schema._schema_id
+        batch.size = events.nbytes
+        batch.events = event_data
+        batch.scope = self._scope_id
+        batch.flags = ordering.value
+        batch.flexData = NULL
+        batch.flexDataSize = 0
+        batch.flexDataOffset = 0
+        cdef nvtxwResultCode_t rc = self._backend._iface.EventBatchWrite(
+            self._writer.stream, &batch)
+        _check(rc, "EventBatchWrite")

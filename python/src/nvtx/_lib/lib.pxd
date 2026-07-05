@@ -133,6 +133,11 @@ cdef extern from "nvtx3/nvToolsExtPayload.h" nogil:
 
     cdef int NVTX_SCOPE_NONE
 
+    cdef int NVTX_BATCH_FLAG_TIME_SORTED
+    cdef int NVTX_BATCH_FLAG_TIME_SORTED_PARTIALLY
+    cdef int NVTX_BATCH_FLAG_TIME_SORTED_PER_SCOPE
+    cdef int NVTX_BATCH_FLAG_UNSORTED
+
     cdef int NVTX_PAYLOAD_ENTRY_TYPE_INVALID
     cdef int NVTX_PAYLOAD_ENTRY_TYPE_INT8
     cdef int NVTX_PAYLOAD_ENTRY_TYPE_UINT8
