@@ -128,6 +128,7 @@ cdef extern from "nvtx3/nvToolsExtPayload.h" nogil:
     cdef int NVTX_PAYLOAD_ENTRY_FLAG_RANGE_BEGIN
     cdef int NVTX_PAYLOAD_ENTRY_FLAG_RANGE_END
     cdef int NVTX_PAYLOAD_ENTRY_FLAG_MARK
+    cdef int NVTX_PAYLOAD_ENTRY_FLAG_COUNTER
 
     cdef int NVTX_PAYLOAD_TYPE_EXT
 

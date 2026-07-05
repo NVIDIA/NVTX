@@ -231,6 +231,23 @@ cdef extern from "nvtxw3/nvtxw3.h" nogil:
         void (*reserved[43])()
 
 
+cdef extern from "nvtxw3/nvtxw3_counter_helpers.h" nogil:
+
+    nvtxwResultCode_t nvtxwCounterInt64Write(
+        const nvtxwInterface_v2_t* iface,
+        nvtxwStreamHandle_t stream,
+        int64_t timestamp,
+        uint64_t counterId,
+        int64_t value)
+
+    nvtxwResultCode_t nvtxwCounterFloat64Write(
+        const nvtxwInterface_v2_t* iface,
+        nvtxwStreamHandle_t stream,
+        int64_t timestamp,
+        uint64_t counterId,
+        double value)
+
+
 cdef extern from "nvtxw3/nvtxw3_event_helpers.h" nogil:
 
     ctypedef uint64_t nvtxRangeId_t
@@ -384,6 +401,7 @@ cdef class Domain:
     cdef object _get_scope_cached
     cdef dict _categories
     cdef dict _schemas
+    cdef object _get_counter_cached
     cdef object _category_ids
     cdef set _user_category_ids
     cdef SchemaRegistrar _schema_registrar
@@ -392,6 +410,18 @@ cdef class Domain:
     cdef _get_event_schema_ids(
         self, nvtxwEventHelperSchemaIds_t* schema_ids_out
     )
+
+
+cdef class Counter:
+    cdef Domain _domain
+    cdef object _name
+    cdef object _dtype
+    cdef object _description
+    cdef object _semantics
+    cdef uint64_t _scope_id
+    cdef uint64_t _counter_id
+    cdef uint64_t _schema_id
+    cdef object _timestamp_field
 
 
 cdef class Schema:
@@ -428,6 +458,7 @@ cdef class Stream:
     cdef bint _writer_ready
     cdef nvtxwEventWriter_t _writer
     cdef void _ensure_writable(self) except *
+    cdef void _ensure_counter(self, Counter counter) except *
     cdef nvtxwEventWriter_t* _get_writer(self) except NULL
     cdef object _resolve_event_attrs(
         self,

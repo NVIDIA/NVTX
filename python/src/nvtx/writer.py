@@ -31,6 +31,7 @@ usage.
 
 from nvtx._lib.writer import (
     Backend,
+    Counter,
     Domain,
     PredefinedScope,
     RegisteredString,
@@ -47,6 +48,7 @@ from nvtx._lib.writer import (
 
 __all__ = [
     "Backend",
+    "Counter",
     "Domain",
     "PredefinedScope",
     "RegisteredString",

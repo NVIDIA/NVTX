@@ -650,7 +650,14 @@ cdef class SchemaRegistrar:
                     )
                     semantics = &semanticsEntries[i].header
 
-                flags |= _entry_flags_from_metadata(field_schema_key.metadata)
+                metadata_flags = _entry_flags_from_metadata(
+                    field_schema_key.metadata
+                )
+                flags |= metadata_flags
+                if counter_group and not (
+                    metadata_flags & NVTX_PAYLOAD_ENTRY_FLAG_TIMESTAMP
+                ):
+                    flags |= NVTX_PAYLOAD_ENTRY_FLAG_COUNTER
 
                 name = field_name.encode()
                 names.append(name)
