@@ -43,6 +43,7 @@ from nvtx._lib import (
 )
 
 from nvtx._lib.counters import CounterSemantics
+from nvtx._dtype_validation import _validate_entry_storage
 from nvtx._metadata import NVTX_DTYPE_METADATA_KEY_NAME, _PayloadMetadata
 
 
@@ -79,9 +80,8 @@ def numpy_dtype(
         key is already present in ``metadata``, the existing value is preserved
         and a warning is emitted.
     entry_kind : EntryKind, optional
-        Role of the field in a range/mark or counter-group schema. The binding
-        adds the ``TIMESTAMP`` role bit for the event timestamp kinds, so the
-        caller states only intent (e.g. ``EntryKind.RANGE_BEGIN``).
+        Role of the field in a range/mark or counter-group schema.
+        Timestamp roles require 64-bit integer storage.
     entry_type : PayloadEntryType, optional
         Special NVTX interpretation of the field's storage. This distinguishes
         range IDs, category IDs, packed ARGB colors, scope IDs, and
@@ -97,6 +97,9 @@ def numpy_dtype(
 
     Raises
     ------
+    TypeError
+        If an entry role or type is invalid or incompatible with the dtype's
+        storage.
     RuntimeError
         If NumPy is not installed.
     """
@@ -108,17 +111,8 @@ def numpy_dtype(
         raise TypeError("entry_type must be an nvtx.PayloadEntryType or None")
 
     base_dtype = np.dtype(*args, **kwargs)
-    required_dtype = {
-        PayloadEntryType.RANGE_ID: np.dtype(np.uint64),
-        PayloadEntryType.CATEGORY: np.dtype(np.uint32),
-        PayloadEntryType.COLOR_ARGB: np.dtype(np.uint32),
-        PayloadEntryType.SCOPE_ID: np.dtype(np.uint64),
-    }.get(entry_type)
-    if required_dtype is not None and base_dtype != required_dtype:
-        raise TypeError(
-            f"PayloadEntryType.{entry_type.name} requires native "
-            f"{required_dtype.name} storage"
-        )
+    _validate_entry_storage(base_dtype, entry_kind)
+    _validate_entry_storage(base_dtype, entry_type)
     if counter_semantics is None and entry_kind is None and entry_type is None:
         return base_dtype
 
