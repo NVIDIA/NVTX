@@ -55,7 +55,7 @@ jobs:
           - runner: macos-latest
             rv: 1.77.0
     steps:
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@v7
       - uses: actions/cache@v5
         with:
           path: ${{ env.CARGO_CACHE_PATH }}
@@ -78,7 +78,7 @@ jobs:
       matrix:
         runner: [ubuntu-latest, windows-latest, macos-latest]
     steps:
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@v7
       - uses: actions/cache@v5
         with:
           path: ${{ env.CARGO_CACHE_PATH }}
@@ -98,7 +98,7 @@ jobs:
       matrix:
         runner: [ubuntu-latest, windows-latest, macos-latest]
     steps:
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@v7
       - run: cargo fmt --all -- --check
 
   check:
@@ -110,7 +110,7 @@ jobs:
         runner: [ubuntu-latest, windows-latest, macos-latest]
         f: [--all-features, --no-default-features]
     steps:
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@v7
       - uses: actions/cache@v5
         with:
           path: ${{ env.CARGO_CACHE_PATH }}
