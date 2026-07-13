@@ -56,7 +56,7 @@ jobs:
             rv: 1.77.0
     steps:
       - uses: actions/checkout@v7
-      - uses: actions/cache@v5
+      - uses: actions/cache@v6
         with:
           path: ${{ env.CARGO_CACHE_PATH }}
           key: "\
@@ -79,7 +79,7 @@ jobs:
         runner: [ubuntu-latest, windows-latest, macos-latest]
     steps:
       - uses: actions/checkout@v7
-      - uses: actions/cache@v5
+      - uses: actions/cache@v6
         with:
           path: ${{ env.CARGO_CACHE_PATH }}
           key: "\
@@ -111,7 +111,7 @@ jobs:
         f: [--all-features, --no-default-features]
     steps:
       - uses: actions/checkout@v7
-      - uses: actions/cache@v5
+      - uses: actions/cache@v6
         with:
           path: ${{ env.CARGO_CACHE_PATH }}
           key: "\
