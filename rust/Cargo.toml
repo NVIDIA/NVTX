@@ -12,8 +12,10 @@ rust-version = "1.77.0"
 description = "NVIDIA Tools Extension SDK"
 repository = "https://github.com/NVIDIA/NVTX"
 readme = "README.md"
-publish = false
+publish = true
 license = "Apache-2.0 WITH LLVM-exception"
+keywords = ["cuda", "nsight", "nvidia", "nvtx", "profiling"]
+categories = ["api-bindings", "development-tools::profiling", "no-std"]
 
 [workspace.lints.clippy]
 all = { level = "deny", priority = -1 }
@@ -64,6 +66,8 @@ repository.workspace = true
 readme.workspace = true
 publish.workspace = true
 license.workspace = true
+keywords.workspace = true
+categories.workspace = true
 
 [lib]
 name = "nvtx"
