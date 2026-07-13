@@ -7,7 +7,7 @@ use crate::TypeValueEncodable;
 /// Identifiers used for Generic resources
 pub enum GenericIdentifier {
     /// Generic pointer
-    Pointer(*const ::std::os::raw::c_void),
+    Pointer(*const core::ffi::c_void),
     /// Generic handle
     Handle(u64),
     /// Generic thread native
@@ -52,7 +52,7 @@ impl TypeValueEncodable for GenericIdentifier {
     }
 }
 
-#[cfg(test)]
+#[cfg(all(test, feature = "std"))]
 mod tests {
 
     use super::*;
@@ -60,7 +60,8 @@ mod tests {
     #[test]
     fn test_identifier_pointer() {
         let dummy = ();
-        let ptr = std::ptr::addr_of!(dummy) as *const std::os::raw::c_void;
+        // CAST: Raw pointer retyping has no `From`; use pointer `.cast()` for this test value.
+        let ptr = std::ptr::addr_of!(dummy).cast::<std::os::raw::c_void>();
         let x = GenericIdentifier::Pointer(ptr);
         let i = Identifier::from(x);
         assert!(matches!(i, Identifier::Generic(GenericIdentifier::Pointer(p)) if p == ptr));
@@ -93,10 +94,12 @@ mod tests {
     #[test]
     fn test_encode_pointer() {
         let dummy = ();
-        let ptr = std::ptr::addr_of!(dummy) as *const std::os::raw::c_void;
+        // CAST: Raw pointer retyping has no `From`; use pointer `.cast()` for this test value.
+        let ptr = std::ptr::addr_of!(dummy).cast::<std::os::raw::c_void>();
         let x = GenericIdentifier::Pointer(ptr);
         let (t, v) = x.encode();
         assert_eq!(t, nvtx_sys::resource_type::GENERIC_POINTER);
+        // SAFETY: The pointer resource type is asserted above, so reading `pValue` is valid.
         unsafe {
             assert!(matches!(v, nvtx_sys::ResourceAttributesIdentifier { pValue: p } if p == ptr));
         }
@@ -108,6 +111,7 @@ mod tests {
         let x = GenericIdentifier::Handle(val);
         let (t, v) = x.encode();
         assert_eq!(t, nvtx_sys::resource_type::GENERIC_HANDLE);
+        // SAFETY: The handle resource type is asserted above, so reading `ullValue` is valid.
         unsafe {
             assert!(
                 matches!(v, nvtx_sys::ResourceAttributesIdentifier { ullValue: v } if v == val)
@@ -121,6 +125,7 @@ mod tests {
         let x = GenericIdentifier::NativeThread(val);
         let (t, v) = x.encode();
         assert_eq!(t, nvtx_sys::resource_type::GENERIC_THREAD_NATIVE);
+        // SAFETY: The native thread type is asserted above, so reading `ullValue` is valid.
         unsafe {
             assert!(
                 matches!(v, nvtx_sys::ResourceAttributesIdentifier { ullValue: v } if v == val)
@@ -134,6 +139,7 @@ mod tests {
         let x = GenericIdentifier::PosixThread(val);
         let (t, v) = x.encode();
         assert_eq!(t, nvtx_sys::resource_type::GENERIC_THREAD_POSIX);
+        // SAFETY: The POSIX thread type is asserted above, so reading `ullValue` is valid.
         unsafe {
             assert!(
                 matches!(v, nvtx_sys::ResourceAttributesIdentifier { ullValue: v } if v == val)

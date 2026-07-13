@@ -10,21 +10,21 @@ use crate::{
 #[cfg(not(target_os = "macos"))]
 use crate::native_types::{pthread_barrier_t, pthread_spinlock_t};
 
-/// Identifiers used for PThread resources
+/// Identifiers used for `PThread` resources
 pub enum PThreadIdentifier {
-    /// PThread mutex
+    /// `PThread` mutex
     Mutex(*const pthread_mutex_t),
-    /// PThread condition_variable
+    /// `PThread` `condition_variable`
     Condition(*const pthread_cond_t),
-    /// PThread rwlock
+    /// `PThread` rwlock
     RWLock(*const pthread_rwlock_t),
     #[cfg(not(target_os = "macos"))]
-    /// PThread barrier
+    /// `PThread` barrier
     Barrier(*const pthread_barrier_t),
     #[cfg(not(target_os = "macos"))]
-    /// PThread spinlock
+    /// `PThread` spinlock
     Spinlock(*const pthread_spinlock_t),
-    /// PThread once
+    /// `PThread` once
     Once(*const pthread_once_t),
 }
 
@@ -74,7 +74,7 @@ impl TypeValueEncodable for PThreadIdentifier {
     }
 }
 
-#[cfg(test)]
+#[cfg(all(test, feature = "std"))]
 mod tests {
 
     use std::os::raw::c_void;
@@ -83,8 +83,7 @@ mod tests {
 
     #[test]
     fn test_identifier_mutex() {
-        let dummy = ();
-        let ptr = std::ptr::addr_of!(dummy) as *const pthread_mutex_t;
+        let ptr: *const pthread_mutex_t = std::ptr::null();
         let x = PThreadIdentifier::Mutex(ptr);
         let i = Identifier::from(x);
         assert!(
@@ -94,8 +93,7 @@ mod tests {
 
     #[test]
     fn test_identifier_cv() {
-        let dummy = ();
-        let ptr = std::ptr::addr_of!(dummy) as *const pthread_cond_t;
+        let ptr: *const pthread_cond_t = std::ptr::null();
         let x = PThreadIdentifier::Condition(ptr);
         let i = Identifier::from(x);
         assert!(
@@ -106,8 +104,7 @@ mod tests {
     #[cfg(not(target_os = "macos"))]
     #[test]
     fn test_identifier_barrier() {
-        let dummy = ();
-        let ptr = std::ptr::addr_of!(dummy) as *const pthread_barrier_t;
+        let ptr: *const pthread_barrier_t = std::ptr::null();
         let x = PThreadIdentifier::Barrier(ptr);
         let i = Identifier::from(x);
         assert!(
@@ -117,8 +114,7 @@ mod tests {
 
     #[test]
     fn test_identifier_rwlock() {
-        let dummy = ();
-        let ptr = std::ptr::addr_of!(dummy) as *const pthread_rwlock_t;
+        let ptr: *const pthread_rwlock_t = std::ptr::null();
         let x = PThreadIdentifier::RWLock(ptr);
         let i = Identifier::from(x);
         assert!(
@@ -129,8 +125,7 @@ mod tests {
     #[cfg(not(target_os = "macos"))]
     #[test]
     fn test_identifier_spinlock() {
-        let dummy = ();
-        let ptr = std::ptr::addr_of!(dummy) as *const pthread_spinlock_t;
+        let ptr: *const pthread_spinlock_t = std::ptr::null();
         let x = PThreadIdentifier::Spinlock(ptr);
         let i = Identifier::from(x);
         assert!(
@@ -140,8 +135,7 @@ mod tests {
 
     #[test]
     fn test_identifier_once() {
-        let dummy = ();
-        let ptr = std::ptr::addr_of!(dummy) as *const pthread_once_t;
+        let ptr: *const pthread_once_t = std::ptr::null();
         let x = PThreadIdentifier::Once(ptr);
         let i = Identifier::from(x);
         assert!(
@@ -151,28 +145,28 @@ mod tests {
 
     #[test]
     fn test_encode_mutex() {
-        let dummy = ();
-        let ptr = std::ptr::addr_of!(dummy) as *const pthread_mutex_t;
+        let ptr: *const pthread_mutex_t = std::ptr::null();
         let x = PThreadIdentifier::Mutex(ptr);
         let (t, v) = x.encode();
         assert_eq!(t, nvtx_sys::resource_type::PTHREAD_MUTEX);
+        // SAFETY: The mutex resource type is asserted above, so reading `pValue` is valid.
         unsafe {
             assert!(
-                matches!(v, nvtx_sys::ResourceAttributesIdentifier { pValue: p } if std::ptr::eq(p, ptr as *const c_void))
+                matches!(v, nvtx_sys::ResourceAttributesIdentifier { pValue: p } if std::ptr::eq(p, ptr.cast::<c_void>()))
             );
         }
     }
 
     #[test]
     fn test_encode_cv() {
-        let dummy = ();
-        let ptr = std::ptr::addr_of!(dummy) as *const pthread_cond_t;
+        let ptr: *const pthread_cond_t = std::ptr::null();
         let x = PThreadIdentifier::Condition(ptr);
         let (t, v) = x.encode();
         assert_eq!(t, nvtx_sys::resource_type::PTHREAD_CONDITION);
+        // SAFETY: The condition resource type is asserted above, so reading `pValue` is valid.
         unsafe {
             assert!(
-                matches!(v, nvtx_sys::ResourceAttributesIdentifier { pValue: p } if std::ptr::eq(p, ptr as *const c_void))
+                matches!(v, nvtx_sys::ResourceAttributesIdentifier { pValue: p } if std::ptr::eq(p, ptr.cast::<c_void>()))
             );
         }
     }
@@ -180,28 +174,28 @@ mod tests {
     #[cfg(not(target_os = "macos"))]
     #[test]
     fn test_encode_barrier() {
-        let dummy = ();
-        let ptr = std::ptr::addr_of!(dummy) as *const pthread_barrier_t;
+        let ptr: *const pthread_barrier_t = std::ptr::null();
         let x = PThreadIdentifier::Barrier(ptr);
         let (t, v) = x.encode();
         assert_eq!(t, nvtx_sys::resource_type::PTHREAD_BARRIER);
+        // SAFETY: The barrier resource type is asserted above, so reading `pValue` is valid.
         unsafe {
             assert!(
-                matches!(v, nvtx_sys::ResourceAttributesIdentifier { pValue: p } if std::ptr::eq(p, ptr as *const c_void))
+                matches!(v, nvtx_sys::ResourceAttributesIdentifier { pValue: p } if std::ptr::eq(p, ptr.cast::<c_void>()))
             );
         }
     }
 
     #[test]
     fn test_encode_rwlock() {
-        let dummy = ();
-        let ptr = std::ptr::addr_of!(dummy) as *const pthread_rwlock_t;
+        let ptr: *const pthread_rwlock_t = std::ptr::null();
         let x = PThreadIdentifier::RWLock(ptr);
         let (t, v) = x.encode();
         assert_eq!(t, nvtx_sys::resource_type::PTHREAD_RWLOCK);
+        // SAFETY: The rwlock resource type is asserted above, so reading `pValue` is valid.
         unsafe {
             assert!(
-                matches!(v, nvtx_sys::ResourceAttributesIdentifier { pValue: p } if std::ptr::eq(p, ptr as *const c_void))
+                matches!(v, nvtx_sys::ResourceAttributesIdentifier { pValue: p } if std::ptr::eq(p, ptr.cast::<c_void>()))
             );
         }
     }
@@ -209,28 +203,28 @@ mod tests {
     #[cfg(not(target_os = "macos"))]
     #[test]
     fn test_encode_spinlock() {
-        let dummy = ();
-        let ptr = std::ptr::addr_of!(dummy) as *const pthread_spinlock_t;
+        let ptr: *const pthread_spinlock_t = std::ptr::null();
         let x = PThreadIdentifier::Spinlock(ptr);
         let (t, v) = x.encode();
         assert_eq!(t, nvtx_sys::resource_type::PTHREAD_SPINLOCK);
+        // SAFETY: The spinlock resource type is asserted above, so reading `pValue` is valid.
         unsafe {
             assert!(
-                matches!(v, nvtx_sys::ResourceAttributesIdentifier { pValue: p } if std::ptr::eq(p, ptr as *const c_void))
+                matches!(v, nvtx_sys::ResourceAttributesIdentifier { pValue: p } if std::ptr::eq(p, ptr.cast::<c_void>()))
             );
         }
     }
 
     #[test]
     fn test_encode_once() {
-        let dummy = ();
-        let ptr = std::ptr::addr_of!(dummy) as *const pthread_once_t;
+        let ptr: *const pthread_once_t = std::ptr::null();
         let x = PThreadIdentifier::Once(ptr);
         let (t, v) = x.encode();
         assert_eq!(t, nvtx_sys::resource_type::PTHREAD_ONCE);
+        // SAFETY: The once resource type is asserted above, so reading `pValue` is valid.
         unsafe {
             assert!(
-                matches!(v, nvtx_sys::ResourceAttributesIdentifier { pValue: p } if std::ptr::eq(p, ptr as *const c_void))
+                matches!(v, nvtx_sys::ResourceAttributesIdentifier { pValue: p } if std::ptr::eq(p, ptr.cast::<c_void>()))
             );
         }
     }

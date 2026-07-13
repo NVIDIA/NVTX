@@ -1,14 +1,15 @@
 // SPDX-FileCopyrightText: Copyright (c) 2025-2026 NVIDIA CORPORATION & AFFILIATES. All rights reserved.
 // SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception
 
-#[cfg(test)]
-use crate::{common::CategoryEncodable, Color, Payload, TypeValueEncodable};
+#[cfg(all(test, feature = "std"))]
+use crate::{common::CategoryEncodable, Color, Payload, Str, TypeValueEncodable};
 use widestring::{WideCStr, WideCString};
 
 /// Utility struct for common test assertions and helpers.
 pub struct TestUtils;
 
-#[cfg(test)]
+#[cfg(all(test, feature = "std"))]
+#[allow(clippy::missing_panics_doc, clippy::panic)]
 impl TestUtils {
     /// Assert that a message encodes to ASCII correctly
     pub fn assert_message_ascii_encoding<T>(message: &T, expected_str: &str)
@@ -17,10 +18,11 @@ impl TestUtils {
     {
         let (t, v) = message.encode();
         assert_eq!(t, nvtx_sys::MessageType::NVTX_MESSAGE_TYPE_ASCII);
-        let expected_cstr = std::ffi::CString::new(expected_str).unwrap();
+        let expected_message_cstr = std::ffi::CString::new(expected_str).unwrap();
+        // SAFETY: The ASCII message type is checked above, so reading `ascii` is valid.
         unsafe {
             assert!(
-                matches!(v, nvtx_sys::MessageValue{ ascii: p } if std::ffi::CStr::from_ptr(p) == expected_cstr.as_c_str())
+                matches!(v, nvtx_sys::MessageValue{ ascii: p } if std::ffi::CStr::from_ptr(p) == expected_message_cstr.as_c_str())
             );
         }
     }
@@ -32,6 +34,7 @@ impl TestUtils {
     {
         let (t, v) = message.encode();
         assert_eq!(t, nvtx_sys::MessageType::NVTX_MESSAGE_TYPE_UNICODE);
+        // SAFETY: The Unicode message type is checked above, so reading `unicode` is valid.
         unsafe {
             assert!(
                 matches!(v, nvtx_sys::MessageValue{ unicode: p } if WideCStr::from_ptr_str(p.cast()) == WideCString::from_str(expected_str).unwrap())
@@ -66,15 +69,15 @@ impl TestUtils {
 
     /// Assert that domain string registration works correctly
     pub fn assert_domain_string_registration(domain: &crate::Domain, name: &str) {
-        let registered = domain.register_string(name);
-        let registered2 = domain.register_string(name);
+        let registered = domain.register_string(Str::from_str_lossy(name));
+        let registered2 = domain.register_string(Str::from_str_lossy(name));
         assert_eq!(registered, registered2); // Should be cached
     }
 
     /// Assert that domain category registration works correctly
     pub fn assert_domain_category_registration(domain: &crate::Domain, name: &str) {
-        let registered = domain.register_category(name);
-        let registered2 = domain.register_category(name);
+        let registered = domain.register_category(Str::from_str_lossy(name));
+        let registered2 = domain.register_category(Str::from_str_lossy(name));
         assert_eq!(registered, registered2); // Should be cached
     }
 

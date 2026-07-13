@@ -2,7 +2,7 @@
 // SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception
 
 use crate::{common::CategoryEncodable, Str};
-use std::sync::atomic::{AtomicU32, Ordering};
+use core::sync::atomic::{AtomicU32, Ordering};
 
 /// Represents a category for use with mark and range grouping.
 ///
@@ -36,21 +36,25 @@ impl CategoryEncodable for Category {
     }
 }
 
-#[cfg(test)]
+#[cfg(all(test, feature = "std"))]
 mod tests {
     use super::*;
     use crate::common::TestUtils;
 
+    fn lossy_str(value: &str) -> Str {
+        Str::from_str_lossy(value)
+    }
+
     #[test]
     fn test_unique_categories() {
-        let cat1 = Category::new("category 1");
-        let cat2 = Category::new("category 1");
+        let cat1 = Category::new(lossy_str("category 1"));
+        let cat2 = Category::new(lossy_str("category 1"));
         assert_ne!(cat1, cat2);
     }
 
     #[test]
     fn test_category_encoding() {
-        let cat = Category::new("test category");
+        let cat = Category::new(lossy_str("test category"));
         TestUtils::assert_category_encoding(&cat, cat.id);
     }
 }

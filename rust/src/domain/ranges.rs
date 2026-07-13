@@ -1,7 +1,7 @@
 // SPDX-FileCopyrightText: Copyright (c) 2025-2026 NVIDIA CORPORATION & AFFILIATES. All rights reserved.
 // SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception
 
-use std::marker::PhantomData;
+use core::marker::PhantomData;
 
 use super::EventArgument;
 use crate::Domain;
@@ -9,7 +9,7 @@ use crate::Domain;
 /// A RAII-like object for modeling process-wide Ranges within a Domain.
 #[derive(Debug)]
 pub struct Range<'a> {
-    pub(super) id: nvtx_sys::RangeId,
+    pub(super) id: Option<nvtx_sys::RangeId>,
     pub(super) domain: &'a Domain,
 }
 
@@ -20,7 +20,7 @@ impl<'a> Range<'a> {
 
     fn new_from_arg_with_domain(arg: impl Into<EventArgument<'a>>, domain: &'a Domain) -> Self {
         Range {
-            id: domain.range_start(arg),
+            id: Some(domain.range_start(arg)),
             domain,
         }
     }
@@ -28,7 +28,9 @@ impl<'a> Range<'a> {
 
 impl Drop for Range<'_> {
     fn drop(&mut self) {
-        self.domain.range_end(self.id);
+        if let Some(id) = self.id {
+            self.domain.range_end(id);
+        }
     }
 }
 
@@ -36,6 +38,7 @@ impl Drop for Range<'_> {
 #[derive(Debug)]
 pub struct LocalRange<'a> {
     pub(super) domain: &'a Domain,
+    pub(super) active: bool,
     // prevent Sync + Send
     _phantom: PhantomData<*mut i32>,
 }
@@ -49,6 +52,7 @@ impl<'a> LocalRange<'a> {
         nvtx_sys::domain_range_push_ex(domain.handle, &arg.encode());
         LocalRange {
             domain,
+            active: true,
             _phantom: PhantomData,
         }
     }
@@ -56,6 +60,8 @@ impl<'a> LocalRange<'a> {
 
 impl Drop for LocalRange<'_> {
     fn drop(&mut self) {
-        nvtx_sys::domain_range_pop(self.domain.handle);
+        if self.active {
+            nvtx_sys::domain_range_pop(self.domain.handle);
+        }
     }
 }

@@ -1,8 +1,11 @@
 // SPDX-FileCopyrightText: Copyright (c) 2025-2026 NVIDIA CORPORATION & AFFILIATES. All rights reserved.
 // SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception
 
-use crate::{domain::RegisteredString, Str, TypeValueEncodable};
-use std::ffi::{CStr, CString};
+use crate::{domain::RegisteredString, NvtxError, Str, TypeValueEncodable};
+use alloc::borrow::ToOwned;
+use alloc::ffi::CString;
+use alloc::string::String;
+use core::ffi::CStr;
 use widestring::{WideCStr, WideCString};
 
 /// Generic message type that can be used in both global and domain contexts
@@ -25,24 +28,32 @@ impl<T> From<Str> for GenericMessage<T> {
     }
 }
 
+impl<T> GenericMessage<T> {
+    /// Convert an owned Rust string into a message, removing interior NULs.
+    ///
+    /// Use this constructor only when losing interior NULs is the intended
+    /// behavior.
+    #[must_use]
+    pub fn from_string_lossy(value: String) -> Self {
+        Self::from(Str::from_string_lossy(value))
+    }
+
+    /// Convert a borrowed Rust string into a message, removing interior NULs.
+    ///
+    /// Use this constructor only when losing interior NULs is the intended
+    /// behavior.
+    #[must_use]
+    pub fn from_str_lossy(value: &str) -> Self {
+        Self::from(Str::from_str_lossy(value))
+    }
+}
+
 impl<'a, T> From<RegisteredString<'a>> for GenericMessage<T>
 where
     T: From<RegisteredString<'a>>,
 {
     fn from(v: RegisteredString<'a>) -> Self {
         Self::Registered(v.into())
-    }
-}
-
-impl<T> From<String> for GenericMessage<T> {
-    fn from(value: String) -> Self {
-        GenericMessage::from(Str::from(value))
-    }
-}
-
-impl<T> From<&str> for GenericMessage<T> {
-    fn from(value: &str) -> Self {
-        GenericMessage::from(Str::from(value))
     }
 }
 
@@ -76,7 +87,13 @@ trait Encodable {
 
 impl Encodable for () {
     fn encode(&self) -> (nvtx_sys::MessageType, nvtx_sys::MessageValue) {
-        unreachable!("Registered strings are not valid in the global context")
+        debug_assert!(false, "{}", NvtxError::RegisteredStringInGlobalContext);
+        (
+            nvtx_sys::MessageType::NVTX_MESSAGE_UNKNOWN,
+            nvtx_sys::MessageValue {
+                ascii: core::ptr::null(),
+            },
+        )
     }
 }
 
@@ -118,7 +135,7 @@ where
         (
             Self::Type::NVTX_MESSAGE_UNKNOWN,
             Self::Value {
-                ascii: std::ptr::null(),
+                ascii: core::ptr::null(),
             },
         )
     }

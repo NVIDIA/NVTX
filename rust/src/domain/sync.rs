@@ -1,7 +1,7 @@
 // SPDX-FileCopyrightText: Copyright (c) 2024-2026 NVIDIA CORPORATION & AFFILIATES. All rights reserved.
 // SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception
 
-use std::marker::PhantomData;
+use core::marker::PhantomData;
 
 /// User Defined Synchronization Object
 pub struct UserSync<'a> {
@@ -13,8 +13,8 @@ impl<'a> UserSync<'a> {
     /// Signal to tools that an attempt to acquire a user defined synchronization object.
     ///
     /// ```
-    /// let d = nvtx::Domain::new("domain");
-    /// let us = d.user_sync("custom object");
+    /// let d = nvtx::Domain::new(c"domain");
+    /// let us = d.user_sync(c"custom object");
     /// // ...
     /// let started = us.acquire();
     /// ```
@@ -27,7 +27,7 @@ impl<'a> UserSync<'a> {
 
 impl Drop for UserSync<'_> {
     fn drop(&mut self) {
-        nvtx_sys::domain_syncuser_destroy(self.handle)
+        nvtx_sys::domain_syncuser_destroy(self.handle);
     }
 }
 
@@ -40,8 +40,8 @@ impl<'a> UserSyncAcquireStart<'a> {
     /// Signal to tools of failure in acquiring a user defined synchronization object.
     ///
     /// ```
-    /// let d = nvtx::Domain::new("domain");
-    /// let us = d.user_sync("custom object");
+    /// let d = nvtx::Domain::new(c"domain");
+    /// let us = d.user_sync(c"custom object");
     /// // ...
     /// let started = us.acquire();
     /// // ...
@@ -56,8 +56,8 @@ impl<'a> UserSyncAcquireStart<'a> {
     /// Signal to tools of success in acquiring a user defined synchronization object.
     ///
     /// ```
-    /// let d = nvtx::Domain::new("domain");
-    /// let us = d.user_sync("custom object");
+    /// let d = nvtx::Domain::new(c"domain");
+    /// let us = d.user_sync(c"custom object");
     /// // ...
     /// let started = us.acquire();
     /// // ...
@@ -81,8 +81,8 @@ impl<'a> UserSyncSuccess<'a> {
     /// Signal to tools of releasing a reservation on user defined synchronization object.
     ///
     /// ```
-    /// let d = nvtx::Domain::new("domain");
-    /// let us = d.user_sync("custom object");
+    /// let d = nvtx::Domain::new(c"domain");
+    /// let us = d.user_sync(c"custom object");
     /// // ...
     /// let started = us.acquire();
     /// // ...

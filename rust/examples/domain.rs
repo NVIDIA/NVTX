@@ -3,12 +3,16 @@
 
 use std::{thread, time};
 
-fn main() {
-    let domain = nvtx::Domain::new("Domain");
-    let [alpha, beta, gamma] = domain.register_strings(["alpha", "beta", "gamma"]);
-    let a = domain.register_category("A");
+fn s(value: &str) -> nvtx::Str {
+    nvtx::Str::from_str_lossy(value)
+}
 
-    let _r = domain.range("Duration");
+fn main() {
+    let domain = nvtx::Domain::new(s("Domain"));
+    let [alpha, beta, gamma] = domain.register_strings([s("alpha"), s("beta"), s("gamma")]);
+    let a = domain.register_category(s("A"));
+
+    let _r = domain.range(s("Duration"));
 
     let r1 = domain.range(
         domain
@@ -19,7 +23,7 @@ fn main() {
             .build(),
     );
 
-    let x = domain.user_sync("cool");
+    let x = domain.user_sync(s("cool"));
     thread::sleep(time::Duration::from_millis(10));
     let y = x.acquire();
     thread::sleep(time::Duration::from_millis(10));
@@ -56,14 +60,14 @@ fn main() {
     drop(r2);
     thread::sleep(time::Duration::from_millis(10));
     drop(r3);
-    let d2 = nvtx::Domain::new("cool");
+    let d2 = nvtx::Domain::new(s("cool"));
 
-    let b2 = d2.register_category("B");
+    let b2 = d2.register_category(s("B"));
     let p1 = d2.range(
         d2.event_attributes_builder()
             .category(b2)
             .color(nvtx::color::orangered)
-            .message("Alpha2")
+            .message(s("Alpha2"))
             .build(),
     );
     thread::sleep(time::Duration::from_millis(10));
@@ -71,7 +75,7 @@ fn main() {
         d2.event_attributes_builder()
             .category(b2)
             .color(nvtx::color::orangered)
-            .message("Beta2")
+            .message(s("Beta2"))
             .build(),
     );
     thread::sleep(time::Duration::from_millis(10));
@@ -79,7 +83,7 @@ fn main() {
         d2.event_attributes_builder()
             .category(b2)
             .color(nvtx::color::orangered)
-            .message("Gamma2")
+            .message(s("Gamma2"))
             .build(),
     );
     thread::sleep(time::Duration::from_millis(10));

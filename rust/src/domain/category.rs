@@ -14,7 +14,7 @@ pub struct Category<'a> {
 
 impl PartialEq for Category<'_> {
     fn eq(&self, other: &Self) -> bool {
-        self.id == other.id && std::ptr::eq(self.domain, other.domain)
+        self.id == other.id && core::ptr::eq(self.domain, other.domain)
     }
 }
 
