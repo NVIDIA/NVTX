@@ -119,6 +119,9 @@ target_compile_definitions(coverage-c-disabled PRIVATE NVTX_DISABLE)
 if(ENABLE_NVTX3_HPP_TESTS)
     add_nvtx_test_library(coverage-cpp SHARED "CoverageCpp.cpp")
 
+    add_executable(explicit-version "ExplicitVersion.cpp")
+    target_link_libraries(explicit-version PRIVATE nvtx3-cpp)
+
     if(NOT MSVC)
         add_nvtx_test_library(coverage-cpp-static-obj-c SHARED "CoverageCpp.cpp" "PrintInjectionC.c" "PrintInjectionImpl.cpp")
         target_compile_definitions(coverage-cpp-static-obj-c PRIVATE SUPPORT_STATIC_INJECTION INJECTION_PRINT_PREFIX="inj-c-static")
@@ -265,6 +268,7 @@ add_test(NAME "CoverageC with PrintInjectionCpp as Preinjection" COMMAND runtest
 set_preinjection_environment("CoverageC with PrintInjectionCpp as Preinjection" inj-cpp-preinject)
 add_test(NAME "CoverageC with NVTX_DISABLE" COMMAND runtest -t coverage-c-disabled)
 if(ENABLE_NVTX3_HPP_TESTS)
+    add_test(NAME "ExplicitVersion" COMMAND explicit-version)
     add_test(NAME "CoverageCpp" COMMAND runtest -t coverage-cpp)
     add_test(NAME "CoverageCpp with PrintInjectionC" COMMAND runtest -t coverage-cpp -i inj-c)
     add_test(NAME "CoverageCpp with PrintInjectionCpp" COMMAND runtest -t coverage-cpp -i inj-cpp)
