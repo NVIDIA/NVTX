@@ -93,6 +93,22 @@ nvtxRangePop();  // Pop must be on same thread as corresponding Push
 }
 ```
 
+Prefer `nvtx3::scoped_range` in normal C++ code. If a range begins and ends in
+different callback scopes on the same thread, use the manual C++ push/pop
+wrappers:
+
+```c++
+void begin_callback()
+{
+    nvtx3::push_range("This is a push/pop range");
+}
+
+void end_callback()
+{
+    nvtx3::pop_range();
+}
+```
+
 ## Start/End Ranges
 
 **C**:
