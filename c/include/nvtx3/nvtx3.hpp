@@ -3588,6 +3588,17 @@ private:
   value_type id_;
 };
 
+namespace detail {
+
+// scope_semantic::scope is a builder method whose name hides the scope type
+// during member lookup. This version-local alias avoids spelling the fully
+// qualified type name, ::nvtx3::NVTX3_VERSION_NAMESPACE::scope, and depending
+// on the optional nvtx3::scope name, which is absent when
+// NVTX3_CPP_REQUIRE_EXPLICIT_VERSION is defined.
+using scope_type = scope;
+
+} // namespace detail
+
 /**
  * @brief Reasons for sampling a counter without a value.
  *
@@ -3961,7 +3972,7 @@ public:
    * @param s Scope identifier (wraps an NVTX_SCOPE_* value).
    * @return Reference to this object for chaining.
    */
-  scope_semantic& scope(nvtx3::scope s) noexcept
+  scope_semantic& scope(detail::scope_type s) noexcept
   {
     data_.scopeId = s.get();
     return *this;
@@ -3996,7 +4007,7 @@ public:
    *                  assign a dynamic ID.
    */
   explicit scope_in(char const* path,
-                    nvtx3::scope parent = nvtx3::scope::none(),
+                    detail::scope_type parent = detail::scope_type::none(),
                     uint64_t static_id = NVTX_SCOPE_NONE) noexcept
   {
 #ifndef NVTX_DISABLE
@@ -4028,7 +4039,7 @@ public:
    *                  assign a dynamic ID.
    */
   explicit scope_in(std::string const& path,
-                    nvtx3::scope parent = nvtx3::scope::none(),
+                    detail::scope_type parent = detail::scope_type::none(),
                     uint64_t static_id = NVTX_SCOPE_NONE) noexcept
     : scope_in{path.c_str(), parent, static_id} {}
 
@@ -4036,7 +4047,7 @@ public:
   uint64_t id() const noexcept { return id_; }
 
   /** @brief Convert to an \c nvtx3::scope for use with scope_semantic. */
-  operator nvtx3::scope() const noexcept { return nvtx3::scope{id_}; }
+  operator detail::scope_type() const noexcept { return detail::scope_type{id_}; }
 
 private:
   uint64_t id_;
@@ -4150,7 +4161,7 @@ public:
    *                  which lets the tool assign the ID.
    */
   explicit time_domain_in(uint64_t timestamp_type_id,
-                          nvtx3::scope s = nvtx3::scope::none(),
+                          detail::scope_type s = detail::scope_type::none(),
                           uint64_t timer_flags = NVTX_TIMER_FLAG_NONE,
                           int64_t timer_resolution = 0,
                           uint64_t timer_start = NVTX_TIMER_START_UNKNOWN,
