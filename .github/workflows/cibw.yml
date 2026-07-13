@@ -61,7 +61,7 @@ jobs:
           platforms: arm64
 
       - name: Build wheels
-        uses: pypa/cibuildwheel@8d2b08b68458a16aeb24b64e68a09ab1c8e82084
+        uses: pypa/cibuildwheel@294735312765b09d24a2fbec22660ce817587d55
         with:
           output-dir: dist
           package-dir: python
