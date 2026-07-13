@@ -37,7 +37,7 @@ jobs:
             runner: -arm
       fail-fast: false
     steps:
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@v7
 
       - uses: >-
           conda-incubator/setup-miniconda@8ee1f361103df19b6f8c8655fd3967a8ecb162d5
@@ -136,7 +136,7 @@ jobs:
             runner: -arm
       fail-fast: false
     steps:
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@v7
 
       - uses: >-
           conda-incubator/setup-miniconda@8ee1f361103df19b6f8c8655fd3967a8ecb162d5
@@ -235,7 +235,7 @@ jobs:
             runner: -arm
       fail-fast: false
     steps:
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@v7
 
       - uses: >-
           conda-incubator/setup-miniconda@8ee1f361103df19b6f8c8655fd3967a8ecb162d5
@@ -326,7 +326,7 @@ jobs:
       VSPATH: >-
         C:\Program Files\Microsoft Visual Studio\${{ matrix.vspath }}\Enterprise
     steps:
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@v7
 
       - uses: >-
           conda-incubator/setup-miniconda@8ee1f361103df19b6f8c8655fd3967a8ecb162d5
@@ -367,7 +367,7 @@ jobs:
       VSPATH: >-
         C:\Program Files\Microsoft Visual Studio\${{ matrix.vspath }}\Enterprise
     steps:
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@v7
 
       - name: Build (VS ${{ matrix.vsyear }}, x86)
         run: tests/scripts/build-windows-vs.ps1 ${{ matrix.vsyear }} x64_x86
@@ -401,7 +401,7 @@ jobs:
       VSPATH: >-
         C:\Program Files\Microsoft Visual Studio\${{ matrix.vspath }}\Enterprise
     steps:
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@v7
 
       - name: Build (VS ${{ matrix.vsyear }}, Arm64) (Native)
         run: tests/scripts/build-windows-vs.ps1 ${{ matrix.vsyear }} arm64
@@ -447,7 +447,7 @@ jobs:
             runner: 14-large
       fail-fast: false
     steps:
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@v7
 
       - name: Homebrew - Install Toolchain
         run: |
