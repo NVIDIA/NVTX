@@ -185,7 +185,7 @@ dependencies = [
 
 [[package]]
 name = "nvidia-nvtx"
-version = "0.2.2"
+version = "2.0.0"
 dependencies = [
  "color-name",
  "gettid",
@@ -200,7 +200,7 @@ dependencies = [
 
 [[package]]
 name = "nvtx-sys"
-version = "0.2.2"
+version = "2.0.0"
 dependencies = [
  "bindgen",
  "cc",
