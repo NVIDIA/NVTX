@@ -16,6 +16,7 @@ run_profile() {
 
 run_profile --all-features
 run_profile --no-default-features --features alloc
+run_profile --no-default-features --features payload,counters,memory,memory_cuda_runtime
 run_profile --no-default-features
 
 rustup target add thumbv7em-none-eabi

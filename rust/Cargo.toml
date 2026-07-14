@@ -76,6 +76,10 @@ default = [
     "cuda",
     "cuda_runtime",
     "opencl",
+    "payload",
+    "counters",
+    "memory",
+    "memory_cuda_runtime",
     "tracing",
 ]
 std = ["alloc", "nvtx-sys/std", "widestring/std"]
@@ -86,6 +90,10 @@ name-current-thread = ["std", "dep:gettid"]
 cuda = ["nvtx-sys/cuda"]
 cuda_runtime = ["nvtx-sys/cuda_runtime"]
 opencl = ["nvtx-sys/opencl"]
+payload = ["nvtx-sys/payload"]
+counters = ["payload", "nvtx-sys/counters"]
+memory = ["nvtx-sys/memory"]
+memory_cuda_runtime = ["memory", "cuda_runtime", "nvtx-sys/memory_cuda_runtime"]
 tracing = [
     "std",
     "color-name",
@@ -131,6 +139,18 @@ required-features = ["name-current-thread"]
 [[example]]
 name = "tracing"
 required-features = ["tracing"]
+
+[[example]]
+name = "extended_payload"
+required-features = ["alloc", "payload"]
+
+[[example]]
+name = "counters"
+required-features = ["alloc", "counters"]
+
+[[example]]
+name = "memory"
+required-features = ["alloc", "memory"]
 
 [lints]
 workspace = true

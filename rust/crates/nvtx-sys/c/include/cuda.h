@@ -9,3 +9,4 @@ typedef CUdevice_v1 CUdevice;                                /**< CUDA device */
 typedef struct CUctx_st *CUcontext;                          /**< CUDA context */
 typedef struct CUevent_st *CUevent;                          /**< CUDA event */
 typedef struct CUstream_st *CUstream;                        /**< CUDA stream */
+typedef struct CUarray_st *CUarray;                          /**< CUDA array */

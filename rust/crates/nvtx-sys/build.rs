@@ -49,8 +49,9 @@ fn main() {
         .must_use_type("nvtx[^R][^e][^s].*_t")
         // permit all nvtx-prefixed types except internal ones
         .allowlist_type("nvtx[^_].*")
-        // expose NVTX_VERSION
+        // expose NVTX_VERSION and public object-like NVTX constants
         .allowlist_var("NVTX_VERSION")
+        .allowlist_var("NVTX_.*")
         // expose all nvtx-prefixed functions
         .allowlist_function("nvtx.*")
         // expose wchar_t for wide function parameters
@@ -63,6 +64,8 @@ fn main() {
         .allowlist_type("cl_.*")
         // disallow any fntypes
         .blocklist_type(".*fntype.*")
+        // disallow implementation-facing extension registration types
+        .blocklist_type("[Nn]vtxExt.*")
         // disallow impl-specific
         .blocklist_type("__.*");
 
@@ -77,6 +80,22 @@ fn main() {
     if cfg!(feature = "opencl") {
         builder = builder.clang_arg("-DENABLE_OPENCL");
         lib_builder.define("ENABLE_OPENCL", None);
+    }
+    if cfg!(feature = "payload") {
+        builder = builder.clang_arg("-DENABLE_PAYLOAD");
+        lib_builder.define("ENABLE_PAYLOAD", None);
+    }
+    if cfg!(feature = "counters") {
+        builder = builder.clang_arg("-DENABLE_COUNTERS");
+        lib_builder.define("ENABLE_COUNTERS", None);
+    }
+    if cfg!(feature = "memory") {
+        builder = builder.clang_arg("-DENABLE_MEMORY");
+        lib_builder.define("ENABLE_MEMORY", None);
+    }
+    if cfg!(feature = "memory_cuda_runtime") {
+        builder = builder.clang_arg("-DENABLE_MEMORY_CUDART");
+        lib_builder.define("ENABLE_MEMORY_CUDART", None);
     }
 
     let target_os = env::var("CARGO_CFG_TARGET_OS").expect("target OS is always set");

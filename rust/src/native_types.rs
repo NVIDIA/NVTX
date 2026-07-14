@@ -7,6 +7,9 @@ pub use nvtx_sys::{CuContext, CuDevice, CuEvent, CuStream};
 #[cfg(feature = "cuda_runtime")]
 pub use nvtx_sys::{CudaEvent, CudaStream};
 
+#[cfg(feature = "memory_cuda_runtime")]
+pub use nvtx_sys::memory::{CuArray, CudaArray};
+
 #[cfg(target_family = "unix")]
 pub use libc::{pthread_cond_t, pthread_mutex_t, pthread_once_t, pthread_rwlock_t};
 

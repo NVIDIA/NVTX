@@ -13,6 +13,13 @@ pub mod ffi {
     include!(concat!(env!("OUT_DIR"), "/bindings.rs"));
 }
 
+#[cfg(feature = "counters")]
+pub mod counters;
+#[cfg(feature = "memory")]
+pub mod memory;
+#[cfg(feature = "payload")]
+pub mod payload;
+
 /// The NVTX version.
 #[allow(clippy::cast_possible_truncation)]
 // CAST: This constant cast stays `as` because `From`/`TryFrom` calls are not const on stable Rust.

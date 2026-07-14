@@ -27,6 +27,10 @@ alloc = ["widestring/alloc"]
 cuda = []
 cuda_runtime = []
 opencl = []
+payload = []
+counters = ["payload"]
+memory = []
+memory_cuda_runtime = ["memory", "cuda_runtime"]
 
 [lints]
 workspace = true

@@ -269,6 +269,8 @@ pub struct Domain {
     registered_categories: AtomicU32,
     strings: Mutex<StringMap<String, (nvtx_sys::StringHandle, u32)>>,
     categories: Mutex<StringMap<String, u32>>,
+    #[cfg(feature = "payload")]
+    schemas: Mutex<StringMap<String, u64>>,
 }
 
 #[cfg(feature = "std")]
@@ -301,7 +303,29 @@ impl Domain {
             registered_categories: AtomicU32::new(0),
             strings: Mutex::new(StringMap::default()),
             categories: Mutex::new(StringMap::default()),
+            #[cfg(feature = "payload")]
+            schemas: Mutex::new(StringMap::default()),
         }
+    }
+
+    #[cfg(any(feature = "payload", feature = "memory"))]
+    pub(crate) const fn raw_handle(&self) -> nvtx_sys::DomainHandle {
+        self.handle
+    }
+
+    #[cfg(feature = "payload")]
+    pub(crate) fn cached_schema_id<E>(
+        &self,
+        key: String,
+        register: impl FnOnce() -> Result<u64, E>,
+    ) -> Result<u64, E> {
+        let mut schemas = lock_unpoison(&self.schemas);
+        if let Some(id) = schemas.get(&key) {
+            return Ok(*id);
+        }
+        let id = register()?;
+        schemas.insert(key, id);
+        Ok(id)
     }
 
     /// Gets a new builder instance for event attributes in the current domain.

@@ -72,6 +72,22 @@
 //!   [`domain::OpenClIdentifier`] to provide an alternative naming mechanism via
 //!   [`Domain::name_resource`].
 //!
+//! * **payload** -
+//!   Enables structured payload schemas and enums, payload events/ranges, scopes,
+//!   time domains, deferred events, and semantic metadata builders.
+//!
+//! * **counters** -
+//!   Enables typed counter registration, sampling, and timestamped batches.
+//!   This feature implies `payload`.
+//!
+//! * **memory** -
+//!   Enables memory heaps, regions, permission annotations, and scoped bindings.
+//!
+//! * **`memory_cuda_runtime`** -
+//!   Enables CUDA process/device permission objects, peer access, CUDA array
+//!   descriptors, and initialized-memory annotations. This feature implies
+//!   `memory` and `cuda_runtime`.
+//!
 //! * **tracing** -
 //!   When enabled, a tracing `Layer` is provided which consumes tracing spans and events
 //!   which will yield NVTX ranges and marks, respectively. Only a subset of
@@ -186,8 +202,23 @@ pub mod native_types;
 
 /// Support for payload information for Ranges and Marks.
 mod payload;
-/// Payload type for use with event attributes.
-pub use payload::Payload;
+/// Payload types for event attributes and extended payload schemas.
+pub use payload::*;
+
+#[cfg(all(feature = "alloc", feature = "payload"))]
+mod semantics;
+#[cfg(all(feature = "alloc", feature = "payload"))]
+pub use semantics::*;
+
+#[cfg(all(feature = "alloc", feature = "counters"))]
+mod counters;
+#[cfg(all(feature = "alloc", feature = "counters"))]
+pub use counters::*;
+
+#[cfg(all(feature = "alloc", feature = "memory"))]
+mod memory;
+#[cfg(all(feature = "alloc", feature = "memory"))]
+pub use memory::*;
 
 /// Support for process-wide ranges.
 #[cfg(feature = "alloc")]

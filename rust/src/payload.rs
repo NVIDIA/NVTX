@@ -3,6 +3,15 @@
 
 use crate::TypeValueEncodable;
 
+#[cfg(all(feature = "alloc", feature = "payload"))]
+mod extended;
+#[cfg(all(feature = "alloc", feature = "payload"))]
+pub use extended::*;
+#[cfg(all(feature = "alloc", feature = "payload"))]
+mod events;
+#[cfg(all(feature = "alloc", feature = "payload"))]
+pub use events::*;
+
 /// Represents a payload value for use within [`crate::EventAttributes`] and
 /// [`crate::domain::EventAttributes`].
 ///
