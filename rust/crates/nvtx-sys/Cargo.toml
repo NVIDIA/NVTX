@@ -26,6 +26,7 @@ std = ["widestring/std"]
 alloc = ["widestring/alloc"]
 cuda = []
 cuda_runtime = []
+opencl = []
 
 [lints]
 workspace = true

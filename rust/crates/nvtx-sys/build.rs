@@ -58,6 +58,9 @@ fn main() {
         // allow cuda types
         .allowlist_type("CU.*")
         .allowlist_type("cuda.*")
+        // allow OpenCL types
+        .allowlist_type("_cl_.*")
+        .allowlist_type("cl_.*")
         // disallow any fntypes
         .blocklist_type(".*fntype.*")
         // disallow impl-specific
@@ -70,6 +73,10 @@ fn main() {
     if cfg!(feature = "cuda_runtime") {
         builder = builder.clang_arg("-DENABLE_CUDART");
         lib_builder.define("ENABLE_CUDART", None);
+    }
+    if cfg!(feature = "opencl") {
+        builder = builder.clang_arg("-DENABLE_OPENCL");
+        lib_builder.define("ENABLE_OPENCL", None);
     }
 
     let target_os = env::var("CARGO_CFG_TARGET_OS").expect("target OS is always set");

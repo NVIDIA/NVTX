@@ -24,6 +24,7 @@
 //!   * Pthreads (on unix-like platforms)
 //!   * CUDA
 //!   * CUDA Runtime
+//!   * `OpenCL`
 //!
 //! ## Features
 //!
@@ -63,6 +64,13 @@
 //!   naming of CUDA runtime resources such as Devices, Events, and Streams. The feature
 //!   also adds [`domain::CudaRuntimeIdentifier`] to provide an alternative naming
 //!   mechanism via [`Domain::name_resource`].
+//!
+//! * **opencl** -
+//!   When enabled, [`name_opencl_resource`] is added to the crate. This enables the
+//!   naming of `OpenCL` resources such as devices, contexts, command queues, memory
+//!   objects, samplers, programs, and events. The feature also adds
+//!   [`domain::OpenClIdentifier`] to provide an alternative naming mechanism via
+//!   [`Domain::name_resource`].
 //!
 //! * **tracing** -
 //!   When enabled, a tracing `Layer` is provided which consumes tracing spans and events
@@ -110,6 +118,12 @@ pub use cuda::*;
 mod cuda_runtime;
 #[cfg(all(feature = "alloc", feature = "cuda_runtime"))]
 pub use cuda_runtime::*;
+
+#[cfg(all(feature = "alloc", feature = "opencl"))]
+/// Support for OpenCL-related APIs.
+mod opencl;
+#[cfg(all(feature = "alloc", feature = "opencl"))]
+pub use opencl::*;
 
 /// Specialized types for use within a domain context.
 #[cfg(feature = "alloc")]

@@ -199,6 +199,28 @@ pub type CuEvent = ffi::CUevent;
 /// An opaque CUDA stream type.
 pub type CuStream = ffi::CUstream;
 
+#[cfg(feature = "opencl")]
+/// An opaque `OpenCL` device type.
+pub type ClDeviceId = ffi::cl_device_id;
+#[cfg(feature = "opencl")]
+/// An opaque `OpenCL` context type.
+pub type ClContext = ffi::cl_context;
+#[cfg(feature = "opencl")]
+/// An opaque `OpenCL` command queue type.
+pub type ClCommandQueue = ffi::cl_command_queue;
+#[cfg(feature = "opencl")]
+/// An opaque `OpenCL` memory object type.
+pub type ClMem = ffi::cl_mem;
+#[cfg(feature = "opencl")]
+/// An opaque `OpenCL` sampler type.
+pub type ClSampler = ffi::cl_sampler;
+#[cfg(feature = "opencl")]
+/// An opaque `OpenCL` program type.
+pub type ClProgram = ffi::cl_program;
+#[cfg(feature = "opencl")]
+/// An opaque `OpenCL` event type.
+pub type ClEvent = ffi::cl_event;
+
 /// Resource types for use within [`crate::ResourceAttributes`].
 pub mod resource_type {
     #![allow(clippy::wildcard_imports)]
@@ -247,6 +269,28 @@ pub mod resource_type {
     }
     #[cfg(feature = "cuda_runtime")]
     pub use cuda_runtime::*;
+
+    #[cfg(feature = "opencl")]
+    mod opencl {
+        use crate::ffi::nvtxResourceOpenCLType_t::*;
+        // CAST: See `resource_type::UNKNOWN` for cast rationale.
+        /// An `OpenCL` device resource.
+        pub const OPENCL_DEVICE: u32 = NVTX_RESOURCE_TYPE_OPENCL_DEVICE as u32;
+        /// An `OpenCL` context resource.
+        pub const OPENCL_CONTEXT: u32 = NVTX_RESOURCE_TYPE_OPENCL_CONTEXT as u32;
+        /// An `OpenCL` command queue resource.
+        pub const OPENCL_COMMANDQUEUE: u32 = NVTX_RESOURCE_TYPE_OPENCL_COMMANDQUEUE as u32;
+        /// An `OpenCL` memory object resource.
+        pub const OPENCL_MEMOBJECT: u32 = NVTX_RESOURCE_TYPE_OPENCL_MEMOBJECT as u32;
+        /// An `OpenCL` sampler resource.
+        pub const OPENCL_SAMPLER: u32 = NVTX_RESOURCE_TYPE_OPENCL_SAMPLER as u32;
+        /// An `OpenCL` program resource.
+        pub const OPENCL_PROGRAM: u32 = NVTX_RESOURCE_TYPE_OPENCL_PROGRAM as u32;
+        /// An `OpenCL` event resource.
+        pub const OPENCL_EVENT: u32 = NVTX_RESOURCE_TYPE_OPENCL_EVENT as u32;
+    }
+    #[cfg(feature = "opencl")]
+    pub use opencl::*;
 
     #[cfg(target_family = "unix")]
     mod pthread {
@@ -644,6 +688,148 @@ pub unsafe fn name_cuda_event_ascii(event: CudaEvent, name: &CStr) {
 pub unsafe fn name_cuda_event_unicode(event: CudaEvent, name: &WideCStr) {
     // SAFETY: Caller guarantees `event` is a valid CUDA runtime event handle.
     unsafe { crate::ffi::nvtxNameCudaEventW(event, name.as_ptr().cast()) }
+}
+
+#[cfg(feature = "opencl")]
+/// Name an `OpenCL` device with an ASCII string.
+///
+/// # Safety
+/// `device` must be a valid `OpenCL` device handle.
+pub unsafe fn name_cl_device_ascii(device: ClDeviceId, name: &CStr) {
+    // SAFETY: Caller guarantees `device` is a valid OpenCL device handle.
+    unsafe { crate::ffi::nvtxNameClDeviceA(device, name.as_ptr()) }
+}
+
+#[cfg(feature = "opencl")]
+/// Name an `OpenCL` device with a Unicode string.
+///
+/// # Safety
+/// `device` must be a valid `OpenCL` device handle.
+pub unsafe fn name_cl_device_unicode(device: ClDeviceId, name: &WideCStr) {
+    // SAFETY: Caller guarantees `device` is a valid OpenCL device handle.
+    unsafe { crate::ffi::nvtxNameClDeviceW(device, name.as_ptr().cast()) }
+}
+
+#[cfg(feature = "opencl")]
+/// Name an `OpenCL` context with an ASCII string.
+///
+/// # Safety
+/// `context` must be a valid `OpenCL` context handle.
+pub unsafe fn name_cl_context_ascii(context: ClContext, name: &CStr) {
+    // SAFETY: Caller guarantees `context` is a valid OpenCL context handle.
+    unsafe { crate::ffi::nvtxNameClContextA(context, name.as_ptr()) }
+}
+
+#[cfg(feature = "opencl")]
+/// Name an `OpenCL` context with a Unicode string.
+///
+/// # Safety
+/// `context` must be a valid `OpenCL` context handle.
+pub unsafe fn name_cl_context_unicode(context: ClContext, name: &WideCStr) {
+    // SAFETY: Caller guarantees `context` is a valid OpenCL context handle.
+    unsafe { crate::ffi::nvtxNameClContextW(context, name.as_ptr().cast()) }
+}
+
+#[cfg(feature = "opencl")]
+/// Name an `OpenCL` command queue with an ASCII string.
+///
+/// # Safety
+/// `command_queue` must be a valid `OpenCL` command queue handle.
+pub unsafe fn name_cl_command_queue_ascii(command_queue: ClCommandQueue, name: &CStr) {
+    // SAFETY: Caller guarantees `command_queue` is a valid OpenCL command queue handle.
+    unsafe { crate::ffi::nvtxNameClCommandQueueA(command_queue, name.as_ptr()) }
+}
+
+#[cfg(feature = "opencl")]
+/// Name an `OpenCL` command queue with a Unicode string.
+///
+/// # Safety
+/// `command_queue` must be a valid `OpenCL` command queue handle.
+pub unsafe fn name_cl_command_queue_unicode(command_queue: ClCommandQueue, name: &WideCStr) {
+    // SAFETY: Caller guarantees `command_queue` is a valid OpenCL command queue handle.
+    unsafe {
+        crate::ffi::nvtxNameClCommandQueueW(command_queue, name.as_ptr().cast());
+    }
+}
+
+#[cfg(feature = "opencl")]
+/// Name an `OpenCL` memory object with an ASCII string.
+///
+/// # Safety
+/// `mem_object` must be a valid `OpenCL` memory object handle.
+pub unsafe fn name_cl_mem_object_ascii(mem_object: ClMem, name: &CStr) {
+    // SAFETY: Caller guarantees `mem_object` is a valid OpenCL memory object handle.
+    unsafe { crate::ffi::nvtxNameClMemObjectA(mem_object, name.as_ptr()) }
+}
+
+#[cfg(feature = "opencl")]
+/// Name an `OpenCL` memory object with a Unicode string.
+///
+/// # Safety
+/// `mem_object` must be a valid `OpenCL` memory object handle.
+pub unsafe fn name_cl_mem_object_unicode(mem_object: ClMem, name: &WideCStr) {
+    // SAFETY: Caller guarantees `mem_object` is a valid OpenCL memory object handle.
+    unsafe { crate::ffi::nvtxNameClMemObjectW(mem_object, name.as_ptr().cast()) }
+}
+
+#[cfg(feature = "opencl")]
+/// Name an `OpenCL` sampler with an ASCII string.
+///
+/// # Safety
+/// `sampler` must be a valid `OpenCL` sampler handle.
+pub unsafe fn name_cl_sampler_ascii(sampler: ClSampler, name: &CStr) {
+    // SAFETY: Caller guarantees `sampler` is a valid OpenCL sampler handle.
+    unsafe { crate::ffi::nvtxNameClSamplerA(sampler, name.as_ptr()) }
+}
+
+#[cfg(feature = "opencl")]
+/// Name an `OpenCL` sampler with a Unicode string.
+///
+/// # Safety
+/// `sampler` must be a valid `OpenCL` sampler handle.
+pub unsafe fn name_cl_sampler_unicode(sampler: ClSampler, name: &WideCStr) {
+    // SAFETY: Caller guarantees `sampler` is a valid OpenCL sampler handle.
+    unsafe { crate::ffi::nvtxNameClSamplerW(sampler, name.as_ptr().cast()) }
+}
+
+#[cfg(feature = "opencl")]
+/// Name an `OpenCL` program with an ASCII string.
+///
+/// # Safety
+/// `program` must be a valid `OpenCL` program handle.
+pub unsafe fn name_cl_program_ascii(program: ClProgram, name: &CStr) {
+    // SAFETY: Caller guarantees `program` is a valid OpenCL program handle.
+    unsafe { crate::ffi::nvtxNameClProgramA(program, name.as_ptr()) }
+}
+
+#[cfg(feature = "opencl")]
+/// Name an `OpenCL` program with a Unicode string.
+///
+/// # Safety
+/// `program` must be a valid `OpenCL` program handle.
+pub unsafe fn name_cl_program_unicode(program: ClProgram, name: &WideCStr) {
+    // SAFETY: Caller guarantees `program` is a valid OpenCL program handle.
+    unsafe { crate::ffi::nvtxNameClProgramW(program, name.as_ptr().cast()) }
+}
+
+#[cfg(feature = "opencl")]
+/// Name an `OpenCL` event with an ASCII string.
+///
+/// # Safety
+/// `event` must be a valid `OpenCL` event handle.
+pub unsafe fn name_cl_event_ascii(event: ClEvent, name: &CStr) {
+    // SAFETY: Caller guarantees `event` is a valid OpenCL event handle.
+    unsafe { crate::ffi::nvtxNameClEventA(event, name.as_ptr()) }
+}
+
+#[cfg(feature = "opencl")]
+/// Name an `OpenCL` event with a Unicode string.
+///
+/// # Safety
+/// `event` must be a valid `OpenCL` event handle.
+pub unsafe fn name_cl_event_unicode(event: ClEvent, name: &WideCStr) {
+    // SAFETY: Caller guarantees `event` is a valid OpenCL event handle.
+    unsafe { crate::ffi::nvtxNameClEventW(event, name.as_ptr().cast()) }
 }
 
 #[must_use]

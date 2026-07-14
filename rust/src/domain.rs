@@ -236,6 +236,8 @@ mod identifier;
 pub use self::identifier::CudaIdentifier;
 #[cfg(feature = "cuda_runtime")]
 pub use self::identifier::CudaRuntimeIdentifier;
+#[cfg(feature = "opencl")]
+pub use self::identifier::OpenClIdentifier;
 #[cfg(target_family = "unix")]
 pub use self::identifier::PThreadIdentifier;
 pub use identifier::{GenericIdentifier, Identifier};
@@ -672,6 +674,10 @@ impl Domain {
     /// domain.name_resource(nvtx::domain::CudaIdentifier::Device(0), c"My device");
     /// #[cfg(feature = "cuda_runtime")]
     /// domain.name_resource(nvtx::domain::CudaRuntimeIdentifier::Device(1), c"My device");
+    /// #[cfg(feature = "opencl")]
+    /// domain.name_resource(
+    ///     nvtx::domain::OpenClIdentifier::Device(core::ptr::null_mut()),
+    ///     c"My OpenCL device");
     /// ```
     pub fn name_resource<'a>(
         &'a self,

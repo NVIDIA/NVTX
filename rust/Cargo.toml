@@ -75,6 +75,7 @@ default = [
     "name-current-thread",
     "cuda",
     "cuda_runtime",
+    "opencl",
     "tracing",
 ]
 std = ["alloc", "nvtx-sys/std", "widestring/std"]
@@ -84,6 +85,7 @@ color-name = ["std", "dep:color-name"]
 name-current-thread = ["std", "dep:gettid"]
 cuda = ["nvtx-sys/cuda"]
 cuda_runtime = ["nvtx-sys/cuda_runtime"]
+opencl = ["nvtx-sys/opencl"]
 tracing = [
     "std",
     "color-name",

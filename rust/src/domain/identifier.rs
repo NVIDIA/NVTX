@@ -21,6 +21,11 @@ mod cuda;
 #[cfg(feature = "cuda")]
 pub use cuda::CudaIdentifier;
 
+#[cfg(feature = "opencl")]
+mod opencl;
+#[cfg(feature = "opencl")]
+pub use opencl::OpenClIdentifier;
+
 /// Identifier used for supported resource types
 #[non_exhaustive]
 pub enum Identifier {
@@ -35,6 +40,9 @@ pub enum Identifier {
     /// CUDA runtime specific identifier
     #[cfg(feature = "cuda_runtime")]
     CudaRuntime(CudaRuntimeIdentifier),
+    /// OpenCL-specific identifier
+    #[cfg(feature = "opencl")]
+    OpenCl(OpenClIdentifier),
 }
 
 impl TypeValueEncodable for Identifier {
@@ -50,6 +58,8 @@ impl TypeValueEncodable for Identifier {
             Identifier::Cuda(c) => c.encode(),
             #[cfg(feature = "cuda_runtime")]
             Identifier::CudaRuntime(c) => c.encode(),
+            #[cfg(feature = "opencl")]
+            Identifier::OpenCl(o) => o.encode(),
         }
     }
 

@@ -14,4 +14,8 @@
 #include "nvtx3/nvToolsExtCudaRt.h"
 #endif
 
+#ifdef ENABLE_OPENCL
+#include "nvtx3/nvToolsExtOpenCL.h"
+#endif
+
 #include "nvtx3/nvToolsExtSync.h"
