@@ -350,7 +350,8 @@
  *
  * Entries of these types are interpreted as event attributes.
  */
-#define NVTX_PAYLOAD_ENTRY_TYPE_CATEGORY 68   /* uint32_t */
+#define NVTX_PAYLOAD_ENTRY_TYPE_RANGE_ID 67 /* nvtxRangeId_t / uint64_t */
+#define NVTX_PAYLOAD_ENTRY_TYPE_CATEGORY 68 /* uint32_t */
 #define NVTX_PAYLOAD_ENTRY_TYPE_COLOR_ARGB 69 /* uint32_t */
 
 /**
@@ -512,12 +513,16 @@
 #define NVTX_PAYLOAD_SCHEMA_FLAG_COUNTER_GROUP (1 << 3)
 
 /**
- * The schema defines a range or marker. An NVTX handler can expect that the
- * schema contains a message and timestamp(s).
+ * The schema defines a range or marker. An NVTX handler can expect timestamp
+ * entries and an optional message entry with event semantics.
  */
 #define NVTX_PAYLOAD_SCHEMA_FLAG_RANGE_PUSHPOP (2 << 3)
 #define NVTX_PAYLOAD_SCHEMA_FLAG_RANGE_STARTEND (3 << 3)
 #define NVTX_PAYLOAD_SCHEMA_FLAG_MARK (4 << 3)
+#define NVTX_PAYLOAD_SCHEMA_FLAG_RANGE_PUSH (5 << 3)
+#define NVTX_PAYLOAD_SCHEMA_FLAG_RANGE_POP (6 << 3)
+#define NVTX_PAYLOAD_SCHEMA_FLAG_RANGE_START (7 << 3)
+#define NVTX_PAYLOAD_SCHEMA_FLAG_RANGE_END (8 << 3)
 
 #endif /* NVTX_PAYLOAD_SCHEMA_FLAGS_V1 */
 

@@ -55,6 +55,19 @@ include(nvtxImportedTargets.cmake)
 set_target_properties(nvtx3-c PROPERTIES EXPORT_PROPERTIES VERSION)
 set_target_properties(nvtx3-cpp PROPERTIES EXPORT_PROPERTIES VERSION)
 
+#-------------------------------------------------------
+# Define "nvtxw3-loader" static library for the NVTXW3 writer loader.
+# Unlike the header-only NVTX C/C++ APIs, the writer loader has a compiled
+# translation unit (it defines nvtxwLoad / nvtxwUnload), so it is built
+# as a small static library rather than an INTERFACE target.
+add_library(nvtxw3-loader STATIC src/nvtxw3_loader.c)
+add_library(nvtx3::nvtxw3-loader ALIAS nvtxw3-loader)
+set_target_properties(nvtxw3-loader PROPERTIES VERSION ${PROJECT_VERSION})
+set_target_properties(nvtxw3-loader PROPERTIES EXPORT_PROPERTIES VERSION)
+# Links nvtx3-c for the include paths (nvtxw3/ and nvtx3/ headers) and the
+# platform's dynamic-loader library (dlopen/dlsym) used to load the backend.
+target_link_libraries(nvtxw3-loader PUBLIC nvtx3-c)
+
 if(NVTX3_INSTALL)
     # Add installation rules
     include(GNUInstallDirs)
@@ -86,7 +99,7 @@ if(NVTX3_INSTALL)
     )
 
     # Install the targets
-    install(TARGETS nvtx3-c nvtx3-cpp EXPORT nvtx3-targets
+    install(TARGETS nvtx3-c nvtx3-cpp nvtxw3-loader EXPORT nvtx3-targets
         INCLUDES DESTINATION "${CMAKE_INSTALL_INCLUDEDIR}")
     install(EXPORT nvtx3-targets
         FILE nvtx3-targets.cmake

@@ -187,6 +187,65 @@ add_nvtx_test_library(coverage-ext-counter SHARED "CoverageExtCounter.c")
 add_nvtx_test_library(coverage-ext-counter-disabled SHARED "CoverageExtCounter.c")
 target_compile_definitions(coverage-ext-counter-disabled PRIVATE NVTX_DISABLE)
 
+add_nvtx_test_library(coverage-nvtxw-c SHARED "CoverageNvtxwC.c")
+add_nvtx_test_library(coverage-nvtxw-cpp SHARED "CoverageNvtxwCpp.cpp")
+
+# Recording mock NVTXW backend.  Built with the default backend filename
+# (libnvtxw3.so / nvtxw3.dll) so the loader's directory and config search modes
+# can find it by the conventional name.  Used by the loader tests below.
+add_nvtx_test_library(nvtxw-mock-backend SHARED "MockNvtxwBackend.c")
+set_target_properties(nvtxw-mock-backend PROPERTIES OUTPUT_NAME "nvtxw3")
+
+# The loader is a static library; make it position-independent so it can be
+# linked into the shared loader test library on all platforms.  It uses POSIX
+# APIs (readlink, getcwd), so build it with GNU extensions to make those
+# declarations visible; the source itself is clean under this project's strict
+# warning set, so it needs no -Werror relaxation.
+set_target_properties(nvtxw3-loader PROPERTIES POSITION_INDEPENDENT_CODE ON)
+if(NOT MSVC)
+    set_target_properties(nvtxw3-loader PROPERTIES C_EXTENSIONS ON)
+endif()
+
+# Loader unit tests: nvtxwLoad across its library resolution and error
+# paths, nvtxwUnload, and nvtxwGetError, driven against the mock backend.
+add_nvtx_test_library(coverage-nvtxw-loader SHARED "CoverageNvtxwLoader.c")
+target_link_libraries(coverage-nvtxw-loader PRIVATE nvtxw3-loader)
+
+# End-to-end helper coverage that asserts on data captured by the mock backend.
+# Built as C only; the helper headers' C++ compile coverage comes from
+# coverage-nvtxw-cpp, and the runtime assertions here are language-independent.
+add_nvtx_test_library(coverage-nvtxw-e2e SHARED "CoverageNvtxwE2E.c")
+
+# Round-trip coverage: decode the helper-produced schemas and payloads with the
+# standalone NVTX payload parser from tools/sample-injection (a real consumer)
+# and assert the decoded output.  The parser is C++17 and was not written for
+# this project's strict warning set, so build it as a separate library with
+# warnings relaxed (it is a dependency under test, not test source).
+set(nvtxw_parser_dir "${NVTX3_PROJ_ROOT}/tools/sample-injection")
+add_library(nvtxw-payload-parser-fortest STATIC
+    "${nvtxw_parser_dir}/Source/Payload/NvtxPayloadRegistry.cpp"
+    "${nvtxw_parser_dir}/Source/Payload/NvtxPayloadParser.cpp"
+    "${nvtxw_parser_dir}/Source/Payload/NvtxPayloadSchema.cpp"
+    "${nvtxw_parser_dir}/Source/Payload/NvtxPayloadTextFormatter.cpp"
+    "${nvtxw_parser_dir}/Source/Payload/NvtxPayloadJsonFormatter.cpp"
+    "${nvtxw_parser_dir}/Source/NvtxPayloadInjectionAdapter.cpp")
+target_include_directories(nvtxw-payload-parser-fortest PUBLIC
+    "${nvtxw_parser_dir}/Source/Payload"
+    "${nvtxw_parser_dir}/Source")
+target_link_libraries(nvtxw-payload-parser-fortest PUBLIC nvtx3-c)
+set_target_properties(nvtxw-payload-parser-fortest PROPERTIES
+    CXX_STANDARD 17 CXX_STANDARD_REQUIRED ON POSITION_INDEPENDENT_CODE ON)
+if(MSVC)
+    target_compile_options(nvtxw-payload-parser-fortest PRIVATE /W0)
+else()
+    target_compile_options(nvtxw-payload-parser-fortest PRIVATE -w)
+endif()
+
+add_nvtx_test_library(coverage-nvtxw-roundtrip SHARED "CoverageNvtxwRoundTrip.cpp")
+target_link_libraries(coverage-nvtxw-roundtrip PRIVATE nvtxw-payload-parser-fortest)
+set_target_properties(coverage-nvtxw-roundtrip PROPERTIES
+    CXX_STANDARD 17 CXX_STANDARD_REQUIRED ON)
+
 if(ENABLE_NVTX3_HPP_TESTS)
     add_nvtx_test_library(attributes SHARED "Attributes.cpp")
 
@@ -322,6 +381,14 @@ add_test(NAME "CoverageExtCounter" COMMAND runtest -t coverage-ext-counter)
 add_test(NAME "CoverageExtCounter with PrintInjectionC" COMMAND runtest -t coverage-ext-counter -i inj-c)
 add_test(NAME "CoverageExtCounter with PrintInjectionCpp" COMMAND runtest -t coverage-ext-counter -i inj-cpp)
 add_test(NAME "CoverageExtCounter with NVTX_DISABLE" COMMAND runtest -t coverage-ext-counter-disabled)
+add_test(NAME "CoverageNvtxwC" COMMAND runtest -t coverage-nvtxw-c)
+add_test(NAME "CoverageNvtxwCpp" COMMAND runtest -t coverage-nvtxw-cpp)
+add_test(NAME "CoverageNvtxwLoader" COMMAND runtest -t coverage-nvtxw-loader
+    "$<TARGET_FILE:nvtxw-mock-backend>"
+    "$<TARGET_FILE_DIR:nvtxw-mock-backend>"
+    "$<TARGET_FILE:coverage-c>")
+add_test(NAME "CoverageNvtxwE2E" COMMAND runtest -t coverage-nvtxw-e2e)
+add_test(NAME "CoverageNvtxwRoundTrip" COMMAND runtest -t coverage-nvtxw-roundtrip)
 if(ENABLE_NVTX3_HPP_TESTS)
     add_test(NAME "Attributes" COMMAND runtest -t attributes)
     add_test(NAME "Attributes with PrintInjectionC" COMMAND runtest -t attributes -i inj-c)
