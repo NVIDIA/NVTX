@@ -165,7 +165,7 @@ Since the C and C++ APIs are header-only, dependency-free, and don't require exp
 
 # Use NVTX with CMake
 
-For projects that use CMake, the included `CMakeLists.txt` provides targets `nvtx3-c` and `nvtx3-cpp` that set the include search paths (and add the `-ldl` linker option if applicable).
+For projects that use CMake, the included `CMakeLists.txt` provides targets `nvtx3-c` and `nvtx3-cpp` that set the include search paths (and add the `-ldl` linker option if applicable).  It also provides the `nvtxw3-loader` target described in [NVTXW writer loader](#nvtxw-writer-loader).
 
 ## Use a local copy of NVTX
 
@@ -220,6 +220,30 @@ target_link_libraries(some_c_program PRIVATE nvtx3-c)
 add_executable(some_cpp_program main.cpp)
 target_link_libraries(some_cpp_program PRIVATE nvtx3-cpp)
 ```
+
+# NVTXW writer loader
+
+The NVTXW ("NVTX Writer") API in `nvtxw3/nvtxw3.h` accepts payload, counter, and timing data that was produced *outside* the live NVTX injection path.  The actual writing is performed by a separate backend library (for example `libnvtxw3.so` / `nvtxw3.dll`, typically provided by a tool such as Nsight Systems), which is located and loaded at runtime.
+
+The headers are split by responsibility: `nvtxw3/nvtxw3.h` is the focused producer/backend contract (result codes, the single `nvtxwGetInterface` entry point, and the `nvtxwInterface_v2_t` function table), while `nvtxw3/nvtxw3_loader.h` holds the optional reference loader (`nvtxwLoad`, `nvtxwUnload`, `nvtxwGetError`, and the config-string utility for session configuration).  Including `nvtxw3_loader.h` transitively includes `nvtxw3.h`.
+
+`nvtxwLoad` takes a single `library` argument and resolves the backend in priority order: the `NVTXW3_LIBRARY` environment variable (if set to a non-empty value), then the `library` argument (a filename or path) if non-NULL, and finally — when `library` is NULL — a default search of the executable directory, the standard dynamic-library search paths, and the current working directory.  The `NVTXW3_LIBRARY` override lets a tool or launcher redirect the backend without rebuilding the instrumented application; when it (or the `library` argument) names a specific library, that library is the only candidate and its failure is reported rather than falling back.
+
+Unlike the rest of the NVTX C/C++ API, the loader is **not** header-only: it has a compiled translation unit (`src/nvtxw3_loader.c`) that defines `nvtxwLoad` and `nvtxwUnload`.  The included `CMakeLists.txt` builds this into a small static library exposed as the `nvtxw3-loader` target (alias `nvtx3::nvtxw3-loader`).  It links `nvtx3-c` transitively, so it also brings in the NVTX include paths and the platform's dynamic-loader library (`dlopen`/`dlsym`).
+
+The loader in `src/nvtxw3_loader.c` is a **reference implementation** and **not** required.  It is provided as a convenient, ready-to-use way to locate and load an NVTXW backend library, but applications are free to ignore it and load the backend themselves.  All that is required to use the NVTXW API is to obtain a backend library, resolve its exported `nvtxwGetInterface` symbol, and call it with the desired interface version (e.g. `NVTXW_INTERFACE_VERSION`) to get the matching `nvtxwInterface_*` function table — by whatever loading mechanism best fits the application.  Use the provided loader, adapt it, or replace it as needed.
+
+There is **no** separate `nvtx3::nvtxw3` target: the NVTXW headers are header-only and already provided by `nvtx3::nvtx3-c` (its include path covers both `nvtx3/` and `nvtxw3/`).  To use NVTXW without the loader, link `nvtx3::nvtx3-c` and load the backend yourself; the optional loader is the only compiled piece, exposed as `nvtx3::nvtxw3-loader`.
+
+Note that `nvtxw3-loader` is the loader you link into your application; it is distinct from the runtime backend library it loads.
+
+Link it like any other NVTX target:
+```cmake
+add_executable(my_writer main.c)
+target_link_libraries(my_writer PRIVATE nvtx3::nvtxw3-loader)
+```
+
+If you are not using CMake, simply compile `src/nvtxw3_loader.c` as part of your build with the `include/` directory on the header search path (and link the dynamic-loader library, e.g. `-ldl`, where required).
 
 # C/C++ versions and compilers
 
