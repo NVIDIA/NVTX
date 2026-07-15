@@ -120,6 +120,7 @@ size_t NvtxPayloadSchemaProcessor::GetTypeSize(uint64_t type) const
     case NVTX_PAYLOAD_ENTRY_TYPE_TID_UINT32:
         return 4;
     case NVTX_PAYLOAD_ENTRY_TYPE_SCOPE_ID:
+    case NVTX_PAYLOAD_ENTRY_TYPE_RANGE_ID:
     case NVTX_PAYLOAD_ENTRY_TYPE_PID_UINT64:
     case NVTX_PAYLOAD_ENTRY_TYPE_TID_UINT64:
         return 8;
