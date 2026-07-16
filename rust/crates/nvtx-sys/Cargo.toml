@@ -26,6 +26,9 @@ std = ["widestring/std"]
 alloc = ["widestring/alloc"]
 cuda = []
 cuda_runtime = []
+# Expose the NVTX tools/injection ABI (`nvtxDetail/nvtxTypes.h`) for tools
+# implementing injection libraries.
+tools = []
 
 [lints]
 workspace = true
