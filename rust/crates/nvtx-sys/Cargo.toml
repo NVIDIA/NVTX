@@ -12,6 +12,8 @@ repository.workspace = true
 readme.workspace = true
 publish.workspace = true
 license.workspace = true
+keywords.workspace = true
+categories.workspace = true
 
 [build-dependencies]
 bindgen = "0.72.1"
