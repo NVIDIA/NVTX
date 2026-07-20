@@ -3,7 +3,7 @@
 
 [tool.black]
 line-length = 79
-target-version = ["py36"]
+target-version = ["py39"]
 include = '\.py?$'
 exclude = '''
 /(
@@ -26,9 +26,10 @@ requires = ["setuptools", "wheel", "Cython>=3.1"]
 
 [project]
 name = "nvtx"
-version = "0.2.15"
+version = "0.2.16"
 description="Python NVTX - Python code annotation library"
 readme = "README.md"
+requires-python = ">=3.9"
 license = "Apache-2.0 WITH LLVM-exception"
 license-files = ["LICENSE.txt"]
 authors = [{name = "NVIDIA Corporation"}]
@@ -61,7 +62,7 @@ docs = ["sphinx", "nvidia_sphinx_theme"]
 
 [tool.pytest.ini_options]
 addopts = [
-    "--import-mode=importlib",  # Recomended by pytest: https://docs.pytest.org/en/7.1.x/explanation/goodpractices.html#choosing-a-test-layout-import-rules
+    "--import-mode=importlib",  # Recommended by pytest: https://docs.pytest.org/en/7.1.x/explanation/goodpractices.html#choosing-a-test-layout-import-rules
 ]
 
 [tool.cibuildwheel]

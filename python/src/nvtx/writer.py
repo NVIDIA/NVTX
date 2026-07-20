@@ -25,8 +25,8 @@ backend. The backend decides where the data is written or how it is merged.
 Backend implementations and configuration are supplied by tools or other
 integrations. For example, NVIDIA Nsight Systems provides the ``nsys_writer``
 integration; see the `Nsight Systems documentation
-<https://docs.nvidia.com/nsight-systems/>`_ for its setup and report-specific
-usage.
+<https://docs.nvidia.com/nsight-systems/AnalysisGuide/index.html#writing-post-collection-events>`_
+for its setup and report-specific usage.
 """
 
 from nvtx._lib.writer import (
