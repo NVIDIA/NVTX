@@ -29,6 +29,14 @@ from nvtx.nvtx import (
     numpy_dtype,
 )
 
+from nvtx._lib import (
+    BatchOrdering,
+    EntryKind,
+    EventKind,
+    PayloadEntryType,
+    PredefinedScope,
+)
+
 from nvtx._lib.counters import (
     Counter,
     CounterInterpolation,

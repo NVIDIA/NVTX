@@ -16,6 +16,7 @@
 # Licensed under the Apache License v2.0 with LLVM Exceptions.
 # See https://nvidia.github.io/NVTX/LICENSE.txt for license information.
 
+import enum
 import warnings
 from nvtx._lib.counters import (
     Counter,
@@ -84,7 +85,9 @@ def _validate_counter_group_dtype(dtype):
     if dtype.fields is None:
         return
 
-    for field_name, (field_type, *_) in dtype.fields.items():
+    # Iterate dtype.names, not dtype.fields to avoid alias duplicates.
+    for field_name in dtype.names:
+        field_type = dtype.fields[field_name][0]
         if field_type.subdtype:
             raise TypeError(
                 "Counter group array fields are not supported. "
@@ -124,6 +127,113 @@ def _counter_semantics_from_metadata(metadata):
     if metadata is None:
         return None
     return getattr(metadata, "counter_semantics", None)
+
+
+class PredefinedScope(enum.Enum):
+    """Predefined NVTX execution scopes."""
+
+    NONE = NVTX_SCOPE_NONE
+    ROOT = NVTX_SCOPE_ROOT
+    CURRENT_HW_MACHINE = NVTX_SCOPE_CURRENT_HW_MACHINE
+    CURRENT_HW_SOCKET = NVTX_SCOPE_CURRENT_HW_SOCKET
+    CURRENT_HW_CPU_PHYSICAL = NVTX_SCOPE_CURRENT_HW_CPU_PHYSICAL
+    CURRENT_HW_CPU_LOGICAL = NVTX_SCOPE_CURRENT_HW_CPU_LOGICAL
+    CURRENT_HW_INNERMOST = NVTX_SCOPE_CURRENT_HW_INNERMOST
+    CURRENT_HYPERVISOR = NVTX_SCOPE_CURRENT_HYPERVISOR
+    CURRENT_VM = NVTX_SCOPE_CURRENT_VM
+    CURRENT_KERNEL = NVTX_SCOPE_CURRENT_KERNEL
+    CURRENT_CONTAINER = NVTX_SCOPE_CURRENT_CONTAINER
+    CURRENT_OS = NVTX_SCOPE_CURRENT_OS
+    CURRENT_SW_PROCESS = NVTX_SCOPE_CURRENT_SW_PROCESS
+    CURRENT_SW_THREAD = NVTX_SCOPE_CURRENT_SW_THREAD
+    CURRENT_SW_INNERMOST = NVTX_SCOPE_CURRENT_SW_INNERMOST
+
+
+def _entry_flags_from_metadata(metadata):
+    """
+    Return the resolved NVTX payload entry flags stored in dtype metadata, if
+    present (0 when absent).
+    """
+
+    if metadata is None:
+        return 0
+    entry_kind = getattr(metadata, "entry_kind", None)
+    return entry_kind.value if entry_kind is not None else 0
+
+
+def _entry_type_from_metadata(metadata):
+    """Return an explicit NVTX payload entry type, or ``None``."""
+    if metadata is None:
+        return None
+    entry_type = getattr(metadata, "entry_type", None)
+    return entry_type.value if entry_type is not None else None
+
+
+class EntryKind(enum.Enum):
+    """
+    Role of a field in a structured payload dtype.
+
+    Attach to a field with :func:`nvtx.numpy_dtype` and its ``entry_kind``
+    argument. The event roles (``RANGE_BEGIN``, ``RANGE_END``, ``MARK``)
+    mark the timestamp fields of an event schema; ``COUNTER_TIMESTAMP``
+    marks the embedded timestamp field of a counter group; ``MESSAGE``
+    marks a string field holding the event message.
+    """
+
+    RANGE_BEGIN = (
+        NVTX_PAYLOAD_ENTRY_FLAG_RANGE_BEGIN
+        | NVTX_PAYLOAD_ENTRY_FLAG_TIMESTAMP
+    )
+    RANGE_END = (
+        NVTX_PAYLOAD_ENTRY_FLAG_RANGE_END | NVTX_PAYLOAD_ENTRY_FLAG_TIMESTAMP
+    )
+    MARK = NVTX_PAYLOAD_ENTRY_FLAG_MARK | NVTX_PAYLOAD_ENTRY_FLAG_TIMESTAMP
+    MESSAGE = NVTX_PAYLOAD_ENTRY_FLAG_EVENT_MESSAGE
+    COUNTER_TIMESTAMP = NVTX_PAYLOAD_ENTRY_FLAG_TIMESTAMP
+
+
+class PayloadEntryType(enum.Enum):
+    """
+    NVTX interpretation of a specially typed payload field.
+
+    Attach to a field with :func:`nvtx.numpy_dtype` and its ``entry_type``
+    argument. The field retains ordinary fixed-width NumPy storage while NVTX
+    tools interpret it as an event attribute or identifier.
+    """
+
+    RANGE_ID = NVTX_PAYLOAD_ENTRY_TYPE_RANGE_ID
+    CATEGORY = NVTX_PAYLOAD_ENTRY_TYPE_CATEGORY
+    COLOR_ARGB = NVTX_PAYLOAD_ENTRY_TYPE_COLOR_ARGB
+    SCOPE_ID = NVTX_PAYLOAD_ENTRY_TYPE_SCOPE_ID
+    REGISTERED_STRING = NVTX_PAYLOAD_ENTRY_TYPE_NVTX_REGISTERED_STRING_HANDLE
+
+
+class EventKind(enum.Enum):
+    """
+    Event kind for the writer's ``write_event`` / ``write_event_batch``,
+    mapped to the schema-level ``NVTX_PAYLOAD_SCHEMA_FLAG_*`` flag.
+
+    ``NVTX_PAYLOAD_SCHEMA_FLAG_COUNTER_GROUP`` is not exposed as an
+    ``EventKind`` because counter-group schemas are created by
+    ``Domain.get_counter()``. The flag is set internally during registration.
+    """
+
+    MARK = NVTX_PAYLOAD_SCHEMA_FLAG_MARK
+    RANGE_PUSHPOP = NVTX_PAYLOAD_SCHEMA_FLAG_RANGE_PUSHPOP
+    RANGE_STARTEND = NVTX_PAYLOAD_SCHEMA_FLAG_RANGE_STARTEND
+    RANGE_PUSH = NVTX_PAYLOAD_SCHEMA_FLAG_RANGE_PUSH
+    RANGE_POP = NVTX_PAYLOAD_SCHEMA_FLAG_RANGE_POP
+    RANGE_START = NVTX_PAYLOAD_SCHEMA_FLAG_RANGE_START
+    RANGE_END = NVTX_PAYLOAD_SCHEMA_FLAG_RANGE_END
+
+
+class BatchOrdering(enum.Enum):
+    """Timestamp ordering within a batch of deferred events or counters."""
+
+    SORTED = NVTX_BATCH_FLAG_TIME_SORTED
+    PARTIALLY_SORTED = NVTX_BATCH_FLAG_TIME_SORTED_PARTIALLY
+    SORTED_PER_SCOPE = NVTX_BATCH_FLAG_TIME_SORTED_PER_SCOPE
+    UNSORTED = NVTX_BATCH_FLAG_UNSORTED
 
 
 _payload_setters = {}
@@ -395,6 +505,278 @@ dummy_counter.domain = dummy_domain
 # Used in `Domain.set_event_attributes` to allow setting fields to None.
 DONT_SET = object()
 
+cdef class SchemaRegistrar:
+    """
+    Builds payload schemas from NumPy dtypes and registers them, caching so
+    each distinct schema registers once. Subclasses override :meth:`_do_register`
+    to supply the register target (global ``nvtxPayloadSchemaRegister`` for
+    instrumentation, ``SchemaRegister`` for the NVTXW writer).
+    """
+
+    def __cinit__(self, *args, **kwargs):
+        # Per-domain schema dedup caches.
+        self._dtype_cache = {}
+        self._array_cache = {}
+        self._fixed_cache = {}
+
+    cdef uint64_t _do_register(
+        self, const nvtxPayloadSchemaAttr_t* attr
+    ) except *:
+        raise NotImplementedError(
+            "SchemaRegistrar subclasses must implement _do_register")
+
+    def _register_builtin_schema(self, dt, metadata):
+        name = dt.name.encode()
+        cdef nvtxSemanticsCounter_t counter_semantics
+        cdef const nvtxSemanticsHeader_t* semantics = NULL
+        cdef object counter_semantics_obj = _counter_semantics_from_metadata(metadata)
+        if counter_semantics_obj is not None:
+            _fill_counter_semantics(&counter_semantics, counter_semantics_obj)
+            semantics = &counter_semantics.header
+
+        array_length = 0
+        flags = NVTX_PAYLOAD_ENTRY_FLAG_UNUSED
+        entry_type = _entry_type_from_metadata(metadata)
+        if entry_type is None:
+            entry_type = _dtype_to_entry_type[dt.type]
+        if entry_type == NVTX_PAYLOAD_ENTRY_TYPE_CSTRING_UTF32:
+            array_length = dt.itemsize // 4
+        elif entry_type == NVTX_PAYLOAD_ENTRY_TYPE_BYTE:
+            array_length = dt.itemsize
+            flags = NVTX_PAYLOAD_ENTRY_FLAG_ARRAY_FIXED_SIZE
+        flags |= _entry_flags_from_metadata(metadata)  # entry-role flags
+
+        cdef nvtxPayloadSchemaEntry_t schemaEntry = nvtxPayloadSchemaEntry_t(
+            flags=flags,
+            type=entry_type,
+            name=name,
+            description=NULL,
+            arrayOrUnionDetail=array_length,
+            offset=0,
+            semantics=semantics,
+            reserved=NULL,
+        )
+
+        cdef nvtxPayloadSchemaAttr_t schemaAttr
+        schemaAttr.fieldMask = NVTX_PAYLOAD_SCHEMA_ATTR_FIELD_TYPE | \
+            NVTX_PAYLOAD_SCHEMA_ATTR_FIELD_ENTRIES | NVTX_PAYLOAD_SCHEMA_ATTR_FIELD_NUM_ENTRIES | \
+            NVTX_PAYLOAD_SCHEMA_ATTR_FIELD_STATIC_SIZE
+        schemaAttr.flags = 0
+        schemaAttr.type = NVTX_PAYLOAD_SCHEMA_TYPE_STATIC
+        schemaAttr.entries = &schemaEntry
+        schemaAttr.numEntries = 1
+        schemaAttr.payloadStaticSize = dt.itemsize
+        return self._do_register(&schemaAttr)
+
+    def _register_structured_schema(self, schema_key):
+        cdef bint counter_group = schema_key.counter_group
+        dt = schema_key.dtype
+        names = []
+        cdef const nvtxSemanticsHeader_t* semantics
+        cdef nvtxPayloadSchemaAttr_t schemaAttr
+        schemaAttr.fieldMask = NVTX_PAYLOAD_SCHEMA_ATTR_FIELD_TYPE | \
+            NVTX_PAYLOAD_SCHEMA_ATTR_FIELD_ENTRIES | \
+            NVTX_PAYLOAD_SCHEMA_ATTR_FIELD_NUM_ENTRIES | \
+            NVTX_PAYLOAD_SCHEMA_ATTR_FIELD_STATIC_SIZE
+        schemaAttr.name = NULL
+        schemaAttr.flags = 0
+        cdef uint64_t schema_flags = schema_key.schema_flags
+        if counter_group:
+            schema_flags |= NVTX_PAYLOAD_SCHEMA_FLAG_COUNTER_GROUP
+        if schema_flags:
+            schemaAttr.fieldMask |= NVTX_PAYLOAD_SCHEMA_ATTR_FIELD_FLAGS
+            schemaAttr.flags = schema_flags
+        # Counter groups and writer event schemas are flat: scalar fields map
+        # to predefined entry types rather than nested per-field sub-schemas.
+        cdef bint flat = counter_group or schema_key.schema_flags != 0
+        schemaAttr.type = NVTX_PAYLOAD_SCHEMA_TYPE_STATIC
+        # dt.names, not dt.fields: the fields dict also contains title
+        # aliases, which would duplicate titled fields in the schema.
+        schemaAttr.numEntries = len(dt.names)
+        schemaAttr.payloadStaticSize = dt.itemsize
+
+        cdef nvtxPayloadSchemaEntry_t* schemaEntries = \
+            <nvtxPayloadSchemaEntry_t*>malloc(len(dt.names) * sizeof(nvtxPayloadSchemaEntry_t))
+        if schemaEntries is NULL:
+            raise MemoryError("Failed to allocate memory for schema entries")
+        cdef nvtxSemanticsCounter_t* semanticsEntries = \
+            <nvtxSemanticsCounter_t*>malloc(len(dt.names) * sizeof(nvtxSemanticsCounter_t))
+        if semanticsEntries is NULL:
+            free(schemaEntries)
+            raise MemoryError("Failed to allocate memory for schema semantics")
+        try:
+            schemaAttr.entries = schemaEntries
+            for i, field_name in enumerate(dt.names):
+                field_type, offset = dt.fields[field_name][:2]
+                array_length = 0
+                flags = NVTX_PAYLOAD_ENTRY_FLAG_UNUSED
+                field_schema_key = PayloadSchemaKey(field_type)
+                semantics = NULL
+
+                if flat and field_type.subdtype:
+                    subdtype, shape = field_type.subdtype
+                    if subdtype.type in _dtype_to_entry_type:
+                        entry_type = _dtype_to_entry_type[subdtype.type]
+                        array_length = np.prod(shape)
+                        flags = NVTX_PAYLOAD_ENTRY_FLAG_ARRAY_FIXED_SIZE
+                    else:
+                        entry_type = self._get_numpy_dtype_schema(field_schema_key)
+                elif flat:
+                    entry_type = _entry_type_from_metadata(
+                        field_schema_key.metadata
+                    )
+                    if entry_type is None:
+                        if field_type.type in _dtype_to_entry_type:
+                            entry_type = _dtype_to_entry_type[field_type.type]
+                        else:
+                            entry_type = self._get_numpy_dtype_schema(
+                                field_schema_key
+                            )
+                else:
+                    entry_type = self._get_numpy_dtype_schema(field_schema_key)
+
+                if entry_type == NVTX_PAYLOAD_ENTRY_TYPE_CSTRING_UTF32:
+                    array_length = field_type.itemsize // 4
+                elif entry_type == NVTX_PAYLOAD_ENTRY_TYPE_BYTE:
+                    array_length = field_type.itemsize
+                    flags = NVTX_PAYLOAD_ENTRY_FLAG_ARRAY_FIXED_SIZE
+
+                field_counter_semantics = _counter_semantics_from_metadata(
+                    field_schema_key.metadata
+                )
+                if field_counter_semantics is not None:
+                    _fill_counter_semantics(
+                        &semanticsEntries[i], field_counter_semantics
+                    )
+                    semantics = &semanticsEntries[i].header
+
+                metadata_flags = _entry_flags_from_metadata(
+                    field_schema_key.metadata
+                )
+                flags |= metadata_flags
+                if counter_group and not (
+                    metadata_flags & NVTX_PAYLOAD_ENTRY_FLAG_TIMESTAMP
+                ):
+                    flags |= NVTX_PAYLOAD_ENTRY_FLAG_COUNTER
+
+                name = field_name.encode()
+                names.append(name)
+                schemaEntries[i] = nvtxPayloadSchemaEntry_t(
+                    flags=flags,
+                    type=entry_type,
+                    name=name,
+                    description=NULL,
+                    arrayOrUnionDetail=array_length,
+                    offset=offset,
+                    semantics=semantics,
+                    reserved=NULL,
+                )
+            return self._do_register(&schemaAttr)
+        finally:
+            free(schemaEntries)
+            free(semanticsEntries)
+
+    def _get_numpy_array_schema(self, uint64_t scalar_schema):
+        cached = self._array_cache.get(scalar_schema)
+        if cached is not None:
+            return cached
+        field_names = [b'size', b'data']
+
+        size_entry = nvtxPayloadSchemaEntry_t(
+            flags=NVTX_PAYLOAD_ENTRY_FLAG_UNUSED,
+            type=NVTX_PAYLOAD_ENTRY_TYPE_UINT64,
+            name=field_names[0],
+            description=NULL,
+            arrayOrUnionDetail=0,
+            offset=0,
+            semantics=NULL,
+            reserved=NULL,
+        )
+        data_entry = nvtxPayloadSchemaEntry_t(
+            flags=NVTX_PAYLOAD_ENTRY_FLAG_ARRAY_LENGTH_INDEX,
+            type=scalar_schema,
+            name=field_names[1],
+            description=NULL,
+            arrayOrUnionDetail=0,
+            offset=0,
+            semantics=NULL,
+            reserved=NULL,
+        )
+        cdef nvtxPayloadSchemaEntry_t[2] entries = [size_entry, data_entry]
+
+        cdef nvtxPayloadSchemaAttr_t schemaAttr
+        schemaAttr.fieldMask = NVTX_PAYLOAD_SCHEMA_ATTR_FIELD_TYPE | \
+            NVTX_PAYLOAD_SCHEMA_ATTR_FIELD_ENTRIES | NVTX_PAYLOAD_SCHEMA_ATTR_FIELD_NUM_ENTRIES
+        schemaAttr.type = NVTX_PAYLOAD_SCHEMA_TYPE_DYNAMIC
+        schemaAttr.entries = entries
+        schemaAttr.numEntries = 2
+        result = self._do_register(&schemaAttr)
+        self._array_cache[scalar_schema] = result
+        return result
+
+    def _get_fixed_size_array_schema(self, uint64_t scalar_schema, size_t array_length, size_t size):
+        cache_key = (scalar_schema, array_length, size)
+        cached = self._fixed_cache.get(cache_key)
+        if cached is not None:
+            return cached
+        cdef nvtxPayloadSchemaEntry_t entry = nvtxPayloadSchemaEntry_t(
+            flags=NVTX_PAYLOAD_ENTRY_FLAG_ARRAY_FIXED_SIZE,
+            type=scalar_schema,
+            name=NULL,
+            description=NULL,
+            arrayOrUnionDetail=array_length,
+            offset=0,
+            semantics=NULL,
+            reserved=NULL,
+        )
+
+        cdef nvtxPayloadSchemaAttr_t schemaAttr
+        schemaAttr.fieldMask = NVTX_PAYLOAD_SCHEMA_ATTR_FIELD_TYPE | \
+            NVTX_PAYLOAD_SCHEMA_ATTR_FIELD_ENTRIES | NVTX_PAYLOAD_SCHEMA_ATTR_FIELD_NUM_ENTRIES | \
+            NVTX_PAYLOAD_SCHEMA_ATTR_FIELD_STATIC_SIZE
+        schemaAttr.type = NVTX_PAYLOAD_SCHEMA_TYPE_STATIC
+        schemaAttr.payloadStaticSize = size
+        schemaAttr.entries = &entry
+        schemaAttr.numEntries = 1
+        result = self._do_register(&schemaAttr)
+        self._fixed_cache[cache_key] = result
+        return result
+
+    def _get_numpy_dtype_schema(self, schema_key):
+        cached = self._dtype_cache.get(schema_key)
+        if cached is not None:
+            return cached
+        dt = schema_key.dtype
+        if dt.subdtype:
+            subdtype = dt.subdtype[0]
+            subdtype_schema = self._get_numpy_dtype_schema(
+                PayloadSchemaKey(subdtype)
+            )
+            result = self._get_fixed_size_array_schema(
+                subdtype_schema, np.prod(dt.shape), dt.itemsize
+            )
+        elif dt.type in _dtype_to_entry_type:
+            result = self._register_builtin_schema(dt, schema_key.metadata)
+        else:
+            result = self._register_structured_schema(schema_key)
+        self._dtype_cache[schema_key] = result
+        return result
+
+
+cdef class _GlobalSchemaRegistrar(SchemaRegistrar):
+    """Registers schemas via the global ``nvtxPayloadSchemaRegister``."""
+
+    cdef nvtxDomainHandle_t _domain
+
+    def __init__(self, DomainHandle handle):
+        self._domain = handle.c_obj
+
+    cdef uint64_t _do_register(
+        self, const nvtxPayloadSchemaAttr_t* attr
+    ) except *:
+        return nvtxPayloadSchemaRegister(self._domain, attr)
+
+
 class Domain:
     """
     A class that provides an interface to NVTX API per domain,
@@ -419,6 +801,7 @@ class Domain:
     def __init__(self, name: Optional[str] = None):
         self.name = name
         self.categories = {}
+        self._schema_registrar = _GlobalSchemaRegistrar(self.handle)
 
     @lru_cache(maxsize=None)
     def get_registered_string(self, string) -> RegisteredString:
@@ -782,196 +1165,14 @@ class Domain:
 
         return nvtxTimestampGet()
 
-    def _register_builtin_schema(self, dt, metadata):
-        name = dt.name.encode()
-        cdef nvtxSemanticsCounter_t counter_semantics
-        cdef const nvtxSemanticsHeader_t* semantics = NULL
-        cdef object counter_semantics_obj = _counter_semantics_from_metadata(metadata)
-        if counter_semantics_obj is not None:
-            _fill_counter_semantics(&counter_semantics, counter_semantics_obj)
-            semantics = &counter_semantics.header
-
-        array_length = 0
-        flags = NVTX_PAYLOAD_ENTRY_FLAG_UNUSED
-        entry_type = _dtype_to_entry_type[dt.type]
-        if entry_type == NVTX_PAYLOAD_ENTRY_TYPE_CSTRING_UTF32:
-            array_length = dt.itemsize // 4
-        elif entry_type == NVTX_PAYLOAD_ENTRY_TYPE_BYTE:
-            array_length = dt.itemsize
-            flags = NVTX_PAYLOAD_ENTRY_FLAG_ARRAY_FIXED_SIZE
-
-        cdef nvtxPayloadSchemaEntry_t schemaEntry = nvtxPayloadSchemaEntry_t(
-            flags=flags,
-            type=entry_type,
-            name=name,
-            description=NULL,
-            arrayOrUnionDetail=array_length,
-            offset=0,
-            semantics=semantics,
-            reserved=NULL,
-        )
-
-        cdef nvtxPayloadSchemaAttr_t schemaAttr
-        schemaAttr.fieldMask = NVTX_PAYLOAD_SCHEMA_ATTR_FIELD_TYPE | \
-            NVTX_PAYLOAD_SCHEMA_ATTR_FIELD_ENTRIES | NVTX_PAYLOAD_SCHEMA_ATTR_FIELD_NUM_ENTRIES | \
-            NVTX_PAYLOAD_SCHEMA_ATTR_FIELD_STATIC_SIZE
-        schemaAttr.type = NVTX_PAYLOAD_SCHEMA_TYPE_STATIC
-        schemaAttr.entries = &schemaEntry
-        schemaAttr.numEntries = 1
-        schemaAttr.payloadStaticSize = dt.itemsize
-        return nvtxPayloadSchemaRegister((<DomainHandle>self.handle).c_obj, &schemaAttr)
-
-    @lru_cache(maxsize=None)
-    def _register_structured_schema(self, schema_key):
-        cdef bint counter_group = schema_key.counter_group
-        dt = schema_key.dtype
-        names = []
-        cdef const nvtxSemanticsHeader_t* semantics
-        cdef nvtxPayloadSchemaAttr_t schemaAttr
-        schemaAttr.fieldMask = NVTX_PAYLOAD_SCHEMA_ATTR_FIELD_TYPE | \
-            NVTX_PAYLOAD_SCHEMA_ATTR_FIELD_ENTRIES | \
-            NVTX_PAYLOAD_SCHEMA_ATTR_FIELD_NUM_ENTRIES | \
-            NVTX_PAYLOAD_SCHEMA_ATTR_FIELD_STATIC_SIZE
-        schemaAttr.name = NULL
-        schemaAttr.flags = 0
-        if counter_group:
-            schemaAttr.fieldMask |= NVTX_PAYLOAD_SCHEMA_ATTR_FIELD_FLAGS
-            schemaAttr.flags = NVTX_PAYLOAD_SCHEMA_FLAG_COUNTER_GROUP
-        schemaAttr.type = NVTX_PAYLOAD_SCHEMA_TYPE_STATIC
-        schemaAttr.numEntries = len(dt.fields)
-        schemaAttr.payloadStaticSize = dt.itemsize
-
-        cdef nvtxPayloadSchemaEntry_t* schemaEntries = \
-            <nvtxPayloadSchemaEntry_t*>malloc(len(dt.fields) * sizeof(nvtxPayloadSchemaEntry_t))
-        if schemaEntries is NULL:
-            raise MemoryError("Failed to allocate memory for schema entries")
-        cdef nvtxSemanticsCounter_t* semanticsEntries = \
-            <nvtxSemanticsCounter_t*>malloc(len(dt.fields) * sizeof(nvtxSemanticsCounter_t))
-        if semanticsEntries is NULL:
-            free(schemaEntries)
-            raise MemoryError("Failed to allocate memory for schema semantics")
-        try:
-            schemaAttr.entries = schemaEntries
-            for i, (field_name, (field_type, offset, *_)) in enumerate(dt.fields.items()):
-                array_length = 0
-                flags = NVTX_PAYLOAD_ENTRY_FLAG_UNUSED
-                field_schema_key = PayloadSchemaKey(field_type)
-                semantics = NULL
-
-                if counter_group and field_type.subdtype:
-                    subdtype, shape = field_type.subdtype
-                    if subdtype.type in _dtype_to_entry_type:
-                        entry_type = _dtype_to_entry_type[subdtype.type]
-                        array_length = np.prod(shape)
-                        flags = NVTX_PAYLOAD_ENTRY_FLAG_ARRAY_FIXED_SIZE
-                    else:
-                        entry_type = self._get_numpy_dtype_schema(field_schema_key)
-                elif counter_group and field_type.type in _dtype_to_entry_type:
-                    entry_type = _dtype_to_entry_type[field_type.type]
-                else:
-                    entry_type = self._get_numpy_dtype_schema(field_schema_key)
-
-                if entry_type == NVTX_PAYLOAD_ENTRY_TYPE_CSTRING_UTF32:
-                    array_length = field_type.itemsize // 4
-                elif entry_type == NVTX_PAYLOAD_ENTRY_TYPE_BYTE:
-                    array_length = field_type.itemsize
-                    flags = NVTX_PAYLOAD_ENTRY_FLAG_ARRAY_FIXED_SIZE
-
-                field_counter_semantics = _counter_semantics_from_metadata(
-                    field_schema_key.metadata
-                )
-                if field_counter_semantics is not None:
-                    _fill_counter_semantics(
-                        &semanticsEntries[i], field_counter_semantics
-                    )
-                    semantics = &semanticsEntries[i].header
-
-                name = field_name.encode()
-                names.append(name)
-                schemaEntries[i] = nvtxPayloadSchemaEntry_t(
-                    flags=flags,
-                    type=entry_type,
-                    name=name,
-                    description=NULL,
-                    arrayOrUnionDetail=array_length,
-                    offset=offset,
-                    semantics=semantics,
-                    reserved=NULL,
-                )
-            return nvtxPayloadSchemaRegister((<DomainHandle>self.handle).c_obj, &schemaAttr)
-        finally:
-            free(schemaEntries)
-            free(semanticsEntries)
-
-    @lru_cache(maxsize=None)
-    def _get_numpy_array_schema(self, uint64_t scalar_schema):
-        field_names = [b'size', b'data']
-
-        size_entry = nvtxPayloadSchemaEntry_t(
-            flags=NVTX_PAYLOAD_ENTRY_FLAG_UNUSED,
-            type=NVTX_PAYLOAD_ENTRY_TYPE_UINT64,
-            name=field_names[0],
-            description=NULL,
-            arrayOrUnionDetail=0,
-            offset=0,
-            semantics=NULL,
-            reserved=NULL,
-        )
-        data_entry = nvtxPayloadSchemaEntry_t(
-            flags=NVTX_PAYLOAD_ENTRY_FLAG_ARRAY_LENGTH_INDEX,
-            type=scalar_schema,
-            name=field_names[1],
-            description=NULL,
-            arrayOrUnionDetail=0,
-            offset=0,
-            semantics=NULL,
-            reserved=NULL,
-        )
-        cdef nvtxPayloadSchemaEntry_t[2] entries = [size_entry, data_entry]
-        
-        cdef nvtxPayloadSchemaAttr_t schemaAttr
-        schemaAttr.fieldMask = NVTX_PAYLOAD_SCHEMA_ATTR_FIELD_TYPE | \
-            NVTX_PAYLOAD_SCHEMA_ATTR_FIELD_ENTRIES | NVTX_PAYLOAD_SCHEMA_ATTR_FIELD_NUM_ENTRIES
-        schemaAttr.type = NVTX_PAYLOAD_SCHEMA_TYPE_DYNAMIC
-        schemaAttr.entries = entries
-        schemaAttr.numEntries = 2
-        return nvtxPayloadSchemaRegister((<DomainHandle>self.handle).c_obj, &schemaAttr)
-    
-    @lru_cache(maxsize=None)
-    def _get_fixed_size_array_schema(self, uint64_t scalar_schema, size_t array_length, size_t size):
-        cdef nvtxPayloadSchemaEntry_t entry = nvtxPayloadSchemaEntry_t(
-            flags=NVTX_PAYLOAD_ENTRY_FLAG_ARRAY_FIXED_SIZE,
-            type=scalar_schema,
-            name=NULL,
-            description=NULL,
-            arrayOrUnionDetail=array_length,
-            offset=0,
-            semantics=NULL,
-            reserved=NULL,
-        )
-
-        cdef nvtxPayloadSchemaAttr_t schemaAttr
-        schemaAttr.fieldMask = NVTX_PAYLOAD_SCHEMA_ATTR_FIELD_TYPE | \
-            NVTX_PAYLOAD_SCHEMA_ATTR_FIELD_ENTRIES | NVTX_PAYLOAD_SCHEMA_ATTR_FIELD_NUM_ENTRIES | \
-            NVTX_PAYLOAD_SCHEMA_ATTR_FIELD_STATIC_SIZE
-        schemaAttr.type = NVTX_PAYLOAD_SCHEMA_TYPE_STATIC
-        schemaAttr.payloadStaticSize = size
-        schemaAttr.entries = &entry
-        schemaAttr.numEntries = 1
-        return nvtxPayloadSchemaRegister((<DomainHandle>self.handle).c_obj, &schemaAttr)
-
-    @lru_cache(maxsize=None)
     def _get_numpy_dtype_schema(self, schema_key):
-        dt = schema_key.dtype
-        if dt.subdtype:
-            subdtype = dt.subdtype[0]
-            subdtype_schema = self._get_numpy_dtype_schema(
-                PayloadSchemaKey(subdtype)
-            )
-            return self._get_fixed_size_array_schema(subdtype_schema, np.prod(dt.shape), dt.itemsize)
-        if dt.type in _dtype_to_entry_type:
-            return self._register_builtin_schema(dt, schema_key.metadata)
-        return self._register_structured_schema(schema_key)
+        # Schema building/caching lives on the domain's SchemaRegistrar.
+        return self._schema_registrar._get_numpy_dtype_schema(schema_key)
+
+    def _get_numpy_array_schema(self, scalar_schema):
+        return self._schema_registrar._get_numpy_array_schema(
+            scalar_schema
+        )
 
 
 cdef class StringHandle:
