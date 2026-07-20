@@ -22,7 +22,7 @@ jobs:
       # installation fails due to a bug in the default setuptools in the
       # ubuntu-latest image. https://github.com/pypa/setuptools/issues/3269
       - name: Set up Python
-        uses: actions/setup-python@v6
+        uses: actions/setup-python@v7
         with:
           python-version: '>=3.9'
 
