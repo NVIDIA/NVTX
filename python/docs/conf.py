@@ -62,6 +62,9 @@ autodoc_member_order = 'bysource'
 import inspect
 
 import nvtx
+from sphinx import addnodes
+
+
 _COUNTER_BASE = nvtx._lib.counters.Counter
 
 
@@ -85,6 +88,19 @@ def _strip_counter_docstring_signature(app, what, name, obj, options, lines):
             del lines[0]
 
 
+def _qualify_annotation_registered_string_refs(app, doctree):
+    """Disambiguate the two RegisteredString classes in the public APIs."""
+    for node in doctree.findall(addnodes.pending_xref):
+        if (
+            node.get("refdomain") == "py"
+            and node.get("reftype") == "class"
+            and node.get("reftarget") == "RegisteredString"
+            and node.get("py:module") == "nvtx"
+        ):
+            node["reftarget"] = "nvtx._lib.lib.RegisteredString"
+
+
 def setup(app):
     app.connect("autodoc-process-signature", _suppress_counter_signature)
     app.connect("autodoc-process-docstring", _strip_counter_docstring_signature)
+    app.connect("doctree-read", _qualify_annotation_registered_string_refs)

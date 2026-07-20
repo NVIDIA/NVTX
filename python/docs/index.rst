@@ -82,8 +82,10 @@ This produces a report file (``.nsys-rep``) which can be viewed in the Nsight Sy
 
 .. toctree::
    :maxdepth: 1
+   :caption: API Reference
 
    reference
+   writer_reference
 
 .. toctree::
     :hidden:
