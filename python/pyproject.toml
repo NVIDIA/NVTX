@@ -77,7 +77,6 @@ pytest {package}/tests
 pytest --enable-injection {package}/tests
 """
 test-extras = "test"
-enable = "cpython-freethreading"
 
 [tool.cibuildwheel.linux]
 archs = ["x86_64", "aarch64"]
