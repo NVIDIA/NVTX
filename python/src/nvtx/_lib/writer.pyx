@@ -2166,7 +2166,11 @@ cdef class Stream:
         batch.timestamps = NULL
         batch.timestampsSize = 0
         if timestamps is not None:
-            timestamps_np = np.ascontiguousarray(timestamps, dtype=np.int64)
+            if isinstance(timestamps, np.ndarray):
+                timestamps_np = np.ascontiguousarray(
+                    timestamps, dtype=np.int64)
+            else:
+                timestamps_np = np.fromiter(timestamps, dtype=np.int64)
             if timestamps_np.ndim != 1:
                 raise ValueError("timestamps must be one-dimensional")
             if timestamps_np.size != samples.size:
