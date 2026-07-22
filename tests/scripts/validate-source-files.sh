@@ -411,7 +411,7 @@ check_yamllint() {
     local output
     local status
 
-    output=$(yamllint --strict .gitlab-ci.yml .github/*.yml .github/workflows/*.yml 2>&1)
+    output=$(yamllint --strict .gitlab-ci.yml .gitlab/ci/*.yml .github/*.yml .github/workflows/*.yml 2>&1)
     status=$?
     if ((status != 0)); then
         record_failure 'yamllint --strict failed' "$output"
