@@ -65,7 +65,14 @@ static const char pathDelimiter = ';';
 static const size_t initialPathBufSize = MAX_PATH; /* Grows if not big enough */
 #define NVTXW_DLLHANDLE  HMODULE
 #define NVTXW_DLLOPEN(x) LoadLibraryA(x)
-#define NVTXW_DLLFUNC    GetProcAddress
+/* GetProcAddress returns FARPROC (a function pointer).  MSVC warns on
+ * function-pointer <-> void* casts (C4054/C4055); cast directly there.
+ * MinGW/GCC still need the void* intermediate for -Wcast-function-type. */
+#if defined(_MSC_VER)
+#define NVTXW_DLLFUNC_AS(type, h, name) ((type)GetProcAddress((h), (name)))
+#else
+#define NVTXW_DLLFUNC_AS(type, h, name) ((type)(void*)GetProcAddress((h), (name)))
+#endif
 #define NVTXW_DLLCLOSE   FreeLibrary
 #else
 static const char pathSep = '/';
@@ -75,7 +82,8 @@ static const char pathDelimiter = ':';
 static const size_t initialPathBufSize = 260; /* Grows if not big enough */
 #define NVTXW_DLLHANDLE  void*
 #define NVTXW_DLLOPEN(x) dlopen(x, RTLD_LAZY)
-#define NVTXW_DLLFUNC    dlsym
+/* Cast via void* so GCC -Wcast-function-type accepts dlsym's void* return. */
+#define NVTXW_DLLFUNC_AS(type, h, name) ((type)(void*)dlsym((h), (name)))
 #define NVTXW_DLLCLOSE   dlclose
 #endif
 
@@ -504,11 +512,16 @@ static char* GetCurrentProcessPath(void)
         while (1)
         {
             char* tmp;
+            /* GetModuleFileNameA takes a DWORD length. On Win64, size_t can
+             * exceed MAXDWORD; on Win32 the types are the same width so the
+             * bound is redundant and triggers -Wtautological-type-limit-compare. */
+#if defined(_WIN64)
             if (size > (size_t)MAXDWORD)
             {
                 free(buf);
                 return NULL;
             }
+#endif
             tmp = (char*)realloc(buf, size);
             if (!tmp)
             {
@@ -640,8 +653,8 @@ static nvtxwResultCode_t InitLibraryFilename(
     /* Resolving the single backend entry point is what validates the library.
      * The loader does not call into the backend; the caller invokes the
      * returned function pointer to request an interface table. */
-    pfnGetInterface = (nvtxwGetInterface_t)
-        NVTXW_DLLFUNC(hModule, NVTXW_GET_INTERFACE_SYMBOL_NAME);
+    pfnGetInterface = NVTXW_DLLFUNC_AS(
+        nvtxwGetInterface_t, hModule, NVTXW_GET_INTERFACE_SYMBOL_NAME);
     if (!pfnGetInterface)
     {
         NVTXW_DLLCLOSE(hModule);
@@ -772,8 +785,8 @@ NVTXW_DECLSPEC void nvtxwUnload(void* moduleHandle)
         return;
     }
 
-    pfnFinalize = (nvtxwFinalize_t)
-        NVTXW_DLLFUNC(hModule, NVTXW_FINALIZE_SYMBOL_NAME);
+    pfnFinalize = NVTXW_DLLFUNC_AS(
+        nvtxwFinalize_t, hModule, NVTXW_FINALIZE_SYMBOL_NAME);
     if (pfnFinalize)
     {
         pfnFinalize();

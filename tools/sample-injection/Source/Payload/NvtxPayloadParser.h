@@ -24,7 +24,6 @@
 #include <stdint.h>
 
 #include <string>
-#include <string_view>
 #include <unordered_map>
 
 #include <nvtx3/nvToolsExtPayload.h>
@@ -60,13 +59,13 @@ class PayloadStreamVisitor
         size_t payloadIndex,
         uint64_t schemaId,
         size_t payloadSize,
-        std::string_view schemaName) = 0;
+        const std::string& schemaName) = 0;
 
     /** Called after all fields for the current payload are emitted. */
     virtual void OnPayloadEnd() = 0;
 
     /** Called before emitting a field's value stream. */
-    virtual void OnFieldBegin(std::string_view name, std::string_view description) = 0;
+    virtual void OnFieldBegin(const std::string& name, const std::string& description) = 0;
 
     /** Called after a field value stream is complete. */
     virtual void OnFieldEnd() = 0;
@@ -93,7 +92,7 @@ class PayloadStreamVisitor
     virtual void OnFloatingPoint(double value) = 0;
 
     /** Emits a string scalar value. */
-    virtual void OnString(std::string_view value) = 0;
+    virtual void OnString(const std::string& value) = 0;
 
     /** Emits raw bytes for unsupported or opaque values. */
     virtual void OnRawBytes(const uint8_t* data, size_t size) = 0;

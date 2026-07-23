@@ -21,7 +21,6 @@
 #include "NvtxPayloadSchema.h"
 #include "NvtxPayloadUtils.h"
 
-#include <algorithm>
 #include <cassert>
 #include <cinttypes>
 
@@ -417,7 +416,7 @@ bool NvtxPayloadSchemaProcessor::FinalizeSchema(
                 const size_t enumSize = (enumIt != enums.end()) ? enumIt->second.sizeOfEnum : 0;
                 if (enumSize > 0)
                 {
-                    typeAlign = std::min<size_t>(enumSize, 8);
+                    typeAlign = MinValue(enumSize, size_t{8});
                 }
                 else
                 {
@@ -431,7 +430,7 @@ bool NvtxPayloadSchemaProcessor::FinalizeSchema(
                         entry.type);
                     valid = false;
                     // Keep finalization progressing to surface additional errors in one pass.
-                    typeAlign = std::min<size_t>(entrySize, 8);
+                    typeAlign = MinValue(entrySize, size_t{8});
                 }
             }
         }
@@ -444,13 +443,13 @@ bool NvtxPayloadSchemaProcessor::FinalizeSchema(
         // Apply packing/alignment cap, if it is set.
         if (schema.packAlign > 0)
         {
-            typeAlign = (typeAlign == 0) ? schema.packAlign : std::min(typeAlign, schema.packAlign);
+            typeAlign = (typeAlign == 0) ? schema.packAlign : MinValue(typeAlign, schema.packAlign);
         }
 
         // Invalid schemas can leave alignment unresolved in fallback paths.
         assert(typeAlign != 0 && "Entry alignment must be non-zero.");
 
-        schemaAlign = std::max(schemaAlign, typeAlign);
+        schemaAlign = MaxValue(schemaAlign, typeAlign);
 
         // Use explicit offsets if provided. Implicit offsets are resolved from `nextOffset`.
         const bool hasUserProvidedOffset = !(i > 0 && entry.offset == 0);
@@ -474,14 +473,15 @@ bool NvtxPayloadSchemaProcessor::FinalizeSchema(
         if (hasUserProvidedOffset)
         {
             // Keep implicit placement monotonic even when explicit offsets are out of order.
-            nextOffset = std::max(nextOffset, entry.offset + entrySize);
+            // Cast entry.offset so size_t and uint64_t do not fight in MaxValue on 32-bit.
+            nextOffset = MaxValue(nextOffset, static_cast<size_t>(entry.offset) + entrySize);
             continue;
         }
 
         // Use the already computed effective member alignment for implicit placement.
         nextOffset = AlignUp(nextOffset, typeAlign);
         entry.offset = nextOffset;
-        nextOffset = std::max(nextOffset, entry.offset + entrySize);
+        nextOffset = MaxValue(nextOffset, static_cast<size_t>(entry.offset) + entrySize);
     }
 
     // Ensure schema static size covers all finalized entries.

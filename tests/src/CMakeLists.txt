@@ -193,8 +193,13 @@ add_nvtx_test_library(coverage-nvtxw-cpp SHARED "CoverageNvtxwCpp.cpp")
 # Recording mock NVTXW backend.  Built with the default backend filename
 # (libnvtxw3.so / nvtxw3.dll) so the loader's directory and config search modes
 # can find it by the conventional name.  Used by the loader tests below.
+# MinGW/MSYS2 default to a "lib" shared-library prefix; clear it on Windows so
+# the artifact matches NVTXW_LIB_FILENAME_DEFAULT ("nvtxw3.dll").
 add_nvtx_test_library(nvtxw-mock-backend SHARED "MockNvtxwBackend.c")
 set_target_properties(nvtxw-mock-backend PROPERTIES OUTPUT_NAME "nvtxw3")
+if(WIN32)
+    set_target_properties(nvtxw-mock-backend PROPERTIES PREFIX "")
+endif()
 
 # The loader is a static library; make it position-independent so it can be
 # linked into the shared loader test library on all platforms.  It uses POSIX
@@ -218,9 +223,16 @@ add_nvtx_test_library(coverage-nvtxw-e2e SHARED "CoverageNvtxwE2E.c")
 
 # Round-trip coverage: decode the helper-produced schemas and payloads with the
 # standalone NVTX payload parser from tools/sample-injection (a real consumer)
-# and assert the decoded output.  The parser is C++17 and was not written for
-# this project's strict warning set, so build it as a separate library with
-# warnings relaxed (it is a dependency under test, not test source).
+# and assert the decoded output.  Built as C++14 on older MSVC toolsets (VS 2015)
+# and C++17 elsewhere.  It was not written for this project's strict warning
+# set, so build it as a separate library with warnings relaxed (it is a
+# dependency under test, not test source).
+if(MSVC AND MSVC_TOOLSET_VERSION LESS_EQUAL 140)
+    set(nvtxw_payload_parser_cxx_std 14)
+else()
+    set(nvtxw_payload_parser_cxx_std 17)
+endif()
+
 set(nvtxw_parser_dir "${NVTX3_PROJ_ROOT}/tools/sample-injection")
 add_library(nvtxw-payload-parser-fortest STATIC
     "${nvtxw_parser_dir}/Source/Payload/NvtxPayloadRegistry.cpp"
@@ -234,9 +246,13 @@ target_include_directories(nvtxw-payload-parser-fortest PUBLIC
     "${nvtxw_parser_dir}/Source")
 target_link_libraries(nvtxw-payload-parser-fortest PUBLIC nvtx3-c)
 set_target_properties(nvtxw-payload-parser-fortest PROPERTIES
-    CXX_STANDARD 17 CXX_STANDARD_REQUIRED ON POSITION_INDEPENDENT_CODE ON)
+    CXX_STANDARD ${nvtxw_payload_parser_cxx_std}
+    CXX_STANDARD_REQUIRED ON
+    POSITION_INDEPENDENT_CODE ON)
 if(MSVC)
-    target_compile_options(nvtxw-payload-parser-fortest PRIVATE /W0)
+    # /W0 alone is not enough: directory-level -WX still promotes any leaked
+    # warning (e.g. UCRT C4738 on x86) into an error.
+    target_compile_options(nvtxw-payload-parser-fortest PRIVATE /W0 /WX-)
 else()
     target_compile_options(nvtxw-payload-parser-fortest PRIVATE -w)
 endif()
@@ -244,7 +260,15 @@ endif()
 add_nvtx_test_library(coverage-nvtxw-roundtrip SHARED "CoverageNvtxwRoundTrip.cpp")
 target_link_libraries(coverage-nvtxw-roundtrip PRIVATE nvtxw-payload-parser-fortest)
 set_target_properties(coverage-nvtxw-roundtrip PROPERTIES
-    CXX_STANDARD 17 CXX_STANDARD_REQUIRED ON)
+    CXX_STANDARD ${nvtxw_payload_parser_cxx_std}
+    CXX_STANDARD_REQUIRED ON)
+# Includes parser headers that were not written for this project's /Wall /WX set
+# (e.g. MSVC C4623/C4626/C5027 on reference-member aggregates).
+if(MSVC)
+    target_compile_options(coverage-nvtxw-roundtrip PRIVATE /W0 /WX-)
+else()
+    target_compile_options(coverage-nvtxw-roundtrip PRIVATE -w)
+endif()
 
 if(ENABLE_NVTX3_HPP_TESTS)
     add_nvtx_test_library(attributes SHARED "Attributes.cpp")
