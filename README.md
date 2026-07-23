@@ -198,7 +198,7 @@ Normal (non-IMPORTED) targets will be defined when using CPM (CMake Package Mana
         CPMAddPackage(
             NAME NVTX
             GITHUB_REPOSITORY NVIDIA/NVTX
-            GIT_TAG v3.5.0-c-cpp
+            GIT_TAG v3.6.0-c-cpp
             GIT_SHALLOW TRUE)
 
         add_executable(my_program main.cpp)
@@ -296,7 +296,7 @@ include(path/to/CPM.cmake)
 CPMAddPackage(
     NAME NVTX
     GITHUB_REPOSITORY NVIDIA/NVTX
-    GIT_TAG v3.5.0-c-cpp
+    GIT_TAG v3.6.0-c-cpp
     GIT_SHALLOW TRUE)
 
 # Example C program

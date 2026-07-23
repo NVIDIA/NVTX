@@ -34,7 +34,7 @@ cmake_minimum_required(VERSION 3.19)
 # This allows the same target name to be used for different NVTX versions.
 
 # Project declaration needs to be before the configuration
-project(nvtx3 VERSION 3.5.0)
+project(nvtx3 VERSION 3.6.0)
 
 # Check if standalone or part of another project:
 set(NVTX3_C_ROOT "${CMAKE_CURRENT_SOURCE_DIR}")
