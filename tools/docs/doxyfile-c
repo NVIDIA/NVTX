@@ -941,6 +941,7 @@ INPUT                  = ../../c/include/nvtx3/nvToolsExt.h \
                          ../../c/include/nvtx3/nvToolsExtSync.h \
                          ../../c/include/nvtx3/nvToolsExtMem.h \
                          ../../c/include/nvtx3/nvToolsExtMemCudaRt.h \
+                         ../../c/include/nvtx3/nvToolsExtCounters.h \
                          ../../c/include/nvtx3/nvToolsExtPayload.h \
                          ./NVTX_EXTENDED_PAYLOADS.md \
                          ./NVTXW_USER_GUIDE.md \
@@ -951,7 +952,6 @@ INPUT                  = ../../c/include/nvtx3/nvToolsExt.h \
                          ../../c/include/nvtxw3/nvtxw3_counter_helpers.h \
                          ../../c/include/nvtxw3/nvtxw3_setup_helpers.h \
                          ../../c/include/nvtx3/nvToolsExtPayloadHelper.h \
-                         ../../c/include/nvtx3/nvToolsExtCounters.h \
                          ../../c/include/nvtx3/nvToolsExtSemanticsCounters.h \
                          ../../c/include/nvtx3/nvToolsExtSemanticsScope.h \
                          ../../c/include/nvtx3/nvToolsExtSemanticsTime.h \

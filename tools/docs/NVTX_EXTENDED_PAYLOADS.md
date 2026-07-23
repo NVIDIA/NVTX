@@ -50,7 +50,7 @@ can be:
   with a hex/binary viewer when no schema is available, or
 - a single value of a **predefined type** (e.g. an `int`, a `double`, or a C-string),
   decoded without a schema. (Note that for a single numeric scalar, the classic payload
-  field on @ref nvtxEventAttributes_t might be simpler.)
+  field on @ref nvtxEventAttributes_v2 "nvtxEventAttributes_t" might be simpler.)
 
 Typical use cases:
 
@@ -209,8 +209,9 @@ For a code example that attaches time and scope semantics to timestamp entries, 
 
 ## Attaching Payloads to Event Attributes {#NVTX_EXTENDED_PAYLOADS_ATTACH}
 
-Attach an array of `nvtxPayloadData_t` to an @ref nvtxEventAttributes_t and emit the
-event through any of the attribute-based NVTX APIs (for example
+Attach an array of `nvtxPayloadData_t` to an
+@ref nvtxEventAttributes_v2 "nvtxEventAttributes_t" and emit the event through any of
+the attribute-based NVTX APIs (for example
 `nvtxDomainRangePushEx` or `nvtxDomainMarkEx`).
 
 For the single-payload case, the helper macros @ref nvtxPayloadRangePush and
@@ -227,7 +228,8 @@ nvtxPayloadRangePush(domain, &attr, schemaId, &value, sizeof(value));
 ```
 
 For multiple payloads, the helper macro @ref NVTX_PAYLOAD_EVTATTR_SET_MULTIPLE can be
-used to bind an `nvtxPayloadData_t` array to @ref nvtxEventAttributes_t:
+used to bind an `nvtxPayloadData_t` array to
+@ref nvtxEventAttributes_v2 "nvtxEventAttributes_t":
 
 ```c
 nvtxPayloadData_t payloads[] = {
@@ -275,8 +277,8 @@ color red, the effective range color is red.
 
 Within a single API call, event attributes are applied in this order:
 
-1. Regular @ref nvtxEventAttributes_t members, such as message or color, if the API
-   takes event attributes.
+1. Regular @ref nvtxEventAttributes_v2 "nvtxEventAttributes_t" members, such as message
+   or color, if the API takes event attributes.
 2. Extended payload entries, walking the `nvtxPayloadData_t` array in order.
 3. For each payload, schema entries in order.
 
@@ -420,8 +422,10 @@ and scope information that describe when and where the event originated; see
 - @ref nvtxEventBatchSubmit - submit a batch of deferred events using
   @ref nvtxEventBatch_t.
 
-A deferred event's schema typically has @ref NVTX_PAYLOAD_SCHEMA_FLAG_RANGE_* or
-@ref NVTX_PAYLOAD_SCHEMA_FLAG_MARK set, and carries at least an event-message entry.
+A deferred event's schema typically has one of the `NVTX_PAYLOAD_SCHEMA_FLAG_RANGE_*`
+flags (for example @ref NVTX_PAYLOAD_SCHEMA_FLAG_RANGE_PUSHPOP or
+@ref NVTX_PAYLOAD_SCHEMA_FLAG_RANGE_STARTEND) or @ref NVTX_PAYLOAD_SCHEMA_FLAG_MARK set,
+and carries at least an event-message entry.
 
 ## Scopes {#NVTX_EXTENDED_PAYLOADS_SCOPES}
 
@@ -752,7 +756,7 @@ NVTX provides two kinds of helper macros for extended payloads:
 
 - Schema-definition helpers that define a C struct and matching payload schema.
 - Event-attribute helpers that attach payload data to a range or marker through
-  @ref nvtxEventAttributes_t.
+  @ref nvtxEventAttributes_v2 "nvtxEventAttributes_t".
 
 For simpler schema authoring, `nvtx3/nvToolsExtPayloadHelper.h` provides macros that
 derive a schema directly from a C struct definition:
@@ -792,7 +796,7 @@ conforming compilers work without extra flags.
 The event-attribute helpers are lower-level convenience macros for attaching already
 registered payload data to event attributes. Use @ref nvtxPayloadRangePush or
 @ref nvtxPayloadMark for one payload, or @ref NVTX_PAYLOAD_EVTATTR_SET_MULTIPLE to bind
-an array of `nvtxPayloadData_t` to @ref nvtxEventAttributes_t.
+an array of `nvtxPayloadData_t` to @ref nvtxEventAttributes_v2 "nvtxEventAttributes_t".
 
 ## Best Practices {#NVTX_EXTENDED_PAYLOADS_BEST_PRACTICES}
 

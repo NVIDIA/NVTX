@@ -423,17 +423,13 @@ typedef nvtxDomainRegistration* nvtxDomainHandle_t;
 struct nvtxStringRegistration_st;
 typedef struct nvtxStringRegistration_st nvtxStringRegistration;
 
-/* \brief Registered String Handle Structure.
-* \anchor REGISTERED_STRING_HANDLE_STRUCTURE
-*
-* This structure is opaque to the user and is used as a handle to reference
-* a registered string.  This type is returned from tools when using the NVTX
-* API to create a registered string.
-* A value of 0 (or NULL) is a null handle and does not reference a created
-* registered string. Applications may initialize handle variables to 0 and
-* compare them with 0 to determine whether they reference a registered string.
-*
-*/
+/** \brief Registered string handle \anchor REGISTERED_STRING_HANDLE_STRUCTURE
+ *
+ * Opaque handle returned when registering a string with NVTX. A value of 0
+ * (or NULL) is a null handle and does not reference a registered string.
+ * Applications may initialize handle variables to 0 and compare them with 0
+ * to determine whether they reference a registered string.
+ */
 typedef nvtxStringRegistration* nvtxStringHandle_t;
 
 /* ========================================================================= */
@@ -460,8 +456,8 @@ typedef enum nvtxMessageType_t
     NVTX_MESSAGE_TYPE_UNICODE     = 2,     /**< A wide character sequence is used as payload. */
     /* NVTX_VERSION_2 */
     NVTX_MESSAGE_TYPE_REGISTERED  = 3     /**< A unique string handle that was registered
-                                                with \ref nvtxDomainRegisterStringA() or
-                                                \ref nvtxDomainRegisterStringW(). */
+                                                with \ref nvtxDomainRegisterStringA or
+                                                \ref nvtxDomainRegisterStringW. */
 } nvtxMessageType_t;
 
 typedef union nvtxMessageValue_t
@@ -590,8 +586,8 @@ typedef enum nvtxPayloadType_t
  * \endcode
  *
  * In the example the caller does not have to set the value of
- * \ref ::nvtxEventAttributes_v2::category or
- * \ref ::nvtxEventAttributes_v2::payload as these fields were set to
+ * \ref nvtxEventAttributes_v2::category or
+ * \ref PAYLOAD_FIELD "nvtxEventAttributes_v2::payload" as these fields were set to
  * the default value by {0}.
  * \sa
  * ::nvtxDomainMarkEx
@@ -623,7 +619,7 @@ typedef struct nvtxEventAttributes_v2
      * A category is a user-controlled ID that can be used to group
      * events.  The tool may use category IDs to improve filtering or
      * enable grouping of events in the same category. The functions
-     * \ref ::nvtxNameCategoryA or \ref ::nvtxNameCategoryW can be used
+     * \ref nvtxNameCategoryA or \ref nvtxNameCategoryW can be used
      * to name a category.
      *
      * Default Value is 0
@@ -786,6 +782,7 @@ NVTX_DECLSPEC void NVTX_API nvtxMarkEx(const nvtxEventAttributes_t* eventAttrib)
  * \version NVTX_VERSION_0
  * @{ */
 NVTX_DECLSPEC void NVTX_API nvtxMarkA(const char* message);
+/** \copydoc nvtxMarkA */
 NVTX_DECLSPEC void NVTX_API nvtxMarkW(const wchar_t* message);
 /** @} */
 
@@ -1162,8 +1159,7 @@ typedef enum nvtxResourceGenericType_t
 
 
 
-/** \brief Resource Attribute Structure.
-* \anchor RESOURCE_ATTRIBUTE_STRUCTURE
+/** \brief Resource Attribute Structure \anchor RESOURCE_ATTRIBUTE_STRUCTURE
 *
 * This structure is used to describe the attributes of a resource. The layout of
 * the structure is defined by a specific version of the tools extension
@@ -1334,7 +1330,7 @@ typedef struct nvtxResourceHandle* nvtxResourceHandle_t;
 * \endcode
 *
 * \sa
-* ::nvtxResourceAttributes_t
+* \ref RESOURCE_ATTRIBUTE_STRUCTURE "nvtxResourceAttributes_t"
 * ::nvtxDomainResourceDestroy
 *
 * \version NVTX_VERSION_2
@@ -1432,6 +1428,7 @@ NVTX_DECLSPEC void NVTX_API nvtxDomainNameCategoryW(nvtxDomainHandle_t domain, u
  * \version NVTX_VERSION_1
  * @{ */
 NVTX_DECLSPEC void NVTX_API nvtxNameCategoryA(uint32_t category, const char* name);
+/** \copydoc nvtxNameCategoryA */
 NVTX_DECLSPEC void NVTX_API nvtxNameCategoryW(uint32_t category, const wchar_t* name);
 /** @} */
 
@@ -1552,6 +1549,7 @@ NVTX_DECLSPEC void NVTX_API nvtxNameOsThreadW(uint32_t threadId, const wchar_t* 
 * \version NVTX_VERSION_2
 * @{ */
 NVTX_DECLSPEC nvtxStringHandle_t NVTX_API nvtxDomainRegisterStringA(nvtxDomainHandle_t domain, const char* string);
+/** \copydoc nvtxDomainRegisterStringA */
 NVTX_DECLSPEC nvtxStringHandle_t NVTX_API nvtxDomainRegisterStringW(nvtxDomainHandle_t domain, const wchar_t* string);
 /** @} */
 
