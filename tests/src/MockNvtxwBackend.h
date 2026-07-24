@@ -554,7 +554,16 @@ static nvtxwResultCode_t MockNvtxwGetInterface(
     nvtxwInterfaceVersion_t version,
     const void** ifaceOut)
 {
+    /* Disable the MSVC deprecation warning for getenv -- this usage is safe
+     * because the returned value is used before any subsequent call. */
+#if defined(_MSC_VER)
+#pragma warning( push )
+#pragma warning( disable : 4996 )
+#endif
     const char* envConfig = getenv(MOCK_NVTXW_CONFIG_ENV_VAR);
+#if defined(_MSC_VER)
+#pragma warning( pop )
+#endif
 
     if (!ifaceOut) return NVTXW_RESULT_INVALID_ARGUMENT;
     *ifaceOut = NULL;

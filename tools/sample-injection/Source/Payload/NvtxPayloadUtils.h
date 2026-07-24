@@ -44,8 +44,21 @@ inline size_t AlignUp(size_t value, size_t alignment)
     return (value + mask) & ~mask;
 }
 
+/** Prefer over std::min/std::max to avoid Windows min/max macro conflicts. */
+template <typename T>
+inline T MinValue(T a, T b)
+{
+    return a < b ? a : b;
+}
+
+template <typename T>
+inline T MaxValue(T a, T b)
+{
+    return a > b ? a : b;
+}
+
 /** Returns the type category for a predefined NVTX entry type. */
-inline constexpr TypeCategoryFlags GetTypeCategory(uint64_t type)
+inline TypeCategoryFlags GetTypeCategory(uint64_t type)
 {
     switch (type)
     {

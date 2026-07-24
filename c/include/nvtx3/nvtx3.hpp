@@ -657,8 +657,10 @@
  * Oftentimes users want to quickly and easily add NVTX ranges to their library
  * or application to aid in profiling and optimization.
  *
- * A convenient way to do this is to use the \ref NVTX3_FUNC_RANGE and
- * \ref NVTX3_FUNC_RANGE_IN macros. These macros take care of constructing an
+ * A convenient way to do this is to use the
+ * \ref NVTX3_V1_FUNC_RANGE "NVTX3_FUNC_RANGE" and
+ * \ref NVTX3_V1_FUNC_RANGE_IN "NVTX3_FUNC_RANGE_IN" macros. These macros take
+ * care of constructing an
  * `nvtx3::scoped_range_in` with the name of the enclosing function as the
  * range's message.
  *
@@ -4920,7 +4922,7 @@ using counter = counter_in<T, domain::global>;
  * field expects.
  *
  * The type of the semantic is deduced from the expression, so any builder
- * in the `::nvtx3::v1` semantic family works. If the semantic is chained to
+ * in the `nvtx3::v1` semantic family works. If the semantic is chained to
  * another semantic, the chain is copied into the static semantic object.
  *
  * Example:

@@ -14,10 +14,12 @@ fi
 
 NAME="build-linux-gcc$SUFFIX"
 LOCATION="$(cd "$(dirname "$0")/.." ; pwd)"
-mkdir "$LOCATION/$NAME"
+mkdir -p "$LOCATION/$NAME"
 cd "$LOCATION/$NAME"
 
-NVCC="$CONDA/envs/cuda-env/bin/nvcc"
+if ! NVCC="$(command -v nvcc 2>/dev/null)"; then
+    NVCC="${CONDA:-}/envs/cuda-env/bin/nvcc"
+fi
 CUDA_MAX_GCC_VER=15
 if [[ ! "$VER" =~ ^[0-9]+$ || "$VER" -gt "$CUDA_MAX_GCC_VER" ]]; then
     echo "CUDA disabled: GCC version '$VER' is not supported; CUDA requires GCC <= $CUDA_MAX_GCC_VER."
