@@ -1,0 +1,33 @@
+<map id="nvtxw3_event_helpers.h" name="nvtxw3_event_helpers.h">
+<area shape="rect" id="Node000001" title="Stateless helpers for writing event payloads through NVTXW EventWrite." alt="" coords="975,5,1156,31"/>
+<area shape="rect" id="Node000002" href="$nvtxw3_8h.html" title="NVTX Writer API for feed&#45;forward trace data." alt="" coords="793,79,927,104"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="1033,33,907,77,905,72,1031,28"/>
+<area shape="rect" id="Node000007" title=" " alt="" coords="977,372,1052,397"/>
+<area shape="poly" id="edge16_Node000001_Node000007" title=" " alt="" coords="1068,31,1068,163,1068,239,1064,274,1055,307,1031,361,1026,359,1050,305,1059,273,1063,239,1063,163,1063,31"/>
+<area shape="rect" id="Node000014" title=" " alt="" coords="1103,79,1174,104"/>
+<area shape="poly" id="edge17_Node000001_Node000014" title=" " alt="" coords="1079,29,1119,67,1115,71,1076,33"/>
+<area shape="rect" id="Node000003" href="$nv_tools_ext_payload_8h.html" title="NVTX payload extension API: schema types, entry flags, and registration." alt="" coords="439,225,635,251"/>
+<area shape="poly" id="edge2_Node000002_Node000003" title=" " alt="" coords="795,107,722,125,648,154,600,185,561,217,558,213,597,181,645,150,721,120,793,102"/>
+<area shape="poly" id="edge15_Node000002_Node000007" title=" " alt="" coords="878,102,935,150,966,185,992,224,1005,259,1013,295,1018,358,1013,358,1008,296,1000,260,987,227,962,188,931,154,875,106"/>
+<area shape="rect" id="Node000012" href="$nv_tools_ext_counters_8h_source.html" title=" " alt="" coords="659,152,861,177"/>
+<area shape="poly" id="edge11_Node000002_Node000012" title=" " alt="" coords="845,106,789,146,786,142,842,102"/>
+<area shape="rect" id="Node000004" href="$nv_tools_ext_8h.html" title=" " alt="" coords="280,299,384,324"/>
+<area shape="poly" id="edge3_Node000003_Node000004" title=" " alt="" coords="505,253,379,297,377,292,503,248"/>
+<area shape="rect" id="Node000010" title=" " alt="" coords="691,299,885,324"/>
+<area shape="poly" id="edge9_Node000003_Node000010" title=" " alt="" coords="578,248,735,292,733,297,577,253"/>
+<area shape="rect" id="Node000011" title=" " alt="" coords="408,299,667,324"/>
+<area shape="poly" id="edge10_Node000003_Node000011" title=" " alt="" coords="540,251,540,285,535,285,535,251"/>
+<area shape="rect" id="Node000005" title=" " alt="" coords="5,372,200,397"/>
+<area shape="poly" id="edge4_Node000004_Node000005" title=" " alt="" coords="296,327,154,370,152,365,294,321"/>
+<area shape="rect" id="Node000006" title=" " alt="" coords="225,372,295,397"/>
+<area shape="poly" id="edge5_Node000004_Node000006" title=" " alt="" coords="322,326,283,364,280,360,318,322"/>
+<area shape="poly" id="edge6_Node000004_Node000007" title=" " alt="" coords="385,320,396,321,719,357,964,377,964,382,719,362,396,327,384,325"/>
+<area shape="rect" id="Node000008" title=" " alt="" coords="319,372,491,397"/>
+<area shape="poly" id="edge7_Node000004_Node000008" title=" " alt="" coords="346,322,385,360,382,364,342,326"/>
+<area shape="rect" id="Node000009" title=" " alt="" coords="515,372,679,397"/>
+<area shape="poly" id="edge8_Node000004_Node000009" title=" " alt="" coords="375,321,542,366,540,371,374,327"/>
+<area shape="poly" id="edge12_Node000012_Node000003" title=" " alt="" coords="725,180,587,224,585,219,723,175"/>
+<area shape="poly" id="edge13_Node000012_Node000010" title=" " alt="" coords="743,180,725,193,708,211,698,230,698,240,701,249,721,273,747,290,744,295,717,277,696,252,693,240,693,229,703,208,721,189,740,175"/>
+<area shape="rect" id="Node000013" title=" " alt="" coords="711,225,977,251"/>
+<area shape="poly" id="edge14_Node000012_Node000013" title=" " alt="" coords="775,175,821,214,818,218,772,179"/>
+</map>

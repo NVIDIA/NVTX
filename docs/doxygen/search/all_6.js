@@ -1,6 +1,4 @@
 var searchData=
 [
-  ['general_0',['General',['../group___g_e_n_e_r_a_l.html',1,'']]],
-  ['glance_1',['Concepts at a Glance',['../md__n_v_t_x___e_x_t_e_n_d_e_d___p_a_y_l_o_a_d_s.html#NVTX_EXTENDED_PAYLOADS_CONCEPTS',1,'']]],
-  ['guide_2',['Extended Payloads: User Guide',['../md__n_v_t_x___e_x_t_e_n_d_e_d___p_a_y_l_o_a_d_s.html#NVTX_EXTENDED_PAYLOADS',1,'']]]
+  ['7_20time_20domains_20timestamps_20and_20synchronization_0',['7. Time Domains, Timestamps, and Synchronization',['../md__n_v_t_x_w___u_s_e_r___g_u_i_d_e.html#NVTXW_TIME_DOMAINS',1,'']]]
 ];

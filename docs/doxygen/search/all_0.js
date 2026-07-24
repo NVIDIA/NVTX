@@ -1,16 +1,11 @@
 var searchData=
 [
-  ['a_20glance_0',['Concepts at a Glance',['../md__n_v_t_x___e_x_t_e_n_d_e_d___p_a_y_l_o_a_d_s.html#NVTX_EXTENDED_PAYLOADS_CONCEPTS',1,'']]],
-  ['and_20buffers_1',['Deep-copy of strings and buffers',['../md__n_v_t_x___e_x_t_e_n_d_e_d___p_a_y_l_o_a_d_s.html#NVTX_EXTENDED_PAYLOADS_DEEP_COPY',1,'']]],
-  ['and_20ranges_2',['and ranges',['../md__n_v_t_x___e_x_t_e_n_d_e_d___p_a_y_l_o_a_d_s.html#NVTX_EXTENDED_PAYLOADS_HOWTO_DEFERRED',1,'Deferred marks and ranges'],['../group___m_a_r_k_e_r_s___a_n_d___r_a_n_g_e_s.html',1,'Markers and Ranges'],['../index.html#MARKERS_AND_RANGES',1,'Markers and Ranges']]],
-  ['and_20strings_3',['Fixed-size embedded arrays and strings',['../md__n_v_t_x___e_x_t_e_n_d_e_d___p_a_y_l_o_a_d_s.html#NVTX_EXTENDED_PAYLOADS_FIXED_ARRAYS',1,'']]],
-  ['api_20reference_4',['NVTX C API Reference',['../index.html',1,'']]],
-  ['apis_5',['Payload Event APIs',['../md__n_v_t_x___e_x_t_e_n_d_e_d___p_a_y_l_o_a_d_s.html#NVTX_EXTENDED_PAYLOADS_EVENT_APIS',1,'']]],
-  ['arrayoruniondetail_6',['arrayOrUnionDetail',['../structnvtx_payload_schema_entry__t.html#a187c1291da112ded29e1275700e3dabd',1,'nvtxPayloadSchemaEntry_t']]],
-  ['arrays_7',['Variable-length arrays',['../md__n_v_t_x___e_x_t_e_n_d_e_d___p_a_y_l_o_a_d_s.html#NVTX_EXTENDED_PAYLOADS_VAR_ARRAYS',1,'']]],
-  ['arrays_20and_20strings_8',['Fixed-size embedded arrays and strings',['../md__n_v_t_x___e_x_t_e_n_d_e_d___p_a_y_l_o_a_d_s.html#NVTX_EXTENDED_PAYLOADS_FIXED_ARRAYS',1,'']]],
-  ['at_20a_20glance_9',['Concepts at a Glance',['../md__n_v_t_x___e_x_t_e_n_d_e_d___p_a_y_l_o_a_d_s.html#NVTX_EXTENDED_PAYLOADS_CONCEPTS',1,'']]],
-  ['attaching_20payloads_20to_20event_20attributes_10',['Attaching Payloads to Event Attributes',['../md__n_v_t_x___e_x_t_e_n_d_e_d___p_a_y_l_o_a_d_s.html#NVTX_EXTENDED_PAYLOADS_ATTACH',1,'']]],
-  ['attribute_20precedence_11',['Event Attribute Precedence',['../md__n_v_t_x___e_x_t_e_n_d_e_d___p_a_y_l_o_a_d_s.html#NVTX_EXTENDED_PAYLOADS_EVENT_ATTRIBUTE_PRECEDENCE',1,'']]],
-  ['attributes_12',['attributes',['../md__n_v_t_x___e_x_t_e_n_d_e_d___p_a_y_l_o_a_d_s.html#NVTX_EXTENDED_PAYLOADS_ATTACH',1,'Attaching Payloads to Event Attributes'],['../index.html#EVENT_ATTRIBUTES',1,'Event Attributes'],['../group___e_v_e_n_t___a_t_t_r_i_b_u_t_e_s.html',1,'Event Attributes']]]
+  ['1_20when_20to_20use_20nvtxw_0',['1. When to Use NVTXW',['../md__n_v_t_x_w___u_s_e_r___g_u_i_d_e.html#autotoc_md6',1,'']]],
+  ['10_20loading_20the_20backend_1',['10. Loading the Backend',['../md__n_v_t_x_w___u_s_e_r___g_u_i_d_e.html#autotoc_md23',1,'']]],
+  ['11_20configuration_2',['11. Configuration',['../md__n_v_t_x_w___u_s_e_r___g_u_i_d_e.html#autotoc_md27',1,'']]],
+  ['12_20versioning_20and_20forward_20compatibility_3',['12. Versioning and Forward Compatibility',['../md__n_v_t_x_w___u_s_e_r___g_u_i_d_e.html#NVTXW_VERSIONING',1,'']]],
+  ['13_20thread_20safety_4',['13. Thread Safety',['../md__n_v_t_x_w___u_s_e_r___g_u_i_d_e.html#NVTXW_THREAD_SAFETY',1,'']]],
+  ['14_20error_20handling_5',['14. Error Handling',['../md__n_v_t_x_w___u_s_e_r___g_u_i_d_e.html#autotoc_md31',1,'']]],
+  ['15_20core_20interface_20example_6',['15. Core Interface Example',['../md__n_v_t_x_w___u_s_e_r___g_u_i_d_e.html#NVTXW_CORE_EXAMPLE',1,'']]],
+  ['16_20tips_20and_20gotchas_7',['16. Tips and Gotchas',['../md__n_v_t_x_w___u_s_e_r___g_u_i_d_e.html#autotoc_md34',1,'']]]
 ];

@@ -34,5 +34,13 @@ var searchData=
   ['nvtxsemanticstime_5ft_31',['nvtxSemanticsTime_t',['../structnvtx_semantics_time__t.html',1,'']]],
   ['nvtxsyncpoint_5ft_32',['nvtxSyncPoint_t',['../structnvtx_sync_point__t.html',1,'']]],
   ['nvtxsyncuserattributes_5fv0_33',['nvtxSyncUserAttributes_v0',['../structnvtx_sync_user_attributes__v0.html',1,'']]],
-  ['nvtxtimedomainattr_5ft_34',['nvtxTimeDomainAttr_t',['../structnvtx_time_domain_attr__t.html',1,'']]]
+  ['nvtxtimedomainattr_5ft_34',['nvtxTimeDomainAttr_t',['../structnvtx_time_domain_attr__t.html',1,'']]],
+  ['nvtxwdomainattributes_5ft_35',['nvtxwDomainAttributes_t',['../structnvtxw_domain_attributes__t.html',1,'']]],
+  ['nvtxweventattributes_5ft_36',['nvtxwEventAttributes_t',['../structnvtxw_event_attributes__t.html',1,'']]],
+  ['nvtxweventattributesutf8_5ft_37',['nvtxwEventAttributesUtf8_t',['../structnvtxw_event_attributes_utf8__t.html',1,'']]],
+  ['nvtxweventhelperschemaids_5ft_38',['nvtxwEventHelperSchemaIds_t',['../structnvtxw_event_helper_schema_ids__t.html',1,'']]],
+  ['nvtxweventwriter_5ft_39',['nvtxwEventWriter_t',['../structnvtxw_event_writer__t.html',1,'']]],
+  ['nvtxwinterface_5fv2_5ft_40',['nvtxwInterface_v2_t',['../structnvtxw_interface__v2__t.html',1,'']]],
+  ['nvtxwsessionattributes_5ft_41',['nvtxwSessionAttributes_t',['../structnvtxw_session_attributes__t.html',1,'']]],
+  ['nvtxwstreamattributes_5ft_42',['nvtxwStreamAttributes_t',['../structnvtxw_stream_attributes__t.html',1,'']]]
 ];

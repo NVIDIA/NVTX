@@ -1,25 +1,4 @@
 var searchData=
 [
-  ['embedded_20arrays_20and_20strings_0',['Fixed-size embedded arrays and strings',['../md__n_v_t_x___e_x_t_e_n_d_e_d___p_a_y_l_o_a_d_s.html#NVTX_EXTENDED_PAYLOADS_FIXED_ARRAYS',1,'']]],
-  ['empty_20strings_1',['Empty strings',['../md__n_v_t_x___e_x_t_e_n_d_e_d___p_a_y_l_o_a_d_s.html#NVTX_EXTENDED_PAYLOADS_EMPTY_STRINGS',1,'']]],
-  ['end_3a_20payload_20schema_20entry_20flags_2',['END: Payload schema entry flags.',['../nv_tools_ext_payload_8h.html#autotoc_md4',1,'']]],
-  ['end_3a_20payload_20schema_20entry_20types_3',['END: Payload schema entry types.',['../nv_tools_ext_payload_8h.html#autotoc_md6',1,'']]],
-  ['entries_4',['entries',['../structnvtx_payload_enum_attr__t.html#a2a81abd10a27f81936c78cdafe5a7ab8',1,'nvtxPayloadEnumAttr_t::entries'],['../structnvtx_payload_schema_attr__t.html#afa128ebfebfbb3333f41d8a1161b6176',1,'nvtxPayloadSchemaAttr_t::entries']]],
-  ['entry_20flags_5',['END: Payload schema entry flags.',['../nv_tools_ext_payload_8h.html#autotoc_md4',1,'']]],
-  ['entry_20flags_20used_20for_20ref_20nvtxpayloadschemaentry_5ft_3a_3aflags_6',['Payload schema entry flags. Used for @ref nvtxPayloadSchemaEntry_t::flags.',['../nv_tools_ext_payload_8h.html#autotoc_md3',1,'']]],
-  ['entry_20semantics_7',['Entry Semantics',['../md__n_v_t_x___e_x_t_e_n_d_e_d___p_a_y_l_o_a_d_s.html#NVTX_EXTENDED_PAYLOADS_SEMANTICS',1,'']]],
-  ['entry_20types_8',['END: Payload schema entry types.',['../nv_tools_ext_payload_8h.html#autotoc_md6',1,'']]],
-  ['enums_9',['Enums',['../md__n_v_t_x___e_x_t_e_n_d_e_d___p_a_y_l_o_a_d_s.html#NVTX_EXTENDED_PAYLOADS_ENUMS',1,'']]],
-  ['event_20apis_10',['Payload Event APIs',['../md__n_v_t_x___e_x_t_e_n_d_e_d___p_a_y_l_o_a_d_s.html#NVTX_EXTENDED_PAYLOADS_EVENT_APIS',1,'']]],
-  ['event_20attribute_20precedence_11',['Event Attribute Precedence',['../md__n_v_t_x___e_x_t_e_n_d_e_d___p_a_y_l_o_a_d_s.html#NVTX_EXTENDED_PAYLOADS_EVENT_ATTRIBUTE_PRECEDENCE',1,'']]],
-  ['event_20attributes_12',['event attributes',['../md__n_v_t_x___e_x_t_e_n_d_e_d___p_a_y_l_o_a_d_s.html#NVTX_EXTENDED_PAYLOADS_ATTACH',1,'Attaching Payloads to Event Attributes'],['../group___e_v_e_n_t___a_t_t_r_i_b_u_t_e_s.html',1,'Event Attributes'],['../index.html#EVENT_ATTRIBUTES',1,'Event Attributes']]],
-  ['event_20messages_13',['Event Messages',['../md__n_v_t_x___e_x_t_e_n_d_e_d___p_a_y_l_o_a_d_s.html#NVTX_EXTENDED_PAYLOADS_EVENT_MESSAGES',1,'']]],
-  ['events_14',['events',['../md__n_v_t_x___e_x_t_e_n_d_e_d___p_a_y_l_o_a_d_s.html#NVTX_EXTENDED_PAYLOADS_DEFERRED',1,'Deferred Events'],['../structnvtx_event_batch__t.html#aee58560a3adfde054f0245301cf8d7d4',1,'nvtxEventBatch_t::events']]],
-  ['eventschemaid_15',['eventSchemaId',['../structnvtx_event_batch__t.html#ab94294d1b1bb900a008c2029db2967d1',1,'nvtxEventBatch_t']]],
-  ['example_16',['Minimal Example',['../md__n_v_t_x___e_x_t_e_n_d_e_d___p_a_y_l_o_a_d_s.html#NVTX_EXTENDED_PAYLOADS_MINIMAL',1,'']]],
-  ['examples_17',['How-To Examples',['../md__n_v_t_x___e_x_t_e_n_d_e_d___p_a_y_l_o_a_d_s.html#NVTX_EXTENDED_PAYLOADS_HOWTO',1,'']]],
-  ['extended_20payloads_18',['When to Use Extended Payloads',['../md__n_v_t_x___e_x_t_e_n_d_e_d___p_a_y_l_o_a_d_s.html#NVTX_EXTENDED_PAYLOADS_WHEN',1,'']]],
-  ['extended_20payloads_3a_20user_20guide_19',['Extended Payloads: User Guide',['../md__n_v_t_x___e_x_t_e_n_d_e_d___p_a_y_l_o_a_d_s.html#NVTX_EXTENDED_PAYLOADS',1,'']]],
-  ['extension_20',['extension',['../structnvtx_payload_schema_attr__t.html#addb892502797acf269dc928e8614f97f',1,'nvtxPayloadSchemaAttr_t::extension'],['../structnvtx_payload_enum_attr__t.html#a31e43f2fd232fe218a8810ca2367906f',1,'nvtxPayloadEnumAttr_t::extension']]],
-  ['extensions_21',['Optional Extensions',['../index.html#EXTENSIONS',1,'']]]
+  ['5_20writing_20events_0',['5. Writing Events',['../md__n_v_t_x_w___u_s_e_r___g_u_i_d_e.html#NVTXW_WRITING_EVENTS',1,'']]]
 ];

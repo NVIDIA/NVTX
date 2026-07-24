@@ -1,14 +1,10 @@
 var searchData=
 [
-  ['ranges_0',['ranges',['../md__n_v_t_x___e_x_t_e_n_d_e_d___p_a_y_l_o_a_d_s.html#NVTX_EXTENDED_PAYLOADS_HOWTO_DEFERRED',1,'Deferred marks and ranges'],['../group___m_a_r_k_e_r_s___a_n_d___r_a_n_g_e_s.html',1,'Markers and Ranges'],['../index.html#MARKERS_AND_RANGES',1,'Markers and Ranges'],['../index.html#PROCESS_RANGES',1,'Process Ranges'],['../index.html#THREAD_RANGES',1,'Thread Ranges']]],
-  ['ref_20nvtxpayloadentrytypeinfo_5ft_20for_20the_20portability_20mechanism_1',['@ref nvtxPayloadEntryTypeInfo_t for the portability mechanism.',['../nv_tools_ext_payload_8h.html#autotoc_md5',1,'']]],
-  ['ref_20nvtxpayloadschemaentry_5ft_3a_3aflags_2',['Payload schema entry flags. Used for @ref nvtxPayloadSchemaEntry_t::flags.',['../nv_tools_ext_payload_8h.html#autotoc_md3',1,'']]],
-  ['reference_3',['NVTX C API Reference',['../index.html',1,'']]],
-  ['registration_4',['String Registration',['../group___s_t_r_i_n_g___r_e_g_i_s_t_r_a_t_i_o_n.html',1,'']]],
-  ['reserved_5',['reserved',['../structnvtx_payload_schema_entry__t.html#ae8091f5c48af11c8de5353fa4a949d84',1,'nvtxPayloadSchemaEntry_t']]],
-  ['resource_20naming_6',['resource naming',['../group___r_e_s_o_u_r_c_e___n_a_m_i_n_g.html#RESOURCE_NAMING_CUDA',1,'CUDA Resource Naming'],['../group___r_e_s_o_u_r_c_e___n_a_m_i_n_g.html#RESOURCE_NAMING_CUDART',1,'CUDA Runtime Resource Naming'],['../group___r_e_s_o_u_r_c_e___n_a_m_i_n_g.html#RESOURCE_NAMING_OPENCL',1,'OpenCL Resource Naming'],['../index.html#RESOURCE_NAMING',1,'Resource Naming'],['../index.html#RESOURCE_NAMING_OS',1,'Resource Naming'],['../group___r_e_s_o_u_r_c_e___n_a_m_i_n_g.html',1,'Resource Naming']]],
-  ['resource_20objects_7',['Resource Objects',['../index.html#RESOURCE_OBJECTS',1,'']]],
-  ['role_8',['role',['../structnvtx_semantics_correlation__t.html#adfa233dff15c8ba6455ec2a4122b0442',1,'nvtxSemanticsCorrelation_t']]],
-  ['runtime_9',['Memory CUDA Runtime',['../group___m_e_m_o_r_y___c_u_d_a_r_t.html',1,'']]],
-  ['runtime_20resource_20naming_10',['CUDA Runtime Resource Naming',['../group___r_e_s_o_u_r_c_e___n_a_m_i_n_g.html#RESOURCE_NAMING_CUDART',1,'']]]
+  ['fieldmask_0',['fieldmask',['../structnvtx_payload_schema_attr__t.html#ad7f767a3d434cd4f55e9924573f3544b',1,'nvtxPayloadSchemaAttr_t::fieldMask'],['../structnvtx_payload_enum_attr__t.html#a3210b1a35c305aaef946803cc1ac1317',1,'nvtxPayloadEnumAttr_t::fieldMask']]],
+  ['fixed_20size_20embedded_20arrays_20and_20strings_1',['Fixed-size embedded arrays and strings',['../md__n_v_t_x___e_x_t_e_n_d_e_d___p_a_y_l_o_a_d_s.html#NVTX_EXTENDED_PAYLOADS_FIXED_ARRAYS',1,'']]],
+  ['flags_2',['flags',['../nv_tools_ext_payload_8h.html#autotoc_md3',1,'END: Payload schema entry flags.'],['../structnvtx_counter_batch__t.html#a3b577fef504751dfe3427916f6e273d8',1,'nvtxCounterBatch_t::flags'],['../structnvtx_payload_schema_entry__t.html#ae9d93cd49514b16ffa11d4ae6bcc1da7',1,'nvtxPayloadSchemaEntry_t::flags'],['../structnvtx_payload_schema_attr__t.html#af82f33d22722ca11731778945bc44ef6',1,'nvtxPayloadSchemaAttr_t::flags'],['../structnvtx_event_batch__t.html#a12f16213083385276b9cc080100b5197',1,'nvtxEventBatch_t::flags'],['../structnvtx_semantics_counter__t.html#ae3cbd14c5905b869b24212b85b013963',1,'nvtxSemanticsCounter_t::flags'],['../md__n_v_t_x___e_x_t_e_n_d_e_d___p_a_y_l_o_a_d_s.html#NVTX_EXTENDED_PAYLOADS_SCHEMA_ATTR_FLAGS',1,'Flags']]],
+  ['flexdata_3',['flexData',['../structnvtx_event_batch__t.html#af4676ad232d7e62ab7a9aeaceb598429',1,'nvtxEventBatch_t']]],
+  ['flexdataoffset_4',['flexDataOffset',['../structnvtx_event_batch__t.html#a029e6d18671052add9f6d94aaa6bf379',1,'nvtxEventBatch_t']]],
+  ['flexdatasize_5',['flexDataSize',['../structnvtx_event_batch__t.html#a6bed0017d4177f4bbbb6dac5ec70bafb',1,'nvtxEventBatch_t']]],
+  ['forward_20compatibility_6',['12. Versioning and Forward Compatibility',['../md__n_v_t_x_w___u_s_e_r___g_u_i_d_e.html#NVTXW_VERSIONING',1,'']]]
 ];

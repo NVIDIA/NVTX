@@ -252,7 +252,7 @@ NVTX_DECLSPEC void NVTX_API&#160;</td><td class="memItemRight" valign="bottom"><
 <tr class="separator:gad89c5d699ca976a617511ba3cf7f2fdc"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
-<p>See page PAGE_MEMORY. </p>
+<p>See page <a class="el" href="_p_a_g_e__m_e_m_o_r_y.html">Memory</a>. </p>
 <h2 class="groupheader">Macro Definition Documentation</h2>
 <a id="ga1abeb15def646b97b7df002f48c77131" name="ga1abeb15def646b97b7df002f48c77131"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#ga1abeb15def646b97b7df002f48c77131">&#9670;&#160;</a></span>NVTX_MEM_HEAP_HANDLE_PROCESS_WIDE</h2>
@@ -269,7 +269,7 @@ NVTX_DECLSPEC void NVTX_API&#160;</td><td class="memItemRight" valign="bottom"><
 <p>To indicate the full process virtual address space as a heap for functions where a nvtxMemHeapHandle_t is accepted. </p>
 <p>The heap by default is always read-write-execute permissions without creating regions. Regions created in this heap have read-write access by default but not execute. </p>
 
-<p class="definition">Definition at line <a class="el" href="nv_tools_ext_mem_8h_source.html#l00110">110</a> of file <a class="el" href="nv_tools_ext_mem_8h_source.html">nvToolsExtMem.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="nv_tools_ext_mem_8h_source.html#l00118">118</a> of file <a class="el" href="nv_tools_ext_mem_8h_source.html">nvToolsExtMem.h</a>.</p>
 
 </div>
 </div>
@@ -290,7 +290,7 @@ NVTX_DECLSPEC void NVTX_API&#160;</td><td class="memItemRight" valign="bottom"><
 <p>The behavior of this usage is similar to NVTX_MEM_HEAP_HANDLE_PROCESS_WIDE but a tool can use it to track special behaviors and reservation.</p>
 <p>Memory in a heap with this usage has read-write permissions by default but not execute without creating regions. Regions created in this heap have the same default permission access. </p>
 
-<p class="definition">Definition at line <a class="el" href="nv_tools_ext_mem_8h_source.html#l00134">134</a> of file <a class="el" href="nv_tools_ext_mem_8h_source.html">nvToolsExtMem.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="nv_tools_ext_mem_8h_source.html#l00142">142</a> of file <a class="el" href="nv_tools_ext_mem_8h_source.html">nvToolsExtMem.h</a>.</p>
 
 </div>
 </div>
@@ -309,7 +309,7 @@ NVTX_DECLSPEC void NVTX_API&#160;</td><td class="memItemRight" valign="bottom"><
 <p>This heap is a sub-allocator. </p>
 <p>Heap created with this usage should not be accessed by the user until regions are registered. Regions from a heap with this usage have read-write access by default but not execute. </p>
 
-<p class="definition">Definition at line <a class="el" href="nv_tools_ext_mem_8h_source.html#l00117">117</a> of file <a class="el" href="nv_tools_ext_mem_8h_source.html">nvToolsExtMem.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="nv_tools_ext_mem_8h_source.html#l00125">125</a> of file <a class="el" href="nv_tools_ext_mem_8h_source.html">nvToolsExtMem.h</a>.</p>
 
 </div>
 </div>
@@ -325,7 +325,7 @@ NVTX_DECLSPEC void NVTX_API&#160;</td><td class="memItemRight" valign="bottom"><
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="nv_tools_ext_mem_8h_source.html#l00589">589</a> of file <a class="el" href="nv_tools_ext_mem_8h_source.html">nvToolsExtMem.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="nv_tools_ext_mem_8h_source.html#l00597">597</a> of file <a class="el" href="nv_tools_ext_mem_8h_source.html">nvToolsExtMem.h</a>.</p>
 
 </div>
 </div>
@@ -344,7 +344,7 @@ NVTX_DECLSPEC void NVTX_API&#160;</td><td class="memItemRight" valign="bottom"><
 <p>Upon binding, with the thread, exclude parent scope atomic RW regions instead of overlaying on top of them. </p>
 <p>EX After eliminating any errors from read and write, a developer may chose to ensure that atomics are in their own region, removing standard read/write, and replacing with this strict atomic only access. This way they know that conventional reads or writes will not cause unexpected issues. </p>
 
-<p class="definition">Definition at line <a class="el" href="nv_tools_ext_mem_8h_source.html#l00612">612</a> of file <a class="el" href="nv_tools_ext_mem_8h_source.html">nvToolsExtMem.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="nv_tools_ext_mem_8h_source.html#l00620">620</a> of file <a class="el" href="nv_tools_ext_mem_8h_source.html">nvToolsExtMem.h</a>.</p>
 
 </div>
 </div>
@@ -363,7 +363,7 @@ NVTX_DECLSPEC void NVTX_API&#160;</td><td class="memItemRight" valign="bottom"><
 <p>Upon binding, with the thread, exclude parent scope read regions instead of overlaying on top of them. </p>
 <p>EX After eliminating any errors when applying strict writes, a developer may then choose to annotate and enforce strict reads behaviors in segments of code. </p>
 
-<p class="definition">Definition at line <a class="el" href="nv_tools_ext_mem_8h_source.html#l00603">603</a> of file <a class="el" href="nv_tools_ext_mem_8h_source.html">nvToolsExtMem.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="nv_tools_ext_mem_8h_source.html#l00611">611</a> of file <a class="el" href="nv_tools_ext_mem_8h_source.html">nvToolsExtMem.h</a>.</p>
 
 </div>
 </div>
@@ -382,7 +382,7 @@ NVTX_DECLSPEC void NVTX_API&#160;</td><td class="memItemRight" valign="bottom"><
 <p>Upon binding, with the thread, exclude parent scope write regions instead of overlaying on top of them. </p>
 <p>EX A developer may chose to first prevent all writes except the ones specified to avoid OOB writes, since there are typically fewer regions written to than read from. </p>
 
-<p class="definition">Definition at line <a class="el" href="nv_tools_ext_mem_8h_source.html#l00596">596</a> of file <a class="el" href="nv_tools_ext_mem_8h_source.html">nvToolsExtMem.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="nv_tools_ext_mem_8h_source.html#l00604">604</a> of file <a class="el" href="nv_tools_ext_mem_8h_source.html">nvToolsExtMem.h</a>.</p>
 
 </div>
 </div>
@@ -401,7 +401,7 @@ NVTX_DECLSPEC void NVTX_API&#160;</td><td class="memItemRight" valign="bottom"><
 <p>Bind to thread scope. In this case, tools should validate that local thread's execution is honoring the permissions as well as the state of NVTX_MEM_PERMISSIONS_HANDLE_PROCESS_WIDE at the time of binding. If this is not bound then NVTX_MEM_PERMISSIONS_HANDLE_PROCESS_WIDE should be used to validate the memory. </p>
 <p>Not all tools will support every scope, such a GPU sanitizer. </p>
 
-<p class="definition">Definition at line <a class="el" href="nv_tools_ext_mem_8h_source.html#l00624">624</a> of file <a class="el" href="nv_tools_ext_mem_8h_source.html">nvToolsExtMem.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="nv_tools_ext_mem_8h_source.html#l00632">632</a> of file <a class="el" href="nv_tools_ext_mem_8h_source.html">nvToolsExtMem.h</a>.</p>
 
 </div>
 </div>
@@ -422,7 +422,7 @@ NVTX_DECLSPEC void NVTX_API&#160;</td><td class="memItemRight" valign="bottom"><
 <p>This could apply to work done either on the GPU like a kernel launch or to CPU based callbacks like cudaStreamAddCallback if the tools supports it.</p>
 <p>Binding is applies locally to a CPU thread so that if N CPU threads are enqueuing work to the same stream (like the default stream) that there cannot be a race condition between thread binding vs launching their work. IE users should expect the permissions bound in the thread to be honored by the proceeding work (launches, copies, etc) invoked from in the CPU thread until unbound. </p>
 
-<p class="definition">Definition at line <a class="el" href="nv_tools_ext_mem_8h_source.html#l00644">644</a> of file <a class="el" href="nv_tools_ext_mem_8h_source.html">nvToolsExtMem.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="nv_tools_ext_mem_8h_source.html#l00652">652</a> of file <a class="el" href="nv_tools_ext_mem_8h_source.html">nvToolsExtMem.h</a>.</p>
 
 </div>
 </div>
@@ -438,7 +438,7 @@ NVTX_DECLSPEC void NVTX_API&#160;</td><td class="memItemRight" valign="bottom"><
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="nv_tools_ext_mem_8h_source.html#l00615">615</a> of file <a class="el" href="nv_tools_ext_mem_8h_source.html">nvToolsExtMem.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="nv_tools_ext_mem_8h_source.html#l00623">623</a> of file <a class="el" href="nv_tools_ext_mem_8h_source.html">nvToolsExtMem.h</a>.</p>
 
 </div>
 </div>
@@ -454,7 +454,7 @@ NVTX_DECLSPEC void NVTX_API&#160;</td><td class="memItemRight" valign="bottom"><
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="nv_tools_ext_mem_8h_source.html#l00161">161</a> of file <a class="el" href="nv_tools_ext_mem_8h_source.html">nvToolsExtMem.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="nv_tools_ext_mem_8h_source.html#l00169">169</a> of file <a class="el" href="nv_tools_ext_mem_8h_source.html">nvToolsExtMem.h</a>.</p>
 
 </div>
 </div>
@@ -470,7 +470,7 @@ NVTX_DECLSPEC void NVTX_API&#160;</td><td class="memItemRight" valign="bottom"><
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="nv_tools_ext_mem_8h_source.html#l00159">159</a> of file <a class="el" href="nv_tools_ext_mem_8h_source.html">nvToolsExtMem.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="nv_tools_ext_mem_8h_source.html#l00167">167</a> of file <a class="el" href="nv_tools_ext_mem_8h_source.html">nvToolsExtMem.h</a>.</p>
 
 </div>
 </div>
@@ -486,7 +486,7 @@ NVTX_DECLSPEC void NVTX_API&#160;</td><td class="memItemRight" valign="bottom"><
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="nv_tools_ext_mem_8h_source.html#l00160">160</a> of file <a class="el" href="nv_tools_ext_mem_8h_source.html">nvToolsExtMem.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="nv_tools_ext_mem_8h_source.html#l00168">168</a> of file <a class="el" href="nv_tools_ext_mem_8h_source.html">nvToolsExtMem.h</a>.</p>
 
 </div>
 </div>
@@ -502,7 +502,7 @@ NVTX_DECLSPEC void NVTX_API&#160;</td><td class="memItemRight" valign="bottom"><
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="nv_tools_ext_mem_8h_source.html#l00158">158</a> of file <a class="el" href="nv_tools_ext_mem_8h_source.html">nvToolsExtMem.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="nv_tools_ext_mem_8h_source.html#l00166">166</a> of file <a class="el" href="nv_tools_ext_mem_8h_source.html">nvToolsExtMem.h</a>.</p>
 
 </div>
 </div>
@@ -521,7 +521,7 @@ NVTX_DECLSPEC void NVTX_API&#160;</td><td class="memItemRight" valign="bottom"><
 <p>To indicate you are modifying permissions to the process-wide full virtual address space. </p>
 <p>This is a companion object to <code>NVTX_MEM_HEAP_HANDLE_PROCESS_WIDE</code>. </p>
 
-<p class="definition">Definition at line <a class="el" href="nv_tools_ext_mem_8h_source.html#l00156">156</a> of file <a class="el" href="nv_tools_ext_mem_8h_source.html">nvToolsExtMem.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="nv_tools_ext_mem_8h_source.html#l00164">164</a> of file <a class="el" href="nv_tools_ext_mem_8h_source.html">nvToolsExtMem.h</a>.</p>
 
 </div>
 </div>
@@ -539,7 +539,7 @@ NVTX_DECLSPEC void NVTX_API&#160;</td><td class="memItemRight" valign="bottom"><
 
 <p>The memory is for atomic RW. </p>
 
-<p class="definition">Definition at line <a class="el" href="nv_tools_ext_mem_8h_source.html#l00501">501</a> of file <a class="el" href="nv_tools_ext_mem_8h_source.html">nvToolsExtMem.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="nv_tools_ext_mem_8h_source.html#l00509">509</a> of file <a class="el" href="nv_tools_ext_mem_8h_source.html">nvToolsExtMem.h</a>.</p>
 
 </div>
 </div>
@@ -557,7 +557,7 @@ NVTX_DECLSPEC void NVTX_API&#160;</td><td class="memItemRight" valign="bottom"><
 
 <p>There are no permissions for this memory. </p>
 
-<p class="definition">Definition at line <a class="el" href="nv_tools_ext_mem_8h_source.html#l00492">492</a> of file <a class="el" href="nv_tools_ext_mem_8h_source.html">nvToolsExtMem.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="nv_tools_ext_mem_8h_source.html#l00500">500</a> of file <a class="el" href="nv_tools_ext_mem_8h_source.html">nvToolsExtMem.h</a>.</p>
 
 </div>
 </div>
@@ -575,7 +575,7 @@ NVTX_DECLSPEC void NVTX_API&#160;</td><td class="memItemRight" valign="bottom"><
 
 <p>The memory is readable. </p>
 
-<p class="definition">Definition at line <a class="el" href="nv_tools_ext_mem_8h_source.html#l00495">495</a> of file <a class="el" href="nv_tools_ext_mem_8h_source.html">nvToolsExtMem.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="nv_tools_ext_mem_8h_source.html#l00503">503</a> of file <a class="el" href="nv_tools_ext_mem_8h_source.html">nvToolsExtMem.h</a>.</p>
 
 </div>
 </div>
@@ -595,7 +595,7 @@ NVTX_DECLSPEC void NVTX_API&#160;</td><td class="memItemRight" valign="bottom"><
 <p>This is as if never set, rather than documented defaults. As as result any flags indicating how unspecified regions are handle will affect this area.</p>
 <p>This should not be used with READ, WRITE, nor ATOMIC, as those flags would have no effect. </p>
 
-<p class="definition">Definition at line <a class="el" href="nv_tools_ext_mem_8h_source.html#l00511">511</a> of file <a class="el" href="nv_tools_ext_mem_8h_source.html">nvToolsExtMem.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="nv_tools_ext_mem_8h_source.html#l00519">519</a> of file <a class="el" href="nv_tools_ext_mem_8h_source.html">nvToolsExtMem.h</a>.</p>
 
 </div>
 </div>
@@ -613,7 +613,7 @@ NVTX_DECLSPEC void NVTX_API&#160;</td><td class="memItemRight" valign="bottom"><
 
 <p>The memory is writable. </p>
 
-<p class="definition">Definition at line <a class="el" href="nv_tools_ext_mem_8h_source.html#l00498">498</a> of file <a class="el" href="nv_tools_ext_mem_8h_source.html">nvToolsExtMem.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="nv_tools_ext_mem_8h_source.html#l00506">506</a> of file <a class="el" href="nv_tools_ext_mem_8h_source.html">nvToolsExtMem.h</a>.</p>
 
 </div>
 </div>
@@ -629,7 +629,7 @@ NVTX_DECLSPEC void NVTX_API&#160;</td><td class="memItemRight" valign="bottom"><
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="nv_tools_ext_mem_8h_source.html#l00413">413</a> of file <a class="el" href="nv_tools_ext_mem_8h_source.html">nvToolsExtMem.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="nv_tools_ext_mem_8h_source.html#l00421">421</a> of file <a class="el" href="nv_tools_ext_mem_8h_source.html">nvToolsExtMem.h</a>.</p>
 
 </div>
 </div>
@@ -645,7 +645,7 @@ NVTX_DECLSPEC void NVTX_API&#160;</td><td class="memItemRight" valign="bottom"><
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="nv_tools_ext_mem_8h_source.html#l00412">412</a> of file <a class="el" href="nv_tools_ext_mem_8h_source.html">nvToolsExtMem.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="nv_tools_ext_mem_8h_source.html#l00420">420</a> of file <a class="el" href="nv_tools_ext_mem_8h_source.html">nvToolsExtMem.h</a>.</p>
 
 </div>
 </div>
@@ -661,7 +661,7 @@ NVTX_DECLSPEC void NVTX_API&#160;</td><td class="memItemRight" valign="bottom"><
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="nv_tools_ext_mem_8h_source.html#l00411">411</a> of file <a class="el" href="nv_tools_ext_mem_8h_source.html">nvToolsExtMem.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="nv_tools_ext_mem_8h_source.html#l00419">419</a> of file <a class="el" href="nv_tools_ext_mem_8h_source.html">nvToolsExtMem.h</a>.</p>
 
 </div>
 </div>
@@ -682,7 +682,7 @@ NVTX_DECLSPEC void NVTX_API&#160;</td><td class="memItemRight" valign="bottom"><
 <p>Relevant functions: cudaMalloc, cudaMallocManaged, cudaHostAlloc, cudaMallocHost NVTX_MEM_HEAP_HANDLE_PROCESS_WIDE is supported</p>
 <p>nvtxMemHeapRegister receives a heapDesc of type nvtxMemVirtualRangeDesc_t </p>
 
-<p class="definition">Definition at line <a class="el" href="nv_tools_ext_mem_8h_source.html#l00147">147</a> of file <a class="el" href="nv_tools_ext_mem_8h_source.html">nvToolsExtMem.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="nv_tools_ext_mem_8h_source.html#l00155">155</a> of file <a class="el" href="nv_tools_ext_mem_8h_source.html">nvToolsExtMem.h</a>.</p>
 
 </div>
 </div>
@@ -699,7 +699,7 @@ NVTX_DECLSPEC void NVTX_API&#160;</td><td class="memItemRight" valign="bottom"><
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="nv_tools_ext_mem_8h_source.html#l00297">297</a> of file <a class="el" href="nv_tools_ext_mem_8h_source.html">nvToolsExtMem.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="nv_tools_ext_mem_8h_source.html#l00305">305</a> of file <a class="el" href="nv_tools_ext_mem_8h_source.html">nvToolsExtMem.h</a>.</p>
 
 </div>
 </div>
@@ -717,7 +717,7 @@ NVTX_DECLSPEC void NVTX_API&#160;</td><td class="memItemRight" valign="bottom"><
 
 <p>A handle returned by a tool to represent a memory heap. </p>
 
-<p class="definition">Definition at line <a class="el" href="nv_tools_ext_mem_8h_source.html#l00173">173</a> of file <a class="el" href="nv_tools_ext_mem_8h_source.html">nvToolsExtMem.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="nv_tools_ext_mem_8h_source.html#l00181">181</a> of file <a class="el" href="nv_tools_ext_mem_8h_source.html">nvToolsExtMem.h</a>.</p>
 
 </div>
 </div>
@@ -733,7 +733,7 @@ NVTX_DECLSPEC void NVTX_API&#160;</td><td class="memItemRight" valign="bottom"><
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="nv_tools_ext_mem_8h_source.html#l00539">539</a> of file <a class="el" href="nv_tools_ext_mem_8h_source.html">nvToolsExtMem.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="nv_tools_ext_mem_8h_source.html#l00547">547</a> of file <a class="el" href="nv_tools_ext_mem_8h_source.html">nvToolsExtMem.h</a>.</p>
 
 </div>
 </div>
@@ -749,7 +749,7 @@ NVTX_DECLSPEC void NVTX_API&#160;</td><td class="memItemRight" valign="bottom"><
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="nv_tools_ext_mem_8h_source.html#l00521">521</a> of file <a class="el" href="nv_tools_ext_mem_8h_source.html">nvToolsExtMem.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="nv_tools_ext_mem_8h_source.html#l00529">529</a> of file <a class="el" href="nv_tools_ext_mem_8h_source.html">nvToolsExtMem.h</a>.</p>
 
 </div>
 </div>
@@ -767,7 +767,7 @@ NVTX_DECLSPEC void NVTX_API&#160;</td><td class="memItemRight" valign="bottom"><
 
 <p>A handle returned by a tool to represent a memory permissions mask. </p>
 
-<p class="definition">Definition at line <a class="el" href="nv_tools_ext_mem_8h_source.html#l00204">204</a> of file <a class="el" href="nv_tools_ext_mem_8h_source.html">nvToolsExtMem.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="nv_tools_ext_mem_8h_source.html#l00212">212</a> of file <a class="el" href="nv_tools_ext_mem_8h_source.html">nvToolsExtMem.h</a>.</p>
 
 </div>
 </div>
@@ -785,7 +785,7 @@ NVTX_DECLSPEC void NVTX_API&#160;</td><td class="memItemRight" valign="bottom"><
 
 <p>A handle returned by a tool to represent a memory region. </p>
 
-<p class="definition">Definition at line <a class="el" href="nv_tools_ext_mem_8h_source.html#l00184">184</a> of file <a class="el" href="nv_tools_ext_mem_8h_source.html">nvToolsExtMem.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="nv_tools_ext_mem_8h_source.html#l00192">192</a> of file <a class="el" href="nv_tools_ext_mem_8h_source.html">nvToolsExtMem.h</a>.</p>
 
 </div>
 </div>
@@ -801,7 +801,7 @@ NVTX_DECLSPEC void NVTX_API&#160;</td><td class="memItemRight" valign="bottom"><
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="nv_tools_ext_mem_8h_source.html#l00468">468</a> of file <a class="el" href="nv_tools_ext_mem_8h_source.html">nvToolsExtMem.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="nv_tools_ext_mem_8h_source.html#l00476">476</a> of file <a class="el" href="nv_tools_ext_mem_8h_source.html">nvToolsExtMem.h</a>.</p>
 
 </div>
 </div>
@@ -817,7 +817,7 @@ NVTX_DECLSPEC void NVTX_API&#160;</td><td class="memItemRight" valign="bottom"><
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="nv_tools_ext_mem_8h_source.html#l00483">483</a> of file <a class="el" href="nv_tools_ext_mem_8h_source.html">nvToolsExtMem.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="nv_tools_ext_mem_8h_source.html#l00491">491</a> of file <a class="el" href="nv_tools_ext_mem_8h_source.html">nvToolsExtMem.h</a>.</p>
 
 </div>
 </div>
@@ -833,7 +833,7 @@ NVTX_DECLSPEC void NVTX_API&#160;</td><td class="memItemRight" valign="bottom"><
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="nv_tools_ext_mem_8h_source.html#l00363">363</a> of file <a class="el" href="nv_tools_ext_mem_8h_source.html">nvToolsExtMem.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="nv_tools_ext_mem_8h_source.html#l00371">371</a> of file <a class="el" href="nv_tools_ext_mem_8h_source.html">nvToolsExtMem.h</a>.</p>
 
 </div>
 </div>
@@ -849,7 +849,7 @@ NVTX_DECLSPEC void NVTX_API&#160;</td><td class="memItemRight" valign="bottom"><
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="nv_tools_ext_mem_8h_source.html#l00402">402</a> of file <a class="el" href="nv_tools_ext_mem_8h_source.html">nvToolsExtMem.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="nv_tools_ext_mem_8h_source.html#l00410">410</a> of file <a class="el" href="nv_tools_ext_mem_8h_source.html">nvToolsExtMem.h</a>.</p>
 
 </div>
 </div>
@@ -865,7 +865,7 @@ NVTX_DECLSPEC void NVTX_API&#160;</td><td class="memItemRight" valign="bottom"><
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="nv_tools_ext_mem_8h_source.html#l00445">445</a> of file <a class="el" href="nv_tools_ext_mem_8h_source.html">nvToolsExtMem.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="nv_tools_ext_mem_8h_source.html#l00453">453</a> of file <a class="el" href="nv_tools_ext_mem_8h_source.html">nvToolsExtMem.h</a>.</p>
 
 </div>
 </div>
@@ -881,7 +881,7 @@ NVTX_DECLSPEC void NVTX_API&#160;</td><td class="memItemRight" valign="bottom"><
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="nv_tools_ext_mem_8h_source.html#l00212">212</a> of file <a class="el" href="nv_tools_ext_mem_8h_source.html">nvToolsExtMem.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="nv_tools_ext_mem_8h_source.html#l00220">220</a> of file <a class="el" href="nv_tools_ext_mem_8h_source.html">nvToolsExtMem.h</a>.</p>
 
 </div>
 </div>
