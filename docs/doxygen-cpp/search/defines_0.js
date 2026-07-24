@@ -6,5 +6,6 @@ var searchData=
   ['nvtx3_5fv1_5ffunc_5frange_3',['NVTX3_V1_FUNC_RANGE',['../nvtx3_8hpp.html#a9f0dbc21588c8d0f6ee728fdf5289490',1,'nvtx3.hpp']]],
   ['nvtx3_5fv1_5ffunc_5frange_5fif_4',['NVTX3_V1_FUNC_RANGE_IF',['../nvtx3_8hpp.html#a7f4e78b0ede77382c2c09fa007c5963e',1,'nvtx3.hpp']]],
   ['nvtx3_5fv1_5ffunc_5frange_5fif_5fin_5',['NVTX3_V1_FUNC_RANGE_IF_IN',['../nvtx3_8hpp.html#af6fecf49b25b2364e548f9786136fb95',1,'nvtx3.hpp']]],
-  ['nvtx3_5fv1_5ffunc_5frange_5fin_6',['NVTX3_V1_FUNC_RANGE_IN',['../nvtx3_8hpp.html#a58b4c0fa6be7f4754f8e73bcbf6fd1af',1,'nvtx3.hpp']]]
+  ['nvtx3_5fv1_5ffunc_5frange_5fin_6',['NVTX3_V1_FUNC_RANGE_IN',['../nvtx3_8hpp.html#a58b4c0fa6be7f4754f8e73bcbf6fd1af',1,'nvtx3.hpp']]],
+  ['nvtx3_5fv1_5fsemantic_7',['NVTX3_V1_SEMANTIC',['../nvtx3_8hpp.html#a916b6988a1595c87a97c2bdee06dc6be',1,'nvtx3.hpp']]]
 ];

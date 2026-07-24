@@ -1,5 +1,4 @@
 var searchData=
 [
-  ['best_20practices_0',['Best Practices',['../md__n_v_t_x___e_x_t_e_n_d_e_d___p_a_y_l_o_a_d_s.html#NVTX_EXTENDED_PAYLOADS_BEST_PRACTICES',1,'']]],
-  ['buffers_1',['Deep-copy of strings and buffers',['../md__n_v_t_x___e_x_t_e_n_d_e_d___p_a_y_l_o_a_d_s.html#NVTX_EXTENDED_PAYLOADS_DEEP_COPY',1,'']]]
+  ['2_20the_20producer_20backend_20model_0',['2. The Producer/Backend Model',['../md__n_v_t_x_w___u_s_e_r___g_u_i_d_e.html#autotoc_md9',1,'']]]
 ];

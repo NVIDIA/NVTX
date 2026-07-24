@@ -9,5 +9,6 @@ var searchData=
   ['nvtxresourceopencltype_5ft_6',['nvtxResourceOpenCLType_t',['../group___r_e_s_o_u_r_c_e___n_a_m_i_n_g.html#gabe2bb2099deba2265ec10b8881102e97',1,'nvToolsExtOpenCL.h']]],
   ['nvtxresourcesynclinuxtype_5ft_7',['nvtxResourceSyncLinuxType_t',['../group___s_y_n_c_h_r_o_n_i_z_a_t_i_o_n.html#gabd911875209941190ff52505407c7609',1,'nvToolsExtSync.h']]],
   ['nvtxresourcesyncposixthreadtype_5ft_8',['nvtxResourceSyncPosixThreadType_t',['../group___s_y_n_c_h_r_o_n_i_z_a_t_i_o_n.html#gad74944ded1068254043d7400a66ce887',1,'nvToolsExtSync.h']]],
-  ['nvtxresourcesyncwindowstype_5ft_9',['nvtxResourceSyncWindowsType_t',['../group___s_y_n_c_h_r_o_n_i_z_a_t_i_o_n.html#gad86534581d1769a5d946a2f0d98cc8a1',1,'nvToolsExtSync.h']]]
+  ['nvtxresourcesyncwindowstype_5ft_9',['nvtxResourceSyncWindowsType_t',['../group___s_y_n_c_h_r_o_n_i_z_a_t_i_o_n.html#gad86534581d1769a5d946a2f0d98cc8a1',1,'nvToolsExtSync.h']]],
+  ['nvtxweventhelperschemaflag_5ft_10',['nvtxwEventHelperSchemaFlag_t',['../nvtxw3__event__helpers_8h.html#a9d8e954562b2c030fd0b7f464e0250b8',1,'nvtxw3_event_helpers.h']]]
 ];

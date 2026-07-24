@@ -1,0 +1,8 @@
+<map id="nvtxw3_event_helpers.h" name="nvtxw3_event_helpers.h">
+<area shape="rect" id="Node000001" title="Stateless helpers for writing event payloads through NVTXW EventWrite." alt="" coords="5,5,187,31"/>
+<area shape="rect" id="Node000002" href="$nvtxw3__helpers_8h.html" title="Umbrella header aggregating the NVTX Writer helper APIs." alt="" coords="27,152,165,177"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="79,43,68,60,60,79,59,99,65,118,87,150,82,153,60,121,54,100,55,78,63,58,75,40"/>
+<area shape="rect" id="Node000003" href="$nvtxw3__setup__helpers_8h.html" title="Setup helpers for loading NVTXW, registering domains, scopes, and time domains, and opening streams." alt="" coords="70,79,250,104"/>
+<area shape="poly" id="edge2_Node000001_Node000003" title=" " alt="" coords="118,39,152,77,148,80,114,43"/>
+<area shape="poly" id="edge3_Node000003_Node000002" title=" " alt="" coords="142,116,108,154,104,150,138,113"/>
+</map>

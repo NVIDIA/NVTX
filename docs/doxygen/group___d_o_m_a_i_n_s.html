@@ -114,7 +114,7 @@ NVTX_DECLSPEC nvtxDomainHandle_t NVTX_API&#160;</td><td class="memItemRight" val
   </table>
   </dd>
 </dl>
-<dl class="section return"><dt>Returns</dt><dd>A handle representing the domain.</dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>A non-zero handle representing the domain. A return value of 0 (or NULL) is a null handle and does not represent a created domain.</dd></dl>
 <dl class="section user"><dt>Example</dt><dd>Create a domain: <div class="fragment"><div class="line">nvtxDomainHandle_t domain = <a class="code hl_function" href="group___d_o_m_a_i_n_s.html#ga2bbf44a48a4a46bf8900bd886524d87d">nvtxDomainCreateA</a>(<span class="stringliteral">&quot;com.nvidia.nvtx.example&quot;</span>);</div>
 <div class="line"> </div>
 <div class="line"><a class="code hl_function" href="group___m_a_r_k_e_r_s___a_n_d___r_a_n_g_e_s.html#gaa8b4b68acc37bdaf14349b25752b26f9">nvtxMarkA</a>(<span class="stringliteral">&quot;nvtxMarkA to global domain&quot;</span>);</div>

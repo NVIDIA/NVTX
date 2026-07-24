@@ -94,10 +94,10 @@ Data Fields</h2></td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><p>Binary payload data, size and decoding information. </p>
-<p>An array of <code><a class="el" href="structnvtx_payload_data__t.html" title="Binary payload data, size and decoding information.">nvtxPayloadData_t</a></code> can be passed directly to the payload event APIs (<code>nvtxMarkPayload</code>, <code>nvtxRangePushPayload</code>, <code>nvtxRangePopPayload</code>, <code>nvtxRangeStartPayload</code>, <code>nvtxRangeEndPayload</code>, <code>nvtxEventSubmit</code>), or attached to nvtxEventAttributes_t via its <code>payload.ullValue</code> field. The helper macros <a class="el" href="nv_tools_ext_payload_8h.html#a66ed89777074789e4b86460c617d84bd">nvtxPayloadMark</a>, <a class="el" href="nv_tools_ext_payload_8h.html#aee9dc0726b1d8864f245a7a16d3a6dcd">nvtxPayloadRangePush</a>, and <a class="el" href="nv_tools_ext_payload_8h.html#ae8039c4d432c65fbf072b1659c4ce5bd">NVTX_PAYLOAD_EVTATTR_SET_MULTIPLE</a> simplify the latter approach.</p>
+<p>An array of <code><a class="el" href="structnvtx_payload_data__t.html" title="Binary payload data, size and decoding information.">nvtxPayloadData_t</a></code> can be passed directly to the payload event APIs (<code>nvtxMarkPayload</code>, <code>nvtxRangePushPayload</code>, <code>nvtxRangePopPayload</code>, <code>nvtxRangeStartPayload</code>, <code>nvtxRangeEndPayload</code>, <code>nvtxEventSubmit</code>), or attached to <a class="el" href="structnvtx_event_attributes__v2.html">nvtxEventAttributes_t</a> via its <code>payload.ullValue</code> field. The helper macros <a class="el" href="nv_tools_ext_payload_8h.html#a66ed89777074789e4b86460c617d84bd">nvtxPayloadMark</a>, <a class="el" href="nv_tools_ext_payload_8h.html#aee9dc0726b1d8864f245a7a16d3a6dcd">nvtxPayloadRangePush</a>, and <a class="el" href="nv_tools_ext_payload_8h.html#ae8039c4d432c65fbf072b1659c4ce5bd">NVTX_PAYLOAD_EVTATTR_SET_MULTIPLE</a> simplify the latter approach.</p>
 <p>Payload array order and schema-entry order define the ordering of event attributes supplied by extended payloads; see <a class="el" href="nv_tools_ext_payload_8h.html#NVTX_PAYLOAD_EVENT_ATTRIBUTE_PRECEDENCE">NVTX_PAYLOAD_EVENT_ATTRIBUTE_PRECEDENCE</a>. </p>
 
-<p class="definition">Definition at line <a class="el" href="nv_tools_ext_payload_8h_source.html#l00799">799</a> of file <a class="el" href="nv_tools_ext_payload_8h_source.html">nvToolsExtPayload.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="nv_tools_ext_payload_8h_source.html#l00818">818</a> of file <a class="el" href="nv_tools_ext_payload_8h_source.html">nvToolsExtPayload.h</a>.</p>
 </div><h2 class="groupheader">Field Documentation</h2>
 <a id="ad4ecf00bae9cf3ccd26b75b20cc38019" name="ad4ecf00bae9cf3ccd26b75b20cc38019"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#ad4ecf00bae9cf3ccd26b75b20cc38019">&#9670;&#160;</a></span>payload</h2>
@@ -112,7 +112,7 @@ Data Fields</h2></td></tr>
 </div><div class="memdoc">
 <p>Pointer to the binary payload data. Must not be NULL. </p>
 
-<p class="definition">Definition at line <a class="el" href="nv_tools_ext_payload_8h_source.html#l00839">839</a> of file <a class="el" href="nv_tools_ext_payload_8h_source.html">nvToolsExtPayload.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="nv_tools_ext_payload_8h_source.html#l00858">858</a> of file <a class="el" href="nv_tools_ext_payload_8h_source.html">nvToolsExtPayload.h</a>.</p>
 
 </div>
 </div>
@@ -130,12 +130,12 @@ Data Fields</h2></td></tr>
 
 <p>The schema ID, which defines the layout of the binary data. </p>
 <p>The value can be one of:</p><ul>
-<li>A <b>predefined entry type</b> (<code>NVTX_PAYLOAD_ENTRY_TYPE_*</code>, i.e. a value below NVTX_PAYLOAD_SCHEMA_ID_STATIC_START). The payload bytes are decoded directly as that type without requiring a registered schema. For C-string types the bytes contain inline character data (not a pointer). For numeric types, the element count is <code>size / elementSize</code>; any trailing bytes are ignored.</li>
-<li>A <b>registered schema ID</b> (statically specified or dynamically created), &gt;= NVTX_PAYLOAD_SCHEMA_ID_STATIC_START.</li>
+<li>A <b>predefined entry type</b> (<code>NVTX_PAYLOAD_ENTRY_TYPE_*</code>, i.e. a value below <a class="el" href="nv_tools_ext_payload_8h.html#afe3598f95e8bd0dbc19876eb8dba4c8b">NVTX_PAYLOAD_SCHEMA_ID_STATIC_START</a>). The payload bytes are decoded directly as that type without requiring a registered schema. For C-string types the bytes contain inline character data (not a pointer). For numeric types, the element count is <code>size / elementSize</code>; any trailing bytes are ignored.</li>
+<li>A <b>registered schema ID</b> (statically specified or dynamically created), &gt;= <a class="el" href="nv_tools_ext_payload_8h.html#afe3598f95e8bd0dbc19876eb8dba4c8b">NVTX_PAYLOAD_SCHEMA_ID_STATIC_START</a>.</li>
 <li>One of <a class="el" href="nv_tools_ext_payload_8h.html#ab8d11d49f72512c907feac5461cfacf0">NVTX_TYPE_PAYLOAD_SCHEMA_REFERENCED</a> or <a class="el" href="nv_tools_ext_payload_8h.html#a4934201f867b553c51e2dd7968fc62fb">NVTX_TYPE_PAYLOAD_SCHEMA_RAW</a>. </li>
 </ul>
 
-<p class="definition">Definition at line <a class="el" href="nv_tools_ext_payload_8h_source.html#l00816">816</a> of file <a class="el" href="nv_tools_ext_payload_8h_source.html">nvToolsExtPayload.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="nv_tools_ext_payload_8h_source.html#l00835">835</a> of file <a class="el" href="nv_tools_ext_payload_8h_source.html">nvToolsExtPayload.h</a>.</p>
 
 </div>
 </div>
@@ -156,7 +156,7 @@ Data Fields</h2></td></tr>
 <p><code>SIZE_MAX</code> (<code>(size_t)-1</code>) defers size determination to the tool. This is only reliably supported when <a class="el" href="structnvtx_payload_data__t.html#acc85b71f0d3a63e54ebc779f48df8309">schemaId</a> is a predefined null-terminated C-string type, where the tool can call the appropriate string-length function. For all other schema IDs a tool may not be able to determine the size and will skip the payload.</p>
 <p>When <code>schemaId</code> is a predefined C-string type and <code>size != SIZE_MAX</code>, <code>size</code> bounds the inline string data in bytes and the payload does not need to include a null terminator. <code>size</code> must be at least one code unit. An empty string is encoded as a single null code unit. </p>
 
-<p class="definition">Definition at line <a class="el" href="nv_tools_ext_payload_8h_source.html#l00834">834</a> of file <a class="el" href="nv_tools_ext_payload_8h_source.html">nvToolsExtPayload.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="nv_tools_ext_payload_8h_source.html#l00853">853</a> of file <a class="el" href="nv_tools_ext_payload_8h_source.html">nvToolsExtPayload.h</a>.</p>
 
 </div>
 </div>

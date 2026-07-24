@@ -116,7 +116,7 @@ Data Fields</h2></td></tr>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><p>NVTX payload schema attributes. </p>
 
-<p class="definition">Definition at line <a class="el" href="nv_tools_ext_payload_8h_source.html#l00977">977</a> of file <a class="el" href="nv_tools_ext_payload_8h_source.html">nvToolsExtPayload.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="nv_tools_ext_payload_8h_source.html#l00996">996</a> of file <a class="el" href="nv_tools_ext_payload_8h_source.html">nvToolsExtPayload.h</a>.</p>
 </div><h2 class="groupheader">Field Documentation</h2>
 <a id="afa128ebfebfbb3333f41d8a1161b6176" name="afa128ebfebfbb3333f41d8a1161b6176"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#afa128ebfebfbb3333f41d8a1161b6176">&#9670;&#160;</a></span>entries</h2>
@@ -133,7 +133,7 @@ Data Fields</h2></td></tr>
 <p>Entries of a payload schema. (Mandatory)<a class="anchor" id="ENTRIES_FIELD"></a>. </p>
 <p>This field points to an array of schema entries, each describing a field in a data structure such as a C struct or union. </p>
 
-<p class="definition">Definition at line <a class="el" href="nv_tools_ext_payload_8h_source.html#l01012">1012</a> of file <a class="el" href="nv_tools_ext_payload_8h_source.html">nvToolsExtPayload.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="nv_tools_ext_payload_8h_source.html#l01031">1031</a> of file <a class="el" href="nv_tools_ext_payload_8h_source.html">nvToolsExtPayload.h</a>.</p>
 
 </div>
 </div>
@@ -150,7 +150,7 @@ Data Fields</h2></td></tr>
 </div><div class="memdoc">
 <p>Reserved for future use. </p>
 
-<p class="definition">Definition at line <a class="el" href="nv_tools_ext_payload_8h_source.html#l01059">1059</a> of file <a class="el" href="nv_tools_ext_payload_8h_source.html">nvToolsExtPayload.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="nv_tools_ext_payload_8h_source.html#l01078">1078</a> of file <a class="el" href="nv_tools_ext_payload_8h_source.html">nvToolsExtPayload.h</a>.</p>
 
 </div>
 </div>
@@ -169,7 +169,7 @@ Data Fields</h2></td></tr>
 <p>Mask of valid fields in this struct. </p>
 <p>Use the <code>NVTX_PAYLOAD_SCHEMA_ATTR_FIELD_*</code> defines. </p>
 
-<p class="definition">Definition at line <a class="el" href="nv_tools_ext_payload_8h_source.html#l00984">984</a> of file <a class="el" href="nv_tools_ext_payload_8h_source.html">nvToolsExtPayload.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="nv_tools_ext_payload_8h_source.html#l01003">1003</a> of file <a class="el" href="nv_tools_ext_payload_8h_source.html">nvToolsExtPayload.h</a>.</p>
 
 </div>
 </div>
@@ -188,7 +188,7 @@ Data Fields</h2></td></tr>
 <p>Payload schema flags. (Optional) </p>
 <p>Flags defined by <code>NVTX_PAYLOAD_SCHEMA_FLAG_*</code> can be used to set additional properties of the schema. </p>
 
-<p class="definition">Definition at line <a class="el" href="nv_tools_ext_payload_8h_source.html#l01004">1004</a> of file <a class="el" href="nv_tools_ext_payload_8h_source.html">nvToolsExtPayload.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="nv_tools_ext_payload_8h_source.html#l01023">1023</a> of file <a class="el" href="nv_tools_ext_payload_8h_source.html">nvToolsExtPayload.h</a>.</p>
 
 </div>
 </div>
@@ -206,7 +206,7 @@ Data Fields</h2></td></tr>
 
 <p>Name of the payload schema. (Optional) </p>
 
-<p class="definition">Definition at line <a class="el" href="nv_tools_ext_payload_8h_source.html#l00989">989</a> of file <a class="el" href="nv_tools_ext_payload_8h_source.html">nvToolsExtPayload.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="nv_tools_ext_payload_8h_source.html#l01008">1008</a> of file <a class="el" href="nv_tools_ext_payload_8h_source.html">nvToolsExtPayload.h</a>.</p>
 
 </div>
 </div>
@@ -225,7 +225,7 @@ Data Fields</h2></td></tr>
 <p>Number of entries in the payload schema. (Mandatory) </p>
 <p>Number of entries in the array of payload entries <a class="el" href="structnvtx_payload_schema_attr__t.html#ENTRIES_FIELD">ENTRIES_FIELD</a>. </p>
 
-<p class="definition">Definition at line <a class="el" href="nv_tools_ext_payload_8h_source.html#l01019">1019</a> of file <a class="el" href="nv_tools_ext_payload_8h_source.html">nvToolsExtPayload.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="nv_tools_ext_payload_8h_source.html#l01038">1038</a> of file <a class="el" href="nv_tools_ext_payload_8h_source.html">nvToolsExtPayload.h</a>.</p>
 
 </div>
 </div>
@@ -245,7 +245,7 @@ Data Fields</h2></td></tr>
 <p>If not specified, this field defaults to <code>0</code>, which means that the fields in the data structure are not packed and natural alignment rules can be applied.</p>
 <p>A non-zero value caps each member's effective alignment identically to C's <code>#pragma pack(N)</code>: <code>effectiveAlign = min(naturalAlign, packAlign)</code>. For example, <code>packAlign = 4</code> means no member is aligned to more than 4 bytes, regardless of its natural alignment. </p>
 
-<p class="definition">Definition at line <a class="el" href="nv_tools_ext_payload_8h_source.html#l01044">1044</a> of file <a class="el" href="nv_tools_ext_payload_8h_source.html">nvToolsExtPayload.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="nv_tools_ext_payload_8h_source.html#l01063">1063</a> of file <a class="el" href="nv_tools_ext_payload_8h_source.html">nvToolsExtPayload.h</a>.</p>
 
 </div>
 </div>
@@ -262,9 +262,9 @@ Data Fields</h2></td></tr>
 </div><div class="memdoc">
 
 <p>The binary payload size in bytes for static payload schemas. </p>
-<p>If <a class="el" href="structnvtx_payload_schema_attr__t.html#PAYLOAD_TYPE_FIELD">PAYLOAD_TYPE_FIELD</a> is NVTX_PAYLOAD_SCHEMA_TYPE_DYNAMIC this value is ignored. If this field is not specified for a schema of type NVTX_PAYLOAD_SCHEMA_TYPE_STATIC, the size can be automatically determined by a tool. </p>
+<p>If <a class="el" href="structnvtx_payload_schema_attr__t.html#PAYLOAD_TYPE_FIELD">PAYLOAD_TYPE_FIELD</a> is <a class="el" href="nv_tools_ext_payload_8h.html#aa1ccf466d4badf02fc4d26c3b7125354">NVTX_PAYLOAD_SCHEMA_TYPE_DYNAMIC</a> this value is ignored. If this field is not specified for a schema of type <a class="el" href="nv_tools_ext_payload_8h.html#a3580090396ee9a16222c7153bf4e6190">NVTX_PAYLOAD_SCHEMA_TYPE_STATIC</a>, the size can be automatically determined by a tool. </p>
 
-<p class="definition">Definition at line <a class="el" href="nv_tools_ext_payload_8h_source.html#l01029">1029</a> of file <a class="el" href="nv_tools_ext_payload_8h_source.html">nvToolsExtPayload.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="nv_tools_ext_payload_8h_source.html#l01048">1048</a> of file <a class="el" href="nv_tools_ext_payload_8h_source.html">nvToolsExtPayload.h</a>.</p>
 
 </div>
 </div>
@@ -284,7 +284,7 @@ Data Fields</h2></td></tr>
 <p>A static payload schema ID must be unique within the domain, &gt;= NVTX_PAYLOAD_SCHEMA_ID_STATIC_START and &lt; NVTX_PAYLOAD_SCHEMA_ID_DYNAMIC_START.</p>
 <p>Schema IDs and enum IDs share a single namespace within a domain. A given numeric ID must not be used for both a schema and an enum. </p>
 
-<p class="definition">Definition at line <a class="el" href="nv_tools_ext_payload_8h_source.html#l01056">1056</a> of file <a class="el" href="nv_tools_ext_payload_8h_source.html">nvToolsExtPayload.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="nv_tools_ext_payload_8h_source.html#l01075">1075</a> of file <a class="el" href="nv_tools_ext_payload_8h_source.html">nvToolsExtPayload.h</a>.</p>
 
 </div>
 </div>
@@ -303,7 +303,7 @@ Data Fields</h2></td></tr>
 <p>Payload schema type. (Mandatory)<a class="anchor" id="PAYLOAD_TYPE_FIELD"></a>. </p>
 <p>Use the <code>NVTX_PAYLOAD_SCHEMA_TYPE_*</code> defines. </p>
 
-<p class="definition">Definition at line <a class="el" href="nv_tools_ext_payload_8h_source.html#l00996">996</a> of file <a class="el" href="nv_tools_ext_payload_8h_source.html">nvToolsExtPayload.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="nv_tools_ext_payload_8h_source.html#l01015">1015</a> of file <a class="el" href="nv_tools_ext_payload_8h_source.html">nvToolsExtPayload.h</a>.</p>
 
 </div>
 </div>

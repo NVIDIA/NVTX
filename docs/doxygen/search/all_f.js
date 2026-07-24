@@ -1,22 +1,7 @@
 var searchData=
 [
-  ['schema_20entry_20flags_0',['END: Payload schema entry flags.',['../nv_tools_ext_payload_8h.html#autotoc_md4',1,'']]],
-  ['schema_20entry_20flags_20used_20for_20ref_20nvtxpayloadschemaentry_5ft_3a_3aflags_1',['Payload schema entry flags. Used for @ref nvtxPayloadSchemaEntry_t::flags.',['../nv_tools_ext_payload_8h.html#autotoc_md3',1,'']]],
-  ['schema_20entry_20types_2',['END: Payload schema entry types.',['../nv_tools_ext_payload_8h.html#autotoc_md6',1,'']]],
-  ['schemaid_3',['schemaid',['../structnvtx_payload_schema_attr__t.html#ae1fb939b70bec88c7702d6688ae657fc',1,'nvtxPayloadSchemaAttr_t::schemaId'],['../structnvtx_payload_enum_attr__t.html#ac51da0682943b6a5b4fa12365d7f81d4',1,'nvtxPayloadEnumAttr_t::schemaId'],['../structnvtx_counter_attr__t.html#a383083b3ae94dedfb59ddca685abe0eb',1,'nvtxCounterAttr_t::schemaId'],['../structnvtx_payload_data__t.html#acc85b71f0d3a63e54ebc779f48df8309',1,'nvtxPayloadData_t::schemaId']]],
-  ['schemas_4',['schemas',['../md__n_v_t_x___e_x_t_e_n_d_e_d___p_a_y_l_o_a_d_s.html#NVTX_EXTENDED_PAYLOADS_NESTED',1,'Nested schemas'],['../md__n_v_t_x___e_x_t_e_n_d_e_d___p_a_y_l_o_a_d_s.html#NVTX_EXTENDED_PAYLOADS_SCHEMAS',1,'Schemas']]],
-  ['scope_5',['scope',['../structnvtx_event_batch__t.html#a2ba91014d2831e199e4b3e38b388c181',1,'nvtxEventBatch_t']]],
-  ['scopeid_6',['scopeid',['../structnvtx_semantics_scope__t.html#af32805268c18be1fa358738811f2916c',1,'nvtxSemanticsScope_t::scopeId'],['../structnvtx_scope_attr__t.html#aca9b5b78f0557ccf9c009ce797f9fe87',1,'nvtxScopeAttr_t::scopeId'],['../structnvtx_time_domain_attr__t.html#a5285d2fa1096393a6e77598845265544',1,'nvtxTimeDomainAttr_t::scopeId'],['../structnvtx_counter_attr__t.html#a02bba10c2782ffd40efb00155b163917',1,'nvtxCounterAttr_t::scopeId']]],
-  ['scopes_7',['Scopes',['../md__n_v_t_x___e_x_t_e_n_d_e_d___p_a_y_l_o_a_d_s.html#NVTX_EXTENDED_PAYLOADS_SCOPES',1,'']]],
-  ['semanticid_8',['semanticId',['../structnvtx_semantics_header__t.html#ad1e09c81ba70c0678b398808b23133ca',1,'nvtxSemanticsHeader_t']]],
-  ['semantics_9',['semantics',['../md__n_v_t_x___e_x_t_e_n_d_e_d___p_a_y_l_o_a_d_s.html#NVTX_EXTENDED_PAYLOADS_SEMANTICS',1,'Entry Semantics'],['../structnvtx_payload_schema_entry__t.html#a71ddd016470557793d6776781b7c8406',1,'nvtxPayloadSchemaEntry_t::semantics'],['../structnvtx_counter_attr__t.html#a2ab25966e298a5742776ae1aa3bdf401',1,'nvtxCounterAttr_t::semantics']]],
-  ['size_10',['size',['../structnvtx_resource_attributes__v0.html#a3f251637098a16e51e3dd16f6f223282',1,'nvtxResourceAttributes_v0::size'],['../structnvtx_event_attributes__v2.html#a90b5726d65e2665b558668eada26ffb9',1,'nvtxEventAttributes_v2::size'],['../structnvtx_event_batch__t.html#afee23a8f0781cbe9483293172bd2ce07',1,'nvtxEventBatch_t::size'],['../structnvtx_sync_user_attributes__v0.html#ad55d1c1734d77c23863234c28667a4e1',1,'nvtxSyncUserAttributes_v0::size'],['../structnvtx_payload_data__t.html#ad0f0648c8ec5854b2cda3aa6e2f5dae5',1,'nvtxPayloadData_t::size']]],
-  ['size_20embedded_20arrays_20and_20strings_11',['Fixed-size embedded arrays and strings',['../md__n_v_t_x___e_x_t_e_n_d_e_d___p_a_y_l_o_a_d_s.html#NVTX_EXTENDED_PAYLOADS_FIXED_ARRAYS',1,'']]],
-  ['sizeofenum_12',['sizeOfEnum',['../structnvtx_payload_enum_attr__t.html#a12b15187dd2515a895935a767dfbaac0',1,'nvtxPayloadEnumAttr_t']]],
-  ['src_13',['src',['../structnvtx_sync_point__t.html#a3e32665fbf26ab3aa10730d4295be5fd',1,'nvtxSyncPoint_t']]],
-  ['string_20registration_14',['String Registration',['../group___s_t_r_i_n_g___r_e_g_i_s_t_r_a_t_i_o_n.html',1,'']]],
-  ['strings_15',['strings',['../md__n_v_t_x___e_x_t_e_n_d_e_d___p_a_y_l_o_a_d_s.html#NVTX_EXTENDED_PAYLOADS_EMPTY_STRINGS',1,'Empty strings'],['../md__n_v_t_x___e_x_t_e_n_d_e_d___p_a_y_l_o_a_d_s.html#NVTX_EXTENDED_PAYLOADS_FIXED_ARRAYS',1,'Fixed-size embedded arrays and strings'],['../md__n_v_t_x___e_x_t_e_n_d_e_d___p_a_y_l_o_a_d_s.html#NVTX_EXTENDED_PAYLOADS_STRINGS',1,'Strings']]],
-  ['strings_20and_20buffers_16',['Deep-copy of strings and buffers',['../md__n_v_t_x___e_x_t_e_n_d_e_d___p_a_y_l_o_a_d_s.html#NVTX_EXTENDED_PAYLOADS_DEEP_COPY',1,'']]],
-  ['structsize_17',['structSize',['../structnvtx_scope_attr__t.html#a8b181652f06ae70ec916c58dc0f3d114',1,'nvtxScopeAttr_t']]],
-  ['synchronization_18',['synchronization',['../_p_a_g_e__s_y_n_c_h_r_o_n_i_z_a_t_i_o_n.html',1,'Synchronization'],['../group___s_y_n_c_h_r_o_n_i_z_a_t_i_o_n.html',1,'Synchronization']]]
+  ['general_0',['General',['../group___g_e_n_e_r_a_l.html',1,'']]],
+  ['glance_1',['Concepts at a Glance',['../md__n_v_t_x___e_x_t_e_n_d_e_d___p_a_y_l_o_a_d_s.html#NVTX_EXTENDED_PAYLOADS_CONCEPTS',1,'']]],
+  ['gotchas_2',['16. Tips and Gotchas',['../md__n_v_t_x_w___u_s_e_r___g_u_i_d_e.html#autotoc_md34',1,'']]],
+  ['guide_3',['guide',['../md__n_v_t_x___e_x_t_e_n_d_e_d___p_a_y_l_o_a_d_s.html#NVTX_EXTENDED_PAYLOADS',1,'Extended Payloads: User Guide'],['../md__n_v_t_x_w___u_s_e_r___g_u_i_d_e.html#NVTXW_USER_GUIDE',1,'NVTXW User Guide']]]
 ];

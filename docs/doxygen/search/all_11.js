@@ -1,11 +1,11 @@
 var searchData=
 [
-  ['unions_0',['Unions',['../md__n_v_t_x___e_x_t_e_n_d_e_d___p_a_y_l_o_a_d_s.html#NVTX_EXTENDED_PAYLOADS_UNIONS',1,'']]],
-  ['unit_1',['unit',['../structnvtx_semantics_counter__t.html#ab63975716531a02c826e3d60924498e9',1,'nvtxSemanticsCounter_t']]],
-  ['unitscaledenominator_2',['unitScaleDenominator',['../structnvtx_semantics_counter__t.html#a88d60a2c7692ca703a542f3252770f74',1,'nvtxSemanticsCounter_t']]],
-  ['unitscalenumerator_3',['unitScaleNumerator',['../structnvtx_semantics_counter__t.html#a8b5740c0116aa8943ba43f9c97e14c64',1,'nvtxSemanticsCounter_t']]],
-  ['usage_4',['usage',['../structnvtx_mem_heap_desc__v1.html#ace1b78eba0d1733c52f3783fd72b9474',1,'nvtxMemHeapDesc_v1']]],
-  ['use_20extended_20payloads_5',['When to Use Extended Payloads',['../md__n_v_t_x___e_x_t_e_n_d_e_d___p_a_y_l_o_a_d_s.html#NVTX_EXTENDED_PAYLOADS_WHEN',1,'']]],
-  ['used_20for_20ref_20nvtxpayloadschemaentry_5ft_3a_3aflags_6',['Payload schema entry flags. Used for @ref nvtxPayloadSchemaEntry_t::flags.',['../nv_tools_ext_payload_8h.html#autotoc_md3',1,'']]],
-  ['user_20guide_7',['Extended Payloads: User Guide',['../md__n_v_t_x___e_x_t_e_n_d_e_d___p_a_y_l_o_a_d_s.html#NVTX_EXTENDED_PAYLOADS',1,'']]]
+  ['identifier_5ft_0',['identifier_t',['../unionnvtx_resource_attributes__v0_1_1identifier__t.html',1,'nvtxResourceAttributes_v0']]],
+  ['identifiertype_1',['identifierType',['../structnvtx_resource_attributes__v0.html#acec361e5bafce002e93a604e36bdf31b',1,'nvtxResourceAttributes_v0']]],
+  ['iface_2',['iface',['../structnvtxw_event_writer__t.html#a32486f25b85e84443cf7561adaf11622',1,'nvtxwEventWriter_t']]],
+  ['initialization_3',['Initialization',['../index.html#INITIALIZATION',1,'']]],
+  ['interface_4',['9. The Core Interface',['../md__n_v_t_x_w___u_s_e_r___g_u_i_d_e.html#autotoc_md21',1,'']]],
+  ['interface_20example_5',['15. Core Interface Example',['../md__n_v_t_x_w___u_s_e_r___g_u_i_d_e.html#NVTXW_CORE_EXAMPLE',1,'']]],
+  ['introduction_6',['Introduction',['../index.html#INTRODUCTION',1,'']]],
+  ['isflag_7',['isFlag',['../structnvtx_payload_enum__t.html#ae90cfd1bac263d55dfda3e3deab1749a',1,'nvtxPayloadEnum_t']]]
 ];
