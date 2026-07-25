@@ -19,10 +19,15 @@
  */
 
 /* setenv/unsetenv are POSIX; request them even under the project's strict C90.
- * This must precede any system header include. */
+ * This must precede any system header include.  On Apple, also enable Darwin
+ * extensions so NVTX's use of RTLD_DEFAULT (from <dlfcn.h>) remains visible
+ * when a strict POSIX feature-test macro is set. */
 #if !defined(_WIN32) && (!defined(_POSIX_C_SOURCE) || _POSIX_C_SOURCE < 200112L)
 #  undef _POSIX_C_SOURCE
 #  define _POSIX_C_SOURCE 200112L
+#endif
+#if defined(__APPLE__) && !defined(_DARWIN_C_SOURCE)
+#  define _DARWIN_C_SOURCE 1
 #endif
 
 /*
