@@ -1,6 +1,9 @@
 ---
 stages:
   - test
+  - upload
+  - publish-test
+  - publish
   - dispatch
 
 .manual-mode:

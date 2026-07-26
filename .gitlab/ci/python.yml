@@ -11,6 +11,8 @@ include:
       changes:
         - .gitlab-ci.yml
         - .gitlab/ci/common.yml
+        - .gitlab/ci/python-release.yml
+        - .gitlab/ci/scripts/python-*.sh
         - .gitlab/ci/python.yml
         - c/include/*
         - c/include/**/*
@@ -127,4 +129,5 @@ include:
   trigger:
     include:
       - local: /.gitlab/ci/python.yml
+      - local: /.gitlab/ci/python-release.yml
     strategy: depend
