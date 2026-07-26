@@ -22,6 +22,7 @@
 #define NVTXW_COUNTER_HELPERS_API
 
 #include <nvtxw3/nvtxw3.h>
+#include <string.h>
 
 /**
  * \file nvtxw3_counter_helpers.h
