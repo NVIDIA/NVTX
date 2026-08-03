@@ -109,7 +109,7 @@ include:
   before_script:
     - apk add --no-cache python3 py3-pip
 
-'Python (Windows, x64)':
+.python-wheel-windows-template:
   tags: [windows, x64]
   extends:
     - .python-wheel-template
@@ -119,10 +119,24 @@ include:
     - $Venv = Join-Path $env:CI_PROJECT_DIR ".venv"
     - "& $BasePython -m venv $Venv"
     - $Python = Join-Path (Join-Path $Venv "Scripts") "python.exe"
-    - '& $Python -m pip install --upgrade cibuildwheel'
+    - >-
+      & $Python -m pip install --upgrade
+      "cibuildwheel==$env:CIBUILDWHEEL_VERSION"
     - '& $Python -m cibuildwheel --output-dir wheelhouse python'
+
+'Python (Windows, x64)':
+  extends: .python-wheel-windows-template
+  variables:
+    CIBW_ARCHS_WINDOWS: AMD64
   artifacts:
     name: nvtx-wheels-windows-x64-$CI_NODE_INDEX
+
+'Python (Windows, arm64)':
+  extends: .python-wheel-windows-template
+  variables:
+    CIBW_ARCHS_WINDOWS: ARM64
+  artifacts:
+    name: nvtx-wheels-windows-arm64-$CI_NODE_INDEX
 
 'Build and test Python packages':
   extends: .manual-mode
