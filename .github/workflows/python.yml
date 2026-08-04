@@ -41,7 +41,7 @@ jobs:
         pyver: ['3.9', '3.10', '3.11', '3.12', '3.13', 3.13t, '3.14', 3.14t]
     steps:
       - uses: actions/checkout@v7
-      - uses: actions/setup-python@v6
+      - uses: actions/setup-python@v7
         with:
           python-version: ${{ matrix.pyver }}
       - run: pipx run build --sdist python
