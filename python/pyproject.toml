@@ -68,14 +68,7 @@ addopts = [
 [tool.cibuildwheel]
 skip = ["*musllinux*", "cp38-*"]
 build = "cp*"
-test-command = """
-pip install numpy
-pytest {package}/tests
-pytest --enable-injection {package}/tests
-pip uninstall -y numpy
-pytest {package}/tests
-pytest --enable-injection {package}/tests
-"""
+test-command = 'python "{project}/python/tests/run_ci_tests.py"'
 test-extras = "test"
 
 [tool.cibuildwheel.linux]
