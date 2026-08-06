@@ -58,10 +58,27 @@ fn main() {
         // allow cuda types
         .allowlist_type("CU.*")
         .allowlist_type("cuda.*")
-        // disallow any fntypes
-        .blocklist_type(".*fntype.*")
         // disallow impl-specific
         .blocklist_type("__.*");
+
+    if cfg!(feature = "tools") {
+        builder = builder
+            // expose the callback-subscription types (export tables, callback
+            // modules, and callback ids)
+            .allowlist_type("Nvtx.*")
+            // expose the dependency-free fake types referenced by the
+            // fakeimpl fntypes (required because allowlisting is not recursive)
+            .allowlist_type("nvtx_.*")
+            // expose the injection result codes
+            .allowlist_var("NVTX_SUCCESS")
+            .allowlist_var("NVTX_FAIL")
+            .allowlist_var("NVTX_ERR_.*");
+        // the function-table slot signatures (`*_impl_fntype` and
+        // `*_fakeimpl_fntype`) are covered by the "nvtx[^_].*" allowlist above
+    } else {
+        // disallow any fntypes
+        builder = builder.blocklist_type(".*fntype.*");
+    }
 
     if cfg!(feature = "cuda") {
         builder = builder.clang_arg("-DENABLE_CUDA");
