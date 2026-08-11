@@ -99,15 +99,15 @@
  *
  * It is recommended to use `NVTX_PAYLOAD_SCHEMA_REGISTER` to register the schema.
  *
- * @param struct_id The name of the struct.
- * @param schema_name (Optional 1) name of the payload schema. Default is `NULL`.
- * @param prefix (Optional 2) prefix before the schema and attributes variables,
- *               e.g. `static const`. Leave this empty, if no prefix is desired.
- * @param schema_flags (Optional 2) flags to augment the payload schema.
- *                     Default is `NVTX_PAYLOAD_SCHEMA_FLAG_NONE`.
- * @param schema_id (Optional 4) User-defined payload schema ID.
- * @param entries (Mandatory) Payload schema entries. This is always the last
- *                parameter to the macro.
+ * \par Parameters
+ * - \b struct_id - name of the struct.
+ * - \b schema_name - (optional 1) schema name; default `NULL`.
+ * - \b prefix - (optional 2) prefix before the schema and attributes variables,
+ *   e.g. `static const`; leave empty if none.
+ * - \b schema_flags - (optional 3) flags to augment the payload schema;
+ *   default `NVTX_PAYLOAD_SCHEMA_FLAG_NONE`.
+ * - \b schema_id - (optional 4) user-defined schema ID.
+ * - \b entries - (required, last) `NVTX_PAYLOAD_ENTRIES(...)`.
  *
  * @note On MSVC, this macro requires the conforming preprocessor:
  *       \c /Zc:preprocessor (VS 2019+) or \c /experimental:preprocessor
@@ -147,15 +147,15 @@
  * The optional parameters are positional (only allowed to be passed in the
  * predefined order). A maximum of 16 schema entries is supported.
  *
- * @param struct_id The name of the struct.
- * @param schema_name (Optional 1) name of the payload schema. Default is `NULL`.
- * @param prefix (Optional 2) prefix before the schema and attributes variables,
- *               e.g. `static const`. Leave this empty, if no prefix is desired.
- * @param schema_flags (Optional 3) flags to augment the payload schema.
- *                     Default is `NVTX_PAYLOAD_SCHEMA_FLAG_NONE`.
- * @param schema_id (Optional 4) User-defined payload schema ID.
- * @param entries (Mandatory) The schema entries. This is always the last
- *                parameter to the macro.
+ * \par Parameters
+ * - \b struct_id - name of the struct.
+ * - \b schema_name - (optional 1) schema name; default `NULL`.
+ * - \b prefix - (optional 2) prefix before the schema and attributes variables,
+ *   e.g. `static const`; leave empty if none.
+ * - \b schema_flags - (optional 3) flags to augment the payload schema;
+ *   default `NVTX_PAYLOAD_SCHEMA_FLAG_NONE`.
+ * - \b schema_id - (optional 4) user-defined schema ID.
+ * - \b entries - (required, last) `NVTX_PAYLOAD_ENTRIES(...)`.
  *
  * @note On MSVC, this macro requires the conforming preprocessor:
  *       \c /Zc:preprocessor (VS 2019+) or \c /experimental:preprocessor
@@ -185,11 +185,11 @@
 /**
  * \brief Define payload schema for an existing `struct` and register the schema.
  *
- * This does essentially the same as `NVTX_PAYLOAD_STATIC_SCHEMA_DEFINE`, but in
+ * This does essentially the same as `NVTX_DEFINE_SCHEMA_FOR_STRUCT`, but in
  * addition, the schema is registered and `uint64_t struct_id##_schemaId` set.
  *
  * @param domain The NVTX domain handle.
- * All other parameters are similar to `NVTX_PAYLOAD_STATIC_SCHEMA_DEFINE`.
+ * All other parameters are similar to `NVTX_DEFINE_SCHEMA_FOR_STRUCT`.
  *
  * @note On MSVC, this macro requires the conforming preprocessor:
  *       \c /Zc:preprocessor (VS 2019+) or \c /experimental:preprocessor
@@ -211,8 +211,9 @@
  *           (float, fp32[3])
  *   )
  *
- * @param struct_id The name of the struct.
- * @param members The members of the struct.
+ * \par Parameters
+ * - \b struct_id - name of the struct.
+ * - \b members - struct members as `(type, name)` pairs.
  *
  * @note On MSVC, this macro requires the conforming preprocessor:
  *       \c /Zc:preprocessor (VS 2019+) or \c /experimental:preprocessor
@@ -235,4 +236,3 @@
  */
 #define NVTX_PAYLOAD_SCHEMA_REGISTER(domain, struct_id) \
     nvtxPayloadSchemaRegister(domain, &struct_id##Attr)
-
