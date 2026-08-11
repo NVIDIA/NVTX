@@ -125,4 +125,3 @@ NVTX_DECLSPEC void NVTX_API nvtxNameCudaEventW(cudaEvent_t event, const wchar_t*
 #ifdef __cplusplus
 } /* extern "C" */
 #endif /* __cplusplus */
-

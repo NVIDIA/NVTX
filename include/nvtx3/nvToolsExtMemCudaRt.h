@@ -40,6 +40,15 @@ extern "C" {
 #ifndef NVTX_MEM_CUDART_CONTENTS_V1
 #define NVTX_MEM_CUDART_CONTENTS_V1
 
+/**
+ * \page PAGE_MEMORY_CUDART Memory CUDA Runtime
+ *
+ * CUDA runtime memory types (arrays, managed memory, and related helpers)
+ * built on the core memory extension.
+ *
+ * See module \ref MEMORY_CUDART for API details. For general memory concepts,
+ * see \ref PAGE_MEMORY.
+ */
 /** \defgroup MEMORY_CUDART Memory CUDA Runtime
  * See page \ref PAGE_MEMORY_CUDART.
  * @{

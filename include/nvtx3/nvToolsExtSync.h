@@ -170,6 +170,10 @@ typedef enum nvtxResourceSyncLinuxType_t nvtxResourceSyncAndroidType_t;
 * This structure is opaque to the user and is used as a handle to reference
 * a user defined synchronization object.  The tools will return a pointer through the API for the application
 * to hold on its behalf to reference the string in the future.
+* A value of 0 (or NULL) is a null handle and does not reference a created user
+* defined synchronization object. Applications may initialize handle variables
+* to 0 and compare them with 0 to determine whether they reference a created
+* user defined synchronization object.
 *
 */
 typedef struct nvtxSyncUser* nvtxSyncUser_t;
@@ -287,7 +291,9 @@ typedef struct nvtxSyncUserAttributes_v0 nvtxSyncUserAttributes_t;
 * \param domain - Domain to own the resource
 * \param attribs - A structure to assign multiple attributes to the object.
 *
-* \return A handle that represents the newly created user defined synchronization object.
+* \return A non-zero handle that represents the newly created user defined
+* synchronization object. A return value of 0 (or NULL) is a null handle and
+* does not represent a created user defined synchronization object.
 *
 * \sa
 * ::nvtxDomainSyncUserCreate
