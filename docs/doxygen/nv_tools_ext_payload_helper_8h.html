@@ -172,17 +172,15 @@ Macros</h2></td></tr>
 <p>It is required to at least provide the struct name and the payload entries. The first two fields (member name and NVTX entry type) of each payload entry are required.</p>
 <p>The optional parameters are only allowed to be passed in the predefined order. Hence, <code>payload_flags</code> requires <code>payload_schema</code> to be given and <code>prefix</code> requires <code>payload_flags</code> and <code>payload_schema</code> to be given. The payload entries are always the last parameter. A maximum of 16 schema entries is supported.</p>
 <p>It is recommended to use <code>NVTX_PAYLOAD_SCHEMA_REGISTER</code> to register the schema.</p>
-<dl class="params"><dt>Parameters</dt><dd>
-  <table class="params">
-    <tr><td class="paramname">struct_id</td><td>The name of the struct. </td></tr>
-    <tr><td class="paramname">schema_name</td><td>(Optional 1) name of the payload schema. Default is <code>NULL</code>. </td></tr>
-    <tr><td class="paramname">prefix</td><td>(Optional 2) prefix before the schema and attributes variables, e.g. <code>static const</code>. Leave this empty, if no prefix is desired. </td></tr>
-    <tr><td class="paramname">schema_flags</td><td>(Optional 2) flags to augment the payload schema. Default is <code>NVTX_PAYLOAD_SCHEMA_FLAG_NONE</code>. </td></tr>
-    <tr><td class="paramname">schema_id</td><td>(Optional 4) User-defined payload schema ID. </td></tr>
-    <tr><td class="paramname">entries</td><td>(Mandatory) Payload schema entries. This is always the last parameter to the macro.</td></tr>
-  </table>
-  </dd>
-</dl>
+<dl class="section user"><dt>Parameters</dt><dd><ul>
+<li><b>struct_id</b> - name of the struct.</li>
+<li><b>schema_name</b> - (optional 1) schema name; default <code>NULL</code>.</li>
+<li><b>prefix</b> - (optional 2) prefix before the schema and attributes variables, e.g. <code>static const</code>; leave empty if none.</li>
+<li><b>schema_flags</b> - (optional 3) flags to augment the payload schema; default <code>NVTX_PAYLOAD_SCHEMA_FLAG_NONE</code>.</li>
+<li><b>schema_id</b> - (optional 4) user-defined schema ID.</li>
+<li><b>entries</b> - (required, last) <code>NVTX_PAYLOAD_ENTRIES(...)</code>.</li>
+</ul>
+</dd></dl>
 <dl class="section note"><dt>Note</dt><dd>On MSVC, this macro requires the conforming preprocessor: <code>/Zc</code>:preprocessor (VS 2019+) or <code>/experimental</code>:preprocessor (VS 2017 v15.5+). Not supported on older MSVC versions. </dd></dl>
 
 <p class="definition">Definition at line <a class="el" href="nv_tools_ext_payload_helper_8h_source.html#l00116">116</a> of file <a class="el" href="nv_tools_ext_payload_helper_8h_source.html">nvToolsExtPayloadHelper.h</a>.</p>
@@ -225,10 +223,10 @@ Macros</h2></td></tr>
 <div class="ttc" id="anv_tools_ext_payload_8h_html_a7b9e5221764eb87caeba7d8cc6be7f03"><div class="ttname"><a href="nv_tools_ext_payload_8h.html#a7b9e5221764eb87caeba7d8cc6be7f03">nvtxPayloadSchemaRegister</a></div><div class="ttdeci">NVTX_DECLSPEC uint64_t NVTX_API nvtxPayloadSchemaRegister(nvtxDomainHandle_t domain, const nvtxPayloadSchemaAttr_t *attr)</div><div class="ttdoc">Register a payload schema.</div></div>
 </div><!-- fragment -->
 <p>Define payload schema for an existing <code>struct</code> and register the schema. </p>
-<p>This does essentially the same as <code>NVTX_PAYLOAD_STATIC_SCHEMA_DEFINE</code>, but in addition, the schema is registered and <code>uint64_t struct_id##_schemaId</code> set.</p>
+<p>This does essentially the same as <code>NVTX_DEFINE_SCHEMA_FOR_STRUCT</code>, but in addition, the schema is registered and <code>uint64_t struct_id##_schemaId</code> set.</p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">domain</td><td>The NVTX domain handle. All other parameters are similar to <code>NVTX_PAYLOAD_STATIC_SCHEMA_DEFINE</code>.</td></tr>
+    <tr><td class="paramname">domain</td><td>The NVTX domain handle. All other parameters are similar to <code>NVTX_DEFINE_SCHEMA_FOR_STRUCT</code>.</td></tr>
   </table>
   </dd>
 </dl>
@@ -267,16 +265,14 @@ Macros</h2></td></tr>
 <p>Create a type definition for the given struct ID and members. </p>
 <p>This is a convenience macro. A normal <code>typedef</code> can be used instead.</p>
 <p>Example usage: NVTX_DEFINE_STRUCT(your_struct, (double, fp64), (uint8_t, u8), (float, fp32[3]) )</p>
-<dl class="params"><dt>Parameters</dt><dd>
-  <table class="params">
-    <tr><td class="paramname">struct_id</td><td>The name of the struct. </td></tr>
-    <tr><td class="paramname">members</td><td>The members of the struct.</td></tr>
-  </table>
-  </dd>
-</dl>
+<dl class="section user"><dt>Parameters</dt><dd><ul>
+<li><b>struct_id</b> - name of the struct.</li>
+<li><b>members</b> - struct members as <code>(type, name)</code> pairs.</li>
+</ul>
+</dd></dl>
 <dl class="section note"><dt>Note</dt><dd>On MSVC, this macro requires the conforming preprocessor: <code>/Zc</code>:preprocessor (VS 2019+) or <code>/experimental</code>:preprocessor (VS 2017 v15.5+). Not supported on older MSVC versions. </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="nv_tools_ext_payload_helper_8h_source.html#l00221">221</a> of file <a class="el" href="nv_tools_ext_payload_helper_8h_source.html">nvToolsExtPayloadHelper.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="nv_tools_ext_payload_helper_8h_source.html#l00222">222</a> of file <a class="el" href="nv_tools_ext_payload_helper_8h_source.html">nvToolsExtPayloadHelper.h</a>.</p>
 
 </div>
 </div>
@@ -313,17 +309,15 @@ Macros</h2></td></tr>
 <p>Example: NVTX_DEFINE_STRUCT_WITH_SCHEMA(your_struct_name, "Your schema name", NVTX_PAYLOAD_ENTRIES( (int, index, TYPE_INT, "integer value"), (double, dpfloat, TYPE_DOUBLE, "fp64 value"), (const char, (text, 24), TYPE_CSTRING, "text", NULL, 24) ) )</p>
 <p>The first three fields (C type, member, entry type) of each entry are required. A fixed-size array or string requires a special notation with the member name and the size separated by comma and put into brackets (see last entry in the example).</p>
 <p>The optional parameters are positional (only allowed to be passed in the predefined order). A maximum of 16 schema entries is supported.</p>
-<dl class="params"><dt>Parameters</dt><dd>
-  <table class="params">
-    <tr><td class="paramname">struct_id</td><td>The name of the struct. </td></tr>
-    <tr><td class="paramname">schema_name</td><td>(Optional 1) name of the payload schema. Default is <code>NULL</code>. </td></tr>
-    <tr><td class="paramname">prefix</td><td>(Optional 2) prefix before the schema and attributes variables, e.g. <code>static const</code>. Leave this empty, if no prefix is desired. </td></tr>
-    <tr><td class="paramname">schema_flags</td><td>(Optional 3) flags to augment the payload schema. Default is <code>NVTX_PAYLOAD_SCHEMA_FLAG_NONE</code>. </td></tr>
-    <tr><td class="paramname">schema_id</td><td>(Optional 4) User-defined payload schema ID. </td></tr>
-    <tr><td class="paramname">entries</td><td>(Mandatory) The schema entries. This is always the last parameter to the macro.</td></tr>
-  </table>
-  </dd>
-</dl>
+<dl class="section user"><dt>Parameters</dt><dd><ul>
+<li><b>struct_id</b> - name of the struct.</li>
+<li><b>schema_name</b> - (optional 1) schema name; default <code>NULL</code>.</li>
+<li><b>prefix</b> - (optional 2) prefix before the schema and attributes variables, e.g. <code>static const</code>; leave empty if none.</li>
+<li><b>schema_flags</b> - (optional 3) flags to augment the payload schema; default <code>NVTX_PAYLOAD_SCHEMA_FLAG_NONE</code>.</li>
+<li><b>schema_id</b> - (optional 4) user-defined schema ID.</li>
+<li><b>entries</b> - (required, last) <code>NVTX_PAYLOAD_ENTRIES(...)</code>.</li>
+</ul>
+</dd></dl>
 <dl class="section note"><dt>Note</dt><dd>On MSVC, this macro requires the conforming preprocessor: <code>/Zc</code>:preprocessor (VS 2019+) or <code>/experimental</code>:preprocessor (VS 2017 v15.5+). Not supported on older MSVC versions. </dd></dl>
 
 <p class="definition">Definition at line <a class="el" href="nv_tools_ext_payload_helper_8h_source.html#l00164">164</a> of file <a class="el" href="nv_tools_ext_payload_helper_8h_source.html">nvToolsExtPayloadHelper.h</a>.</p>
@@ -452,7 +446,7 @@ Macros</h2></td></tr>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>NVTX schema ID </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="nv_tools_ext_payload_helper_8h_source.html#l00236">236</a> of file <a class="el" href="nv_tools_ext_payload_helper_8h_source.html">nvToolsExtPayloadHelper.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="nv_tools_ext_payload_helper_8h_source.html#l00237">237</a> of file <a class="el" href="nv_tools_ext_payload_helper_8h_source.html">nvToolsExtPayloadHelper.h</a>.</p>
 
 </div>
 </div>

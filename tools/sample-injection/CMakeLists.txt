@@ -37,8 +37,15 @@ target_include_directories(nvtx_payload_parser PUBLIC
     ${NVTX_INCLUDE_PATH}
     ${CMAKE_CURRENT_SOURCE_DIR}/Source/Payload
 )
+# Use C++14 on older MSVC (VS 2015); C++17 elsewhere.
+if(MSVC AND MSVC_TOOLSET_VERSION LESS_EQUAL 140)
+    set(nvtx_payload_parser_cxx_std 14)
+else()
+    set(nvtx_payload_parser_cxx_std 17)
+endif()
+
 set_target_properties(nvtx_payload_parser PROPERTIES
-    CXX_STANDARD 17
+    CXX_STANDARD ${nvtx_payload_parser_cxx_std}
     POSITION_INDEPENDENT_CODE ON
 )
 

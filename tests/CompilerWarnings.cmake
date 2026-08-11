@@ -199,6 +199,11 @@ elseif(MSVC)
         list(APPEND _msvc_warn -wd4746)
     endif()
 
+    # UCRT float helpers emit C4738 on 32-bit x86 under /Wall.
+    if(CMAKE_SIZEOF_VOID_P EQUAL 4)
+        list(APPEND _msvc_warn -wd4738)
+    endif()
+
     if(MSVC_TOOLSET_VERSION LESS 143)
         # VS2019 and earlier
         list(APPEND _msvc_warn -wd4013)

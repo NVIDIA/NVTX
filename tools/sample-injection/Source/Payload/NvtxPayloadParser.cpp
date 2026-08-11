@@ -22,7 +22,6 @@
 #include "NvtxPayloadUtils.h"
 #include "UtfStringConversion.h"
 
-#include <algorithm>
 #include <cassert>
 #include <cinttypes>
 #include <cstring>
@@ -223,14 +222,14 @@ NvtxPayloadParser::FieldDecodeInfo NvtxPayloadParser::BuildFieldDecodeInfo(
             }
             else if (typeAlign == 1)
             {
-                typeAlign = std::min<size_t>(entry.elementSize, 8);
+                typeAlign = MinValue(entry.elementSize, size_t{8});
             }
         }
 
         // Pack alignment caps the effective alignment (like #pragma pack).
         if (packAlign > 0)
         {
-            typeAlign = (typeAlign == 0) ? packAlign : std::min(typeAlign, packAlign);
+            typeAlign = (typeAlign == 0) ? packAlign : MinValue(typeAlign, packAlign);
         }
         const size_t localOffset = AlignUp(state.nextDynamicOffset, typeAlign);
         decode.fieldBaseOffset = baseOffset + localOffset;
@@ -349,7 +348,7 @@ void NvtxPayloadParser::FinishFieldEmission(
     ParseState& state) const
 {
     const size_t localFieldOffset = static_cast<size_t>(decode.fieldBaseOffset - baseOffset);
-    state.nextDynamicOffset = std::max(state.nextDynamicOffset, localFieldOffset + consumedBytes);
+    state.nextDynamicOffset = MaxValue(state.nextDynamicOffset, localFieldOffset + consumedBytes);
     if (decode.isArray)
     {
         context.visitor.OnArrayEnd();
@@ -559,7 +558,7 @@ size_t NvtxPayloadParser::EmitCStringField(
                         ? static_cast<size_t>(static_cast<const uint8_t*>(zeroPos) - ptr)
                         : decode.elementSize;
                 context.visitor.OnString(
-                    std::string_view(reinterpret_cast<const char*>(ptr), length));
+                    std::string(reinterpret_cast<const char*>(ptr), length));
             }
         }
         return decode.elementSize;
@@ -588,7 +587,7 @@ size_t NvtxPayloadParser::EmitCStringField(
                         ? static_cast<size_t>(static_cast<const uint8_t*>(zeroPos) - ptr)
                         : byteCount;
                 context.visitor.OnString(
-                    std::string_view(reinterpret_cast<const char*>(ptr), length));
+                    std::string(reinterpret_cast<const char*>(ptr), length));
             }
         }
         return byteCount;
@@ -621,7 +620,7 @@ size_t NvtxPayloadParser::EmitCStringField(
                         ? static_cast<size_t>(static_cast<const uint8_t*>(zeroPos) - ptr)
                         : byteCount;
                 context.visitor.OnString(
-                    std::string_view(reinterpret_cast<const char*>(ptr), length));
+                    std::string(reinterpret_cast<const char*>(ptr), length));
             }
         }
         return byteCount;
@@ -653,7 +652,7 @@ size_t NvtxPayloadParser::EmitCStringField(
         }
         else
         {
-            context.visitor.OnString(std::string_view(static_cast<const char*>(v)));
+            context.visitor.OnString(std::string(static_cast<const char*>(v)));
         }
     }
 
@@ -700,7 +699,8 @@ void NvtxPayloadParser::EmitPredefinedTypePayload(
     syntheticSchema.type = NVTX_PAYLOAD_SCHEMA_TYPE_STATIC;
     syntheticSchema.packAlign = 0;
 
-    PayloadSchemaEntry& entry = syntheticSchema.entries.emplace_back();
+    syntheticSchema.entries.push_back(PayloadSchemaEntry{});
+    PayloadSchemaEntry& entry = syntheticSchema.entries.back();
     entry.type = type;
     entry.typeCategory = GetTypeCategory(type);
     entry.arrayLayout = PayloadArrayLayout::None;
@@ -860,6 +860,7 @@ void NvtxPayloadParser::ProcessPayloads(
     PayloadStreamVisitor& visitor) const
 {
     ParseContext context{schemas, enums, registeredStrings, visitor};
+
     context.visitor.OnBeginPayloads(count);
     if (!payloadData || count == 0)
     {
@@ -917,7 +918,7 @@ void NvtxPayloadParser::ProcessPayloads(
         if (payload.schemaId == NVTX_TYPE_PAYLOAD_SCHEMA_RAW)
         {
             context.visitor.OnPayloadBegin(
-                i, payload.schemaId, payload.size, std::string_view{"<raw>"});
+                i, payload.schemaId, payload.size, "<raw>");
             context.visitor.OnFieldBegin({}, {});
             context.visitor.OnRawBytes(static_cast<const uint8_t*>(payload.payload), payload.size);
             context.visitor.OnFieldEnd();
@@ -929,7 +930,7 @@ void NvtxPayloadParser::ProcessPayloads(
         if (payload.schemaId < NVTX_PAYLOAD_SCHEMA_ID_STATIC_START)
         {
             context.visitor.OnPayloadBegin(
-                i, payload.schemaId, payload.size, std::string_view{"<predefined>"});
+                i, payload.schemaId, payload.size, "<predefined>");
             EmitPredefinedTypePayload(payload, context);
             context.visitor.OnPayloadEnd();
             continue;
@@ -947,9 +948,7 @@ void NvtxPayloadParser::ProcessPayloads(
         }
 
         const PayloadSchema& schema = schemaIt->second;
-        const std::string_view schemaName = schema.name;
-
-        context.visitor.OnPayloadBegin(i, payload.schemaId, payload.size, schemaName);
+        context.visitor.OnPayloadBegin(i, payload.schemaId, payload.size, schema.name);
 
         ParseState state{};
         state.dynamicSchema = (schema.type == NVTX_PAYLOAD_SCHEMA_TYPE_DYNAMIC);

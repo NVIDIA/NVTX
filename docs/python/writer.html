@@ -1,0 +1,598 @@
+
+
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="./" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>Writing Pre-Collected Data &#8212; nvtx</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
+  </script>
+  <!--
+    this give us a css class that will be invisible only if js is disabled
+  -->
+  <noscript>
+    <style>
+      .pst-js-only { display: none !important; }
+
+    </style>
+  </noscript>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="_static/styles/theme.css?digest=55c26ed414f5f8a31ebb" rel="stylesheet" />
+<link href="_static/styles/pydata-sphinx-theme.css?digest=55c26ed414f5f8a31ebb" rel="stylesheet" />
+
+    <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=8f2a1f02" />
+    <link rel="stylesheet" type="text/css" href="_static/styles/nvidia-sphinx-theme.css?v=933278ad" />
+  
+  <!-- So that users can add custom icons -->
+  <script defer src="_static/scripts/fontawesome.js?digest=55c26ed414f5f8a31ebb"></script>
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="_static/scripts/bootstrap.js?digest=55c26ed414f5f8a31ebb" />
+<link rel="preload" as="script" href="_static/scripts/pydata-sphinx-theme.js?digest=55c26ed414f5f8a31ebb" />
+
+
+
+    <script src="_static/documentation_options.js?v=e2418eca"></script>
+    <script src="_static/doctools.js?v=fd6eb6e6"></script>
+    <script src="_static/sphinx_highlight.js?v=6ffebe34"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'writer';</script>
+    <script>DOCUMENTATION_OPTIONS.search_as_you_type = false;</script>
+
+    <link rel="icon" href="_static/favicon.png"/>
+
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Best practices" href="best_practices.html" />
+    <link rel="prev" title="Counters" href="counters.html" />
+
+
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  <meta name="docsearch:version" content="" />
+  
+    
+    <script src="_static/searchtools.js"></script>
+    <script src="_static/language_data.js"></script>
+    <script src="searchindex.js"></script>
+  
+
+
+  </head>
+
+  <body data-default-mode="">
+
+
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
+  
+  
+  
+  
+  <dialog id="pst-search-dialog">
+    
+<form class="bd-search d-flex align-items-center"
+      action="search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         placeholder="Search the docs ..."
+         aria-label="Search the docs ..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form>
+  </dialog>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
+</div>
+
+  
+    <header id="pst-header" class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+<div class="bd-header__inner bd-page-width">
+  <button class="pst-navbar-icon sidebar-toggle primary-toggle" aria-label="Site navigation">
+    <span class="fa-solid fa-bars"></span>
+  </button>
+  
+  
+  <div class="col-lg-3 navbar-header-items__start">
+    
+      <div class="navbar-item">
+
+  
+    
+  
+
+<a class="navbar-brand logo" href="index.html">
+  
+  
+  
+  
+  
+    
+    
+      
+    
+    
+    <img src="_static/nvidia-logo-horiz-rgb-blk-for-screen.svg" class="logo__image only-light" alt="nvtx - Home"/>
+    <img src="_static/nvidia-logo-horiz-rgb-wht-for-screen.svg" class="logo__image only-dark pst-js-only" alt="nvtx - Home"/>
+  
+  
+    <p class="title logo__title">nvtx</p>
+  
+</a></div>
+    
+  </div>
+  
+  <div class="col-lg-9 navbar-header-items">
+    
+    
+    <div class="navbar-header-items__end">
+      
+        <div class="navbar-item navbar-persistent--container">
+          
+
+<button class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button>
+        </div>
+      
+      
+        <div class="navbar-item">
+
+<button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button pst-js-only" aria-label="Color mode" data-bs-title="Color mode"  data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <i class="theme-switch fa-solid fa-sun                fa-lg" data-mode="light" title="Light"></i>
+  <i class="theme-switch fa-solid fa-moon               fa-lg" data-mode="dark"  title="Dark"></i>
+  <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"  title="System Settings"></i>
+</button></div>
+      
+    </div>
+    
+  </div>
+  
+  
+    <div class="navbar-persistent--mobile">
+
+<button class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button>
+    </div>
+  
+
+  
+    <button class="pst-navbar-icon sidebar-toggle secondary-toggle" aria-label="On this page">
+      <span class="fa-solid fa-outdent"></span>
+    </button>
+  
+</div>
+
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+      <dialog id="pst-primary-sidebar-modal"></dialog>
+      <div id="pst-primary-sidebar" class="bd-sidebar-primary bd-sidebar">
+        
+
+
+
+  
+    
+  
+
+<a class="navbar-brand logo" href="index.html">
+  
+  
+  
+  
+  
+    
+    
+      
+    
+    
+    <img src="_static/nvidia-logo-horiz-rgb-blk-for-screen.svg" class="logo__image only-light" alt="nvtx - Home"/>
+    <img src="_static/nvidia-logo-horiz-rgb-wht-for-screen.svg" class="logo__image only-dark pst-js-only" alt="nvtx - Home"/>
+  
+  
+    <p class="title logo__title">nvtx</p>
+  
+</a>
+
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+    
+    
+      <div class="sidebar-header-items__end">
+        
+          <div class="navbar-item">
+
+<button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button pst-js-only" aria-label="Color mode" data-bs-title="Color mode"  data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <i class="theme-switch fa-solid fa-sun                fa-lg" data-mode="light" title="Light"></i>
+  <i class="theme-switch fa-solid fa-moon               fa-lg" data-mode="dark"  title="Dark"></i>
+  <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"  title="System Settings"></i>
+</button></div>
+        
+      </div>
+    
+  </div>
+  
+    <div class="sidebar-primary-items__start sidebar-primary__section">
+        <div class="sidebar-primary-item">
+
+
+
+<nav class="bd-docs-nav bd-links"
+     aria-label="Table of Contents">
+  <p class="bd-links__title" role="heading" aria-level="1">Table of Contents</p>
+  <div class="bd-toc-item navbar-nav"><ul class="current nav bd-sidenav">
+<li class="toctree-l1 current active has-children"><a class="reference internal" href="overview.html">Overview</a><details open="open"><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="annotate.html">Function Decorator and Context Manager</a></li>
+<li class="toctree-l2"><a class="reference internal" href="annotation_types.html">Annotation Types</a></li>
+<li class="toctree-l2"><a class="reference internal" href="annotation_attributes.html">Annotation Attributes</a></li>
+<li class="toctree-l2"><a class="reference internal" href="counters.html">Counters</a></li>
+<li class="toctree-l2 current active"><a class="current reference internal" href="#">Writing Pre-Collected Data</a></li>
+<li class="toctree-l2"><a class="reference internal" href="best_practices.html">Best practices</a></li>
+<li class="toctree-l2"><a class="reference internal" href="automatic_annotations.html">Automatic function annotation</a></li>
+</ul>
+</details></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">API Reference</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="reference.html">Annotation API</a></li>
+<li class="toctree-l1"><a class="reference internal" href="writer_reference.html">Writer API</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Project Links</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference external" href="https://github.com/NVIDIA/NVTX/">GitHub</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://pypi.org/project/nvtx/">PyPI</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://nvidia.github.io/NVTX/doxygen/">C Docs</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://nvidia.github.io/NVTX/doxygen-cpp/">C++ Docs</a></li>
+</ul>
+</div>
+</nav></div>
+    </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+  </div>
+
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item">
+
+<nav aria-label="Breadcrumb" class="d-print-none">
+  <ul class="bd-breadcrumbs">
+    
+    <li class="breadcrumb-item breadcrumb-home">
+      <a href="index.html" class="nav-link" aria-label="Home">
+        <i class="fa-solid fa-home"></i>
+      </a>
+    </li>
+    
+    <li class="breadcrumb-item"><a href="overview.html" class="nav-link">Overview</a></li>
+    
+    <li class="breadcrumb-item active" aria-current="page"><span class="ellipsis">Writing Pre-Collected Data</span></li>
+  </ul>
+</nav>
+</div>
+      
+    </div>
+  
+  
+</div>
+</div>
+              
+              
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <section id="writing-pre-collected-data">
+<h1>Writing Pre-Collected Data<a class="headerlink" href="#writing-pre-collected-data" title="Link to this heading">#</a></h1>
+<p>NVTX code annotations and NVTX Writer solve different problems:</p>
+<ul class="simple">
+<li><p>Use the regular NVTX API (<code class="docutils literal notranslate"><span class="pre">nvtx.Domain.push_range</span></code>, <code class="docutils literal notranslate"><span class="pre">nvtx.Domain.pop_range</span></code>, etc.)
+to annotate work as it executes.
+A profiling tool observes those calls while the application is running.</p></li>
+<li><p>Use a writer to submit events and counter samples that already have
+timestamps. A writer backend consumes the data and decides where to store,
+merge, or display it.</p></li>
+</ul>
+<section id="backends-and-integrations">
+<h2>Backends and Integrations<a class="headerlink" href="#backends-and-integrations" title="Link to this heading">#</a></h2>
+<p>The <a class="reference internal" href="writer_reference.html#module-nvtx.writer" title="nvtx.writer"><code class="xref py py-mod docutils literal notranslate"><span class="pre">nvtx.writer</span></code></a> module defines the backend-independent writer API. A
+backend implementation must be available before a session can write data.</p>
+<p>For example, NVIDIA Nsight Systems provides the <code class="docutils literal notranslate"><span class="pre">nsys_writer</span></code> integration.
+See the <a class="reference external" href="https://docs.nvidia.com/nsight-systems/AnalysisGuide/index.html#writing-post-collection-events">Nsight Systems documentation</a>
+for its setup and specific usage.</p>
+<p>Backend configuration and output behavior are integration-specific.</p>
+</section>
+<section id="session-and-basic-events">
+<h2>Session and Basic Events<a class="headerlink" href="#session-and-basic-events" title="Link to this heading">#</a></h2>
+<p>A <a class="reference internal" href="writer_reference.html#nvtx.writer.Session" title="nvtx.writer.Session"><code class="xref py py-class docutils literal notranslate"><span class="pre">nvtx.writer.Session</span></code></a> owns one collection of output data. Within a
+session, a <a class="reference internal" href="writer_reference.html#nvtx.writer.Domain" title="nvtx.writer.Domain"><code class="xref py py-class docutils literal notranslate"><span class="pre">nvtx.writer.Domain</span></code></a> namespaces registered objects, while a
+<a class="reference internal" href="writer_reference.html#nvtx.writer.Stream" title="nvtx.writer.Stream"><code class="xref py py-class docutils literal notranslate"><span class="pre">nvtx.writer.Stream</span></code></a> represents a logical source such as a thread,
+process, rank, or device stream.</p>
+<p>Create sessions and streams with context managers so their output is finalized
+even if writing fails. For individual events, use
+<a class="reference internal" href="writer_reference.html#nvtx.writer.Stream.write_mark" title="nvtx.writer.Stream.write_mark"><code class="xref py py-meth docutils literal notranslate"><span class="pre">nvtx.writer.Stream.write_mark()</span></code></a>,
+<a class="reference internal" href="writer_reference.html#nvtx.writer.Stream.write_pushpop" title="nvtx.writer.Stream.write_pushpop"><code class="xref py py-meth docutils literal notranslate"><span class="pre">write_pushpop()</span></code></a>, or
+<a class="reference internal" href="writer_reference.html#nvtx.writer.Stream.write_startend" title="nvtx.writer.Stream.write_startend"><code class="xref py py-meth docutils literal notranslate"><span class="pre">write_startend()</span></code></a>.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">nvtx.writer</span><span class="w"> </span><span class="kn">import</span> <span class="n">Session</span><span class="p">,</span> <span class="n">load_backend</span>
+
+
+<span class="c1"># The integration providing the backend defines its path and configuration.</span>
+<span class="n">backend</span> <span class="o">=</span> <span class="n">load_backend</span><span class="p">(</span><span class="s2">&quot;/path/to/backend/library&quot;</span><span class="p">)</span>
+<span class="k">with</span> <span class="n">Session</span><span class="p">(</span><span class="s2">&quot;Example Writer&quot;</span><span class="p">,</span> <span class="n">backend</span><span class="o">=</span><span class="n">backend</span><span class="p">)</span> <span class="k">as</span> <span class="n">session</span><span class="p">:</span>
+    <span class="n">domain</span> <span class="o">=</span> <span class="n">session</span><span class="o">.</span><span class="n">get_domain</span><span class="p">(</span><span class="s2">&quot;My Domain&quot;</span><span class="p">)</span>
+    <span class="k">with</span> <span class="n">session</span><span class="o">.</span><span class="n">create_stream</span><span class="p">(</span><span class="s2">&quot;My Stream&quot;</span><span class="p">,</span> <span class="n">domain</span><span class="o">=</span><span class="n">domain</span><span class="p">)</span> <span class="k">as</span> <span class="n">stream</span><span class="p">:</span>
+        <span class="n">stream</span><span class="o">.</span><span class="n">write_mark</span><span class="p">(</span><span class="mi">100</span><span class="p">,</span> <span class="n">message</span><span class="o">=</span><span class="s2">&quot;My Mark&quot;</span><span class="p">)</span>
+        <span class="n">stream</span><span class="o">.</span><span class="n">write_pushpop</span><span class="p">(</span>
+            <span class="n">start</span><span class="o">=</span><span class="mi">200</span><span class="p">,</span>
+            <span class="n">end</span><span class="o">=</span><span class="mi">500</span><span class="p">,</span>
+            <span class="n">message</span><span class="o">=</span><span class="s2">&quot;My Message&quot;</span><span class="p">,</span>
+            <span class="n">color</span><span class="o">=</span><span class="s2">&quot;green&quot;</span><span class="p">,</span>
+        <span class="p">)</span>
+</pre></div>
+</div>
+<p>The following sections reuse the <code class="docutils literal notranslate"><span class="pre">domain</span></code> and <code class="docutils literal notranslate"><span class="pre">stream</span></code> names from this
+setup.</p>
+</section>
+<section id="counters-and-batches">
+<h2>Counters and Batches<a class="headerlink" href="#counters-and-batches" title="Link to this heading">#</a></h2>
+<p>Regular NVTX counters submit annotations with <a class="reference internal" href="reference.html#nvtx.Counter.sample" title="nvtx.Counter.sample"><code class="xref py py-meth docutils literal notranslate"><span class="pre">nvtx.Counter.sample()</span></code></a>.
+Writer counter samples are instead submitted to a stream with an explicit
+timestamp.</p>
+<p>Register a counter with <a class="reference internal" href="writer_reference.html#nvtx.writer.Domain.get_counter" title="nvtx.writer.Domain.get_counter"><code class="xref py py-meth docutils literal notranslate"><span class="pre">nvtx.writer.Domain.get_counter()</span></code></a>,
+then submit values with <a class="reference internal" href="writer_reference.html#nvtx.writer.Stream.write_counter_sample" title="nvtx.writer.Stream.write_counter_sample"><code class="xref py py-meth docutils literal notranslate"><span class="pre">nvtx.writer.Stream.write_counter_sample()</span></code></a> or
+<a class="reference internal" href="writer_reference.html#nvtx.writer.Stream.write_counter_batch" title="nvtx.writer.Stream.write_counter_batch"><code class="xref py py-meth docutils literal notranslate"><span class="pre">write_counter_batch()</span></code></a>. Each sample has a timestamp
+in the stream’s time domain; a batch pairs values and timestamps by position.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">counter</span> <span class="o">=</span> <span class="n">domain</span><span class="o">.</span><span class="n">get_counter</span><span class="p">(</span><span class="s2">&quot;My Counter&quot;</span><span class="p">,</span> <span class="nb">int</span><span class="p">)</span>
+
+<span class="c1"># Write one sample ...</span>
+<span class="n">stream</span><span class="o">.</span><span class="n">write_counter_sample</span><span class="p">(</span><span class="n">counter</span><span class="p">,</span> <span class="n">timestamp</span><span class="o">=</span><span class="mi">600</span><span class="p">,</span> <span class="n">value</span><span class="o">=</span><span class="mi">12</span><span class="p">)</span>
+
+<span class="c1"># ... or submit several samples together.</span>
+<span class="n">stream</span><span class="o">.</span><span class="n">write_counter_batch</span><span class="p">(</span>
+    <span class="n">counter</span><span class="p">,</span>
+    <span class="p">[</span><span class="mi">10</span><span class="p">,</span> <span class="mi">8</span><span class="p">,</span> <span class="mi">4</span><span class="p">],</span>
+    <span class="n">timestamps</span><span class="o">=</span><span class="p">[</span><span class="mi">700</span><span class="p">,</span> <span class="mi">800</span><span class="p">,</span> <span class="mi">900</span><span class="p">],</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+</section>
+<section id="generic-events">
+<h2>Generic Events<a class="headerlink" href="#generic-events" title="Link to this heading">#</a></h2>
+<p>Generic events are useful when a mark or range needs additional data fields.
+A structured NumPy dtype defines the layout: annotated fields provide the
+event’s timing and message, while ordinary fields carry application-specific
+data. Register it with <a class="reference internal" href="writer_reference.html#nvtx.writer.Domain.get_schema" title="nvtx.writer.Domain.get_schema"><code class="xref py py-meth docutils literal notranslate"><span class="pre">nvtx.writer.Domain.get_schema()</span></code></a>, then submit a row
+with <a class="reference internal" href="writer_reference.html#nvtx.writer.Stream.write_event" title="nvtx.writer.Stream.write_event"><code class="xref py py-meth docutils literal notranslate"><span class="pre">nvtx.writer.Stream.write_event()</span></code></a>.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">nvtx</span>
+
+
+<span class="n">event_dtype</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">dtype</span><span class="p">([</span>
+    <span class="p">(</span><span class="s2">&quot;start&quot;</span><span class="p">,</span> <span class="n">nvtx</span><span class="o">.</span><span class="n">numpy_dtype</span><span class="p">(</span>
+        <span class="n">np</span><span class="o">.</span><span class="n">int64</span><span class="p">,</span> <span class="n">entry_kind</span><span class="o">=</span><span class="n">nvtx</span><span class="o">.</span><span class="n">EntryKind</span><span class="o">.</span><span class="n">RANGE_BEGIN</span><span class="p">)),</span>
+    <span class="p">(</span><span class="s2">&quot;end&quot;</span><span class="p">,</span> <span class="n">nvtx</span><span class="o">.</span><span class="n">numpy_dtype</span><span class="p">(</span>
+        <span class="n">np</span><span class="o">.</span><span class="n">int64</span><span class="p">,</span> <span class="n">entry_kind</span><span class="o">=</span><span class="n">nvtx</span><span class="o">.</span><span class="n">EntryKind</span><span class="o">.</span><span class="n">RANGE_END</span><span class="p">)),</span>
+    <span class="p">(</span><span class="s2">&quot;message&quot;</span><span class="p">,</span> <span class="n">nvtx</span><span class="o">.</span><span class="n">numpy_dtype</span><span class="p">(</span>
+        <span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">str_</span><span class="p">,</span> <span class="mi">32</span><span class="p">),</span> <span class="n">entry_kind</span><span class="o">=</span><span class="n">nvtx</span><span class="o">.</span><span class="n">EntryKind</span><span class="o">.</span><span class="n">MESSAGE</span><span class="p">)),</span>
+    <span class="p">(</span><span class="s2">&quot;items&quot;</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">int64</span><span class="p">),</span>
+    <span class="p">(</span><span class="s2">&quot;input_bytes&quot;</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">int64</span><span class="p">),</span>
+<span class="p">])</span>
+<span class="n">event_schema</span> <span class="o">=</span> <span class="n">domain</span><span class="o">.</span><span class="n">get_schema</span><span class="p">(</span>
+    <span class="n">event_dtype</span><span class="p">,</span>
+    <span class="n">kind</span><span class="o">=</span><span class="n">nvtx</span><span class="o">.</span><span class="n">EventKind</span><span class="o">.</span><span class="n">RANGE_STARTEND</span><span class="p">,</span>
+<span class="p">)</span>
+
+<span class="n">stream</span><span class="o">.</span><span class="n">write_event</span><span class="p">(</span>
+    <span class="n">event_schema</span><span class="p">,</span>
+    <span class="p">(</span><span class="mi">1_000</span><span class="p">,</span> <span class="mi">1_500</span><span class="p">,</span> <span class="s2">&quot;process items&quot;</span><span class="p">,</span> <span class="mi">64</span><span class="p">,</span> <span class="mi">16_384</span><span class="p">),</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+<p>Use <a class="reference internal" href="writer_reference.html#nvtx.writer.Stream.write_event_batch" title="nvtx.writer.Stream.write_event_batch"><code class="xref py py-meth docutils literal notranslate"><span class="pre">nvtx.writer.Stream.write_event_batch()</span></code></a> to submit multiple rows with
+the same schema. See the <a class="reference internal" href="writer_reference.html"><span class="doc">Writer API</span></a> for all supported operations
+and their dtype requirements.</p>
+</section>
+</section>
+
+
+                </article>
+              
+              
+              
+              
+              
+                <footer class="prev-next-footer d-print-none">
+                  
+<div class="prev-next-area">
+    <a class="left-prev"
+       href="counters.html"
+       title="previous page">
+      <i class="fa-solid fa-angle-left"></i>
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">previous</p>
+        <p class="prev-next-title">Counters</p>
+      </div>
+    </a>
+    <a class="right-next"
+       href="best_practices.html"
+       title="next page">
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">next</p>
+        <p class="prev-next-title">Best practices</p>
+      </div>
+      <i class="fa-solid fa-angle-right"></i>
+    </a>
+</div>
+                </footer>
+              
+            </div>
+            
+            
+
+
+              
+                <dialog id="pst-secondary-sidebar-modal"></dialog>
+                <div id="pst-secondary-sidebar" class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+
+
+  <div class="sidebar-secondary-item">
+<div
+    id="pst-page-navigation-heading-2"
+    class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> On this page
+  </div>
+  <nav id="pst-page-toc-nav" class="page-toc" aria-labelledby="pst-page-navigation-heading-2">
+    <ul class="pst-show_toc_level nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#backends-and-integrations">Backends and Integrations</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#session-and-basic-events">Session and Basic Events</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#counters-and-batches">Counters and Batches</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#generic-events">Generic Events</a></li>
+</ul>
+  </nav></div>
+
+</div></div>
+              
+            
+
+          </div>
+          <footer class="bd-footer-content">
+            
+          </footer>
+        
+      </main>
+    </div>
+  </div>
+  
+
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script defer src="_static/scripts/bootstrap.js?digest=55c26ed414f5f8a31ebb"></script>
+<script defer src="_static/scripts/pydata-sphinx-theme.js?digest=55c26ed414f5f8a31ebb"></script>
+
+
+  <footer class="bd-footer">
+<div class="bd-footer__inner bd-page-width">
+  
+    <div class="footer-items__start">
+      
+        <div class="footer-item">
+<a class="footer-brand logo" href="https://www.nvidia.com">
+  <img src="_static/nvidia-logo-horiz-rgb-1c-blk-for-screen.svg" class="logo__image only-light" alt="NVIDIA"/>
+  <img src="_static/nvidia-logo-horiz-rgb-1c-wht-for-screen.svg" class="logo__image only-dark" alt="NVIDIA"/>
+</a></div>
+      
+        <div class="footer-item">
+
+<div class="footer-links">
+  
+  
+  <a class="external" href="https://www.nvidia.com/en-us/about-nvidia/privacy-policy/">Privacy Policy</a>
+   | 
+  
+  
+  
+  <a class="external" href="https://www.nvidia.com/en-us/about-nvidia/privacy-center/">Your Privacy Choices</a>
+   | 
+  
+  
+  
+  <a class="external" href="https://www.nvidia.com/en-us/about-nvidia/terms-of-service/">Terms of Service</a>
+   | 
+  
+  
+  
+  <a class="external" href="https://www.nvidia.com/en-us/about-nvidia/accessibility/">Accessibility</a>
+   | 
+  
+  
+  
+  <a class="external" href="https://www.nvidia.com/en-us/about-nvidia/company-policies/">Corporate Policies</a>
+   | 
+  
+  
+  
+  <a class="external" href="https://www.nvidia.com/en-us/product-security/">Product Security</a>
+   | 
+  
+  
+  
+  <a class="external" href="https://www.nvidia.com/en-us/contact/">Contact</a>
+  
+  
+  
+</div>
+</div>
+      
+        <div class="footer-item">
+
+
+
+
+  <p class="copyright">
+    
+      Copyright © 2020-2026, NVIDIA Corporation.
+      <br/>
+    
+  </p>
+</div>
+      
+    </div>
+  
+  
+  
+</div>
+
+  </footer>
+  </body>
+</html>

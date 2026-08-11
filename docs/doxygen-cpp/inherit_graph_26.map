@@ -1,3 +1,5 @@
 <map id="Graphical Class Hierarchy" name="Graphical Class Hierarchy">
-<area shape="rect" id="Node000000" href="$classnvtx3_1_1v1_1_1mv1_1_1schema.html" title="Represents the registered schema for a payload struct." alt="" coords="5,5,184,31"/>
+<area shape="rect" id="Node000000" title=" " alt="" coords="5,5,245,60"/>
+<area shape="rect" id="Node000001" href="$classnvtx3_1_1v1_1_1mv2_1_1scope__semantic.html" title="Builder for the scope semantic applied to a payload entry." alt="" coords="293,13,460,53"/>
+<area shape="poly" id="edge9_Node000000_Node000001" title=" " alt="" coords="259,30,293,30,293,35,259,35"/>
 </map>

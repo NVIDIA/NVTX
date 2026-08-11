@@ -1,0 +1,1579 @@
+
+
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="./" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>Writer API &#8212; nvtx</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
+  </script>
+  <!--
+    this give us a css class that will be invisible only if js is disabled
+  -->
+  <noscript>
+    <style>
+      .pst-js-only { display: none !important; }
+
+    </style>
+  </noscript>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="_static/styles/theme.css?digest=55c26ed414f5f8a31ebb" rel="stylesheet" />
+<link href="_static/styles/pydata-sphinx-theme.css?digest=55c26ed414f5f8a31ebb" rel="stylesheet" />
+
+    <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=8f2a1f02" />
+    <link rel="stylesheet" type="text/css" href="_static/styles/nvidia-sphinx-theme.css?v=933278ad" />
+  
+  <!-- So that users can add custom icons -->
+  <script defer src="_static/scripts/fontawesome.js?digest=55c26ed414f5f8a31ebb"></script>
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="_static/scripts/bootstrap.js?digest=55c26ed414f5f8a31ebb" />
+<link rel="preload" as="script" href="_static/scripts/pydata-sphinx-theme.js?digest=55c26ed414f5f8a31ebb" />
+
+
+
+    <script src="_static/documentation_options.js?v=e2418eca"></script>
+    <script src="_static/doctools.js?v=fd6eb6e6"></script>
+    <script src="_static/sphinx_highlight.js?v=6ffebe34"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'writer_reference';</script>
+    <script>DOCUMENTATION_OPTIONS.search_as_you_type = false;</script>
+
+    <link rel="icon" href="_static/favicon.png"/>
+
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="prev" title="Annotation API" href="reference.html" />
+
+
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  <meta name="docsearch:version" content="" />
+  
+    
+    <script src="_static/searchtools.js"></script>
+    <script src="_static/language_data.js"></script>
+    <script src="searchindex.js"></script>
+  
+
+
+  </head>
+
+  <body data-default-mode="">
+
+
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
+  
+  
+  
+  
+  <dialog id="pst-search-dialog">
+    
+<form class="bd-search d-flex align-items-center"
+      action="search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         placeholder="Search the docs ..."
+         aria-label="Search the docs ..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form>
+  </dialog>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
+</div>
+
+  
+    <header id="pst-header" class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+<div class="bd-header__inner bd-page-width">
+  <button class="pst-navbar-icon sidebar-toggle primary-toggle" aria-label="Site navigation">
+    <span class="fa-solid fa-bars"></span>
+  </button>
+  
+  
+  <div class="col-lg-3 navbar-header-items__start">
+    
+      <div class="navbar-item">
+
+  
+    
+  
+
+<a class="navbar-brand logo" href="index.html">
+  
+  
+  
+  
+  
+    
+    
+      
+    
+    
+    <img src="_static/nvidia-logo-horiz-rgb-blk-for-screen.svg" class="logo__image only-light" alt="nvtx - Home"/>
+    <img src="_static/nvidia-logo-horiz-rgb-wht-for-screen.svg" class="logo__image only-dark pst-js-only" alt="nvtx - Home"/>
+  
+  
+    <p class="title logo__title">nvtx</p>
+  
+</a></div>
+    
+  </div>
+  
+  <div class="col-lg-9 navbar-header-items">
+    
+    
+    <div class="navbar-header-items__end">
+      
+        <div class="navbar-item navbar-persistent--container">
+          
+
+<button class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button>
+        </div>
+      
+      
+        <div class="navbar-item">
+
+<button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button pst-js-only" aria-label="Color mode" data-bs-title="Color mode"  data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <i class="theme-switch fa-solid fa-sun                fa-lg" data-mode="light" title="Light"></i>
+  <i class="theme-switch fa-solid fa-moon               fa-lg" data-mode="dark"  title="Dark"></i>
+  <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"  title="System Settings"></i>
+</button></div>
+      
+    </div>
+    
+  </div>
+  
+  
+    <div class="navbar-persistent--mobile">
+
+<button class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button>
+    </div>
+  
+
+  
+    <button class="pst-navbar-icon sidebar-toggle secondary-toggle" aria-label="On this page">
+      <span class="fa-solid fa-outdent"></span>
+    </button>
+  
+</div>
+
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+      <dialog id="pst-primary-sidebar-modal"></dialog>
+      <div id="pst-primary-sidebar" class="bd-sidebar-primary bd-sidebar">
+        
+
+
+
+  
+    
+  
+
+<a class="navbar-brand logo" href="index.html">
+  
+  
+  
+  
+  
+    
+    
+      
+    
+    
+    <img src="_static/nvidia-logo-horiz-rgb-blk-for-screen.svg" class="logo__image only-light" alt="nvtx - Home"/>
+    <img src="_static/nvidia-logo-horiz-rgb-wht-for-screen.svg" class="logo__image only-dark pst-js-only" alt="nvtx - Home"/>
+  
+  
+    <p class="title logo__title">nvtx</p>
+  
+</a>
+
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+    
+    
+      <div class="sidebar-header-items__end">
+        
+          <div class="navbar-item">
+
+<button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button pst-js-only" aria-label="Color mode" data-bs-title="Color mode"  data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <i class="theme-switch fa-solid fa-sun                fa-lg" data-mode="light" title="Light"></i>
+  <i class="theme-switch fa-solid fa-moon               fa-lg" data-mode="dark"  title="Dark"></i>
+  <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"  title="System Settings"></i>
+</button></div>
+        
+      </div>
+    
+  </div>
+  
+    <div class="sidebar-primary-items__start sidebar-primary__section">
+        <div class="sidebar-primary-item">
+
+
+
+<nav class="bd-docs-nav bd-links"
+     aria-label="Table of Contents">
+  <p class="bd-links__title" role="heading" aria-level="1">Table of Contents</p>
+  <div class="bd-toc-item navbar-nav"><ul class="nav bd-sidenav">
+<li class="toctree-l1 has-children"><a class="reference internal" href="overview.html">Overview</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="annotate.html">Function Decorator and Context Manager</a></li>
+<li class="toctree-l2"><a class="reference internal" href="annotation_types.html">Annotation Types</a></li>
+<li class="toctree-l2"><a class="reference internal" href="annotation_attributes.html">Annotation Attributes</a></li>
+<li class="toctree-l2"><a class="reference internal" href="counters.html">Counters</a></li>
+<li class="toctree-l2"><a class="reference internal" href="writer.html">Writing Pre-Collected Data</a></li>
+<li class="toctree-l2"><a class="reference internal" href="best_practices.html">Best practices</a></li>
+<li class="toctree-l2"><a class="reference internal" href="automatic_annotations.html">Automatic function annotation</a></li>
+</ul>
+</details></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">API Reference</span></p>
+<ul class="current nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="reference.html">Annotation API</a></li>
+<li class="toctree-l1 current active"><a class="current reference internal" href="#">Writer API</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Project Links</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference external" href="https://github.com/NVIDIA/NVTX/">GitHub</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://pypi.org/project/nvtx/">PyPI</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://nvidia.github.io/NVTX/doxygen/">C Docs</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://nvidia.github.io/NVTX/doxygen-cpp/">C++ Docs</a></li>
+</ul>
+</div>
+</nav></div>
+    </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+  </div>
+
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item">
+
+<nav aria-label="Breadcrumb" class="d-print-none">
+  <ul class="bd-breadcrumbs">
+    
+    <li class="breadcrumb-item breadcrumb-home">
+      <a href="index.html" class="nav-link" aria-label="Home">
+        <i class="fa-solid fa-home"></i>
+      </a>
+    </li>
+    <li class="breadcrumb-item active" aria-current="page"><span class="ellipsis">Writer API</span></li>
+  </ul>
+</nav>
+</div>
+      
+    </div>
+  
+  
+</div>
+</div>
+              
+              
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <section id="module-nvtx.writer">
+<span id="writer-api"></span><h1>Writer API<a class="headerlink" href="#module-nvtx.writer" title="Link to this heading">#</a></h1>
+<p>Write pre-collected trace data through an NVTXW backend.</p>
+<p>Regular <a class="reference internal" href="reference.html#module-nvtx" title="nvtx"><code class="xref py py-mod docutils literal notranslate"><span class="pre">nvtx</span></code></a> calls annotate work as it executes. This module instead
+submits events and counter samples with explicit timestamps to a writer
+backend. The backend decides where the data is written or how it is merged.</p>
+<p>Backend implementations and configuration are supplied by tools or other
+integrations. For example, NVIDIA Nsight Systems provides the <code class="docutils literal notranslate"><span class="pre">nsys_writer</span></code>
+integration; see the <a class="reference external" href="https://docs.nvidia.com/nsight-systems/AnalysisGuide/index.html#writing-post-collection-events">Nsight Systems documentation</a>
+for its setup and report-specific usage.</p>
+<section id="backend">
+<h2>Backend<a class="headerlink" href="#backend" title="Link to this heading">#</a></h2>
+<dl class="py function">
+<dt class="sig sig-object py" id="nvtx.writer.load_backend">
+<span class="sig-prename descclassname"><span class="pre">nvtx.writer.</span></span><span class="sig-name descname"><span class="pre">load_backend</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">path</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#nvtx.writer.load_backend" title="Link to this definition">#</a></dt>
+<dd><p>Load and initialize an NVTXW backend from an explicit library path.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>path</strong> (<em>pathlib.Path</em><em> or </em><em>str</em>) – Path to the backend shared library.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The loaded backend.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference internal" href="#nvtx.writer.Backend" title="nvtx.writer.Backend">Backend</a></p>
+</dd>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><ul class="simple">
+<li><p><strong>OSError</strong> – If the library cannot be loaded.</p></li>
+<li><p><a class="reference internal" href="#nvtx.writer.WriterError" title="nvtx.writer.WriterError"><strong>WriterError</strong></a> – If the backend does not export <code class="docutils literal notranslate"><span class="pre">nvtxwGetInterface</span></code> or does not
+    provide the requested interface version.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="nvtx.writer.Backend">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">nvtx.writer.</span></span><span class="sig-name descname"><span class="pre">Backend</span></span><a class="headerlink" href="#nvtx.writer.Backend" title="Link to this definition">#</a></dt>
+<dd><p>A loaded NVTXW backend: the module handle plus its interface table.</p>
+<p>Do not construct directly; use <a class="reference internal" href="#nvtx.writer.load_backend" title="nvtx.writer.load_backend"><code class="xref py py-func docutils literal notranslate"><span class="pre">load_backend()</span></code></a>.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="nvtx.writer.Backend.close">
+<span class="sig-name descname"><span class="pre">close</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">self</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#nvtx.writer.Backend.close" title="Link to this definition">#</a></dt>
+<dd><p>Finalize and release the backend.</p>
+<p>Active sessions, and their open streams, are ended first.</p>
+<p>Calling this method is optional because backends normally remain
+loaded until the process exits. Calling it more than once has no
+effect. When multiple backends were loaded from the same library, the
+library is finalized only after every wrapper is closed. Its module
+remains loaded until process exit.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Raises<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference internal" href="#nvtx.writer.WriterError" title="nvtx.writer.WriterError"><strong>WriterError</strong></a> – If the backend fails to end an active session.</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py exception">
+<dt class="sig sig-object py" id="nvtx.writer.WriterError">
+<span class="property"><span class="k"><span class="pre">exception</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">nvtx.writer.</span></span><span class="sig-name descname"><span class="pre">WriterError</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">result_code</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">operation</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#nvtx.writer.WriterError" title="Link to this definition">#</a></dt>
+<dd><p>Raised when an NVTXW backend call returns a non-success result code.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>result_code</strong> (<em>int</em>) – The <code class="docutils literal notranslate"><span class="pre">NVTXW_RESULT_*</span></code> code returned by the failing call.</p></li>
+<li><p><strong>operation</strong> (<em>str</em><em>, </em><em>optional</em>) – Name of the backend call that failed.</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="nvtx.writer.WriterError.result_code">
+<span class="sig-name descname"><span class="pre">result_code</span></span><a class="headerlink" href="#nvtx.writer.WriterError.result_code" title="Link to this definition">#</a></dt>
+<dd><p>The raw <code class="docutils literal notranslate"><span class="pre">NVTXW_RESULT_*</span></code> code returned by the failing call.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>int</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="nvtx.writer.WriterError.operation">
+<span class="sig-name descname"><span class="pre">operation</span></span><a class="headerlink" href="#nvtx.writer.WriterError.operation" title="Link to this definition">#</a></dt>
+<dd><p>Name of the backend call that failed, if known.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>str or None</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="sessions-and-streams">
+<h2>Sessions and Streams<a class="headerlink" href="#sessions-and-streams" title="Link to this heading">#</a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="nvtx.writer.Session">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">nvtx.writer.</span></span><span class="sig-name descname"><span class="pre">Session</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">backend</span></span></em>, <em class="sig-param"><span class="keyword-only-separator o"><abbr title="Keyword-only parameters separator (PEP 3102)"><span class="pre">*</span></abbr></span></em>, <em class="sig-param"><span class="n"><span class="pre">config</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#nvtx.writer.Session" title="Link to this definition">#</a></dt>
+<dd><p>An NVTXW session: the top-level container data is written into.</p>
+<p>Use as a context manager (recommended) or call <a class="reference internal" href="#nvtx.writer.Session.begin" title="nvtx.writer.Session.begin"><code class="xref py py-meth docutils literal notranslate"><span class="pre">begin()</span></code></a> and
+<a class="reference internal" href="#nvtx.writer.Session.end" title="nvtx.writer.Session.end"><code class="xref py py-meth docutils literal notranslate"><span class="pre">end()</span></code></a> explicitly.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>name</strong> (<em>str</em><em> or </em><em>bytes</em>) – Session name. Tools may display it or use it to name a file or
+directory representing the session.</p></li>
+<li><p><strong>backend</strong> (<a class="reference internal" href="#nvtx.writer.Backend" title="nvtx.writer.Backend"><em>Backend</em></a>) – Backend the session writes to, from <a class="reference internal" href="#nvtx.writer.load_backend" title="nvtx.writer.load_backend"><code class="xref py py-func docutils literal notranslate"><span class="pre">load_backend()</span></code></a>.</p></li>
+<li><p><strong>config</strong> (<em>str</em><em> or </em><em>bytes</em><em>, </em><em>optional</em>) – Backend-specific configuration options, one <code class="docutils literal notranslate"><span class="pre">key=value</span></code> pair per
+line. Backends use reasonable defaults for options not provided and
+ignore keys they do not support.</p></li>
+</ul>
+</dd>
+</dl>
+<p class="rubric">Notes</p>
+<p>Writes to distinct streams may proceed concurrently. Calls on the same
+stream must not overlap unless the caller synchronizes them. Registration
+and lifecycle operations must not overlap writes: complete setup before
+starting writer threads, and stop them before closing streams or ending
+the session.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="nvtx.writer.Session.begin">
+<span class="sig-name descname"><span class="pre">begin</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">self</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#nvtx.writer.Session.begin" title="Link to this definition">#</a></dt>
+<dd><p>Start the session.</p>
+<p>When applicable, prefer using a context manager
+(<code class="docutils literal notranslate"><span class="pre">with</span> <span class="pre">Session(&quot;my</span> <span class="pre">session&quot;,</span> <span class="pre">backend=backend)</span> <span class="pre">as</span> <span class="pre">session:</span></code>) over
+calling this method explicitly.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Raises<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>RuntimeError</strong> – If the session is already active or the backend is closed.</p></li>
+<li><p><a class="reference internal" href="#nvtx.writer.WriterError" title="nvtx.writer.WriterError"><strong>WriterError</strong></a> – If the backend fails to begin the session.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="nvtx.writer.Session.create_stream">
+<span class="sig-name descname"><span class="pre">create_stream</span></span><span class="sig-paren">(</span>
+
+<dl>
+<dd><em class="sig-param"><span class="n"><span class="pre">self</span></span></em>,</dd>
+<dd><em class="sig-param"><span class="n"><span class="pre">name</span></span></em>,</dd>
+<dd><em class="sig-param"><span class="keyword-only-separator o"><abbr title="Keyword-only parameters separator (PEP 3102)"><span class="pre">*</span></abbr></span></em>,</dd>
+<dd><em class="sig-param"><span class="n"><span class="pre">domain</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>,</dd>
+<dd><em class="sig-param"><span class="n"><span class="pre">scope</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>,</dd>
+<dd><em class="sig-param"><span class="n"><span class="pre">time_domain_id</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">NVTX_TIME_DOMAIN_ID_NONE</span></span></em>,</dd>
+<dd><em class="sig-param"><span class="n"><span class="pre">interleaving</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">StreamInterleaving.NONE</span></span></em>,</dd>
+<dd><em class="sig-param"><span class="n"><span class="pre">ordering</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">StreamOrdering.UNKNOWN</span></span></em>,</dd>
+<dd><em class="sig-param"><span class="n"><span class="pre">skid</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">StreamSkid.NONE</span></span></em>,</dd>
+<dd><em class="sig-param"><span class="n"><span class="pre">skid_amount</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>,</dd>
+</dl>
+
+<span class="sig-paren">)</span><a class="headerlink" href="#nvtx.writer.Session.create_stream" title="Link to this definition">#</a></dt>
+<dd><p>Create a stream associated with this session.</p>
+<p>This method configures the stream but does not open it. Use the stream
+as a context manager or call <a class="reference internal" href="#nvtx.writer.Stream.open" title="nvtx.writer.Stream.open"><code class="xref py py-meth docutils literal notranslate"><span class="pre">Stream.open()</span></code></a> before writing events.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>name</strong> (<em>str</em><em> or </em><em>bytes</em>) – Stream name.</p></li>
+<li><p><strong>domain</strong> (<a class="reference internal" href="#nvtx.writer.Domain" title="nvtx.writer.Domain"><em>Domain</em></a><em>, </em><em>str</em><em>, </em><em>bytes</em><em>, </em><em>optional</em>) – Domain object or domain name. <code class="docutils literal notranslate"><span class="pre">None</span></code> selects the session default
+domain. Names and <code class="docutils literal notranslate"><span class="pre">None</span></code> are resolved with <a class="reference internal" href="#nvtx.writer.Session.get_domain" title="nvtx.writer.Session.get_domain"><code class="xref py py-meth docutils literal notranslate"><span class="pre">get_domain()</span></code></a>.</p></li>
+<li><p><strong>scope</strong> (<a class="reference internal" href="#nvtx.writer.PredefinedScope" title="nvtx.writer.PredefinedScope"><em>PredefinedScope</em></a><em>, </em><a class="reference internal" href="#nvtx.writer.Scope" title="nvtx.writer.Scope"><em>Scope</em></a><em>, </em><em>int</em><em>, or </em><em>None</em><em>, </em><em>optional</em>) – Default scope associated with the stream. Pass
+<code class="xref py py-attr docutils literal notranslate"><span class="pre">PredefinedScope.NONE</span></code>, <code class="xref py py-attr docutils literal notranslate"><span class="pre">PredefinedScope.ROOT</span></code>, or a
+dynamic scope returned by <a class="reference internal" href="#nvtx.writer.Domain.get_scope" title="nvtx.writer.Domain.get_scope"><code class="xref py py-meth docutils literal notranslate"><span class="pre">Domain.get_scope()</span></code></a> for this
+stream’s domain. An integer must be in the NVTX static scope ID
+range.</p></li>
+<li><p><strong>time_domain_id</strong> (<a class="reference internal" href="reference.html#nvtx.TimestampType" title="nvtx.TimestampType"><em>TimestampType</em></a><em> or </em><em>int</em><em>, </em><em>optional</em>) – Time domain used by event timestamps.</p></li>
+<li><p><strong>interleaving</strong> (<a class="reference internal" href="#nvtx.writer.StreamInterleaving" title="nvtx.writer.StreamInterleaving"><em>StreamInterleaving</em></a><em>, </em><em>optional</em>) – Whether ordering guarantees apply across the stream or per scope.</p></li>
+<li><p><strong>ordering</strong> (<a class="reference internal" href="#nvtx.writer.StreamOrdering" title="nvtx.writer.StreamOrdering"><em>StreamOrdering</em></a><em>, </em><em>optional</em>) – Ordering guarantee for events in the stream.</p></li>
+<li><p><strong>skid</strong> (<a class="reference internal" href="#nvtx.writer.StreamSkid" title="nvtx.writer.StreamSkid"><em>StreamSkid</em></a><em>, </em><em>optional</em>) – Unit used to express the partial-sort skid.</p></li>
+<li><p><strong>skid_amount</strong> (<em>int</em><em>, </em><em>optional</em>) – Maximum partial-sort skid in the unit selected by <code class="docutils literal notranslate"><span class="pre">skid</span></code>.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>A configured, unopened stream.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference internal" href="#nvtx.writer.Stream" title="nvtx.writer.Stream">Stream</a></p>
+</dd>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><ul class="simple">
+<li><p><strong>RuntimeError</strong> – If the session is not active or the domain is no longer valid.</p></li>
+<li><p><strong>TypeError</strong> – If <code class="docutils literal notranslate"><span class="pre">interleaving</span></code>, <code class="docutils literal notranslate"><span class="pre">ordering</span></code>, <code class="docutils literal notranslate"><span class="pre">skid</span></code>, or
+    <code class="docutils literal notranslate"><span class="pre">time_domain_id</span></code> has an unsupported type, or <code class="docutils literal notranslate"><span class="pre">scope</span></code> is not a
+    supported stream scope.</p></li>
+<li><p><strong>ValueError</strong> – If <code class="docutils literal notranslate"><span class="pre">domain</span></code> belongs to a different session, <code class="docutils literal notranslate"><span class="pre">scope</span></code> is
+    registered in a different domain, or a runtime-resolved
+    predefined scope or an integer outside the static scope ID range
+    is provided.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="nvtx.writer.Session.end">
+<span class="sig-name descname"><span class="pre">end</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">self</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#nvtx.writer.Session.end" title="Link to this definition">#</a></dt>
+<dd><p>End the session.</p>
+<p>Streams still open in this session are closed first. Objects created
+from the session (domains, streams, registered strings, scopes, and
+counters) become invalid when it ends.</p>
+<p>When applicable, prefer using a context manager
+(<code class="docutils literal notranslate"><span class="pre">with</span> <span class="pre">Session(&quot;my</span> <span class="pre">session&quot;,</span> <span class="pre">backend=backend)</span> <span class="pre">as</span> <span class="pre">session:</span></code>) over
+calling this method explicitly.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Raises<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>RuntimeError</strong> – If the session is not active or the backend is closed.</p></li>
+<li><p><a class="reference internal" href="#nvtx.writer.WriterError" title="nvtx.writer.WriterError"><strong>WriterError</strong></a> – If the backend fails to close a stream or end the session.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="nvtx.writer.Session.get_domain">
+<span class="sig-name descname"><span class="pre">get_domain</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">self</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#nvtx.writer.Session.get_domain" title="Link to this definition">#</a></dt>
+<dd><p>Get or create a domain within this session.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>name</strong> (<em>str</em><em> or </em><em>bytes</em><em>, </em><em>optional</em>) – Domain name. <code class="docutils literal notranslate"><span class="pre">None</span></code> or an empty name selects the session’s
+default domain.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The requested domain. Repeated calls with the same name return
+the same object.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference internal" href="#nvtx.writer.Domain" title="nvtx.writer.Domain">Domain</a></p>
+</dd>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><ul class="simple">
+<li><p><strong>RuntimeError</strong> – If the session is not active.</p></li>
+<li><p><strong>TypeError</strong> – If <code class="docutils literal notranslate"><span class="pre">name</span></code> is not a str, bytes, or None.</p></li>
+<li><p><a class="reference internal" href="#nvtx.writer.WriterError" title="nvtx.writer.WriterError"><strong>WriterError</strong></a> – If the backend fails to register the domain.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="nvtx.writer.Domain">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">nvtx.writer.</span></span><span class="sig-name descname"><span class="pre">Domain</span></span><a class="headerlink" href="#nvtx.writer.Domain" title="Link to this definition">#</a></dt>
+<dd><p>Session-owned NVTX domain. Created by <a class="reference internal" href="#nvtx.writer.Session.get_domain" title="nvtx.writer.Session.get_domain"><code class="xref py py-meth docutils literal notranslate"><span class="pre">Session.get_domain()</span></code></a>.
+Valid until the owning session ends.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="nvtx.writer.Domain.get_category_id">
+<span class="sig-name descname"><span class="pre">get_category_id</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">self</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">bytes</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#nvtx.writer.Domain.get_category_id" title="Link to this definition">#</a></dt>
+<dd><p>Get or create a named category in this domain.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>name</strong> (<em>str</em><em> or </em><em>bytes</em>) – Category name.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The category ID. IDs start at 1 because 0 represents no category,
+and skip integer category values already passed to this domain’s
+event write methods. Results are cached per domain.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>int</p>
+</dd>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><ul class="simple">
+<li><p><strong>RuntimeError</strong> – If the domain is no longer valid.</p></li>
+<li><p><strong>TypeError</strong> – If <code class="docutils literal notranslate"><span class="pre">name</span></code> is not a string or bytes object.</p></li>
+<li><p><a class="reference internal" href="#nvtx.writer.WriterError" title="nvtx.writer.WriterError"><strong>WriterError</strong></a> – If the backend fails to register the category.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="nvtx.writer.Domain.get_counter">
+<span class="sig-name descname"><span class="pre">get_counter</span></span><span class="sig-paren">(</span>
+
+<dl>
+<dd><em class="sig-param"><span class="n"><span class="pre">self</span></span></em>,</dd>
+<dd><em class="sig-param"><span class="n"><span class="pre">name</span></span></em>,</dd>
+<dd><em class="sig-param"><span class="n"><span class="pre">dtype</span></span></em>,</dd>
+<dd><em class="sig-param"><span class="keyword-only-separator o"><abbr title="Keyword-only parameters separator (PEP 3102)"><span class="pre">*</span></abbr></span></em>,</dd>
+<dd><em class="sig-param"><span class="n"><span class="pre">description</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>,</dd>
+<dd><em class="sig-param"><span class="n"><span class="pre">scope</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>,</dd>
+<dd><em class="sig-param"><span class="n"><span class="pre">semantics</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>,</dd>
+</dl>
+
+<span class="sig-paren">)</span><a class="headerlink" href="#nvtx.writer.Domain.get_counter" title="Link to this definition">#</a></dt>
+<dd><p>Get or create a counter or counter group in this domain.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>name</strong> (<em>str</em><em> or </em><em>bytes</em>) – Display name for the counter.</p></li>
+<li><p><strong>dtype</strong> (<em>int</em><em>, </em><em>float</em><em>, or </em><em>dtype-like</em>) – Counter value type. <code class="docutils literal notranslate"><span class="pre">int</span></code> records signed 64-bit integer samples,
+<code class="docutils literal notranslate"><span class="pre">float</span></code> records double-precision samples, and a NumPy dtype-like
+object records samples with that dtype. Top-level fixed-size array
+dtypes are not supported. A structured dtype describes a flat
+counter group. Its fields may define per-field
+semantics with <a class="reference internal" href="reference.html#nvtx.numpy_dtype" title="nvtx.numpy_dtype"><code class="xref py py-func docutils literal notranslate"><span class="pre">nvtx.numpy_dtype()</span></code></a> and its
+<code class="docutils literal notranslate"><span class="pre">counter_semantics</span></code> argument, and at most one field may have the
+<code class="xref py py-attr docutils literal notranslate"><span class="pre">nvtx.EntryKind.COUNTER_TIMESTAMP</span></code> role.</p></li>
+<li><p><strong>description</strong> (<em>str</em><em> or </em><em>bytes</em><em>, </em><em>optional</em>) – Longer description for the counter.</p></li>
+<li><p><strong>scope</strong> (<a class="reference internal" href="#nvtx.writer.PredefinedScope" title="nvtx.writer.PredefinedScope"><em>PredefinedScope</em></a><em>, </em><a class="reference internal" href="#nvtx.writer.Scope" title="nvtx.writer.Scope"><em>Scope</em></a><em>, </em><em>int</em><em>, or </em><em>None</em><em>, </em><em>optional</em>) – Scope associated with the counter. Pass a predefined scope, a
+dynamic scope returned by <a class="reference internal" href="#nvtx.writer.Domain.get_scope" title="nvtx.writer.Domain.get_scope"><code class="xref py py-meth docutils literal notranslate"><span class="pre">get_scope()</span></code></a>, or an integer in the
+NVTX static scope ID range.</p></li>
+<li><p><strong>semantics</strong> (<a class="reference internal" href="reference.html#nvtx.CounterSemantics" title="nvtx.CounterSemantics"><em>CounterSemantics</em></a><em>, </em><em>optional</em>) – Semantics for the counter as a whole. For per-field semantics in a
+structured dtype, use <a class="reference internal" href="reference.html#nvtx.numpy_dtype" title="nvtx.numpy_dtype"><code class="xref py py-func docutils literal notranslate"><span class="pre">nvtx.numpy_dtype()</span></code></a>.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The requested counter. Results are cached per domain.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference internal" href="#nvtx.writer.Counter" title="nvtx.writer.Counter">Counter</a></p>
+</dd>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><ul class="simple">
+<li><p><strong>RuntimeError</strong> – If NumPy is required but not installed, or the domain is no
+    longer valid.</p></li>
+<li><p><strong>TypeError</strong> – If <code class="docutils literal notranslate"><span class="pre">dtype</span></code> is not dtype-like, is a top-level fixed-size array,
+    or contains nested or array fields, or if <code class="docutils literal notranslate"><span class="pre">scope</span></code> has an
+    unsupported type.</p></li>
+<li><p><strong>ValueError</strong> – If the counter layout contains an unsupported field role, more
+    than one embedded counter timestamp, or <code class="docutils literal notranslate"><span class="pre">scope</span></code> is registered
+    in a different domain.</p></li>
+<li><p><a class="reference internal" href="#nvtx.writer.WriterError" title="nvtx.writer.WriterError"><strong>WriterError</strong></a> – If the backend fails to register the counter or its schema.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="nvtx.writer.Domain.get_registered_string">
+<span class="sig-name descname"><span class="pre">get_registered_string</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">self</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">string</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#nvtx.writer.Domain.get_registered_string" title="Link to this definition">#</a></dt>
+<dd><p>Get or create a registered string in this domain.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>string</strong> (<em>str</em><em> or </em><em>bytes</em>) – String to register.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The registered string. Results are cached per domain; str and
+bytes spellings of the same string share one registration.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference internal" href="#nvtx.writer.RegisteredString" title="nvtx.writer.RegisteredString">RegisteredString</a></p>
+</dd>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><ul class="simple">
+<li><p><strong>RuntimeError</strong> – If the domain is no longer valid.</p></li>
+<li><p><strong>TypeError</strong> – If <code class="docutils literal notranslate"><span class="pre">string</span></code> is not a string or bytes object.</p></li>
+<li><p><a class="reference internal" href="#nvtx.writer.WriterError" title="nvtx.writer.WriterError"><strong>WriterError</strong></a> – If the backend fails to register the string.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="nvtx.writer.Domain.get_schema">
+<span class="sig-name descname"><span class="pre">get_schema</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">self</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dtype</span></span></em>, <em class="sig-param"><span class="keyword-only-separator o"><abbr title="Keyword-only parameters separator (PEP 3102)"><span class="pre">*</span></abbr></span></em>, <em class="sig-param"><span class="n"><span class="pre">kind</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#nvtx.writer.Domain.get_schema" title="Link to this definition">#</a></dt>
+<dd><p>Get or create a payload schema in this domain.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>dtype</strong> (<em>dtype-like</em>) – NumPy dtype describing the payload layout. In an event schema,
+fields define their roles with <a class="reference internal" href="reference.html#nvtx.numpy_dtype" title="nvtx.numpy_dtype"><code class="xref py py-func docutils literal notranslate"><span class="pre">nvtx.numpy_dtype()</span></code></a> and its
+<code class="docutils literal notranslate"><span class="pre">entry_kind</span></code> argument, and may define specially interpreted
+integer fields with its <code class="docutils literal notranslate"><span class="pre">entry_type</span></code> argument.</p></li>
+<li><p><strong>kind</strong> (<a class="reference internal" href="reference.html#nvtx.EventKind" title="nvtx.EventKind"><em>EventKind</em></a><em>, </em><em>optional</em>) – Event family described by the schema; required for use with
+<a class="reference internal" href="#nvtx.writer.Stream.write_event" title="nvtx.writer.Stream.write_event"><code class="xref py py-meth docutils literal notranslate"><span class="pre">Stream.write_event()</span></code></a> and <a class="reference internal" href="#nvtx.writer.Stream.write_event_batch" title="nvtx.writer.Stream.write_event_batch"><code class="xref py py-meth docutils literal notranslate"><span class="pre">Stream.write_event_batch()</span></code></a>.
+The ID-correlated <code class="xref py py-attr docutils literal notranslate"><span class="pre">EventKind.RANGE_START</span></code> and
+<code class="xref py py-attr docutils literal notranslate"><span class="pre">EventKind.RANGE_END</span></code> families require exactly one field
+annotated with <code class="xref py py-attr docutils literal notranslate"><span class="pre">PayloadEntryType.RANGE_ID</span></code>. <code class="docutils literal notranslate"><span class="pre">None</span></code> creates
+a generic payload schema.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The registered schema. Results are cached per domain, dtype,
+and kind.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference internal" href="#nvtx.writer.Schema" title="nvtx.writer.Schema">Schema</a></p>
+</dd>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><ul class="simple">
+<li><p><strong>RuntimeError</strong> – If numpy is not installed or the domain is no longer valid.</p></li>
+<li><p><strong>TypeError</strong> – If <code class="docutils literal notranslate"><span class="pre">dtype</span></code> is not dtype-like, or <code class="docutils literal notranslate"><span class="pre">kind</span></code> is not an
+    <a class="reference internal" href="reference.html#nvtx.EventKind" title="nvtx.EventKind"><code class="xref py py-class docutils literal notranslate"><span class="pre">nvtx.EventKind</span></code></a> or <code class="docutils literal notranslate"><span class="pre">None</span></code>. For event schemas, if the
+    dtype is not structured, a field uses managed storage or a
+    non-native byte order, or a timestamp role field is not a
+    64-bit integer.</p></li>
+<li><p><strong>ValueError</strong> – If <code class="docutils literal notranslate"><span class="pre">kind</span></code> cannot be described by a dtype, or the dtype’s
+    timestamp roles do not match <code class="docutils literal notranslate"><span class="pre">kind</span></code>.</p></li>
+<li><p><a class="reference internal" href="#nvtx.writer.WriterError" title="nvtx.writer.WriterError"><strong>WriterError</strong></a> – If the backend fails to register the schema.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="nvtx.writer.Domain.get_scope">
+<span class="sig-name descname"><span class="pre">get_scope</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">self</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">path</span></span></em>, <em class="sig-param"><span class="keyword-only-separator o"><abbr title="Keyword-only parameters separator (PEP 3102)"><span class="pre">*</span></abbr></span></em>, <em class="sig-param"><span class="n"><span class="pre">parent</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#nvtx.writer.Domain.get_scope" title="Link to this definition">#</a></dt>
+<dd><p>Get or create a scope in this domain.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>path</strong> (<em>str</em><em> or </em><em>bytes</em>) – Path of the scope relative to <code class="docutils literal notranslate"><span class="pre">parent</span></code>.</p></li>
+<li><p><strong>parent</strong> (<a class="reference internal" href="#nvtx.writer.PredefinedScope" title="nvtx.writer.PredefinedScope"><em>PredefinedScope</em></a><em> or </em><a class="reference internal" href="#nvtx.writer.Scope" title="nvtx.writer.Scope"><em>Scope</em></a><em>, </em><em>optional</em>) – Parent scope. <code class="docutils literal notranslate"><span class="pre">None</span></code> places the scope at the domain root. The
+predefined parents may be <code class="xref py py-attr docutils literal notranslate"><span class="pre">PredefinedScope.NONE</span></code>,
+<code class="xref py py-attr docutils literal notranslate"><span class="pre">PredefinedScope.ROOT</span></code>,
+<code class="xref py py-attr docutils literal notranslate"><span class="pre">PredefinedScope.CURRENT_HW_MACHINE</span></code>, or
+<code class="xref py py-attr docutils literal notranslate"><span class="pre">PredefinedScope.CURRENT_VM</span></code>.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The registered scope. Results are cached for each <code class="docutils literal notranslate"><span class="pre">path</span></code> and
+parent pair.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference internal" href="#nvtx.writer.Scope" title="nvtx.writer.Scope">Scope</a></p>
+</dd>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><ul class="simple">
+<li><p><strong>RuntimeError</strong> – If the domain is no longer valid.</p></li>
+<li><p><strong>TypeError</strong> – If <code class="docutils literal notranslate"><span class="pre">parent</span></code> is not a <a class="reference internal" href="#nvtx.writer.PredefinedScope" title="nvtx.writer.PredefinedScope"><code class="xref py py-class docutils literal notranslate"><span class="pre">PredefinedScope</span></code></a>, a
+    <a class="reference internal" href="#nvtx.writer.Scope" title="nvtx.writer.Scope"><code class="xref py py-class docutils literal notranslate"><span class="pre">Scope</span></code></a>, or <code class="docutils literal notranslate"><span class="pre">None</span></code>.</p></li>
+<li><p><strong>ValueError</strong> – If <code class="docutils literal notranslate"><span class="pre">parent</span></code> is registered in a different domain or is not a
+    supported predefined parent scope.</p></li>
+<li><p><a class="reference internal" href="#nvtx.writer.WriterError" title="nvtx.writer.WriterError"><strong>WriterError</strong></a> – If the backend fails to register the scope.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="nvtx.writer.Stream">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">nvtx.writer.</span></span><span class="sig-name descname"><span class="pre">Stream</span></span><a class="headerlink" href="#nvtx.writer.Stream" title="Link to this definition">#</a></dt>
+<dd><p>NVTXW stream: the object events and counter samples are written to.</p>
+<p>Created by <a class="reference internal" href="#nvtx.writer.Session.create_stream" title="nvtx.writer.Session.create_stream"><code class="xref py py-meth docutils literal notranslate"><span class="pre">Session.create_stream()</span></code></a>.  Use as a context manager
+(recommended) or call <a class="reference internal" href="#nvtx.writer.Stream.open" title="nvtx.writer.Stream.open"><code class="xref py py-meth docutils literal notranslate"><span class="pre">open()</span></code></a> and <a class="reference internal" href="#nvtx.writer.Stream.close" title="nvtx.writer.Stream.close"><code class="xref py py-meth docutils literal notranslate"><span class="pre">close()</span></code></a> explicitly before and
+after writing data.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="nvtx.writer.Stream.close">
+<span class="sig-name descname"><span class="pre">close</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">self</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#nvtx.writer.Stream.close" title="Link to this definition">#</a></dt>
+<dd><p>Close the stream without ending its session.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Raises<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>RuntimeError</strong> – If the stream is not open or the backend is closed.</p></li>
+<li><p><a class="reference internal" href="#nvtx.writer.WriterError" title="nvtx.writer.WriterError"><strong>WriterError</strong></a> – If the backend fails to close the stream.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="nvtx.writer.Stream.open">
+<span class="sig-name descname"><span class="pre">open</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">self</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#nvtx.writer.Stream.open" title="Link to this definition">#</a></dt>
+<dd><p>Open the stream for writing.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Raises<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>RuntimeError</strong> – If the stream is already open or its domain is no longer valid.</p></li>
+<li><p><a class="reference internal" href="#nvtx.writer.WriterError" title="nvtx.writer.WriterError"><strong>WriterError</strong></a> – If the backend fails to open the stream.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="nvtx.writer.Stream.write_counter_batch">
+<span class="sig-name descname"><span class="pre">write_counter_batch</span></span><span class="sig-paren">(</span>
+
+<dl>
+<dd><em class="sig-param"><span class="n"><span class="pre">self</span></span></em>,</dd>
+<dd><em class="sig-param"><span class="n"><span class="pre">Counter</span> <span class="pre">counter</span></span></em>,</dd>
+<dd><em class="sig-param"><span class="n"><span class="pre">data</span></span></em>,</dd>
+<dd><em class="sig-param"><span class="n"><span class="pre">*</span></span></em>,</dd>
+<dd><em class="sig-param"><span class="n"><span class="pre">timestamps</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>,</dd>
+<dd><em class="sig-param"><span class="n"><span class="pre">ordering</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">BatchOrdering.SORTED</span></span></em>,</dd>
+</dl>
+
+<span class="sig-paren">)</span><a class="headerlink" href="#nvtx.writer.Stream.write_counter_batch" title="Link to this definition">#</a></dt>
+<dd><p>Write a batch of counter samples.</p>
+<p>Timestamps come from one of two sources, selected by the counter’s
+registered layout:</p>
+<ul class="simple">
+<li><p><strong>Separate</strong>: <code class="docutils literal notranslate"><span class="pre">timestamps</span></code> is an iterable of per-sample
+timestamps, same length as <code class="docutils literal notranslate"><span class="pre">data</span></code>, and <code class="docutils literal notranslate"><span class="pre">data</span></code> carries the
+values only.  Required unless the layout embeds a timestamp field.</p></li>
+<li><p><strong>Embedded</strong>: the counter-group layout has an
+<code class="docutils literal notranslate"><span class="pre">entry_kind=nvtx.EntryKind.COUNTER_TIMESTAMP</span></code> field and each row
+in <code class="docutils literal notranslate"><span class="pre">data</span></code> carries it; <code class="docutils literal notranslate"><span class="pre">timestamps</span></code> must be omitted.</p></li>
+</ul>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>counter</strong> (<a class="reference internal" href="#nvtx.writer.Counter" title="nvtx.writer.Counter"><em>Counter</em></a>) – Counter returned by <a class="reference internal" href="#nvtx.writer.Domain.get_counter" title="nvtx.writer.Domain.get_counter"><code class="xref py py-meth docutils literal notranslate"><span class="pre">Domain.get_counter()</span></code></a> for this stream’s
+domain.</p></li>
+<li><p><strong>data</strong> (<em>numpy.ndarray</em><em>, </em><em>pandas.DataFrame</em><em>, or </em><em>iterable</em>) – Sample rows. For scalar counters, this is an iterable of values.
+DataFrame columns are matched to counter fields by name.</p></li>
+<li><p><strong>timestamps</strong> (<em>iterable</em><em> of </em><em>int</em><em>, </em><em>optional</em>) – Timestamp for each sample. Required unless the counter layout
+contains an embedded counter timestamp and otherwise must be
+omitted.</p></li>
+<li><p><strong>ordering</strong> (<a class="reference internal" href="reference.html#nvtx.BatchOrdering" title="nvtx.BatchOrdering"><em>BatchOrdering</em></a><em>, </em><em>optional</em>) – Timestamp ordering of the samples. The default is
+<code class="xref py py-attr docutils literal notranslate"><span class="pre">BatchOrdering.SORTED</span></code>.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><ul class="simple">
+<li><p><strong>RuntimeError</strong> – If the stream is not open, the backend is closed, or NumPy is not
+    installed.</p></li>
+<li><p><strong>TypeError</strong> – If <code class="docutils literal notranslate"><span class="pre">counter</span></code> is not a <a class="reference internal" href="#nvtx.writer.Counter" title="nvtx.writer.Counter"><code class="xref py py-class docutils literal notranslate"><span class="pre">Counter</span></code></a> or <code class="docutils literal notranslate"><span class="pre">ordering</span></code> is not a
+    <code class="xref py py-class docutils literal notranslate"><span class="pre">BatchOrdering</span></code>.</p></li>
+<li><p><strong>ValueError</strong> – If <code class="docutils literal notranslate"><span class="pre">counter</span></code> belongs to another domain, the timestamp source is
+    invalid, <code class="docutils literal notranslate"><span class="pre">data</span></code> is empty, <code class="docutils literal notranslate"><span class="pre">data</span></code> or <code class="docutils literal notranslate"><span class="pre">timestamps</span></code> is not
+    one-dimensional, or their lengths differ.</p></li>
+<li><p><a class="reference internal" href="#nvtx.writer.WriterError" title="nvtx.writer.WriterError"><strong>WriterError</strong></a> – If the backend fails to write the batch.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="nvtx.writer.Stream.write_counter_sample">
+<span class="sig-name descname"><span class="pre">write_counter_sample</span></span><span class="sig-paren">(</span>
+
+<dl>
+<dd><em class="sig-param"><span class="n"><span class="pre">self</span></span></em>,</dd>
+<dd><em class="sig-param"><span class="n"><span class="pre">Counter</span> <span class="pre">counter</span></span></em>,</dd>
+<dd><em class="sig-param"><span class="n"><span class="pre">int64_t</span> <span class="pre">timestamp</span></span></em>,</dd>
+<dd><em class="sig-param"><span class="n"><span class="pre">value</span></span></em>,</dd>
+</dl>
+
+<span class="sig-paren">)</span><a class="headerlink" href="#nvtx.writer.Stream.write_counter_sample" title="Link to this definition">#</a></dt>
+<dd><p>Write a single counter sample.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>counter</strong> (<a class="reference internal" href="#nvtx.writer.Counter" title="nvtx.writer.Counter"><em>Counter</em></a>) – Counter returned by <a class="reference internal" href="#nvtx.writer.Domain.get_counter" title="nvtx.writer.Domain.get_counter"><code class="xref py py-meth docutils literal notranslate"><span class="pre">Domain.get_counter()</span></code></a> for this stream’s
+domain.</p></li>
+<li><p><strong>timestamp</strong> (<em>int</em>) – Sample timestamp in the stream’s time domain.</p></li>
+<li><p><strong>value</strong> – Sample value matching the counter’s registered layout. For a
+counter group, this contains one row of field values.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><ul class="simple">
+<li><p><strong>RuntimeError</strong> – If the stream is not open or the backend is closed.</p></li>
+<li><p><strong>TypeError</strong> – If <code class="docutils literal notranslate"><span class="pre">counter</span></code> is not a <a class="reference internal" href="#nvtx.writer.Counter" title="nvtx.writer.Counter"><code class="xref py py-class docutils literal notranslate"><span class="pre">Counter</span></code></a>.</p></li>
+<li><p><strong>ValueError</strong> – If <code class="docutils literal notranslate"><span class="pre">counter</span></code> belongs to another domain, its layout embeds a
+    counter timestamp, or <code class="docutils literal notranslate"><span class="pre">value</span></code> does not contain exactly one
+    sample.</p></li>
+<li><p><a class="reference internal" href="#nvtx.writer.WriterError" title="nvtx.writer.WriterError"><strong>WriterError</strong></a> – If the backend fails to write the sample.</p></li>
+</ul>
+</dd>
+</dl>
+<p class="rubric">Notes</p>
+<p>A structured sample is converted to a contiguous array on each call.
+For high write rates, prefer <a class="reference internal" href="#nvtx.writer.Stream.write_counter_batch" title="nvtx.writer.Stream.write_counter_batch"><code class="xref py py-meth docutils literal notranslate"><span class="pre">write_counter_batch()</span></code></a>.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="nvtx.writer.Stream.write_counter_sample_no_value">
+<span class="sig-name descname"><span class="pre">write_counter_sample_no_value</span></span><span class="sig-paren">(</span>
+
+<dl>
+<dd><em class="sig-param"><span class="n"><span class="pre">self</span></span></em>,</dd>
+<dd><em class="sig-param"><span class="n"><span class="pre">Counter</span> <span class="pre">counter</span></span></em>,</dd>
+<dd><em class="sig-param"><span class="n"><span class="pre">int64_t</span> <span class="pre">timestamp</span></span></em>,</dd>
+<dd><em class="sig-param"><span class="n"><span class="pre">reason</span></span></em>,</dd>
+</dl>
+
+<span class="sig-paren">)</span><a class="headerlink" href="#nvtx.writer.Stream.write_counter_sample_no_value" title="Link to this definition">#</a></dt>
+<dd><p>Write a counter sample with no explicit value.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>counter</strong> (<a class="reference internal" href="#nvtx.writer.Counter" title="nvtx.writer.Counter"><em>Counter</em></a>) – Counter returned by <a class="reference internal" href="#nvtx.writer.Domain.get_counter" title="nvtx.writer.Domain.get_counter"><code class="xref py py-meth docutils literal notranslate"><span class="pre">Domain.get_counter()</span></code></a> for this stream’s
+domain.</p></li>
+<li><p><strong>timestamp</strong> (<em>int</em>) – Sample timestamp in the stream’s time domain.</p></li>
+<li><p><strong>reason</strong> (<a class="reference internal" href="reference.html#nvtx.CounterNoValueReason" title="nvtx.CounterNoValueReason"><em>CounterNoValueReason</em></a>) – Reason the sample has no explicit value.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><ul class="simple">
+<li><p><strong>RuntimeError</strong> – If the stream is not open or the backend is closed.</p></li>
+<li><p><strong>TypeError</strong> – If <code class="docutils literal notranslate"><span class="pre">counter</span></code> is not a <a class="reference internal" href="#nvtx.writer.Counter" title="nvtx.writer.Counter"><code class="xref py py-class docutils literal notranslate"><span class="pre">Counter</span></code></a> or <code class="docutils literal notranslate"><span class="pre">reason</span></code> is not a
+    <a class="reference internal" href="reference.html#nvtx.CounterNoValueReason" title="nvtx.CounterNoValueReason"><code class="xref py py-class docutils literal notranslate"><span class="pre">nvtx.CounterNoValueReason</span></code></a>.</p></li>
+<li><p><strong>ValueError</strong> – If <code class="docutils literal notranslate"><span class="pre">counter</span></code> belongs to another domain.</p></li>
+<li><p><a class="reference internal" href="#nvtx.writer.WriterError" title="nvtx.writer.WriterError"><strong>WriterError</strong></a> – If the backend fails to write the sample.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="nvtx.writer.Stream.write_end">
+<span class="sig-name descname"><span class="pre">write_end</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">self</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">timestamp</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">range_id</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#nvtx.writer.Stream.write_end" title="Link to this definition">#</a></dt>
+<dd><p>Write the end of a start/end range.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>timestamp</strong> (<em>int</em>) – Range end timestamp in the stream’s time domain.</p></li>
+<li><p><strong>range_id</strong> (<em>int</em>) – Identifier passed to the matching <a class="reference internal" href="#nvtx.writer.Stream.write_start" title="nvtx.writer.Stream.write_start"><code class="xref py py-meth docutils literal notranslate"><span class="pre">write_start()</span></code></a> call.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><ul class="simple">
+<li><p><strong>RuntimeError</strong> – If the stream is not open or the backend is closed.</p></li>
+<li><p><a class="reference internal" href="#nvtx.writer.WriterError" title="nvtx.writer.WriterError"><strong>WriterError</strong></a> – If the backend fails to write the event.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="nvtx.writer.Stream.write_event">
+<span class="sig-name descname"><span class="pre">write_event</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">self</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">Schema</span> <span class="pre">schema</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">row</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#nvtx.writer.Stream.write_event" title="Link to this definition">#</a></dt>
+<dd><p>Write an event described by a role-annotated dtype schema.</p>
+<p>All event families are supported. The ID-correlated
+<code class="xref py py-attr docutils literal notranslate"><span class="pre">EventKind.RANGE_START</span></code> and <code class="xref py py-attr docutils literal notranslate"><span class="pre">EventKind.RANGE_END</span></code> schemas
+include a <code class="xref py py-attr docutils literal notranslate"><span class="pre">PayloadEntryType.RANGE_ID</span></code> field.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>schema</strong> (<a class="reference internal" href="#nvtx.writer.Schema" title="nvtx.writer.Schema"><em>Schema</em></a>) – Event schema returned by <a class="reference internal" href="#nvtx.writer.Domain.get_schema" title="nvtx.writer.Domain.get_schema"><code class="xref py py-meth docutils literal notranslate"><span class="pre">Domain.get_schema()</span></code></a> with a
+<code class="docutils literal notranslate"><span class="pre">kind</span></code>, for this stream’s domain.</p></li>
+<li><p><strong>row</strong> (<em>array-like</em>) – Values for one row of the schema’s dtype, such as a tuple or a
+NumPy scalar.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><ul class="simple">
+<li><p><strong>RuntimeError</strong> – If the stream is not open or the backend is closed.</p></li>
+<li><p><strong>TypeError</strong> – If <code class="docutils literal notranslate"><span class="pre">schema</span></code> is not a <a class="reference internal" href="#nvtx.writer.Schema" title="nvtx.writer.Schema"><code class="xref py py-class docutils literal notranslate"><span class="pre">Schema</span></code></a>.</p></li>
+<li><p><strong>ValueError</strong> – If <code class="docutils literal notranslate"><span class="pre">schema</span></code> belongs to another domain or is not an event
+    schema, or <code class="docutils literal notranslate"><span class="pre">row</span></code> does not contain exactly one event.</p></li>
+<li><p><a class="reference internal" href="#nvtx.writer.WriterError" title="nvtx.writer.WriterError"><strong>WriterError</strong></a> – If the backend fails to write the event.</p></li>
+</ul>
+</dd>
+</dl>
+<p class="rubric">Notes</p>
+<p>Each call converts <code class="docutils literal notranslate"><span class="pre">row</span></code> to a contiguous array. For high write
+rates with a complete-event schema, prefer <a class="reference internal" href="#nvtx.writer.Stream.write_event_batch" title="nvtx.writer.Stream.write_event_batch"><code class="xref py py-meth docutils literal notranslate"><span class="pre">write_event_batch()</span></code></a>.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="nvtx.writer.Stream.write_event_batch">
+<span class="sig-name descname"><span class="pre">write_event_batch</span></span><span class="sig-paren">(</span>
+
+<dl>
+<dd><em class="sig-param"><span class="n"><span class="pre">self</span></span></em>,</dd>
+<dd><em class="sig-param"><span class="n"><span class="pre">Schema</span> <span class="pre">schema</span></span></em>,</dd>
+<dd><em class="sig-param"><span class="n"><span class="pre">rows</span></span></em>,</dd>
+<dd><em class="sig-param"><span class="n"><span class="pre">*</span></span></em>,</dd>
+<dd><em class="sig-param"><span class="n"><span class="pre">ordering</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">BatchOrdering.SORTED</span></span></em>,</dd>
+</dl>
+
+<span class="sig-paren">)</span><a class="headerlink" href="#nvtx.writer.Stream.write_event_batch" title="Link to this definition">#</a></dt>
+<dd><p>Write a batch of complete events.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>schema</strong> (<a class="reference internal" href="#nvtx.writer.Schema" title="nvtx.writer.Schema"><em>Schema</em></a>) – Complete-event schema returned by <a class="reference internal" href="#nvtx.writer.Domain.get_schema" title="nvtx.writer.Domain.get_schema"><code class="xref py py-meth docutils literal notranslate"><span class="pre">Domain.get_schema()</span></code></a>
+with a <code class="docutils literal notranslate"><span class="pre">kind</span></code> of <code class="xref py py-attr docutils literal notranslate"><span class="pre">EventKind.MARK</span></code>,
+<code class="xref py py-attr docutils literal notranslate"><span class="pre">EventKind.RANGE_PUSHPOP</span></code>, or
+<code class="xref py py-attr docutils literal notranslate"><span class="pre">EventKind.RANGE_STARTEND</span></code>, for this stream’s domain.</p></li>
+<li><p><strong>rows</strong> (<em>numpy.ndarray</em><em>, </em><em>pandas.DataFrame</em><em>, or </em><em>iterable</em>) – Event rows. DataFrame columns are matched to fields by name.</p></li>
+<li><p><strong>ordering</strong> (<a class="reference internal" href="reference.html#nvtx.BatchOrdering" title="nvtx.BatchOrdering"><em>BatchOrdering</em></a><em>, </em><em>optional</em>) – Timestamp ordering of the rows. The default is
+<code class="xref py py-attr docutils literal notranslate"><span class="pre">BatchOrdering.SORTED</span></code>.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><ul class="simple">
+<li><p><strong>RuntimeError</strong> – If the stream is not open or the backend is closed.</p></li>
+<li><p><strong>TypeError</strong> – If <code class="docutils literal notranslate"><span class="pre">schema</span></code> is not a <a class="reference internal" href="#nvtx.writer.Schema" title="nvtx.writer.Schema"><code class="xref py py-class docutils literal notranslate"><span class="pre">Schema</span></code></a> or <code class="docutils literal notranslate"><span class="pre">ordering</span></code> is not a
+    <code class="xref py py-class docutils literal notranslate"><span class="pre">BatchOrdering</span></code>.</p></li>
+<li><p><strong>ValueError</strong> – If <code class="docutils literal notranslate"><span class="pre">schema</span></code> belongs to another domain or is not a
+    complete-event schema, or <code class="docutils literal notranslate"><span class="pre">rows</span></code> contains no events.</p></li>
+<li><p><a class="reference internal" href="#nvtx.writer.WriterError" title="nvtx.writer.WriterError"><strong>WriterError</strong></a> – If the backend fails to write the batch.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="nvtx.writer.Stream.write_mark">
+<span class="sig-name descname"><span class="pre">write_mark</span></span><span class="sig-paren">(</span>
+
+<dl>
+<dd><em class="sig-param"><span class="n"><span class="pre">self</span></span></em>,</dd>
+<dd><em class="sig-param"><span class="n"><span class="pre">timestamp</span></span></em>,</dd>
+<dd><em class="sig-param"><span class="keyword-only-separator o"><abbr title="Keyword-only parameters separator (PEP 3102)"><span class="pre">*</span></abbr></span></em>,</dd>
+<dd><em class="sig-param"><span class="n"><span class="pre">message</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>,</dd>
+<dd><em class="sig-param"><span class="n"><span class="pre">color</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>,</dd>
+<dd><em class="sig-param"><span class="n"><span class="pre">category</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>,</dd>
+</dl>
+
+<span class="sig-paren">)</span><a class="headerlink" href="#nvtx.writer.Stream.write_mark" title="Link to this definition">#</a></dt>
+<dd><p>Write a mark event.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>timestamp</strong> (<em>int</em>) – Event timestamp in the stream’s time domain.</p></li>
+<li><p><strong>message</strong> (<em>str</em><em>, </em><em>bytes</em><em>, or </em><a class="reference internal" href="#nvtx.writer.RegisteredString" title="nvtx.writer.RegisteredString"><em>RegisteredString</em></a><em>, </em><em>optional</em>) – Message associated with the event.</p></li>
+<li><p><strong>color</strong> (<em>int</em><em> or </em><em>color-like</em><em>, </em><em>optional</em>) – Event color. Integers are interpreted as ARGB values.</p></li>
+<li><p><strong>category</strong> (<em>str</em><em>, </em><em>bytes</em><em>, or </em><em>int</em><em>, </em><em>optional</em>) – Event category. A name is registered in the stream’s domain.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><ul class="simple">
+<li><p><strong>RuntimeError</strong> – If the stream is not open or the backend is closed.</p></li>
+<li><p><strong>TypeError</strong> – If <code class="docutils literal notranslate"><span class="pre">message</span></code> or <code class="docutils literal notranslate"><span class="pre">category</span></code> has an unsupported type.</p></li>
+<li><p><strong>ValueError</strong> – If an integer <code class="docutils literal notranslate"><span class="pre">category</span></code> is outside <code class="docutils literal notranslate"><span class="pre">[0,</span> <span class="pre">2**32</span> <span class="pre">-</span> <span class="pre">1]</span></code>, or
+    <code class="docutils literal notranslate"><span class="pre">message</span></code> is a <a class="reference internal" href="#nvtx.writer.RegisteredString" title="nvtx.writer.RegisteredString"><code class="xref py py-class docutils literal notranslate"><span class="pre">RegisteredString</span></code></a> from a different domain.</p></li>
+<li><p><a class="reference internal" href="#nvtx.writer.WriterError" title="nvtx.writer.WriterError"><strong>WriterError</strong></a> – If the backend fails to write the event.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="nvtx.writer.Stream.write_pop">
+<span class="sig-name descname"><span class="pre">write_pop</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">self</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">timestamp</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#nvtx.writer.Stream.write_pop" title="Link to this definition">#</a></dt>
+<dd><p>Write the end of the most recently pushed range.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>timestamp</strong> (<em>int</em>) – Range end timestamp in the stream’s time domain.</p>
+</dd>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><ul class="simple">
+<li><p><strong>RuntimeError</strong> – If the stream is not open or the backend is closed.</p></li>
+<li><p><a class="reference internal" href="#nvtx.writer.WriterError" title="nvtx.writer.WriterError"><strong>WriterError</strong></a> – If the backend fails to write the event.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="nvtx.writer.Stream.write_push">
+<span class="sig-name descname"><span class="pre">write_push</span></span><span class="sig-paren">(</span>
+
+<dl>
+<dd><em class="sig-param"><span class="n"><span class="pre">self</span></span></em>,</dd>
+<dd><em class="sig-param"><span class="n"><span class="pre">timestamp</span></span></em>,</dd>
+<dd><em class="sig-param"><span class="keyword-only-separator o"><abbr title="Keyword-only parameters separator (PEP 3102)"><span class="pre">*</span></abbr></span></em>,</dd>
+<dd><em class="sig-param"><span class="n"><span class="pre">message</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>,</dd>
+<dd><em class="sig-param"><span class="n"><span class="pre">color</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>,</dd>
+<dd><em class="sig-param"><span class="n"><span class="pre">category</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>,</dd>
+</dl>
+
+<span class="sig-paren">)</span><a class="headerlink" href="#nvtx.writer.Stream.write_push" title="Link to this definition">#</a></dt>
+<dd><p>Write the beginning of a push/pop range.</p>
+<p>Push/pop ranges are nested and pair in last-in, first-out order.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>timestamp</strong> (<em>int</em>) – Range start timestamp in the stream’s time domain.</p></li>
+<li><p><strong>message</strong> (<em>str</em><em>, </em><em>bytes</em><em>, or </em><a class="reference internal" href="#nvtx.writer.RegisteredString" title="nvtx.writer.RegisteredString"><em>RegisteredString</em></a><em>, </em><em>optional</em>) – Message associated with the range.</p></li>
+<li><p><strong>color</strong> (<em>int</em><em> or </em><em>color-like</em><em>, </em><em>optional</em>) – Range color. Integers are interpreted as ARGB values.</p></li>
+<li><p><strong>category</strong> (<em>str</em><em>, </em><em>bytes</em><em>, or </em><em>int</em><em>, </em><em>optional</em>) – Range category. A name is registered in the stream’s domain.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><ul class="simple">
+<li><p><strong>RuntimeError</strong> – If the stream is not open or the backend is closed.</p></li>
+<li><p><strong>TypeError</strong> – If <code class="docutils literal notranslate"><span class="pre">message</span></code> or <code class="docutils literal notranslate"><span class="pre">category</span></code> has an unsupported type.</p></li>
+<li><p><strong>ValueError</strong> – If an integer <code class="docutils literal notranslate"><span class="pre">category</span></code> is outside <code class="docutils literal notranslate"><span class="pre">[0,</span> <span class="pre">2**32</span> <span class="pre">-</span> <span class="pre">1]</span></code>, or
+    <code class="docutils literal notranslate"><span class="pre">message</span></code> is a <a class="reference internal" href="#nvtx.writer.RegisteredString" title="nvtx.writer.RegisteredString"><code class="xref py py-class docutils literal notranslate"><span class="pre">RegisteredString</span></code></a> from a different domain.</p></li>
+<li><p><a class="reference internal" href="#nvtx.writer.WriterError" title="nvtx.writer.WriterError"><strong>WriterError</strong></a> – If the backend fails to write the event.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="nvtx.writer.Stream.write_pushpop">
+<span class="sig-name descname"><span class="pre">write_pushpop</span></span><span class="sig-paren">(</span>
+
+<dl>
+<dd><em class="sig-param"><span class="n"><span class="pre">self</span></span></em>,</dd>
+<dd><em class="sig-param"><span class="n"><span class="pre">start</span></span></em>,</dd>
+<dd><em class="sig-param"><span class="n"><span class="pre">end</span></span></em>,</dd>
+<dd><em class="sig-param"><span class="keyword-only-separator o"><abbr title="Keyword-only parameters separator (PEP 3102)"><span class="pre">*</span></abbr></span></em>,</dd>
+<dd><em class="sig-param"><span class="n"><span class="pre">message</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>,</dd>
+<dd><em class="sig-param"><span class="n"><span class="pre">color</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>,</dd>
+<dd><em class="sig-param"><span class="n"><span class="pre">category</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>,</dd>
+</dl>
+
+<span class="sig-paren">)</span><a class="headerlink" href="#nvtx.writer.Stream.write_pushpop" title="Link to this definition">#</a></dt>
+<dd><p>Write a complete push/pop range event.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>start</strong> (<em>int</em>) – Range start timestamp in the stream’s time domain.</p></li>
+<li><p><strong>end</strong> (<em>int</em>) – Range end timestamp in the stream’s time domain.</p></li>
+<li><p><strong>message</strong> (<em>str</em><em>, </em><em>bytes</em><em>, or </em><a class="reference internal" href="#nvtx.writer.RegisteredString" title="nvtx.writer.RegisteredString"><em>RegisteredString</em></a><em>, </em><em>optional</em>) – Message associated with the range.</p></li>
+<li><p><strong>color</strong> (<em>int</em><em> or </em><em>color-like</em><em>, </em><em>optional</em>) – Range color. Integers are interpreted as ARGB values.</p></li>
+<li><p><strong>category</strong> (<em>str</em><em>, </em><em>bytes</em><em>, or </em><em>int</em><em>, </em><em>optional</em>) – Range category. A name is registered in the stream’s domain.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><ul class="simple">
+<li><p><strong>RuntimeError</strong> – If the stream is not open or the backend is closed.</p></li>
+<li><p><strong>TypeError</strong> – If <code class="docutils literal notranslate"><span class="pre">message</span></code> or <code class="docutils literal notranslate"><span class="pre">category</span></code> has an unsupported type.</p></li>
+<li><p><strong>ValueError</strong> – If an integer <code class="docutils literal notranslate"><span class="pre">category</span></code> is outside <code class="docutils literal notranslate"><span class="pre">[0,</span> <span class="pre">2**32</span> <span class="pre">-</span> <span class="pre">1]</span></code>, or
+    <code class="docutils literal notranslate"><span class="pre">message</span></code> is a <a class="reference internal" href="#nvtx.writer.RegisteredString" title="nvtx.writer.RegisteredString"><code class="xref py py-class docutils literal notranslate"><span class="pre">RegisteredString</span></code></a> from a different domain.</p></li>
+<li><p><a class="reference internal" href="#nvtx.writer.WriterError" title="nvtx.writer.WriterError"><strong>WriterError</strong></a> – If the backend fails to write the event.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="nvtx.writer.Stream.write_start">
+<span class="sig-name descname"><span class="pre">write_start</span></span><span class="sig-paren">(</span>
+
+<dl>
+<dd><em class="sig-param"><span class="n"><span class="pre">self</span></span></em>,</dd>
+<dd><em class="sig-param"><span class="n"><span class="pre">timestamp</span></span></em>,</dd>
+<dd><em class="sig-param"><span class="n"><span class="pre">range_id</span></span></em>,</dd>
+<dd><em class="sig-param"><span class="keyword-only-separator o"><abbr title="Keyword-only parameters separator (PEP 3102)"><span class="pre">*</span></abbr></span></em>,</dd>
+<dd><em class="sig-param"><span class="n"><span class="pre">message</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>,</dd>
+<dd><em class="sig-param"><span class="n"><span class="pre">color</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>,</dd>
+<dd><em class="sig-param"><span class="n"><span class="pre">category</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>,</dd>
+</dl>
+
+<span class="sig-paren">)</span><a class="headerlink" href="#nvtx.writer.Stream.write_start" title="Link to this definition">#</a></dt>
+<dd><p>Write the beginning of a start/end range.</p>
+<p>The range is paired with a subsequent <a class="reference internal" href="#nvtx.writer.Stream.write_end" title="nvtx.writer.Stream.write_end"><code class="xref py py-meth docutils literal notranslate"><span class="pre">write_end()</span></code></a> call that
+uses the same <code class="docutils literal notranslate"><span class="pre">range_id</span></code>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>timestamp</strong> (<em>int</em>) – Range start timestamp in the stream’s time domain.</p></li>
+<li><p><strong>range_id</strong> (<em>int</em>) – Nonzero identifier used to pair the start with its end.</p></li>
+<li><p><strong>message</strong> (<em>str</em><em>, </em><em>bytes</em><em>, or </em><a class="reference internal" href="#nvtx.writer.RegisteredString" title="nvtx.writer.RegisteredString"><em>RegisteredString</em></a><em>, </em><em>optional</em>) – Message associated with the range.</p></li>
+<li><p><strong>color</strong> (<em>int</em><em> or </em><em>color-like</em><em>, </em><em>optional</em>) – Range color. Integers are interpreted as ARGB values.</p></li>
+<li><p><strong>category</strong> (<em>str</em><em>, </em><em>bytes</em><em>, or </em><em>int</em><em>, </em><em>optional</em>) – Range category. A name is registered in the stream’s domain.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><ul class="simple">
+<li><p><strong>RuntimeError</strong> – If the stream is not open or the backend is closed.</p></li>
+<li><p><strong>TypeError</strong> – If <code class="docutils literal notranslate"><span class="pre">message</span></code> or <code class="docutils literal notranslate"><span class="pre">category</span></code> has an unsupported type.</p></li>
+<li><p><strong>ValueError</strong> – If <code class="docutils literal notranslate"><span class="pre">range_id</span></code> is zero, an integer <code class="docutils literal notranslate"><span class="pre">category</span></code> is outside
+    <code class="docutils literal notranslate"><span class="pre">[0,</span> <span class="pre">2**32</span> <span class="pre">-</span> <span class="pre">1]</span></code>, or <code class="docutils literal notranslate"><span class="pre">message</span></code> is a <a class="reference internal" href="#nvtx.writer.RegisteredString" title="nvtx.writer.RegisteredString"><code class="xref py py-class docutils literal notranslate"><span class="pre">RegisteredString</span></code></a>
+    from a different domain.</p></li>
+<li><p><a class="reference internal" href="#nvtx.writer.WriterError" title="nvtx.writer.WriterError"><strong>WriterError</strong></a> – If the backend fails to write the event.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="nvtx.writer.Stream.write_startend">
+<span class="sig-name descname"><span class="pre">write_startend</span></span><span class="sig-paren">(</span>
+
+<dl>
+<dd><em class="sig-param"><span class="n"><span class="pre">self</span></span></em>,</dd>
+<dd><em class="sig-param"><span class="n"><span class="pre">start</span></span></em>,</dd>
+<dd><em class="sig-param"><span class="n"><span class="pre">end</span></span></em>,</dd>
+<dd><em class="sig-param"><span class="keyword-only-separator o"><abbr title="Keyword-only parameters separator (PEP 3102)"><span class="pre">*</span></abbr></span></em>,</dd>
+<dd><em class="sig-param"><span class="n"><span class="pre">message</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>,</dd>
+<dd><em class="sig-param"><span class="n"><span class="pre">color</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>,</dd>
+<dd><em class="sig-param"><span class="n"><span class="pre">category</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>,</dd>
+</dl>
+
+<span class="sig-paren">)</span><a class="headerlink" href="#nvtx.writer.Stream.write_startend" title="Link to this definition">#</a></dt>
+<dd><p>Write a complete start/end range event.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>start</strong> (<em>int</em>) – Range start timestamp in the stream’s time domain.</p></li>
+<li><p><strong>end</strong> (<em>int</em>) – Range end timestamp in the stream’s time domain.</p></li>
+<li><p><strong>message</strong> (<em>str</em><em>, </em><em>bytes</em><em>, or </em><a class="reference internal" href="#nvtx.writer.RegisteredString" title="nvtx.writer.RegisteredString"><em>RegisteredString</em></a><em>, </em><em>optional</em>) – Message associated with the range.</p></li>
+<li><p><strong>color</strong> (<em>int</em><em> or </em><em>color-like</em><em>, </em><em>optional</em>) – Range color. Integers are interpreted as ARGB values.</p></li>
+<li><p><strong>category</strong> (<em>str</em><em>, </em><em>bytes</em><em>, or </em><em>int</em><em>, </em><em>optional</em>) – Range category. A name is registered in the stream’s domain.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><ul class="simple">
+<li><p><strong>RuntimeError</strong> – If the stream is not open or the backend is closed.</p></li>
+<li><p><strong>TypeError</strong> – If <code class="docutils literal notranslate"><span class="pre">message</span></code> or <code class="docutils literal notranslate"><span class="pre">category</span></code> has an unsupported type.</p></li>
+<li><p><strong>ValueError</strong> – If an integer <code class="docutils literal notranslate"><span class="pre">category</span></code> is outside <code class="docutils literal notranslate"><span class="pre">[0,</span> <span class="pre">2**32</span> <span class="pre">-</span> <span class="pre">1]</span></code>, or
+    <code class="docutils literal notranslate"><span class="pre">message</span></code> is a <a class="reference internal" href="#nvtx.writer.RegisteredString" title="nvtx.writer.RegisteredString"><code class="xref py py-class docutils literal notranslate"><span class="pre">RegisteredString</span></code></a> from a different domain.</p></li>
+<li><p><a class="reference internal" href="#nvtx.writer.WriterError" title="nvtx.writer.WriterError"><strong>WriterError</strong></a> – If the backend fails to write the event.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="registered-objects">
+<h2>Registered Objects<a class="headerlink" href="#registered-objects" title="Link to this heading">#</a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="nvtx.writer.RegisteredString">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">nvtx.writer.</span></span><span class="sig-name descname"><span class="pre">RegisteredString</span></span><a class="headerlink" href="#nvtx.writer.RegisteredString" title="Link to this definition">#</a></dt>
+<dd><p>Wrapper for <code class="docutils literal notranslate"><span class="pre">nvtxStringHandle_t</span></code>, created by
+<a class="reference internal" href="#nvtx.writer.Domain.get_registered_string" title="nvtx.writer.Domain.get_registered_string"><code class="xref py py-meth docutils literal notranslate"><span class="pre">Domain.get_registered_string()</span></code></a>.</p>
+<p>Pass to the single-event range/mark write methods in place of a <code class="docutils literal notranslate"><span class="pre">str</span></code>
+message to emit a registered-string handle instead of an inline UTF-8
+message. The numeric <code class="xref py py-attr docutils literal notranslate"><span class="pre">handle</span></code> can also be stored in a payload field
+annotated with <code class="xref py py-attr docutils literal notranslate"><span class="pre">nvtx.PayloadEntryType.REGISTERED_STRING</span></code>. Valid until
+the owning session ends.</p>
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="nvtx.writer.Scope">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">nvtx.writer.</span></span><span class="sig-name descname"><span class="pre">Scope</span></span><a class="headerlink" href="#nvtx.writer.Scope" title="Link to this definition">#</a></dt>
+<dd><p>Wrapper for a registered scope ID.
+Created by <a class="reference internal" href="#nvtx.writer.Domain.get_scope" title="nvtx.writer.Domain.get_scope"><code class="xref py py-meth docutils literal notranslate"><span class="pre">Domain.get_scope()</span></code></a>.
+Valid until the owning session ends.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="nvtx.writer.Scope.path">
+<span class="sig-name descname"><span class="pre">path</span></span><a class="headerlink" href="#nvtx.writer.Scope.path" title="Link to this definition">#</a></dt>
+<dd><p>The path the scope was registered with (<code class="docutils literal notranslate"><span class="pre">None</span></code> if unnamed).</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="nvtx.writer.Scope.scope_id">
+<span class="sig-name descname"><span class="pre">scope_id</span></span><a class="headerlink" href="#nvtx.writer.Scope.scope_id" title="Link to this definition">#</a></dt>
+<dd><p>Registered scope ID within the domain.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="nvtx.writer.Schema">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">nvtx.writer.</span></span><span class="sig-name descname"><span class="pre">Schema</span></span><a class="headerlink" href="#nvtx.writer.Schema" title="Link to this definition">#</a></dt>
+<dd><p>Domain-owned payload schema handle. Created by <a class="reference internal" href="#nvtx.writer.Domain.get_schema" title="nvtx.writer.Domain.get_schema"><code class="xref py py-meth docutils literal notranslate"><span class="pre">Domain.get_schema()</span></code></a>.
+Pass event schemas (created with a <code class="docutils literal notranslate"><span class="pre">kind</span></code>) to
+<a class="reference internal" href="#nvtx.writer.Stream.write_event" title="nvtx.writer.Stream.write_event"><code class="xref py py-meth docutils literal notranslate"><span class="pre">Stream.write_event()</span></code></a> and <a class="reference internal" href="#nvtx.writer.Stream.write_event_batch" title="nvtx.writer.Stream.write_event_batch"><code class="xref py py-meth docutils literal notranslate"><span class="pre">Stream.write_event_batch()</span></code></a>.
+Valid until the owning session ends.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="nvtx.writer.Schema.dtype">
+<span class="sig-name descname"><span class="pre">dtype</span></span><a class="headerlink" href="#nvtx.writer.Schema.dtype" title="Link to this definition">#</a></dt>
+<dd><p>The NumPy dtype the schema was registered with.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="nvtx.writer.Schema.kind">
+<span class="sig-name descname"><span class="pre">kind</span></span><a class="headerlink" href="#nvtx.writer.Schema.kind" title="Link to this definition">#</a></dt>
+<dd><p>The schema’s <code class="xref py py-class docutils literal notranslate"><span class="pre">EventKind</span></code>, or <code class="docutils literal notranslate"><span class="pre">None</span></code> if generic.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="nvtx.writer.Schema.schema_id">
+<span class="sig-name descname"><span class="pre">schema_id</span></span><a class="headerlink" href="#nvtx.writer.Schema.schema_id" title="Link to this definition">#</a></dt>
+<dd><p>Registered schema ID within the domain.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="nvtx.writer.Counter">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">nvtx.writer.</span></span><span class="sig-name descname"><span class="pre">Counter</span></span><a class="headerlink" href="#nvtx.writer.Counter" title="Link to this definition">#</a></dt>
+<dd><p>Domain-owned counter handle. Created by <a class="reference internal" href="#nvtx.writer.Domain.get_counter" title="nvtx.writer.Domain.get_counter"><code class="xref py py-meth docutils literal notranslate"><span class="pre">Domain.get_counter()</span></code></a>.
+Pass to the <a class="reference internal" href="#nvtx.writer.Stream" title="nvtx.writer.Stream"><code class="xref py py-class docutils literal notranslate"><span class="pre">Stream</span></code></a> counter write methods.
+Valid until the owning session ends.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="nvtx.writer.Counter.counter_id">
+<span class="sig-name descname"><span class="pre">counter_id</span></span><a class="headerlink" href="#nvtx.writer.Counter.counter_id" title="Link to this definition">#</a></dt>
+<dd><p>Registered counter ID within the domain.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="nvtx.writer.Counter.description">
+<span class="sig-name descname"><span class="pre">description</span></span><a class="headerlink" href="#nvtx.writer.Counter.description" title="Link to this definition">#</a></dt>
+<dd><p>The counter’s description, or <code class="docutils literal notranslate"><span class="pre">None</span></code>.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="nvtx.writer.Counter.dtype">
+<span class="sig-name descname"><span class="pre">dtype</span></span><a class="headerlink" href="#nvtx.writer.Counter.dtype" title="Link to this definition">#</a></dt>
+<dd><p>The normalized dtype the counter was registered with.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="nvtx.writer.Counter.name">
+<span class="sig-name descname"><span class="pre">name</span></span><a class="headerlink" href="#nvtx.writer.Counter.name" title="Link to this definition">#</a></dt>
+<dd><p>The counter’s display name.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="nvtx.writer.Counter.semantics">
+<span class="sig-name descname"><span class="pre">semantics</span></span><a class="headerlink" href="#nvtx.writer.Counter.semantics" title="Link to this definition">#</a></dt>
+<dd><p>The counter’s <a class="reference internal" href="reference.html#nvtx.CounterSemantics" title="nvtx.CounterSemantics"><code class="xref py py-class docutils literal notranslate"><span class="pre">nvtx.CounterSemantics</span></code></a>, or <code class="docutils literal notranslate"><span class="pre">None</span></code>.</p>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="stream-options">
+<h2>Stream Options<a class="headerlink" href="#stream-options" title="Link to this heading">#</a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="nvtx.writer.StreamInterleaving">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">nvtx.writer.</span></span><span class="sig-name descname"><span class="pre">StreamInterleaving</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">values</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#nvtx.writer.StreamInterleaving" title="Link to this definition">#</a></dt>
+<dd><p>Whether ordering guarantees apply across the whole stream or per scope.</p>
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="nvtx.writer.StreamOrdering">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">nvtx.writer.</span></span><span class="sig-name descname"><span class="pre">StreamOrdering</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">values</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#nvtx.writer.StreamOrdering" title="Link to this definition">#</a></dt>
+<dd><p>How fully events are sorted in the stream.</p>
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="nvtx.writer.StreamSkid">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">nvtx.writer.</span></span><span class="sig-name descname"><span class="pre">StreamSkid</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">values</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#nvtx.writer.StreamSkid" title="Link to this definition">#</a></dt>
+<dd><p>How partial-sort “skid” is quantified (paired with <code class="docutils literal notranslate"><span class="pre">skid_amount</span></code>).</p>
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="nvtx.writer.PredefinedScope">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">nvtx.writer.</span></span><span class="sig-name descname"><span class="pre">PredefinedScope</span></span><a class="headerlink" href="#nvtx.writer.PredefinedScope" title="Link to this definition">#</a></dt>
+<dd><p>Alias of <a class="reference internal" href="reference.html#nvtx.PredefinedScope" title="nvtx.PredefinedScope"><code class="xref py py-class docutils literal notranslate"><span class="pre">nvtx.PredefinedScope</span></code></a>.</p>
+</dd></dl>
+
+</section>
+</section>
+
+
+                </article>
+              
+              
+              
+              
+              
+                <footer class="prev-next-footer d-print-none">
+                  
+<div class="prev-next-area">
+    <a class="left-prev"
+       href="reference.html"
+       title="previous page">
+      <i class="fa-solid fa-angle-left"></i>
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">previous</p>
+        <p class="prev-next-title">Annotation API</p>
+      </div>
+    </a>
+</div>
+                </footer>
+              
+            </div>
+            
+            
+
+
+              
+                <dialog id="pst-secondary-sidebar-modal"></dialog>
+                <div id="pst-secondary-sidebar" class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+
+
+  <div class="sidebar-secondary-item">
+<div
+    id="pst-page-navigation-heading-2"
+    class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> On this page
+  </div>
+  <nav id="pst-page-toc-nav" class="page-toc" aria-labelledby="pst-page-navigation-heading-2">
+    <ul class="pst-show_toc_level nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#backend">Backend</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#nvtx.writer.load_backend"><code class="docutils literal notranslate"><span class="pre">load_backend()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#nvtx.writer.Backend"><code class="docutils literal notranslate"><span class="pre">Backend</span></code></a><ul class="nav section-nav flex-column">
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#nvtx.writer.Backend.close"><code class="docutils literal notranslate"><span class="pre">close()</span></code></a></li>
+</ul>
+</li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#nvtx.writer.WriterError"><code class="docutils literal notranslate"><span class="pre">WriterError</span></code></a><ul class="nav section-nav flex-column">
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#nvtx.writer.WriterError.result_code"><code class="docutils literal notranslate"><span class="pre">result_code</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#nvtx.writer.WriterError.operation"><code class="docutils literal notranslate"><span class="pre">operation</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#sessions-and-streams">Sessions and Streams</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#nvtx.writer.Session"><code class="docutils literal notranslate"><span class="pre">Session</span></code></a><ul class="nav section-nav flex-column">
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#nvtx.writer.Session.begin"><code class="docutils literal notranslate"><span class="pre">begin()</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#nvtx.writer.Session.create_stream"><code class="docutils literal notranslate"><span class="pre">create_stream()</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#nvtx.writer.Session.end"><code class="docutils literal notranslate"><span class="pre">end()</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#nvtx.writer.Session.get_domain"><code class="docutils literal notranslate"><span class="pre">get_domain()</span></code></a></li>
+</ul>
+</li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#nvtx.writer.Domain"><code class="docutils literal notranslate"><span class="pre">Domain</span></code></a><ul class="nav section-nav flex-column">
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#nvtx.writer.Domain.get_category_id"><code class="docutils literal notranslate"><span class="pre">get_category_id()</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#nvtx.writer.Domain.get_counter"><code class="docutils literal notranslate"><span class="pre">get_counter()</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#nvtx.writer.Domain.get_registered_string"><code class="docutils literal notranslate"><span class="pre">get_registered_string()</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#nvtx.writer.Domain.get_schema"><code class="docutils literal notranslate"><span class="pre">get_schema()</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#nvtx.writer.Domain.get_scope"><code class="docutils literal notranslate"><span class="pre">get_scope()</span></code></a></li>
+</ul>
+</li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#nvtx.writer.Stream"><code class="docutils literal notranslate"><span class="pre">Stream</span></code></a><ul class="nav section-nav flex-column">
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#nvtx.writer.Stream.close"><code class="docutils literal notranslate"><span class="pre">close()</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#nvtx.writer.Stream.open"><code class="docutils literal notranslate"><span class="pre">open()</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#nvtx.writer.Stream.write_counter_batch"><code class="docutils literal notranslate"><span class="pre">write_counter_batch()</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#nvtx.writer.Stream.write_counter_sample"><code class="docutils literal notranslate"><span class="pre">write_counter_sample()</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#nvtx.writer.Stream.write_counter_sample_no_value"><code class="docutils literal notranslate"><span class="pre">write_counter_sample_no_value()</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#nvtx.writer.Stream.write_end"><code class="docutils literal notranslate"><span class="pre">write_end()</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#nvtx.writer.Stream.write_event"><code class="docutils literal notranslate"><span class="pre">write_event()</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#nvtx.writer.Stream.write_event_batch"><code class="docutils literal notranslate"><span class="pre">write_event_batch()</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#nvtx.writer.Stream.write_mark"><code class="docutils literal notranslate"><span class="pre">write_mark()</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#nvtx.writer.Stream.write_pop"><code class="docutils literal notranslate"><span class="pre">write_pop()</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#nvtx.writer.Stream.write_push"><code class="docutils literal notranslate"><span class="pre">write_push()</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#nvtx.writer.Stream.write_pushpop"><code class="docutils literal notranslate"><span class="pre">write_pushpop()</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#nvtx.writer.Stream.write_start"><code class="docutils literal notranslate"><span class="pre">write_start()</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#nvtx.writer.Stream.write_startend"><code class="docutils literal notranslate"><span class="pre">write_startend()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#registered-objects">Registered Objects</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#nvtx.writer.RegisteredString"><code class="docutils literal notranslate"><span class="pre">RegisteredString</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#nvtx.writer.Scope"><code class="docutils literal notranslate"><span class="pre">Scope</span></code></a><ul class="nav section-nav flex-column">
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#nvtx.writer.Scope.path"><code class="docutils literal notranslate"><span class="pre">path</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#nvtx.writer.Scope.scope_id"><code class="docutils literal notranslate"><span class="pre">scope_id</span></code></a></li>
+</ul>
+</li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#nvtx.writer.Schema"><code class="docutils literal notranslate"><span class="pre">Schema</span></code></a><ul class="nav section-nav flex-column">
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#nvtx.writer.Schema.dtype"><code class="docutils literal notranslate"><span class="pre">dtype</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#nvtx.writer.Schema.kind"><code class="docutils literal notranslate"><span class="pre">kind</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#nvtx.writer.Schema.schema_id"><code class="docutils literal notranslate"><span class="pre">schema_id</span></code></a></li>
+</ul>
+</li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#nvtx.writer.Counter"><code class="docutils literal notranslate"><span class="pre">Counter</span></code></a><ul class="nav section-nav flex-column">
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#nvtx.writer.Counter.counter_id"><code class="docutils literal notranslate"><span class="pre">counter_id</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#nvtx.writer.Counter.description"><code class="docutils literal notranslate"><span class="pre">description</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#nvtx.writer.Counter.dtype"><code class="docutils literal notranslate"><span class="pre">dtype</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#nvtx.writer.Counter.name"><code class="docutils literal notranslate"><span class="pre">name</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#nvtx.writer.Counter.semantics"><code class="docutils literal notranslate"><span class="pre">semantics</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#stream-options">Stream Options</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#nvtx.writer.StreamInterleaving"><code class="docutils literal notranslate"><span class="pre">StreamInterleaving</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#nvtx.writer.StreamOrdering"><code class="docutils literal notranslate"><span class="pre">StreamOrdering</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#nvtx.writer.StreamSkid"><code class="docutils literal notranslate"><span class="pre">StreamSkid</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#nvtx.writer.PredefinedScope"><code class="docutils literal notranslate"><span class="pre">PredefinedScope</span></code></a></li>
+</ul>
+</li>
+</ul>
+  </nav></div>
+
+</div></div>
+              
+            
+
+          </div>
+          <footer class="bd-footer-content">
+            
+          </footer>
+        
+      </main>
+    </div>
+  </div>
+  
+
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script defer src="_static/scripts/bootstrap.js?digest=55c26ed414f5f8a31ebb"></script>
+<script defer src="_static/scripts/pydata-sphinx-theme.js?digest=55c26ed414f5f8a31ebb"></script>
+
+
+  <footer class="bd-footer">
+<div class="bd-footer__inner bd-page-width">
+  
+    <div class="footer-items__start">
+      
+        <div class="footer-item">
+<a class="footer-brand logo" href="https://www.nvidia.com">
+  <img src="_static/nvidia-logo-horiz-rgb-1c-blk-for-screen.svg" class="logo__image only-light" alt="NVIDIA"/>
+  <img src="_static/nvidia-logo-horiz-rgb-1c-wht-for-screen.svg" class="logo__image only-dark" alt="NVIDIA"/>
+</a></div>
+      
+        <div class="footer-item">
+
+<div class="footer-links">
+  
+  
+  <a class="external" href="https://www.nvidia.com/en-us/about-nvidia/privacy-policy/">Privacy Policy</a>
+   | 
+  
+  
+  
+  <a class="external" href="https://www.nvidia.com/en-us/about-nvidia/privacy-center/">Your Privacy Choices</a>
+   | 
+  
+  
+  
+  <a class="external" href="https://www.nvidia.com/en-us/about-nvidia/terms-of-service/">Terms of Service</a>
+   | 
+  
+  
+  
+  <a class="external" href="https://www.nvidia.com/en-us/about-nvidia/accessibility/">Accessibility</a>
+   | 
+  
+  
+  
+  <a class="external" href="https://www.nvidia.com/en-us/about-nvidia/company-policies/">Corporate Policies</a>
+   | 
+  
+  
+  
+  <a class="external" href="https://www.nvidia.com/en-us/product-security/">Product Security</a>
+   | 
+  
+  
+  
+  <a class="external" href="https://www.nvidia.com/en-us/contact/">Contact</a>
+  
+  
+  
+</div>
+</div>
+      
+        <div class="footer-item">
+
+
+
+
+  <p class="copyright">
+    
+      Copyright © 2020-2026, NVIDIA Corporation.
+      <br/>
+    
+  </p>
+</div>
+      
+    </div>
+  
+  
+  
+</div>
+
+  </footer>
+  </body>
+</html>

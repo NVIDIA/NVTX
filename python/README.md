@@ -48,6 +48,13 @@ See [here](https://nvidia.github.io/NVTX/python/) for detailed docs.
 
 ## Release Notes
 
+### 0.2.16
+
+- Add support for counter annotations through the NVTX Counters extension.
+- Add `nvtx.writer` for writing pre-collected events and counter samples (NVTXW).
+- Drop support for Python 3.8.
+- Fix several payload-handling edge cases.
+
 ### 0.2.15
 
 - Extend Domain API to accept keyword arguments for event attributes.

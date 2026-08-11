@@ -259,7 +259,8 @@ decode behaviour or output formatting: `EVENT_MESSAGE`, `TIMESTAMP`,
 
 Schema-level flags (`nvtxPayloadSchemaAttr_t::flags`) are not stored or acted
 upon. This includes `DEEP_COPY`, `REFERENCED`, `COUNTER_GROUP`,
-`RANGE_PUSHPOP`, `RANGE_STARTEND`, and `MARK`.
+`RANGE_PUSHPOP`, `RANGE_STARTEND`, `RANGE_PUSH`, `RANGE_POP`, `RANGE_START`,
+`RANGE_END`, and `MARK`.
 
 ### Other
 

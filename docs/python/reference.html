@@ -9,7 +9,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>API Reference &#8212; nvtx</title>
+    <title>Annotation API &#8212; nvtx</title>
   
   
   
@@ -42,7 +42,7 @@
 
 
 
-    <script src="_static/documentation_options.js?v=d5b904a0"></script>
+    <script src="_static/documentation_options.js?v=e2418eca"></script>
     <script src="_static/doctools.js?v=fd6eb6e6"></script>
     <script src="_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script>DOCUMENTATION_OPTIONS.pagename = 'reference';</script>
@@ -52,6 +52,7 @@
 
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Writer API" href="writer_reference.html" />
     <link rel="prev" title="Automatic function annotation" href="automatic_annotations.html" />
 
 
@@ -262,13 +263,16 @@
 <li class="toctree-l2"><a class="reference internal" href="annotation_types.html">Annotation Types</a></li>
 <li class="toctree-l2"><a class="reference internal" href="annotation_attributes.html">Annotation Attributes</a></li>
 <li class="toctree-l2"><a class="reference internal" href="counters.html">Counters</a></li>
+<li class="toctree-l2"><a class="reference internal" href="writer.html">Writing Pre-Collected Data</a></li>
 <li class="toctree-l2"><a class="reference internal" href="best_practices.html">Best practices</a></li>
 <li class="toctree-l2"><a class="reference internal" href="automatic_annotations.html">Automatic function annotation</a></li>
 </ul>
 </details></li>
 </ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">API Reference</span></p>
 <ul class="current nav bd-sidenav">
-<li class="toctree-l1 current active"><a class="current reference internal" href="#">API Reference</a></li>
+<li class="toctree-l1 current active"><a class="current reference internal" href="#">Annotation API</a></li>
+<li class="toctree-l1"><a class="reference internal" href="writer_reference.html">Writer API</a></li>
 </ul>
 <p aria-level="2" class="caption" role="heading"><span class="caption-text">Project Links</span></p>
 <ul class="nav bd-sidenav">
@@ -310,7 +314,7 @@
         <i class="fa-solid fa-home"></i>
       </a>
     </li>
-    <li class="breadcrumb-item active" aria-current="page"><span class="ellipsis">API Reference</span></li>
+    <li class="breadcrumb-item active" aria-current="page"><span class="ellipsis">Annotation API</span></li>
   </ul>
 </nav>
 </div>
@@ -328,7 +332,7 @@
                 <article class="bd-article">
                   
   <section id="module-nvtx">
-<span id="api-reference"></span><h1>API Reference<a class="headerlink" href="#module-nvtx" title="Link to this heading">#</a></h1>
+<span id="annotation-api"></span><h1>Annotation API<a class="headerlink" href="#module-nvtx" title="Link to this heading">#</a></h1>
 <dl class="py class">
 <dt class="sig sig-object py" id="nvtx.annotate">
 <span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">nvtx.</span></span><span class="sig-name descname"><span class="pre">annotate</span></span><span class="sig-paren">(</span>
@@ -592,15 +596,19 @@ NumPy to be installed (not installed with <code class="docutils literal notransl
 <dl>
 <dd><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>,</dd>
 <dd><em class="sig-param"><span class="n"><span class="pre">counter_semantics</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#nvtx.CounterSemantics" title="nvtx._lib.counters.CounterSemantics"><span class="pre">CounterSemantics</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>,</dd>
+<dd><em class="sig-param"><span class="n"><span class="pre">entry_kind</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#nvtx.EntryKind" title="nvtx._lib.lib.EntryKind"><span class="pre">EntryKind</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>,</dd>
+<dd><em class="sig-param"><span class="n"><span class="pre">entry_type</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#nvtx.PayloadEntryType" title="nvtx._lib.lib.PayloadEntryType"><span class="pre">PayloadEntryType</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>,</dd>
 <dd><em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em>,</dd>
 </dl>
 
 <span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">dtype</span></span></span><a class="headerlink" href="#nvtx.numpy_dtype" title="Link to this definition">#</a></dt>
-<dd><p>Construct a NumPy dtype, optionally carrying NVTX counter semantics.</p>
+<dd><p>Construct a NumPy dtype, optionally carrying NVTX payload metadata.</p>
 <p>This function accepts the same arguments as <code class="xref py py-func docutils literal notranslate"><span class="pre">numpy.dtype()</span></code>. When
 <code class="docutils literal notranslate"><span class="pre">counter_semantics</span></code> is provided, the returned dtype carries metadata
 for use as a flat structured counter field. For a top-level scalar counter,
 pass semantics to <a class="reference internal" href="#nvtx.Domain.get_counter" title="nvtx.Domain.get_counter"><code class="xref py py-meth docutils literal notranslate"><span class="pre">nvtx.Domain.get_counter()</span></code></a> instead.</p>
+<p>When <code class="docutils literal notranslate"><span class="pre">entry_kind</span></code> is provided, the dtype carries that field role for a
+range/mark field (or a counter-group timestamp).</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
@@ -609,16 +617,71 @@ pass semantics to <a class="reference internal" href="#nvtx.Domain.get_counter" 
 typically a field in a structured counter dtype. If the NVTX metadata
 key is already present in <code class="docutils literal notranslate"><span class="pre">metadata</span></code>, the existing value is preserved
 and a warning is emitted.</p></li>
+<li><p><strong>entry_kind</strong> (<a class="reference internal" href="#nvtx.EntryKind" title="nvtx.EntryKind"><em>EntryKind</em></a><em>, </em><em>optional</em>) – Role of the field in a range/mark or counter-group schema.
+Timestamp roles require 64-bit integer storage.</p></li>
+<li><p><strong>entry_type</strong> (<a class="reference internal" href="#nvtx.PayloadEntryType" title="nvtx.PayloadEntryType"><em>PayloadEntryType</em></a><em>, </em><em>optional</em>) – Special NVTX interpretation of the field’s storage. This distinguishes
+range IDs, category IDs, packed ARGB colors, scope IDs, and
+<code class="xref py py-attr docutils literal notranslate"><span class="pre">PayloadEntryType.REGISTERED_STRING</span></code> handles from ordinary
+integers with the same storage width.</p></li>
 <li><p><strong>**kwargs</strong> – Keyword arguments passed to <code class="xref py py-func docutils literal notranslate"><span class="pre">numpy.dtype()</span></code>.</p></li>
 </ul>
 </dd>
-<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p>The constructed dtype.</p>
 </dd>
-<dt class="field-odd">Raises<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>RuntimeError</strong> – If NumPy is not installed.</p>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>numpy.dtype</p>
+</dd>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><ul class="simple">
+<li><p><strong>TypeError</strong> – If an entry role or type is invalid or incompatible with the dtype’s
+    storage.</p></li>
+<li><p><strong>RuntimeError</strong> – If NumPy is not installed.</p></li>
+</ul>
 </dd>
 </dl>
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="nvtx.BatchOrdering">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">nvtx.</span></span><span class="sig-name descname"><span class="pre">BatchOrdering</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">values</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#nvtx.BatchOrdering" title="Link to this definition">#</a></dt>
+<dd><p>Timestamp ordering within a batch of deferred events or counters.</p>
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="nvtx.EntryKind">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">nvtx.</span></span><span class="sig-name descname"><span class="pre">EntryKind</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">values</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#nvtx.EntryKind" title="Link to this definition">#</a></dt>
+<dd><p>Role of a field in a structured payload dtype.</p>
+<p>Attach to a field with <a class="reference internal" href="#nvtx.numpy_dtype" title="nvtx.numpy_dtype"><code class="xref py py-func docutils literal notranslate"><span class="pre">nvtx.numpy_dtype()</span></code></a> and its <code class="docutils literal notranslate"><span class="pre">entry_kind</span></code>
+argument. The event roles (<code class="docutils literal notranslate"><span class="pre">RANGE_BEGIN</span></code>, <code class="docutils literal notranslate"><span class="pre">RANGE_END</span></code>, <code class="docutils literal notranslate"><span class="pre">MARK</span></code>)
+mark the timestamp fields of an event schema; <code class="docutils literal notranslate"><span class="pre">COUNTER_TIMESTAMP</span></code>
+marks the embedded timestamp field of a counter group; <code class="docutils literal notranslate"><span class="pre">MESSAGE</span></code>
+marks a string field holding the event message.</p>
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="nvtx.EventKind">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">nvtx.</span></span><span class="sig-name descname"><span class="pre">EventKind</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">values</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#nvtx.EventKind" title="Link to this definition">#</a></dt>
+<dd><p>Event kind for the writer’s <code class="docutils literal notranslate"><span class="pre">write_event</span></code> / <code class="docutils literal notranslate"><span class="pre">write_event_batch</span></code>,
+mapped to the schema-level <code class="docutils literal notranslate"><span class="pre">NVTX_PAYLOAD_SCHEMA_FLAG_*</span></code> flag.</p>
+<p><code class="docutils literal notranslate"><span class="pre">NVTX_PAYLOAD_SCHEMA_FLAG_COUNTER_GROUP</span></code> is not exposed as an
+<code class="docutils literal notranslate"><span class="pre">EventKind</span></code> because counter-group schemas are created by
+<code class="docutils literal notranslate"><span class="pre">Domain.get_counter()</span></code>. The flag is set internally during registration.</p>
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="nvtx.PayloadEntryType">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">nvtx.</span></span><span class="sig-name descname"><span class="pre">PayloadEntryType</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">values</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#nvtx.PayloadEntryType" title="Link to this definition">#</a></dt>
+<dd><p>NVTX interpretation of a specially typed payload field.</p>
+<p>Attach to a field with <a class="reference internal" href="#nvtx.numpy_dtype" title="nvtx.numpy_dtype"><code class="xref py py-func docutils literal notranslate"><span class="pre">nvtx.numpy_dtype()</span></code></a> and its <code class="docutils literal notranslate"><span class="pre">entry_type</span></code>
+argument. The field retains ordinary fixed-width NumPy storage while NVTX
+tools interpret it as an event attribute or identifier.</p>
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="nvtx.PredefinedScope">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">nvtx.</span></span><span class="sig-name descname"><span class="pre">PredefinedScope</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">values</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#nvtx.PredefinedScope" title="Link to this definition">#</a></dt>
+<dd><p>Predefined NVTX execution scopes.</p>
 </dd></dl>
 
 <dl class="py class">
@@ -1678,6 +1741,15 @@ should come from the same timestamp domain.</p>
         <p class="prev-next-title">Automatic function annotation</p>
       </div>
     </a>
+    <a class="right-next"
+       href="writer_reference.html"
+       title="next page">
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">next</p>
+        <p class="prev-next-title">Writer API</p>
+      </div>
+      <i class="fa-solid fa-angle-right"></i>
+    </a>
 </div>
                 </footer>
               
@@ -1707,6 +1779,11 @@ should come from the same timestamp domain.</p>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#nvtx.mark"><code class="docutils literal notranslate"><span class="pre">mark()</span></code></a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#nvtx.get_domain"><code class="docutils literal notranslate"><span class="pre">get_domain()</span></code></a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#nvtx.numpy_dtype"><code class="docutils literal notranslate"><span class="pre">numpy_dtype()</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#nvtx.BatchOrdering"><code class="docutils literal notranslate"><span class="pre">BatchOrdering</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#nvtx.EntryKind"><code class="docutils literal notranslate"><span class="pre">EntryKind</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#nvtx.EventKind"><code class="docutils literal notranslate"><span class="pre">EventKind</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#nvtx.PayloadEntryType"><code class="docutils literal notranslate"><span class="pre">PayloadEntryType</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#nvtx.PredefinedScope"><code class="docutils literal notranslate"><span class="pre">PredefinedScope</span></code></a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#nvtx.Domain"><code class="docutils literal notranslate"><span class="pre">Domain</span></code></a><ul class="nav section-nav flex-column">
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#nvtx.Domain.end_range"><code class="docutils literal notranslate"><span class="pre">end_range()</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#nvtx.Domain.get_category_id"><code class="docutils literal notranslate"><span class="pre">get_category_id()</span></code></a></li>
@@ -1884,7 +1961,7 @@ should come from the same timestamp domain.</p>
 
   <p class="copyright">
     
-      Copyright © 2020-2025, NVIDIA Corporation.
+      Copyright © 2020-2026, NVIDIA Corporation.
       <br/>
     
   </p>

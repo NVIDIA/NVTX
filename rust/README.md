@@ -1,6 +1,6 @@
-# nvtx-rs
+# Rust NVTX
 
-nvtx-rs provides Rust bindings for NVIDIA's nvtx library.
+Rust NVTX provides Rust language bindings for the NVIDIA Tools Extension SDK (NVTX).
 
 See the generated documentation for more details and the examples for sample usage.
 
@@ -18,13 +18,13 @@ The crate now supports three capability tiers:
 
 ```bash
 # default full API
-cargo add nvidia-nvtx
+cargo add nvtx
 
 # no_std + alloc profile
-cargo add nvidia-nvtx --no-default-features --features alloc
+cargo add nvtx --no-default-features --features alloc
 
 # strict core profile
-cargo add nvidia-nvtx --no-default-features
+cargo add nvtx --no-default-features
 ```
 
 In strict core mode, use borrowed C-string APIs such as `mark_ascii` / `mark_unicode`,
@@ -32,4 +32,4 @@ In strict core mode, use borrowed C-string APIs such as `mark_ascii` / `mark_uni
 
 ## Compatibility
 
-The `nvtx-rs` crate requires rustc 1.77 or greater
+The `nvtx` crate requires rustc 1.77 or greater.

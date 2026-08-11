@@ -42,7 +42,7 @@
 
 
 
-    <script src="_static/documentation_options.js?v=d5b904a0"></script>
+    <script src="_static/documentation_options.js?v=e2418eca"></script>
     <script src="_static/doctools.js?v=fd6eb6e6"></script>
     <script src="_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script>DOCUMENTATION_OPTIONS.pagename = 'counters';</script>
@@ -52,7 +52,7 @@
 
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
-    <link rel="next" title="Best practices" href="best_practices.html" />
+    <link rel="next" title="Writing Pre-Collected Data" href="writer.html" />
     <link rel="prev" title="Annotation Attributes" href="annotation_attributes.html" />
 
 
@@ -263,13 +263,16 @@
 <li class="toctree-l2"><a class="reference internal" href="annotation_types.html">Annotation Types</a></li>
 <li class="toctree-l2"><a class="reference internal" href="annotation_attributes.html">Annotation Attributes</a></li>
 <li class="toctree-l2 current active"><a class="current reference internal" href="#">Counters</a></li>
+<li class="toctree-l2"><a class="reference internal" href="writer.html">Writing Pre-Collected Data</a></li>
 <li class="toctree-l2"><a class="reference internal" href="best_practices.html">Best practices</a></li>
 <li class="toctree-l2"><a class="reference internal" href="automatic_annotations.html">Automatic function annotation</a></li>
 </ul>
 </details></li>
 </ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">API Reference</span></p>
 <ul class="nav bd-sidenav">
-<li class="toctree-l1"><a class="reference internal" href="reference.html">API Reference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="reference.html">Annotation API</a></li>
+<li class="toctree-l1"><a class="reference internal" href="writer_reference.html">Writer API</a></li>
 </ul>
 <p aria-level="2" class="caption" role="heading"><span class="caption-text">Project Links</span></p>
 <ul class="nav bd-sidenav">
@@ -335,6 +338,8 @@
 <h1>Counters<a class="headerlink" href="#counters" title="Link to this heading">#</a></h1>
 <p>Counter annotations describe quantities that change over time, such as memory
 usage, queue depth, bytes processed, or model training metrics.</p>
+<p>This page covers counter annotations captured while the application runs. To
+submit pre-collected samples with explicit timestamps, see <a class="reference internal" href="writer.html"><span class="doc">Writing Pre-Collected Data</span></a>.</p>
 <p>Create counters with <a class="reference internal" href="reference.html#nvtx.Domain.get_counter" title="nvtx.Domain.get_counter"><code class="xref py py-meth docutils literal notranslate"><span class="pre">nvtx.Domain.get_counter()</span></code></a> and keep the counter
 object around; call <a class="reference internal" href="reference.html#nvtx.Counter.sample" title="nvtx.Counter.sample"><code class="xref py py-meth docutils literal notranslate"><span class="pre">nvtx.Counter.sample()</span></code></a> from performance-sensitive code.</p>
 <section id="scalar-counters">
@@ -487,11 +492,11 @@ unchanged, or unavailable, but no explicit value should be submitted:</p>
       </div>
     </a>
     <a class="right-next"
-       href="best_practices.html"
+       href="writer.html"
        title="next page">
       <div class="prev-next-info">
         <p class="prev-next-subtitle">next</p>
-        <p class="prev-next-title">Best practices</p>
+        <p class="prev-next-title">Writing Pre-Collected Data</p>
       </div>
       <i class="fa-solid fa-angle-right"></i>
     </a>
@@ -604,7 +609,7 @@ unchanged, or unavailable, but no explicit value should be submitted:</p>
 
   <p class="copyright">
     
-      Copyright © 2020-2025, NVIDIA Corporation.
+      Copyright © 2020-2026, NVIDIA Corporation.
       <br/>
     
   </p>

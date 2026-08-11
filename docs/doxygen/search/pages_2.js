@@ -1,5 +1,5 @@
 var searchData=
 [
-  ['nvtx_20c_20api_20reference_0',['NVTX C API Reference',['../index.html',1,'']]],
-  ['nvtx_5fextended_5fpayloads_1',['NVTX_EXTENDED_PAYLOADS',['../md__n_v_t_x___e_x_t_e_n_d_e_d___p_a_y_l_o_a_d_s.html',1,'']]]
+  ['memory_0',['Memory',['../_p_a_g_e__m_e_m_o_r_y.html',1,'']]],
+  ['memory_20cuda_20runtime_1',['Memory CUDA Runtime',['../_p_a_g_e__m_e_m_o_r_y__c_u_d_a_r_t.html',1,'']]]
 ];

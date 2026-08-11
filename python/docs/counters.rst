@@ -12,6 +12,9 @@ Counters
 Counter annotations describe quantities that change over time, such as memory
 usage, queue depth, bytes processed, or model training metrics.
 
+This page covers counter annotations captured while the application runs. To
+submit pre-collected samples with explicit timestamps, see :doc:`writer`.
+
 Create counters with :meth:`nvtx.Domain.get_counter` and keep the counter
 object around; call :meth:`nvtx.Counter.sample` from performance-sensitive code.
 

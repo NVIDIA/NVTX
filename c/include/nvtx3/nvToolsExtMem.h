@@ -95,6 +95,14 @@ extern "C" {
 
 
 /*  ------------------------------------------------------------------------- */
+/**
+ * \page PAGE_MEMORY Memory
+ *
+ * This section covers NVTX memory tracking: heap and region registration,
+ * permissions, and naming virtual address ranges.
+ *
+ * See module \ref MEMORY for API details.
+ */
 /** \defgroup MEMORY Memory
  * See page \ref PAGE_MEMORY.
  * @{
@@ -271,7 +279,7 @@ typedef struct nvtxMemHeapDesc_v1
      * A category is a user-controlled ID that can be used to group
      * events.  The tool may use category IDs to improve filtering or
      * enable grouping of events in the same category. The functions
-     * \ref ::nvtxNameCategoryA or \ref ::nvtxNameCategoryW can be used
+     * \ref nvtxNameCategoryA or \ref nvtxNameCategoryW can be used
      * to name a category.
      *
      * Default Value is 0.

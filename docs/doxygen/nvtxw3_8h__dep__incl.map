@@ -1,0 +1,16 @@
+<map id="nvtxw3.h" name="nvtxw3.h">
+<area shape="rect" id="Node000001" title="NVTX Writer API for feed&#45;forward trace data." alt="" coords="193,5,275,31"/>
+<area shape="rect" id="Node000002" href="$nvtxw3__counter__helpers_8h.html" title="Counter registration and write helpers for the NVTX Writer API." alt="" coords="5,152,199,177"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="191,39,160,56,133,80,122,98,114,118,106,152,101,151,109,116,117,96,129,77,157,52,189,34"/>
+<area shape="rect" id="Node000004" href="$nvtxw3__event__helpers_8h.html" title="Stateless helpers for writing event payloads through NVTXW EventWrite." alt="" coords="143,79,325,104"/>
+<area shape="poly" id="edge3_Node000001_Node000004" title=" " alt="" coords="237,44,237,79,231,79,231,44"/>
+<area shape="rect" id="Node000006" href="$nvtxw3__loader_8h.html" title="Reference loader and config utilities for the NVTX Writer API." alt="" coords="349,79,479,104"/>
+<area shape="poly" id="edge7_Node000001_Node000006" title=" " alt="" coords="276,33,386,76,384,81,274,38"/>
+<area shape="rect" id="Node000003" href="$nvtxw3__helpers_8h.html" title="Umbrella header aggregating the NVTX Writer helper APIs." alt="" coords="168,225,305,251"/>
+<area shape="poly" id="edge2_Node000002_Node000003" title=" " alt="" coords="137,181,216,223,213,227,134,186"/>
+<area shape="poly" id="edge4_Node000004_Node000003" title=" " alt="" coords="237,118,239,225,234,225,232,118"/>
+<area shape="rect" id="Node000005" href="$nvtxw3__setup__helpers_8h.html" title="Setup helpers for loading NVTXW, registering domains, scopes, and time domains, and opening streams." alt="" coords="275,152,455,177"/>
+<area shape="poly" id="edge5_Node000004_Node000005" title=" " alt="" coords="269,108,345,149,342,154,266,113"/>
+<area shape="poly" id="edge6_Node000005_Node000003" title=" " alt="" coords="333,186,259,227,256,223,331,182"/>
+<area shape="poly" id="edge8_Node000006_Node000005" title=" " alt="" coords="400,117,375,153,370,150,396,114"/>
+</map>

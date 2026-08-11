@@ -22,7 +22,7 @@ jobs:
       # installation fails due to a bug in the default setuptools in the
       # ubuntu-latest image. https://github.com/pypa/setuptools/issues/3269
       - name: Set up Python
-        uses: actions/setup-python@v6
+        uses: actions/setup-python@v7
         with:
           python-version: '>=3.9'
 
@@ -61,7 +61,7 @@ jobs:
           platforms: arm64
 
       - name: Build wheels
-        uses: pypa/cibuildwheel@294735312765b09d24a2fbec22660ce817587d55
+        uses: pypa/cibuildwheel@4726cd35bb13f7bde50cf2761f2499ac7b3aa32c
         with:
           output-dir: dist
           package-dir: python

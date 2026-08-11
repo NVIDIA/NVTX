@@ -30,7 +30,7 @@ void NvtxPayloadTextVisitor::OnBeginPayloads(size_t count)
 }
 
 void NvtxPayloadTextVisitor::OnPayloadBegin(
-    size_t payloadIndex, uint64_t schemaId, size_t payloadSize, std::string_view schemaName)
+    size_t payloadIndex, uint64_t schemaId, size_t payloadSize, const std::string& schemaName)
 {
     out_ += " payload[";
     AppendNumber(payloadIndex);
@@ -56,7 +56,7 @@ void NvtxPayloadTextVisitor::OnPayloadEnd()
     out_ += "]}";
 }
 
-void NvtxPayloadTextVisitor::OnFieldBegin(std::string_view name, std::string_view description)
+void NvtxPayloadTextVisitor::OnFieldBegin(const std::string& name, const std::string& description)
 {
     if (!containers_.empty() && (containers_.back().kind == ContainerKind::PayloadFields ||
                                  containers_.back().kind == ContainerKind::ObjectFields))
@@ -144,7 +144,7 @@ void NvtxPayloadTextVisitor::OnFloatingPoint(double value)
     MarkFieldValueEmitted();
 }
 
-void NvtxPayloadTextVisitor::OnString(std::string_view value)
+void NvtxPayloadTextVisitor::OnString(const std::string& value)
 {
     PrepareArrayElement();
     out_ += value;
