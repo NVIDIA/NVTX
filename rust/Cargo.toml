@@ -17,6 +17,10 @@ license = "Apache-2.0 WITH LLVM-exception"
 keywords = ["cuda", "nsight", "nvidia", "nvtx", "profiling"]
 categories = ["api-bindings", "development-tools::profiling", "no-std"]
 
+[workspace.dependencies]
+# Keep the local development path and the crates.io version coupled for publishing.
+nvtx-sys = { version = "2.0.0", path = "crates/nvtx-sys", default-features = false }
+
 [workspace.lints.clippy]
 all = { level = "deny", priority = -1 }
 pedantic = { level = "deny", priority = -1 }
@@ -98,7 +102,7 @@ tracing = [
 [dependencies]
 color-name = { version = "1.2.0", optional = true }
 gettid = { version = "0.1.4", optional = true }
-nvtx-sys = { path = "crates/nvtx-sys", default-features = false }
+nvtx-sys.workspace = true
 spin = { version = "0.10.0", optional = true }
 tracing-core = { version = "0.1.36", optional = true }
 tracing-subscriber = { version = "0.3.23", optional = true }
