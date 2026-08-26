@@ -452,4 +452,141 @@ if(NVTX_ENABLE_CXX11_TESTS)
     add_test(NAME "UseExportedApiExt with PrintInjectionCpp" COMMAND runtest -t use-exported-api-ext -i inj-cpp)
 endif()
 
+# CUDA driver injection discovery tests.  Each stub is built under the driver's
+# name (libcuda.so.1 / nvcuda.dll) in its own directory so a per-test search path
+# selects one.
+if(WIN32 OR CMAKE_SYSTEM_NAME STREQUAL "Linux")
+    function(add_cuda_driver_stub TARGET_NAME OUTPUT_SUBDIR)
+        add_nvtx_test_library(${TARGET_NAME} SHARED "StubCudaDriver.c")
+        # Without --kill-at, MinGW exports the stdcall symbol decorated as
+        # cuNvtxGetInjectionInitializer@8, but the loader looks it up by the undecorated
+        # name.  --kill-at strips the @8 so the stub exports cuNvtxGetInjectionInitializer.
+        target_link_options(${TARGET_NAME} PRIVATE
+            $<$<AND:$<NOT:$<CXX_COMPILER_ID:MSVC>>,$<PLATFORM_ID:Windows>>:-Wl,--kill-at>
+        )
+        if(WIN32)
+            set_target_properties(${TARGET_NAME} PROPERTIES PREFIX "" OUTPUT_NAME "nvcuda" SUFFIX ".dll")
+        else()
+            set_target_properties(${TARGET_NAME} PROPERTIES PREFIX "lib" OUTPUT_NAME "cuda" SUFFIX ".so.1")
+        endif()
+        # Put every output in the stub's own directory.  On Linux that is the
+        # .so.1 (LIBRARY), and on Windows both the .dll (RUNTIME) and its import
+        # .lib (ARCHIVE), so the shared nvcuda.lib name does not collide across
+        # stubs.
+        # $<0:> keeps multi-config generators (e.g. Visual Studio) from appending a
+        # per-config subdirectory, so the stub stays at the fixed path that the
+        # test's NVTX_CUDA_DRIVER_STUB_DIR / LD_LIBRARY_PATH points to.
+        set_target_properties(${TARGET_NAME} PROPERTIES
+            LIBRARY_OUTPUT_DIRECTORY "${CMAKE_CURRENT_BINARY_DIR}/${OUTPUT_SUBDIR}$<0:>"
+            RUNTIME_OUTPUT_DIRECTORY "${CMAKE_CURRENT_BINARY_DIR}/${OUTPUT_SUBDIR}$<0:>"
+            ARCHIVE_OUTPUT_DIRECTORY "${CMAKE_CURRENT_BINARY_DIR}/${OUTPUT_SUBDIR}$<0:>")
+    endfunction()
+
+    set(yaml_present "${CMAKE_CURRENT_BINARY_DIR}/yaml-present")
+    set(yaml_absent "${CMAKE_CURRENT_BINARY_DIR}/yaml-absent")
+    if(WIN32)
+        file(MAKE_DIRECTORY "${yaml_present}/NVIDIA Corporation/NVTX")
+        file(TOUCH "${yaml_present}/NVIDIA Corporation/NVTX/nvtx-cuda.yaml")
+    else()
+        file(MAKE_DIRECTORY "${yaml_present}/nvidia/nvtx")
+        file(TOUCH "${yaml_present}/nvidia/nvtx/nvtx-cuda.yaml")
+    endif()
+
+    # Point a test at its stub CUDA driver and select whether the nvtx-cuda.yaml file
+    # appears present.  On Linux the stub dir is searched via LD_LIBRARY_PATH.  On
+    # Windows the test reads NVTX_CUDA_DRIVER_STUB_DIR and registers it with
+    # AddDllDirectory, which the loader's LOAD_LIBRARY_SEARCH_USER_DIRS then searches.
+    function(set_cuda_stub_environment TEST_NAME NVTX_CUDA_YAML STUB_SUBDIR)
+        set(stub_dir "${CMAKE_CURRENT_BINARY_DIR}/${STUB_SUBDIR}")
+        if(NVTX_CUDA_YAML STREQUAL "present")
+            set(yaml_dir "${yaml_present}")
+        else()
+            set(yaml_dir "${yaml_absent}")
+        endif()
+        if(WIN32)
+            file(TO_NATIVE_PATH "${stub_dir}" stub_dir)
+            file(TO_NATIVE_PATH "${yaml_dir}" yaml_dir)
+            set_property(TEST "${TEST_NAME}" PROPERTY ENVIRONMENT
+                "NVTX_CUDA_DRIVER_STUB_DIR=${stub_dir}" "LOCALAPPDATA=${yaml_dir}")
+        else()
+            set_property(TEST "${TEST_NAME}" PROPERTY ENVIRONMENT
+                "LD_LIBRARY_PATH=${stub_dir}" "XDG_RUNTIME_DIR=${yaml_dir}")
+        endif()
+    endfunction()
+
+    add_cuda_driver_stub(cuda-driver-stub "cuda-driver-stub")
+    add_cuda_driver_stub(cuda-driver-stub-omit-getter "cuda-driver-stub-omit-getter")
+    target_compile_definitions(cuda-driver-stub-omit-getter PRIVATE STUB_CUDA_OMIT_GETTER)
+    add_cuda_driver_stub(cuda-driver-stub-getter-error "cuda-driver-stub-getter-error")
+    target_compile_definitions(cuda-driver-stub-getter-error PRIVATE STUB_CUDA_GETTER_ERROR)
+    add_cuda_driver_stub(cuda-driver-stub-init-fails "cuda-driver-stub-init-fails")
+    target_compile_definitions(cuda-driver-stub-init-fails PRIVATE STUB_CUDA_INIT_FAILS)
+    add_cuda_driver_stub(cuda-driver-stub-nvtx-extension "cuda-driver-stub-nvtx-extension")
+    target_compile_definitions(cuda-driver-stub-nvtx-extension PRIVATE STUB_CUDA_NVTX_EXTENSION)
+
+    add_nvtx_test_library(cuda-driver-injection-discovery SHARED "CudaDriverInjectionDiscovery.c")
+    add_nvtx_test_library(cuda-driver-injection-discovery-ext SHARED "CudaDriverInjectionDiscoveryExt.c")
+
+    add_nvtx_test_library(cuda-driver-injection-discovery-disabled SHARED "CudaDriverInjectionDiscovery.c")
+    target_compile_definitions(cuda-driver-injection-discovery-disabled PRIVATE NVTX_SUPPORT_CUDA_DRIVER_INJECTION_LIBRARY=0)
+    add_nvtx_test_library(cuda-driver-injection-discovery-ext-disabled SHARED "CudaDriverInjectionDiscoveryExt.c")
+    target_compile_definitions(cuda-driver-injection-discovery-ext-disabled PRIVATE NVTX_SUPPORT_CUDA_DRIVER_INJECTION_LIBRARY=0)
+
+    add_test(NAME "CudaDriverInjectionDiscovery"
+        COMMAND runtest -t cuda-driver-injection-discovery loaded)
+    set_cuda_stub_environment("CudaDriverInjectionDiscovery" present "cuda-driver-stub")
+
+    add_test(NAME "CudaDriverInjectionDiscovery getter not exported"
+        COMMAND runtest -t cuda-driver-injection-discovery unloaded)
+    set_cuda_stub_environment("CudaDriverInjectionDiscovery getter not exported" present "cuda-driver-stub-omit-getter")
+
+    add_test(NAME "CudaDriverInjectionDiscovery getter returns error"
+        COMMAND runtest -t cuda-driver-injection-discovery unloaded)
+    set_cuda_stub_environment("CudaDriverInjectionDiscovery getter returns error" present "cuda-driver-stub-getter-error")
+
+    add_test(NAME "CudaDriverInjectionDiscovery init fails"
+        COMMAND runtest -t cuda-driver-injection-discovery unloaded)
+    set_cuda_stub_environment("CudaDriverInjectionDiscovery init fails" present "cuda-driver-stub-init-fails")
+
+    add_test(NAME "CudaDriverInjectionDiscovery yaml absent"
+        COMMAND runtest -t cuda-driver-injection-discovery unloaded)
+    set_cuda_stub_environment("CudaDriverInjectionDiscovery yaml absent" absent "cuda-driver-stub")
+
+    add_test(NAME "CudaDriverInjectionDiscovery opt-out"
+        COMMAND runtest -t cuda-driver-injection-discovery unloaded)
+    set_cuda_stub_environment("CudaDriverInjectionDiscovery opt-out" present "cuda-driver-stub")
+    set_property(TEST "CudaDriverInjectionDiscovery opt-out" APPEND PROPERTY
+        ENVIRONMENT "NVTX_INJECTION64_PATH=./." "NVTX_INJECTION32_PATH=./.")
+
+    add_test(NAME "CudaDriverInjectionDiscovery disabled"
+        COMMAND runtest -t cuda-driver-injection-discovery-disabled unloaded)
+    set_cuda_stub_environment("CudaDriverInjectionDiscovery disabled" present "cuda-driver-stub")
+
+    add_test(NAME "CudaDriverInjectionDiscovery extension"
+        COMMAND runtest -t cuda-driver-injection-discovery-ext loaded)
+    set_cuda_stub_environment("CudaDriverInjectionDiscovery extension" present "cuda-driver-stub-nvtx-extension")
+
+    add_test(NAME "CudaDriverInjectionDiscovery extension getter not exported"
+        COMMAND runtest -t cuda-driver-injection-discovery-ext unloaded)
+    set_cuda_stub_environment("CudaDriverInjectionDiscovery extension getter not exported" present "cuda-driver-stub-omit-getter")
+
+    add_test(NAME "CudaDriverInjectionDiscovery extension getter returns error"
+        COMMAND runtest -t cuda-driver-injection-discovery-ext unloaded)
+    set_cuda_stub_environment("CudaDriverInjectionDiscovery extension getter returns error" present "cuda-driver-stub-getter-error")
+
+    add_test(NAME "CudaDriverInjectionDiscovery extension yaml absent"
+        COMMAND runtest -t cuda-driver-injection-discovery-ext unloaded)
+    set_cuda_stub_environment("CudaDriverInjectionDiscovery extension yaml absent" absent "cuda-driver-stub")
+
+    add_test(NAME "CudaDriverInjectionDiscovery extension opt-out"
+        COMMAND runtest -t cuda-driver-injection-discovery-ext unloaded)
+    set_cuda_stub_environment("CudaDriverInjectionDiscovery extension opt-out" present "cuda-driver-stub-nvtx-extension")
+    set_property(TEST "CudaDriverInjectionDiscovery extension opt-out" APPEND PROPERTY
+        ENVIRONMENT "NVTX_INJECTION64_PATH=./." "NVTX_INJECTION32_PATH=./.")
+
+    add_test(NAME "CudaDriverInjectionDiscovery extension disabled"
+        COMMAND runtest -t cuda-driver-injection-discovery-ext-disabled unloaded)
+    set_cuda_stub_environment("CudaDriverInjectionDiscovery extension disabled" present "cuda-driver-stub-nvtx-extension")
+endif()
+
 add_subdirectory(ShouldFail)
