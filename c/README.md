@@ -179,6 +179,20 @@ _NOTE:_ Older versions of NVTX did require linking against a dynamic library.  N
 
 Since the C and C++ APIs are header-only, dependency-free, and don't require explicit initialization, they are suitable for annotating other header-only libraries.
 
+# Opt out of automatic NVTX tracing
+
+Some tools trace NVTX annotations automatically when active on a system,
+without requiring any change to the way you run your applications.
+
+To opt out and keep an application from being traced, set the
+`NVTX_INJECTION64_PATH` environment variable to `./.` when you run it:
+
+    NVTX_INJECTION64_PATH=./. ./my_application
+
+Use `NVTX_INJECTION32_PATH` for a 32-bit application.  Set the variable for a
+single run as shown, or export it from your shell to opt out for every
+application you run.
+
 # Use NVTX with CMake
 
 For projects that use CMake, the included `CMakeLists.txt` provides targets `nvtx3-c` and `nvtx3-cpp` that set the include search paths (and add the `-ldl` linker option if applicable).  It also provides the `nvtxw3-loader` target described in [NVTXW writer loader](#nvtxw-writer-loader).
