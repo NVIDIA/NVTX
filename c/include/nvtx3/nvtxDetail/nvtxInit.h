@@ -43,6 +43,13 @@
 #define NVTX_BUFSIZE    16384
 #define NVTX_DLLHANDLE  HMODULE
 #define NVTX_DLLOPEN(x) LoadLibraryW(x)
+#if !defined(LOAD_LIBRARY_SEARCH_SYSTEM32)
+#define LOAD_LIBRARY_SEARCH_SYSTEM32 0x00000800
+#endif
+#if !defined(LOAD_LIBRARY_SEARCH_USER_DIRS)
+#define LOAD_LIBRARY_SEARCH_USER_DIRS 0x00000400
+#endif
+#define NVTX_DLLOPEN_CUDA_DRIVER() LoadLibraryExW(L"nvcuda.dll", NVTX_NULLPTR, LOAD_LIBRARY_SEARCH_SYSTEM32 | LOAD_LIBRARY_SEARCH_USER_DIRS)
 #define NVTX_DLLFUNC(h, x) NVTX_REINTERPRET_CAST(void(*)(void), GetProcAddress((h), (x)))
 #define NVTX_DLLCLOSE   FreeLibrary
 #define NVTX_DLLDEFAULT NVTX_NULLPTR
@@ -59,6 +66,7 @@
 #define NVTX_BUFSIZE    16384
 #define NVTX_DLLHANDLE  void*
 #define NVTX_DLLOPEN(x) dlopen(x, RTLD_LAZY)
+#define NVTX_DLLOPEN_CUDA_DRIVER() dlopen("libcuda.so.1", RTLD_LAZY)
 #define NVTX_DLLFUNC(h, x) dlsym((h), (x))
 #define NVTX_DLLCLOSE   dlclose
 #if !defined(__APPLE__)
@@ -151,8 +159,30 @@
 *       - NVTX_SUPPORT_ANDROID_INJECTION_LIBRARY_IN_PACKAGE
 *       - NVTX_SUPPORT_ALREADY_INJECTED_LIBRARY
 *       - NVTX_SUPPORT_STATIC_INJECTION_LIBRARY
+*
+*    3: Add support for an injection supplied by the CUDA driver.  It is appended
+*       to the version 2 search order at the lowest priority, attempted only when
+*       no other injection is found.  This step makes an inexpensive check for the
+*       nvtx-cuda.yaml file that a tool advertises when it needs this injection.
+*       A CUDA driver load is only attempted when the YAML file is present, so a
+*       process with no tool attached avoids the cost of loading the driver.  When
+*       the driver loads, its "cuNvtxGetInjectionInitializer" export is looked up
+*       and, if found, called to get an NVTX init function.
+*       The YAML file is checked at these locations in order, and the first one
+*       that exists ends the check.
+*       - (Windows) %ProgramFiles%\NVIDIA Corporation\NVTX\runtime\nvtx-cuda.yaml
+*       - (Windows) %LOCALAPPDATA%\NVIDIA Corporation\NVTX\nvtx-cuda.yaml
+*       - (Linux) /run/nvidia/nvtx/nvtx-cuda.yaml
+*       - (Linux root) /run/nvidia/nvtx/user.0/nvtx-cuda.yaml
+*       - (Linux non-root) $XDG_RUNTIME_DIR/nvidia/nvtx/nvtx-cuda.yaml
+*       This step can be disabled at compile time by defining
+*       NVTX_SUPPORT_CUDA_DRIVER_INJECTION_LIBRARY to 0.  On a system
+*       where the YAML file is present, a process that does not want the driver
+*       loaded can end the search at runtime by setting NVTX_INJECTION64_PATH, or
+*       NVTX_INJECTION32_PATH for a 32-bit process, to "./.", a value that cannot
+*       be loaded, so no injection is loaded.
 */
-#define NVTX_LOAD_SEQUENCE_VERSION 2
+#define NVTX_LOAD_SEQUENCE_VERSION 3
 
 #ifndef NVTX_SUPPORT_ALREADY_INJECTED_LIBRARY
 /* Define this to 1 for platforms that where pre-injected libraries can be discovered. */
@@ -202,6 +232,16 @@
 #endif
 #endif
 
+#ifndef NVTX_SUPPORT_CUDA_DRIVER_INJECTION_LIBRARY
+/* Define this to 1 for platforms that can load an NVTX injection from the CUDA driver.
+*  Loading the driver needs dynamic injection library support. */
+#if (defined(_WIN32) || defined(__linux__)) && NVTX_SUPPORT_DYNAMIC_INJECTION_LIBRARY
+#define NVTX_SUPPORT_CUDA_DRIVER_INJECTION_LIBRARY 1
+#else
+#define NVTX_SUPPORT_CUDA_DRIVER_INJECTION_LIBRARY 0
+#endif
+#endif
+
 #if NVTX_SUPPORT_STATIC_INJECTION_LIBRARY && !defined(NVTX_STATIC_INJECTION_IMPL)
 /* To make an NVTX injection library support static injection, it must do these things:
 *  - Define InitializeInjectionNvtx2_fnptr as a normal symbol (not weak), pointing to
@@ -226,6 +266,101 @@
 __attribute__((weak)) NvtxInitializeInjectionNvtxFunc_t InitializeInjectionNvtx2_fnptr;
 #endif
 
+#if NVTX_SUPPORT_CUDA_DRIVER_INJECTION_LIBRARY
+NVTX_LINKONCE_FWDDECL_FUNCTION int NVTX_VERSIONED_IDENTIFIER(nvtxShouldUseCudaDriverInjection)(void);
+NVTX_LINKONCE_DEFINE_FUNCTION int NVTX_VERSIONED_IDENTIFIER(nvtxShouldUseCudaDriverInjection)(void)
+{
+#if defined(_MSC_VER)
+#pragma warning( push )
+#pragma warning( disable : 4996 )
+#endif
+#if defined(_WIN32)
+#if NVTX_SUPPORT_ENV_VARS
+    const NVTX_PATHCHAR* dir;
+    const NVTX_PATHCHAR* suffix;
+    NVTX_PATHCHAR path[NVTX_BUFSIZE];
+    size_t dirLen;
+    size_t suffixLen;
+
+    dir = NVTX_GETENV(NVTX_STR("ProgramFiles"));
+    suffix = NVTX_STR("\\NVIDIA Corporation\\NVTX\\runtime\\nvtx-cuda.yaml");
+    if (dir && dir[0] != 0)
+    {
+        dirLen = NVTX_STATIC_CAST(size_t, lstrlenW(dir));
+        suffixLen = NVTX_STATIC_CAST(size_t, lstrlenW(suffix));
+        if (dirLen + suffixLen < NVTX_STATIC_CAST(size_t, NVTX_BUFSIZE))
+        {
+            memcpy(path, dir, dirLen * sizeof(NVTX_PATHCHAR));
+            memcpy(path + dirLen, suffix, (suffixLen + 1) * sizeof(NVTX_PATHCHAR));
+            if (GetFileAttributesW(path) != INVALID_FILE_ATTRIBUTES)
+            {
+                return 1;
+            }
+        }
+    }
+
+    dir = NVTX_GETENV(NVTX_STR("LOCALAPPDATA"));
+    suffix = NVTX_STR("\\NVIDIA Corporation\\NVTX\\nvtx-cuda.yaml");
+    if (dir && dir[0] != 0)
+    {
+        dirLen = NVTX_STATIC_CAST(size_t, lstrlenW(dir));
+        suffixLen = NVTX_STATIC_CAST(size_t, lstrlenW(suffix));
+        if (dirLen + suffixLen < NVTX_STATIC_CAST(size_t, NVTX_BUFSIZE))
+        {
+            memcpy(path, dir, dirLen * sizeof(NVTX_PATHCHAR));
+            memcpy(path + dirLen, suffix, (suffixLen + 1) * sizeof(NVTX_PATHCHAR));
+            if (GetFileAttributesW(path) != INVALID_FILE_ATTRIBUTES)
+            {
+                return 1;
+            }
+        }
+    }
+#endif /* NVTX_SUPPORT_ENV_VARS */
+    return 0;
+#elif defined(__GNUC__)
+#if NVTX_SUPPORT_ENV_VARS
+    const NVTX_PATHCHAR* dir;
+    const NVTX_PATHCHAR* suffix;
+    NVTX_PATHCHAR path[NVTX_BUFSIZE];
+    size_t dirLen;
+    size_t suffixLen;
+#endif /* NVTX_SUPPORT_ENV_VARS */
+
+    if (access(NVTX_STR("/run/nvidia/nvtx/nvtx-cuda.yaml"), F_OK) == 0)
+    {
+        return 1;
+    }
+
+    if (geteuid() == 0)
+    {
+        return access(NVTX_STR("/run/nvidia/nvtx/user.0/nvtx-cuda.yaml"), F_OK) == 0;
+    }
+
+#if NVTX_SUPPORT_ENV_VARS
+    dir = NVTX_GETENV(NVTX_STR("XDG_RUNTIME_DIR"));
+    suffix = NVTX_STR("/nvidia/nvtx/nvtx-cuda.yaml");
+    if (dir && dir[0] != 0)
+    {
+        dirLen = strlen(dir);
+        suffixLen = strlen(suffix);
+        if (dirLen + suffixLen < NVTX_STATIC_CAST(size_t, NVTX_BUFSIZE))
+        {
+            memcpy(path, dir, dirLen * sizeof(NVTX_PATHCHAR));
+            memcpy(path + dirLen, suffix, (suffixLen + 1) * sizeof(NVTX_PATHCHAR));
+            return access(path, F_OK) == 0;
+        }
+    }
+#endif /* NVTX_SUPPORT_ENV_VARS */
+    return 0;
+#else
+    return 0;
+#endif
+#if defined(_MSC_VER)
+#pragma warning( pop )
+#endif
+}
+#endif /* NVTX_SUPPORT_CUDA_DRIVER_INJECTION_LIBRARY */
+
 /* This function tries to find or load an NVTX injection library and get the
 *  address of its InitializeInjection2 function.  If such a function pointer
 *  is found, it is called, and passed the address of this NVTX instance's
@@ -241,6 +376,7 @@ __attribute__((weak)) NvtxInitializeInjectionNvtxFunc_t InitializeInjectionNvtx2
 *      - Path specified by env var NVTX_INJECTION??_PATH (?? is 32 or 64)
 *      - On Android, libNvtxInjection??.so within the package (?? is 32 or 64)
 *  - Statically-linked injection library defining InitializeInjectionNvtx2_fnptr
+*  - Injection from the CUDA driver via its exported cuNvtxGetInjectionInitializer
 */
 NVTX_LINKONCE_FWDDECL_FUNCTION int NVTX_VERSIONED_IDENTIFIER(nvtxInitializeInjectionLibrary)(void);
 NVTX_LINKONCE_DEFINE_FUNCTION int NVTX_VERSIONED_IDENTIFIER(nvtxInitializeInjectionLibrary)(void)
@@ -280,6 +416,18 @@ NVTX_LINKONCE_DEFINE_FUNCTION int NVTX_VERSIONED_IDENTIFIER(nvtxInitializeInject
 #if defined(_MSC_VER)
 #pragma warning( pop )
 #endif
+
+        /* "./." cannot name a loadable library, so it is used as an explicit
+        *  request for no injection.  Stop the search here without attempting a
+        *  load. */
+        if (injectionLibraryPath
+            && injectionLibraryPath[0] == '.'
+            && injectionLibraryPath[1] == '/'
+            && injectionLibraryPath[2] == '.'
+            && injectionLibraryPath[3] == '\0')
+        {
+            return NVTX_ERR_NO_INJECTION_LIBRARY_AVAILABLE;
+        }
 #endif
 
 #if NVTX_SUPPORT_ANDROID_INJECTION_LIBRARY_IN_PACKAGE
@@ -398,6 +546,35 @@ NVTX_LINKONCE_DEFINE_FUNCTION int NVTX_VERSIONED_IDENTIFIER(nvtxInitializeInject
         if (InitializeInjectionNvtx2_fnptr)
         {
             init_fnptr = InitializeInjectionNvtx2_fnptr;
+        }
+    }
+#endif
+
+#if NVTX_SUPPORT_CUDA_DRIVER_INJECTION_LIBRARY
+    if (!init_fnptr && NVTX_VERSIONED_IDENTIFIER(nvtxShouldUseCudaDriverInjection)())
+    {
+        /* Load the CUDA driver */
+        injectionLibraryHandle = NVTX_DLLOPEN_CUDA_DRIVER();
+        if (injectionLibraryHandle)
+        {
+            /* Get an NVTX init function from cuNvtxGetInjectionInitializer */
+            nvtx_CUnvtxGetInjectionInitializerFunc cuNvtxGetInjectionInitializer_fnptr =
+                NVTX_REINTERPRET_CAST(nvtx_CUnvtxGetInjectionInitializerFunc,
+                    NVTX_DLLFUNC(injectionLibraryHandle, "cuNvtxGetInjectionInitializer"));
+            if (cuNvtxGetInjectionInitializer_fnptr)
+            {
+                nvtx_CUgenericFunctionPointer generic_fnptr = NVTX_NULLPTR;
+                if (cuNvtxGetInjectionInitializer_fnptr(
+                        NVTX_CU_NVTX_INJECTION_INITIALIZER_NVTX, &generic_fnptr) == 0)
+                {
+                    init_fnptr = NVTX_REINTERPRET_CAST(NvtxInitializeInjectionNvtxFunc_t, generic_fnptr);
+                }
+            }
+            if (!init_fnptr)
+            {
+                NVTX_DLLCLOSE(injectionLibraryHandle);
+                injectionLibraryHandle = NVTX_DLLDEFAULT;
+            }
         }
     }
 #endif

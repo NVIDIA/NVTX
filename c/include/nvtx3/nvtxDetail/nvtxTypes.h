@@ -65,6 +65,20 @@ typedef void* nvtx_cl_sampler;
 typedef void* nvtx_nvtxSyncUser_t;
 typedef void nvtx_nvtxSyncUserAttributes_t;
 
+typedef void (NVTX_API * nvtx_CUgenericFunctionPointer)(void);
+
+typedef enum nvtx_CUnvtxInjectionInitializerKind
+{
+    NVTX_CU_NVTX_INJECTION_INITIALIZER_INVALID        = 0x0,
+    NVTX_CU_NVTX_INJECTION_INITIALIZER_NVTX           = 0x1,
+    NVTX_CU_NVTX_INJECTION_INITIALIZER_NVTX_EXTENSION = 0x2,
+    NVTX_CU_NVTX_INJECTION_INITIALIZER_MAX            = 0x7FFFFFFF
+} nvtx_CUnvtxInjectionInitializerKind;
+
+typedef int (NVTX_API * nvtx_CUnvtxGetInjectionInitializerFunc)(
+    nvtx_CUnvtxInjectionInitializerKind kind,
+    nvtx_CUgenericFunctionPointer* initializer);
+
 /* --------- Types for function pointers (with fake API types) ---------- */
 
 typedef void (NVTX_API * nvtxMarkEx_impl_fntype)(const nvtxEventAttributes_t* eventAttrib);
