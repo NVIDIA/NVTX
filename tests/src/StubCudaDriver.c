@@ -68,12 +68,12 @@ static int NVTX_API StubExtInit(nvtxExtModuleInfo_t* moduleInfo)
 
 NVTX_DYNAMIC_EXPORT
 int NVTX_API cuNvtxGetInjectionInitializer(
-    nvtx_CUnvtxInjectionInitializerKind kind,
-    nvtx_CUgenericFunctionPointer* initializer);
+    NvtxInjectionInitializerKind kind,
+    NvtxInjectionGenericFunc_t* initializer);
 NVTX_DYNAMIC_EXPORT
 int NVTX_API cuNvtxGetInjectionInitializer(
-    nvtx_CUnvtxInjectionInitializerKind kind,
-    nvtx_CUgenericFunctionPointer* initializer)
+    NvtxInjectionInitializerKind kind,
+    NvtxInjectionGenericFunc_t* initializer)
 {
     NVTX_EXPORT_UNMANGLED_FUNCTION_NAME
 #if defined(STUB_CUDA_GETTER_ERROR)
@@ -82,14 +82,14 @@ int NVTX_API cuNvtxGetInjectionInitializer(
     return 1;
 #else
 #if !defined(STUB_CUDA_NVTX_EXTENSION)
-    if (kind == NVTX_CU_NVTX_INJECTION_INITIALIZER_NVTX)
+    if (kind == NVTX_INJECTION_INITIALIZER_CORE)
     {
-        *initializer = (nvtx_CUgenericFunctionPointer)StubInit;
+        *initializer = (NvtxInjectionGenericFunc_t)StubInit;
     }
 #else
-    if (kind == NVTX_CU_NVTX_INJECTION_INITIALIZER_NVTX_EXTENSION)
+    if (kind == NVTX_INJECTION_INITIALIZER_EXTENSION)
     {
-        *initializer = (nvtx_CUgenericFunctionPointer)StubExtInit;
+        *initializer = (NvtxInjectionGenericFunc_t)StubExtInit;
     }
 #endif
     else
