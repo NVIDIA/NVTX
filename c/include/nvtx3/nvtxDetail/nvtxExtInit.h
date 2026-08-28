@@ -345,14 +345,14 @@ NVTX_LINKONCE_DEFINE_FUNCTION int NVTX_VERSIONED_IDENTIFIER(nvtxExtLoadInjection
         if (injectionLibraryHandle)
         {
             /* Get an NVTX init function from cuNvtxGetInjectionInitializer */
-            nvtx_CUnvtxGetInjectionInitializerFunc cuNvtxGetInjectionInitializer_fnptr =
-                NVTX_REINTERPRET_CAST(nvtx_CUnvtxGetInjectionInitializerFunc,
+            NvtxGetInjectionInitializerFunc_t cuNvtxGetInjectionInitializer_fnptr =
+                NVTX_REINTERPRET_CAST(NvtxGetInjectionInitializerFunc_t,
                     NVTX_DLLFUNC(injectionLibraryHandle, "cuNvtxGetInjectionInitializer"));
             if (cuNvtxGetInjectionInitializer_fnptr)
             {
-                nvtx_CUgenericFunctionPointer generic_fnptr = NVTX_NULLPTR;
+                NvtxInjectionGenericFunc_t generic_fnptr = NVTX_NULLPTR;
                 if (cuNvtxGetInjectionInitializer_fnptr(
-                        NVTX_CU_NVTX_INJECTION_INITIALIZER_NVTX_EXTENSION, &generic_fnptr) == 0)
+                        NVTX_INJECTION_INITIALIZER_EXTENSION, &generic_fnptr) == 0)
                 {
                     init_fnptr = NVTX_REINTERPRET_CAST(NvtxExtInitializeInjectionFunc_t, generic_fnptr);
                 }
