@@ -1,0 +1,19 @@
+---
+stages:
+  - test
+  - upload
+  - publish-test
+  - publish
+  - dispatch
+
+.manual-mode:
+  stage: dispatch
+  rules:
+    - if: '$CI_PIPELINE_SOURCE == "web"'
+  when: manual
+  allow_failure: true
+
+.windows-retry-template:
+  retry:
+    max: 2
+    when: scheduler_failure

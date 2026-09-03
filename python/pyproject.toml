@@ -66,23 +66,16 @@ addopts = [
 ]
 
 [tool.cibuildwheel]
-skip = ["*musllinux*", "cp38-*"]
+skip = ["*musllinux*"]
 build = "cp*"
-test-command = """
-pip install numpy
-pytest {package}/tests
-pytest --enable-injection {package}/tests
-pip uninstall -y numpy
-pytest {package}/tests
-pytest --enable-injection {package}/tests
-"""
+test-command = 'python "{project}/python/tests/run_ci_tests.py"'
 test-extras = "test"
 
 [tool.cibuildwheel.linux]
 archs = ["x86_64", "aarch64"]
 
 [tool.cibuildwheel.windows]
-archs = ["AMD64"]
+archs = ["AMD64", "ARM64"]
 
 [tool.cibuildwheel.macos]
 archs = ["all"]

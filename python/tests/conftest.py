@@ -80,26 +80,33 @@ INJECTION_DIR = TESTS_DIR / "injection"
 INJECTION_MODULE_NAME = "nvtx_test_injection"
 
 
-def build_injection():
-    """
-    Compile the injection module to be used in tests and return the path to the compiled module.
-    """
-    owd = os.getcwd()
-    try:
-        os.chdir(INJECTION_DIR)
-        setuptools.setup(
-            script_args=["build_ext", "-i"],
-            ext_modules=[
-                setuptools.Extension(
-                    INJECTION_MODULE_NAME,
-                    sources=[str(INJECTION_DIR / "NvtxTestInjection.cpp")],
-                    include_dirs=[str(INCLUDE_DIR)],
-                )
-            ],
-        )
-    finally:
-        os.chdir(owd)
-    return str(next(INJECTION_DIR.glob(f"{INJECTION_MODULE_NAME}.*")))
+def build_injection(build_dir: Path) -> str:
+    """Compile the test injection module and return its shared-library path."""
+    build_dir.mkdir(parents=True, exist_ok=True)
+    extension = setuptools.Extension(
+        INJECTION_MODULE_NAME,
+        sources=[str(INJECTION_DIR / "NvtxTestInjection.cpp")],
+        include_dirs=[str(INCLUDE_DIR)],
+        depends=[str(path) for path in INCLUDE_DIR.rglob("*.h")],
+    )
+    distribution = setuptools.Distribution(
+        {
+            "name": INJECTION_MODULE_NAME,
+            "ext_modules": [extension],
+        }
+    )
+    command = distribution.get_command_obj("build_ext")
+    command.ensure_finalized()
+    command.build_lib = str(build_dir / "lib")
+    command.build_temp = str(build_dir / "temp")
+    command.force = True
+    command.inplace = False
+    command.run()
+
+    injection_path = Path(command.get_ext_fullpath(INJECTION_MODULE_NAME)).resolve()
+    if not injection_path.is_file():
+        raise RuntimeError(f"test injection was not built at {injection_path}")
+    return str(injection_path)
 
 
 def pytest_addoption(parser):
@@ -112,9 +119,13 @@ def enable_injection(request):
 
 
 @pytest.fixture(scope="session", autouse=True)
-def nvtx_events(enable_injection):
+def nvtx_events(
+    enable_injection,
+    tmp_path_factory: pytest.TempPathFactory,
+):
     if enable_injection:
-        return NvtxEventsReader(build_injection())
+        build_dir = tmp_path_factory.mktemp("nvtx_test_injection")
+        return NvtxEventsReader(build_injection(build_dir))
 
 
 @pytest.fixture(autouse=True)
@@ -557,9 +568,7 @@ if np is not None:
             )
 
         def registered_schema_entry_type(dtype):
-            return registered_schemas[
-                dtype, dtype_metadata_key(dtype), False, 0
-            ]
+            return registered_schemas[dtype, dtype_metadata_key(dtype), False, 0]
 
         def child_schema_dtypes(dtype, expected_schema_flags):
             if dtype.subdtype:
@@ -659,9 +668,7 @@ if np is not None:
     ):
         # Counter groups must set the flag on the top-level schema.
         schema_flags = (
-            PAYLOAD_SCHEMA_FLAG_COUNTER_GROUP
-            if dtype.fields is not None
-            else 0
+            PAYLOAD_SCHEMA_FLAG_COUNTER_GROUP if dtype.fields is not None else 0
         )
         verify_payload_dtype_schema_registration(
             events,
