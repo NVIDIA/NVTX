@@ -1,0 +1,147 @@
+---
+include:
+  - local: /.gitlab/ci/common.yml
+
+.python-template:
+  timeout: 10m
+  interruptible: true
+  rules:
+    - if: '$CI_PIPELINE_SOURCE == "parent_pipeline"'
+    - if: '$CI_PIPELINE_SOURCE == "merge_request_event"'
+      changes:
+        - .gitlab-ci.yml
+        - .gitlab/ci/common.yml
+        - .gitlab/ci/python-release.yml
+        - .gitlab/ci/scripts/python-*.sh
+        - .gitlab/ci/python.yml
+        - c/include/*
+        - c/include/**/*
+        - python/*.cfg
+        - python/*.in
+        - python/*.ps1
+        - python/*.py
+        - python/*.sh
+        - python/*.toml
+        - python/src/*
+        - python/src/**/*
+        - python/tests/*
+        - python/tests/**/*
+
+.python-wheel-template:
+  extends: .python-template
+  variables:
+    CIBUILDWHEEL_VERSION: "4.1.0"
+  parallel:
+    matrix:
+      - CIBW_BUILD:
+          - "cp39-*"
+          - "cp310-*"
+          - "cp311-*"
+          - "cp312-*"
+          - "cp313-*"
+          - "cp314-*"
+          - "cp314t-*"
+  artifacts:
+    when: on_failure
+    paths:
+      - wheelhouse/*.whl
+    reports:
+      junit: junit-*.xml
+    expire_in: 7 days
+
+.python-wheel-linux-template:
+  extends: .python-wheel-template
+  script:
+    - python3 -m venv "$CI_PROJECT_DIR/.venv"
+    - >-
+      "$CI_PROJECT_DIR/.venv/bin/python" -m pip install
+      "cibuildwheel==$CIBUILDWHEEL_VERSION"
+    - >-
+      "$CI_PROJECT_DIR/.venv/bin/python" -m cibuildwheel
+      --output-dir wheelhouse python
+
+'Python sdist':
+  tags: [linux, x64]
+  extends: .python-template
+  artifacts:
+    when: on_failure
+    name: nvtx-sdist
+    paths:
+      - python/dist/*.tar.gz
+    reports:
+      junit: junit-*.xml
+    expire_in: 7 days
+  script:
+    - python3 -m venv "$CI_PROJECT_DIR/.venv"
+    - source "$CI_PROJECT_DIR/.venv/bin/activate"
+    - pip install build
+    - python -m build --sdist python
+    - pip install "$(ls python/dist/*.tar.gz)[test]"
+    - python python/tests/run_ci_tests.py
+
+'Python (Linux, x64)':
+  tags: [linux, x64]
+  extends: .python-wheel-linux-template
+  variables:
+    CIBW_ARCHS_LINUX: x86_64
+  artifacts:
+    name: nvtx-wheels-linux-x64-$CI_NODE_INDEX
+
+'Python (Linux, arm64)':
+  image: docker:28
+  services:
+    - name: docker:28-dind
+  tags:
+    - perflab-arm
+    - os/linux-arm
+    - type/docker
+    - cpu/arm
+  extends: .python-wheel-linux-template
+  variables:
+    CIBW_ARCHS_LINUX: aarch64
+  artifacts:
+    name: nvtx-wheels-linux-arm64-$CI_NODE_INDEX
+  retry:
+    max: 2
+    when:
+      - runner_system_failure
+      - scheduler_failure
+  before_script:
+    - apk add --no-cache python3 py3-pip
+
+.python-wheel-windows-template:
+  tags: [windows, x64]
+  extends:
+    - .python-wheel-template
+    - .windows-retry-template
+  script:
+    - $BasePython = Join-Path (Join-Path $env:PYTHONPATH "3.12") "python.exe"
+    - $Venv = Join-Path $env:CI_PROJECT_DIR ".venv"
+    - "& $BasePython -m venv $Venv"
+    - $Python = Join-Path (Join-Path $Venv "Scripts") "python.exe"
+    - >-
+      & $Python -m pip install --upgrade
+      "cibuildwheel==$env:CIBUILDWHEEL_VERSION"
+    - '& $Python -m cibuildwheel --output-dir wheelhouse python'
+
+'Python (Windows, x64)':
+  extends: .python-wheel-windows-template
+  variables:
+    CIBW_ARCHS_WINDOWS: AMD64
+  artifacts:
+    name: nvtx-wheels-windows-x64-$CI_NODE_INDEX
+
+'Python (Windows, arm64)':
+  extends: .python-wheel-windows-template
+  variables:
+    CIBW_ARCHS_WINDOWS: ARM64
+  artifacts:
+    name: nvtx-wheels-windows-arm64-$CI_NODE_INDEX
+
+'Build and test Python packages':
+  extends: .manual-mode
+  trigger:
+    include:
+      - local: /.gitlab/ci/python.yml
+      - local: /.gitlab/ci/python-release.yml
+    strategy: depend

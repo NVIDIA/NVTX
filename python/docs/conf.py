@@ -25,7 +25,7 @@ copyright = "2020-2026, NVIDIA Corporation"
 author = "NVIDIA Corporation"
 
 # The full version, including alpha/beta/rc tags
-release = "0.2.16"
+release = "0.2.17"
 
 
 # -- General configuration ---------------------------------------------------

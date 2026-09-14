@@ -1,0 +1,21 @@
+---
+include:
+  - local: /.gitlab/ci/common.yml
+
+'Source Validation':
+  tags: [linux, x64]
+  timeout: 10m
+  variables:
+    GIT_DEPTH: 0
+  rules:
+    - if: '$CI_PIPELINE_SOURCE == "merge_request_event"'
+    - if: '$CI_PIPELINE_SOURCE == "parent_pipeline"'
+  script:
+    - tests/scripts/validate-source-files.sh
+
+'Run Source Validation':
+  extends: .manual-mode
+  trigger:
+    include:
+      - local: /.gitlab/ci/validate.yml
+    strategy: depend
