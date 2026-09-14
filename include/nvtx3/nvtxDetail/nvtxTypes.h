@@ -140,6 +140,26 @@ typedef void (NVTX_API * nvtxDomainSyncUserAcquireFailed_fakeimpl_fntype)(nvtx_n
 typedef void (NVTX_API * nvtxDomainSyncUserAcquireSuccess_fakeimpl_fntype)(nvtx_nvtxSyncUser_t handle);
 typedef void (NVTX_API * nvtxDomainSyncUserReleasing_fakeimpl_fntype)(nvtx_nvtxSyncUser_t handle);
 
+/* ---------------- Types for injection initializer --------------------- */
+
+typedef void (NVTX_API * NvtxInjectionGenericFunc_t)(void);
+
+/* Kind values must match the selector values accepted by
+ * cuNvtxGetInjectionInitializer. */
+typedef enum NvtxInjectionInitializerKind
+{
+    NVTX_INJECTION_INITIALIZER_INVALID   = 0,
+    NVTX_INJECTION_INITIALIZER_CORE      = 1,
+    NVTX_INJECTION_INITIALIZER_EXTENSION = 2,
+    /* --- New constants must only be added directly above this line --- */
+    NVTX_INJECTION_INITIALIZER_SIZE,
+    NVTX_INJECTION_INITIALIZER_FORCE_INT = 0x7fffffff
+} NvtxInjectionInitializerKind;
+
+typedef int (NVTX_API * NvtxGetInjectionInitializerFunc_t)(
+    NvtxInjectionInitializerKind kind,
+    NvtxInjectionGenericFunc_t* initializer);
+
 /* ---------------- Types for callback subscription --------------------- */
 
 typedef const void *(NVTX_API * NvtxGetExportTableFunc_t)(uint32_t exportTableId);
@@ -179,7 +199,7 @@ typedef enum NvtxCallbackIdCore
     NVTX_CBID_CORE_NameOsThreadW           = 15,
     /* --- New constants must only be added directly above this line --- */
     NVTX_CBID_CORE_SIZE,
-    NVTX_CBID_CORE_FORCE_INT = 0x7fffffff
+    NVTX_CBID_CORE_FORCE_INT               = 0x7fffffff
 } NvtxCallbackIdCore;
 
 typedef enum NvtxCallbackIdCore2
