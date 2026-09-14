@@ -48,6 +48,11 @@ See [here](https://nvidia.github.io/NVTX/python/) for detailed docs.
 
 ## Release Notes
 
+### 0.2.17
+
+- Discover an NVTX injection from the CUDA driver when environment variable
+  `NVTX_INJECTION64_PATH` / `NVTX_INJECTION32_PATH` is not set (C langauge changes only).
+
 ### 0.2.16
 
 - Add support for counter annotations through the NVTX Counters extension.

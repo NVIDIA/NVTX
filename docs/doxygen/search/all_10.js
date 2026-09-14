@@ -1,8 +1,7 @@
 var searchData=
 [
-  ['handling_0',['14. Error Handling',['../md__n_v_t_x_w___u_s_e_r___g_u_i_d_e.html#autotoc_md31',1,'']]],
-  ['header_1',['header',['../structnvtx_semantics_counter__t.html#a11f4578f98bf9511ac49621748b26057',1,'nvtxSemanticsCounter_t']]],
-  ['helper_20macros_2',['Helper Macros',['../md__n_v_t_x___e_x_t_e_n_d_e_d___p_a_y_l_o_a_d_s.html#NVTX_EXTENDED_PAYLOADS_HELPERS',1,'']]],
-  ['helpers_3',['4. Quick Start (With Helpers)',['../md__n_v_t_x_w___u_s_e_r___g_u_i_d_e.html#autotoc_md13',1,'']]],
-  ['how_20to_20examples_4',['How-To Examples',['../md__n_v_t_x___e_x_t_e_n_d_e_d___p_a_y_l_o_a_d_s.html#NVTX_EXTENDED_PAYLOADS_HOWTO',1,'']]]
+  ['unit_422',['unit',['../structnvtx_semantics_counter__t.html#ab63975716531a02c826e3d60924498e9',1,'nvtxSemanticsCounter_t']]],
+  ['unitscaledenominator_423',['unitScaleDenominator',['../structnvtx_semantics_counter__t.html#a88d60a2c7692ca703a542f3252770f74',1,'nvtxSemanticsCounter_t']]],
+  ['unitscalenumerator_424',['unitScaleNumerator',['../structnvtx_semantics_counter__t.html#a8b5740c0116aa8943ba43f9c97e14c64',1,'nvtxSemanticsCounter_t']]],
+  ['usage_425',['usage',['../structnvtx_mem_heap_desc__v1.html#ace1b78eba0d1733c52f3783fd72b9474',1,'nvtxMemHeapDesc_v1']]]
 ];
