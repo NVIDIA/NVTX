@@ -15,7 +15,6 @@ fn main() {
     let host = env::var("HOST").expect("host triple is always set");
 
     lib_builder
-        .include("../../../c/include")
         .include("c/include")
         .opt_level(2)
         .file(Path::new("c/src/lib.c"));
@@ -23,8 +22,6 @@ fn main() {
     builder = builder
         .use_core()
         .detect_include_paths(true)
-        .clang_arg("-I")
-        .clang_arg("../../../c/include")
         .clang_arg("-I")
         .clang_arg("c/include")
         .header("c/include/wrapper.h")

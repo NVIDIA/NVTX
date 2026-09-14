@@ -198,7 +198,7 @@ Normal (non-IMPORTED) targets will be defined when using CPM (CMake Package Mana
         CPMAddPackage(
             NAME NVTX
             GITHUB_REPOSITORY NVIDIA/NVTX
-            GIT_TAG v3.6.0-c-cpp
+            GIT_TAG v3.7.0-c-cpp
             GIT_SHALLOW TRUE)
 
         add_executable(my_program main.cpp)
@@ -296,7 +296,7 @@ include(path/to/CPM.cmake)
 CPMAddPackage(
     NAME NVTX
     GITHUB_REPOSITORY NVIDIA/NVTX
-    GIT_TAG v3.6.0-c-cpp
+    GIT_TAG v3.7.0-c-cpp
     GIT_SHALLOW TRUE)
 
 # Example C program
@@ -409,6 +409,25 @@ Providing non-public information to tools via NVTX is helpful in internal builds
 #define NVTX_DISABLE
 ```
 Or add `-DNVTX_DISABLE` to the compiler command line, only in the configuration for public builds.  This avoids having to manually add `#if`s around NVTX calls solely for the purpose of disabling all of them in specific build configurations.
+
+# How is NVTX call handling configured at run-time?
+
+When initialized, NVTX determines if an injection implementation is available. If
+one is found, it is attached, and NVTX API calls are passed to the injection library.
+To explicitly request a dynamic injection library, set the environment variable
+`NVTX_INJECTION64_PATH` (for a 64-bit process) or `NVTX_INJECTION32_PATH` (for
+a 32-bit process) to indicate the library's path.
+
+Newer versions of NVTX include a mechanism that allows automatic tracing of NVTX annotated
+applications. This mechanism is intended to be used by production monitoring tools, and is
+not something most developers need to be concerned about.
+
+To opt out of automatic discovery, set the appropriate `NVTX_INJECTIONxx_PATH` variable
+to `./.` (dot-slash-dot). NVTX treats this value as a request to stop the injection
+search entirely.
+
+For details about implementing and explicitly loading an injection library,
+see the [NVTX Sample Injection](tools/sample-injection/README.md).
 
 # General Usage Guidelines
 

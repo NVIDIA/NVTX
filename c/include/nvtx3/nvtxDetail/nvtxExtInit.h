@@ -107,6 +107,16 @@ extern "C" {
 #endif
 #endif
 
+#ifndef NVTX_SUPPORT_CUDA_DRIVER_INJECTION_LIBRARY
+/* Define this to 1 for platforms that can load an NVTX injection from the CUDA driver.
+*  Loading the driver needs dynamic injection library support. */
+#if (defined(_WIN32) || defined(__linux__)) && NVTX_SUPPORT_DYNAMIC_INJECTION_LIBRARY
+#define NVTX_SUPPORT_CUDA_DRIVER_INJECTION_LIBRARY 1
+#else
+#define NVTX_SUPPORT_CUDA_DRIVER_INJECTION_LIBRARY 0
+#endif
+#endif
+
 #if NVTX_SUPPORT_STATIC_INJECTION_LIBRARY && !defined(NVTX_STATIC_INJECTION_IMPL)
 /* To make an NVTX injection library support static injection, it must do these things:
 *  - Define InitializeInjectionNvtxExtension_fnptr as a normal symbol (not weak), pointing to
@@ -146,6 +156,7 @@ __attribute__((weak)) NvtxExtInitializeInjectionFunc_t InitializeInjectionNvtxEx
 *      - Path specified by env var NVTX_INJECTION??_PATH (?? is 32 or 64)
 *      - On Android, libNvtxInjection??.so within the package (?? is 32 or 64)
 *  - Statically-linked injection library defining InitializeInjectionNvtxExtension_fnptr
+*  - Injection from the CUDA driver via its exported cuNvtxGetInjectionInitializer
 */
 NVTX_LINKONCE_FWDDECL_FUNCTION int NVTX_VERSIONED_IDENTIFIER(nvtxExtLoadInjectionLibrary)(
     NvtxExtInitializeInjectionFunc_t* out_init_fnptr);
@@ -191,6 +202,18 @@ NVTX_LINKONCE_DEFINE_FUNCTION int NVTX_VERSIONED_IDENTIFIER(nvtxExtLoadInjection
 #if defined(_MSC_VER)
 #pragma warning( pop )
 #endif
+
+        /* "./." cannot name a loadable library, so it is used as an explicit
+           request for no injection.  Stop the search here without attempting a
+           load. */
+        if (injectionLibraryPath
+            && injectionLibraryPath[0] == '.'
+            && injectionLibraryPath[1] == '/'
+            && injectionLibraryPath[2] == '.'
+            && injectionLibraryPath[3] == '\0')
+        {
+            return NVTX_ERR_NO_INJECTION_LIBRARY_AVAILABLE;
+        }
 #endif
 
 #if NVTX_SUPPORT_ANDROID_INJECTION_LIBRARY_IN_PACKAGE
@@ -310,6 +333,35 @@ NVTX_LINKONCE_DEFINE_FUNCTION int NVTX_VERSIONED_IDENTIFIER(nvtxExtLoadInjection
         if (InitializeInjectionNvtxExtension_fnptr)
         {
             init_fnptr = InitializeInjectionNvtxExtension_fnptr;
+        }
+    }
+#endif
+
+#if NVTX_SUPPORT_CUDA_DRIVER_INJECTION_LIBRARY
+    if (!init_fnptr && NVTX_VERSIONED_IDENTIFIER(nvtxShouldUseCudaDriverInjection)())
+    {
+        /* Load the CUDA driver */
+        injectionLibraryHandle = NVTX_DLLOPEN_CUDA_DRIVER();
+        if (injectionLibraryHandle)
+        {
+            /* Get an NVTX init function from cuNvtxGetInjectionInitializer */
+            NvtxGetInjectionInitializerFunc_t cuNvtxGetInjectionInitializer_fnptr =
+                NVTX_REINTERPRET_CAST(NvtxGetInjectionInitializerFunc_t,
+                    NVTX_DLLFUNC(injectionLibraryHandle, "cuNvtxGetInjectionInitializer"));
+            if (cuNvtxGetInjectionInitializer_fnptr)
+            {
+                NvtxInjectionGenericFunc_t generic_fnptr = NVTX_NULLPTR;
+                if (cuNvtxGetInjectionInitializer_fnptr(
+                        NVTX_INJECTION_INITIALIZER_EXTENSION, &generic_fnptr) == 0)
+                {
+                    init_fnptr = NVTX_REINTERPRET_CAST(NvtxExtInitializeInjectionFunc_t, generic_fnptr);
+                }
+            }
+            if (!init_fnptr)
+            {
+                NVTX_DLLCLOSE(injectionLibraryHandle);
+                injectionLibraryHandle = NVTX_DLLDEFAULT;
+            }
         }
     }
 #endif
