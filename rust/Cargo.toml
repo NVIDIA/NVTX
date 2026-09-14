@@ -5,7 +5,7 @@
 members = ["crates/nvtx-sys"]
 
 [workspace.package]
-version = "2.0.0"
+version = "2.1.0"
 authors = ["NVIDIA", "Voltron Data"]
 edition = "2021"
 rust-version = "1.77.0"
@@ -19,7 +19,7 @@ categories = ["api-bindings", "development-tools::profiling", "no-std"]
 
 [workspace.dependencies]
 # Keep the local development path and the crates.io version coupled for publishing.
-nvtx-sys = { version = "2.0.0", path = "crates/nvtx-sys", default-features = false }
+nvtx-sys = { version = "2.1.0", path = "crates/nvtx-sys", default-features = false }
 
 [workspace.lints.clippy]
 all = { level = "deny", priority = -1 }
