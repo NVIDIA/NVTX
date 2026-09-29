@@ -48,6 +48,11 @@ fn main() {
         .allowlist_type("nvtx[^_].*")
         // expose NVTX_VERSION
         .allowlist_var("NVTX_VERSION")
+        // expose the push/pop sentinel returned when no tool tracks range depth
+        .allowlist_var("NVTX_NO_PUSH_POP_TRACKING")
+        // evaluate macros bindgen cannot parse natively, e.g. the cast in
+        // NVTX_NO_PUSH_POP_TRACKING's definition
+        .clang_macro_fallback()
         // expose all nvtx-prefixed functions
         .allowlist_function("nvtx.*")
         // expose wchar_t for wide function parameters

@@ -18,6 +18,10 @@ pub mod ffi {
 // CAST: This constant cast stays `as` because `From`/`TryFrom` calls are not const on stable Rust.
 pub const NVTX_VERSION: i16 = ffi::NVTX_VERSION as i16;
 
+/// Sentinel returned by the push/pop functions (e.g. [`range_push_ascii`] and
+/// [`range_pop`]) when no attached tool tracks range nesting depth.
+pub const NVTX_NO_PUSH_POP_TRACKING: i32 = ffi::NVTX_NO_PUSH_POP_TRACKING;
+
 /// A unique range identifier.
 pub type RangeId = ffi::nvtxRangeId_t;
 
@@ -77,6 +81,12 @@ mod tests {
             value.into() >= 0,
             "{name} must fit in NVTX's signed 32-bit type fields"
         );
+    }
+
+    #[test]
+    fn no_push_pop_tracking_matches_c_header() {
+        // `nvToolsExt.h` defines this as `NVTX_STATIC_CAST(int, -2)`.
+        assert_eq!(NVTX_NO_PUSH_POP_TRACKING, -2);
     }
 
     #[test]
