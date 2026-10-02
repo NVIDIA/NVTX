@@ -12,6 +12,7 @@ def main():
     usage = "%prog [options] scriptfile [args] ..."
 
     parser = OptionParser(usage)
+    parser.disable_interspersed_args()
     parser.add_option(
         "--linenos",
         action="store_true",
