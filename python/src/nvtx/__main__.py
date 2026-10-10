@@ -1,6 +1,7 @@
 # SPDX-FileCopyrightText: Copyright (c) 2024-2026 NVIDIA CORPORATION & AFFILIATES. All rights reserved.
 # SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception
 
+import os
 import sys
 from runpy import run_path
 from optparse import OptionParser
@@ -39,6 +40,7 @@ def main():
     script_file = args[0]
 
     sys.argv = args
+    sys.path.insert(0, os.path.dirname(os.path.abspath(script_file)))
     profiler = Profile(linenos=options.linenos, annotate_cfuncs=options.annotate_cfuncs)
 
     profiler.enable()
