@@ -198,7 +198,7 @@ Normal (non-IMPORTED) targets will be defined when using CPM (CMake Package Mana
         CPMAddPackage(
             NAME NVTX
             GITHUB_REPOSITORY NVIDIA/NVTX
-            GIT_TAG v3.6.0-c-cpp
+            GIT_TAG v3.7.0-c-cpp
             GIT_SHALLOW TRUE)
 
         add_executable(my_program main.cpp)
@@ -296,7 +296,7 @@ include(path/to/CPM.cmake)
 CPMAddPackage(
     NAME NVTX
     GITHUB_REPOSITORY NVIDIA/NVTX
-    GIT_TAG v3.6.0-c-cpp
+    GIT_TAG v3.7.0-c-cpp
     GIT_SHALLOW TRUE)
 
 # Example C program
@@ -419,8 +419,8 @@ To explicitly request a dynamic injection library, set the environment variable
 a 32-bit process) to indicate the library's path.
 
 Newer versions of NVTX include a mechanism that allows automatic tracing of NVTX annotated
-applications. This mechanism is intended to be used by production monitoring tools, and is
-not something most developers need to be concerned about.
+applications. This mechanism is intended to be used by profiling and tracing tools that
+integrate with NVTX.
 
 To opt out of automatic discovery, set the appropriate `NVTX_INJECTIONxx_PATH` variable
 to `./.` (dot-slash-dot). NVTX treats this value as a request to stop the injection

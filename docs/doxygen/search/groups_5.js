@@ -1,6 +1,5 @@
 var searchData=
 [
-  ['markers_20and_20ranges_0',['Markers and Ranges',['../group___m_a_r_k_e_r_s___a_n_d___r_a_n_g_e_s.html',1,'']]],
-  ['memory_1',['Memory',['../group___m_e_m_o_r_y.html',1,'']]],
-  ['memory_20cuda_20runtime_2',['Memory CUDA Runtime',['../group___m_e_m_o_r_y___c_u_d_a_r_t.html',1,'']]]
+  ['string_20registration_835',['String Registration',['../group___s_t_r_i_n_g___r_e_g_i_s_t_r_a_t_i_o_n.html',1,'']]],
+  ['synchronization_836',['Synchronization',['../group___s_y_n_c_h_r_o_n_i_z_a_t_i_o_n.html',1,'']]]
 ];

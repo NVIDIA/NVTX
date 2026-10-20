@@ -1,22 +1,10 @@
 var searchData=
 [
-  ['a_20—_20the_20reference_20loader_20recommended_20default_0',['Option A — The Reference Loader (Recommended Default)',['../md__n_v_t_x_w___u_s_e_r___g_u_i_d_e.html#autotoc_md24',1,'']]],
-  ['a_20glance_1',['Concepts at a Glance',['../md__n_v_t_x___e_x_t_e_n_d_e_d___p_a_y_l_o_a_d_s.html#NVTX_EXTENDED_PAYLOADS_CONCEPTS',1,'']]],
-  ['and_20buffers_2',['Deep-copy of strings and buffers',['../md__n_v_t_x___e_x_t_e_n_d_e_d___p_a_y_l_o_a_d_s.html#NVTX_EXTENDED_PAYLOADS_DEEP_COPY',1,'']]],
-  ['and_20deferred_20events_3',['NVTXW vs. NVTX and Deferred Events',['../md__n_v_t_x_w___u_s_e_r___g_u_i_d_e.html#autotoc_md7',1,'']]],
-  ['and_20forward_20compatibility_4',['12. Versioning and Forward Compatibility',['../md__n_v_t_x_w___u_s_e_r___g_u_i_d_e.html#NVTXW_VERSIONING',1,'']]],
-  ['and_20gotchas_5',['16. Tips and Gotchas',['../md__n_v_t_x_w___u_s_e_r___g_u_i_d_e.html#autotoc_md34',1,'']]],
-  ['and_20ranges_6',['and ranges',['../md__n_v_t_x___e_x_t_e_n_d_e_d___p_a_y_l_o_a_d_s.html#NVTX_EXTENDED_PAYLOADS_HOWTO_DEFERRED',1,'Deferred marks and ranges'],['../group___m_a_r_k_e_r_s___a_n_d___r_a_n_g_e_s.html',1,'Markers and Ranges'],['../index.html#MARKERS_AND_RANGES',1,'Markers and Ranges']]],
-  ['and_20registered_20strings_7',['6. Domains, Scopes, and Registered Strings',['../md__n_v_t_x_w___u_s_e_r___g_u_i_d_e.html#NVTXW_DOMAINS_SCOPES_STRINGS',1,'']]],
-  ['and_20strings_8',['Fixed-size embedded arrays and strings',['../md__n_v_t_x___e_x_t_e_n_d_e_d___p_a_y_l_o_a_d_s.html#NVTX_EXTENDED_PAYLOADS_FIXED_ARRAYS',1,'']]],
-  ['and_20synchronization_9',['7. Time Domains, Timestamps, and Synchronization',['../md__n_v_t_x_w___u_s_e_r___g_u_i_d_e.html#NVTXW_TIME_DOMAINS',1,'']]],
-  ['api_20reference_10',['NVTX C API Reference',['../index.html',1,'']]],
-  ['apis_11',['Payload Event APIs',['../md__n_v_t_x___e_x_t_e_n_d_e_d___p_a_y_l_o_a_d_s.html#NVTX_EXTENDED_PAYLOADS_EVENT_APIS',1,'']]],
-  ['arrayoruniondetail_12',['arrayOrUnionDetail',['../structnvtx_payload_schema_entry__t.html#a187c1291da112ded29e1275700e3dabd',1,'nvtxPayloadSchemaEntry_t']]],
-  ['arrays_13',['Variable-length arrays',['../md__n_v_t_x___e_x_t_e_n_d_e_d___p_a_y_l_o_a_d_s.html#NVTX_EXTENDED_PAYLOADS_VAR_ARRAYS',1,'']]],
-  ['arrays_20and_20strings_14',['Fixed-size embedded arrays and strings',['../md__n_v_t_x___e_x_t_e_n_d_e_d___p_a_y_l_o_a_d_s.html#NVTX_EXTENDED_PAYLOADS_FIXED_ARRAYS',1,'']]],
-  ['at_20a_20glance_15',['Concepts at a Glance',['../md__n_v_t_x___e_x_t_e_n_d_e_d___p_a_y_l_o_a_d_s.html#NVTX_EXTENDED_PAYLOADS_CONCEPTS',1,'']]],
-  ['attaching_20payloads_20to_20event_20attributes_16',['Attaching Payloads to Event Attributes',['../md__n_v_t_x___e_x_t_e_n_d_e_d___p_a_y_l_o_a_d_s.html#NVTX_EXTENDED_PAYLOADS_ATTACH',1,'']]],
-  ['attribute_20precedence_17',['Event Attribute Precedence',['../md__n_v_t_x___e_x_t_e_n_d_e_d___p_a_y_l_o_a_d_s.html#NVTX_EXTENDED_PAYLOADS_EVENT_ATTRIBUTE_PRECEDENCE',1,'']]],
-  ['attributes_18',['attributes',['../md__n_v_t_x___e_x_t_e_n_d_e_d___p_a_y_l_o_a_d_s.html#NVTX_EXTENDED_PAYLOADS_ATTACH',1,'Attaching Payloads to Event Attributes'],['../index.html#EVENT_ATTRIBUTES',1,'Event Attributes'],['../group___e_v_e_n_t___a_t_t_r_i_b_u_t_e_s.html',1,'Event Attributes']]]
+  ['markers_20and_20ranges_41',['Markers and Ranges',['../group___m_a_r_k_e_r_s___a_n_d___r_a_n_g_e_s.html',1,'']]],
+  ['memory_42',['Memory',['../group___m_e_m_o_r_y.html',1,'(Global Namespace)'],['../_p_a_g_e__m_e_m_o_r_y.html',1,'(Global Namespace)']]],
+  ['memory_20cuda_20runtime_43',['Memory CUDA Runtime',['../group___m_e_m_o_r_y___c_u_d_a_r_t.html',1,'(Global Namespace)'],['../_p_a_g_e__m_e_m_o_r_y__c_u_d_a_r_t.html',1,'(Global Namespace)']]],
+  ['message_44',['message',['../structnvtx_resource_attributes__v0.html#a6fb8c53dcd2860bada12560d5b2e586f',1,'nvtxResourceAttributes_v0::message()'],['../structnvtxw_event_attributes_utf8__t.html#ae665745265554da68309ee62e69a97d9',1,'nvtxwEventAttributesUtf8_t::message()'],['../structnvtxw_event_attributes__t.html#ad317e4ad00b3dc4904a9c55341f3cd9e',1,'nvtxwEventAttributes_t::message()'],['../structnvtx_mem_heap_desc__v1.html#ad12fa13f5c26f2373e37c0d81a84ed5a',1,'nvtxMemHeapDesc_v1::message()'],['../structnvtx_sync_user_attributes__v0.html#af0a877617fbf058cc2b6ee5c97a28ca6',1,'nvtxSyncUserAttributes_v0::message()'],['../structnvtx_event_attributes__v2.html#ac2c886998107953b9ca44c096650ac6f',1,'nvtxEventAttributes_v2::message()']]],
+  ['messagelength_45',['messageLength',['../structnvtxw_event_attributes_utf8__t.html#a7361c2fed6b146a8f15bb44efc86e41d',1,'nvtxwEventAttributesUtf8_t']]],
+  ['messagetype_46',['messageType',['../structnvtx_event_attributes__v2.html#aea6394028b2357cc25b41af32f9a7c8b',1,'nvtxEventAttributes_v2::messageType()'],['../structnvtx_resource_attributes__v0.html#a23bd2e672a9fe0b600e7d3599da7443a',1,'nvtxResourceAttributes_v0::messageType()'],['../structnvtx_sync_user_attributes__v0.html#ab31b719d75e5a4b64a7052327c2db023',1,'nvtxSyncUserAttributes_v0::messageType()'],['../structnvtx_mem_heap_desc__v1.html#ab6fc2c152e78099ddbf86746502b7f5c',1,'nvtxMemHeapDesc_v1::messageType()']]],
+  ['min_47',['min',['../structnvtx_semantics_counter__t.html#a353d625001638a5d2c7341a013e505f4',1,'nvtxSemanticsCounter_t']]]
 ];

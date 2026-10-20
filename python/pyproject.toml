@@ -26,7 +26,7 @@ requires = ["setuptools", "wheel", "Cython>=3.1"]
 
 [project]
 name = "nvtx"
-version = "0.2.16"
+version = "0.2.17"
 description="Python NVTX - Python code annotation library"
 readme = "README.md"
 requires-python = ">=3.9"
