@@ -1,4 +1,0 @@
----
-.core-template:
-  artifacts:
-    when: always

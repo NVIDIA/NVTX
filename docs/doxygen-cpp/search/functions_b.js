@@ -1,8 +1,0 @@
-var searchData=
-[
-  ['range_5fhandle_0',['range_handle',['../structnvtx3_1_1v1_1_1mv2_1_1range__handle.html#aaa00a9930c621897f951b9e601096acc',1,'nvtx3::v1::mv2::range_handle::range_handle(value_type id) noexcept'],['../structnvtx3_1_1v1_1_1mv2_1_1range__handle.html#a550ec84b48ed8caaf292a0b05617c1a3',1,'nvtx3::v1::mv2::range_handle::range_handle() noexcept=default'],['../structnvtx3_1_1v1_1_1mv2_1_1range__handle.html#a31a849f4f25d05eab44312a9c643c246',1,'nvtx3::v1::mv2::range_handle::range_handle(std::nullptr_t) noexcept']]],
-  ['registered_5fstring_5fin_1',['registered_string_in',['../classnvtx3_1_1v1_1_1mv2_1_1registered__string__in.html#aa6aabd442316c3c027fef97c104a54e9',1,'nvtx3::v1::mv2::registered_string_in::registered_string_in(char const *msg) noexcept'],['../classnvtx3_1_1v1_1_1mv2_1_1registered__string__in.html#a0e44548021821efc7b6bed80ad0fbc3a',1,'nvtx3::v1::mv2::registered_string_in::registered_string_in(std::string const &amp;msg) noexcept'],['../classnvtx3_1_1v1_1_1mv2_1_1registered__string__in.html#aff85c7163db29aac8f2bad871cdacc51',1,'nvtx3::v1::mv2::registered_string_in::registered_string_in(wchar_t const *msg) noexcept'],['../classnvtx3_1_1v1_1_1mv2_1_1registered__string__in.html#a4d43672e82c1a92e37953ca297e624c5',1,'nvtx3::v1::mv2::registered_string_in::registered_string_in(std::wstring const &amp;msg) noexcept']]],
-  ['rgb_2',['rgb',['../structnvtx3_1_1v1_1_1mv2_1_1rgb.html#a8a54f4e918fcdb66846b181a2f237e48',1,'nvtx3::v1::mv2::rgb']]],
-  ['role_3',['role',['../classnvtx3_1_1v1_1_1mv2_1_1correlation__semantic.html#a68728aa737a7bdd86c5084d54128d9a6',1,'nvtx3::v1::mv2::correlation_semantic']]],
-  ['root_4',['root',['../classnvtx3_1_1v1_1_1mv2_1_1scope.html#ad3a806de0952a767f233fb73e58a6a00',1,'nvtx3::v1::mv2::scope']]]
-];
