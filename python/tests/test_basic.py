@@ -59,6 +59,90 @@ def test_annotate_decorator(nvtx_events, message, color, domain, payload, catego
         assert orig_foo is foo
 
 
+@pytest.mark.parametrize("annotation_message", [None, "", "shared"])
+def test_annotate_reused_decorator(
+    nvtx_events, domain, payload, annotation_message
+):
+    ann = nvtx.annotate(
+        message=annotation_message,
+        color="red",
+        domain=domain,
+        category="reused",
+        payload=payload,
+    )
+
+    def first():
+        return 1
+
+    def second():
+        return 2
+
+    decorated = []
+    for func in (first, second):
+        wrapped = ann(func)
+        message = (
+            func.__name__ if annotation_message is None else annotation_message
+        )
+        if nvtx_events:
+            verify_registration_events(nvtx_events, domain, message, "reused")
+        else:
+            assert wrapped is func
+        decorated.append((wrapped, message))
+
+    for index in (1, 0, 1):
+        wrapped, message = decorated[index]
+        assert wrapped() == index + 1
+        if nvtx_events:
+            verify_push(
+                nvtx_events,
+                domain,
+                message,
+                color="red",
+                category="reused",
+                payload=payload,
+            )
+            verify_pop(nvtx_events, domain)
+
+
+def test_annotate_context_manager_after_decorator(
+    nvtx_events, domain, payload
+):
+    ann = nvtx.annotate(
+        color="red", domain=domain, category="reused", payload=payload
+    )
+
+    @ann
+    def decorated():
+        return 1
+
+    assert decorated() == 1
+    if nvtx_events:
+        verify_registration_events(nvtx_events, domain, "decorated", "reused")
+        verify_push(
+            nvtx_events,
+            domain,
+            "decorated",
+            color="red",
+            category="reused",
+            payload=payload,
+        )
+        verify_pop(nvtx_events, domain)
+
+    with ann:
+        pass
+
+    if nvtx_events:
+        verify_push(
+            nvtx_events,
+            domain,
+            None,
+            color="red",
+            category="reused",
+            payload=payload,
+        )
+        verify_pop(nvtx_events, domain)
+
+
 def test_annotate_context_manager_with_exception(nvtx_events, message, color, domain, category,
                                                  payload):
     ann = nvtx.annotate(message=message, color=color, domain=domain, category=category,
