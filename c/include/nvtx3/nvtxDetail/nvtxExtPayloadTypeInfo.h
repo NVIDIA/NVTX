@@ -41,12 +41,21 @@ typedef void* nvtx_payload_pointer_type;
 #include <stdalign.h>
 #endif
 
+/* In C, `char8_t` comes from <uchar.h>, which glibc provides as of 2.36. */
+#if defined(__GLIBC__) && (__GLIBC__ < 2 || (__GLIBC__ == 2 && __GLIBC_MINOR__ < 36))
+#define NVTX_LIBC_HAS_CHAR8 0
+#else
+#define NVTX_LIBC_HAS_CHAR8 1
+#endif
+
 /* `char8_t` is available as of C++20 or C23. */
-#if ((defined(__STDC_VERSION__) && __STDC_VERSION__ >= 202311L) || defined(__cpp_char8_t)) && !defined(__APPLE__) && !defined(__CYGWIN32__)
+#if ((defined(__STDC_VERSION__) && __STDC_VERSION__ >= 202311L && NVTX_LIBC_HAS_CHAR8) || defined(__cpp_char8_t)) && !defined(__APPLE__) && !defined(__CYGWIN32__)
 #define NVTX_HAVE_CHAR8 1
 #else
 #define NVTX_HAVE_CHAR8 0
 #endif
+
+#undef NVTX_LIBC_HAS_CHAR8
 
 /* `char16_t` and `char32_t` are available as of C++11 or C11. */
 #if ((defined(__STDC_VERSION__) && __STDC_VERSION__ >= 201112L) || (defined(__cplusplus) && __cplusplus >= 200704L)) && !defined(__APPLE__) && !defined(__CYGWIN32__)
