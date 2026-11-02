@@ -235,14 +235,20 @@ class annotate:
     def __call__(self, func):
         if self.domain is dummy_domain:
             return func
-        if self.attributes.message is None:
-            self.attributes.message = self.domain.get_registered_string(func.__name__)
+        attributes = self.attributes
+        if attributes.message is None:
+            attributes = self.domain.get_event_attributes(
+                func.__name__,
+                attributes.color,
+                attributes.category,
+                attributes.payload,
+            )
 
         @wraps(func)
         def inner(*args, **kwargs):
             if self.mutable_payload is not None:
-                self.attributes.payload = self.mutable_payload
-            libnvtx_push_range(self.attributes, self.domain.handle)
+                attributes.payload = self.mutable_payload
+            libnvtx_push_range(attributes, self.domain.handle)
             try:
                 result = func(*args, **kwargs)
             finally:
