@@ -2555,7 +2555,7 @@ class event_attributes {
         "Constructing from an rvalue is potentially unsafe and therefore forbidden.");
     attributes_.payloadType = NVTX_PAYLOAD_TYPE_EXT;
     attributes_.reserved0 = static_cast<int32_t>(pdc.size()); // Cast size to int32_t
-    attributes_.payload.ullValue = pdc.data()->as_ull_value();
+    attributes_.payload.ullValue = pdc.size() ? pdc.data()->as_ull_value() : 0;
   }
 
   /**
