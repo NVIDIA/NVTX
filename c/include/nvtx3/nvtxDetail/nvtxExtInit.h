@@ -337,7 +337,10 @@ NVTX_LINKONCE_DEFINE_FUNCTION int NVTX_VERSIONED_IDENTIFIER(nvtxExtLoadInjection
     }
 #endif
 
-#if NVTX_SUPPORT_CUDA_DRIVER_INJECTION_LIBRARY
+/* The helpers used here come from nvtxInit.h of load sequence version 3 or newer.
+*  The core NVTX headers in this translation unit may be from an older release. */
+#if NVTX_SUPPORT_CUDA_DRIVER_INJECTION_LIBRARY \
+    && defined(NVTX_LOAD_SEQUENCE_VERSION) && NVTX_LOAD_SEQUENCE_VERSION >= 3
     if (!init_fnptr && NVTX_VERSIONED_IDENTIFIER(nvtxShouldUseCudaDriverInjection)())
     {
         /* Load the CUDA driver */
