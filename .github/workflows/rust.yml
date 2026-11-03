@@ -139,4 +139,24 @@ jobs:
       - name: Check `no_std` target
         if: matrix.name != 'all-features'
         run: >
-          cargo check --workspace --target thumbv7em-none-eabi ${{ matrix.f }}
+          cargo check --workspace --exclude nvtx-sys-bindgen
+          --target thumbv7em-none-eabi ${{ matrix.f }}
+
+  bindings:
+    name: Bindings
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/cache@v6
+        with:
+          path: ${{ env.CARGO_CACHE_PATH }}
+          key: "\
+            ${{ runner.os }}-cargo-bindings-\
+            ${{ hashFiles('**/Cargo.lock') }}"
+          restore-keys: "\
+            ${{ runner.os }}-cargo-bindings-"
+      - run: cargo run -p nvtx-sys-bindgen
+      - name: Check pre-generated bindings are up to date
+        run: |
+          git status --porcelain
+          test -z "$(git status --porcelain)"

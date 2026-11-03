@@ -30,6 +30,12 @@ cargo add nvtx --no-default-features
 In strict core mode, use borrowed C-string APIs such as `mark_ascii` / `mark_unicode`,
 `name_thread_ascii` / `name_thread_unicode`, or the low-level exports under `nvtx::sys`.
 
+## Bindings
+
+The `nvtx-sys` crate ships pre-generated bindings to the NVTX C headers, so building it needs a
+C compiler for its small C shim, but not libclang. After changing the NVTX headers, regenerate
+the bindings with `cargo run -p nvtx-sys-bindgen`, which requires libclang.
+
 ## Compatibility
 
 The `nvtx` crate requires rustc 1.77 or greater.

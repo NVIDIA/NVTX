@@ -1,0 +1,22 @@
+# SPDX-FileCopyrightText: Copyright (c) 2026 NVIDIA CORPORATION & AFFILIATES. All rights reserved.
+# SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception
+
+[package]
+name = "nvtx-sys-bindgen"
+description = "Generates the pre-generated bindings of nvtx-sys"
+version.workspace = true
+authors.workspace = true
+edition.workspace = true
+rust-version.workspace = true
+repository.workspace = true
+readme.workspace = true
+publish = false
+license.workspace = true
+keywords.workspace = true
+categories.workspace = true
+
+[dependencies]
+bindgen = "0.72.1"
+
+[lints]
+workspace = true

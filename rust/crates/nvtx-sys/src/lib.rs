@@ -10,7 +10,43 @@ pub mod ffi {
     #![allow(non_upper_case_globals)]
     #![allow(non_camel_case_types)]
     #![allow(non_snake_case)]
-    include!(concat!(env!("OUT_DIR"), "/bindings.rs"));
+
+    /// The C `wchar_t` type: 16 bits on Windows, 32 bits elsewhere.
+    pub type wchar_t = widestring::WideChar;
+
+    // Pre-generated bindings for each combination of features, see the `nvtx-sys-bindgen` crate.
+    #[cfg(all(
+        not(feature = "cuda"),
+        not(feature = "cuda_runtime"),
+        not(feature = "tools")
+    ))]
+    include!("bindings/core.rs");
+    #[cfg(all(
+        feature = "cuda",
+        not(feature = "cuda_runtime"),
+        not(feature = "tools")
+    ))]
+    include!("bindings/cuda.rs");
+    #[cfg(all(
+        not(feature = "cuda"),
+        feature = "cuda_runtime",
+        not(feature = "tools")
+    ))]
+    include!("bindings/cuda_runtime.rs");
+    #[cfg(all(feature = "cuda", feature = "cuda_runtime", not(feature = "tools")))]
+    include!("bindings/cuda_cuda_runtime.rs");
+    #[cfg(all(
+        not(feature = "cuda"),
+        not(feature = "cuda_runtime"),
+        feature = "tools"
+    ))]
+    include!("bindings/tools.rs");
+    #[cfg(all(feature = "cuda", not(feature = "cuda_runtime"), feature = "tools"))]
+    include!("bindings/cuda_tools.rs");
+    #[cfg(all(not(feature = "cuda"), feature = "cuda_runtime", feature = "tools"))]
+    include!("bindings/cuda_runtime_tools.rs");
+    #[cfg(all(feature = "cuda", feature = "cuda_runtime", feature = "tools"))]
+    include!("bindings/cuda_cuda_runtime_tools.rs");
 }
 
 /// The NVTX version.
