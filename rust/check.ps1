@@ -40,10 +40,10 @@ foreach ($buildProfile in @(
 rustup target add thumbv7em-none-eabi --toolchain $Toolchain
 Exit-IfFailed
 
-cargo "+$Toolchain" check --workspace --no-default-features --target thumbv7em-none-eabi
+cargo "+$Toolchain" check --workspace --exclude nvtx-sys-bindgen --no-default-features --target thumbv7em-none-eabi
 Exit-IfFailed
 
-cargo "+$Toolchain" check --workspace --no-default-features --features alloc --target thumbv7em-none-eabi
+cargo "+$Toolchain" check --workspace --exclude nvtx-sys-bindgen --no-default-features --features alloc --target thumbv7em-none-eabi
 Exit-IfFailed
 
 cargo "+$Toolchain" install --locked cargo-deny

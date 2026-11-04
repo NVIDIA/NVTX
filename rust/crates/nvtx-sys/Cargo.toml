@@ -16,8 +16,7 @@ keywords.workspace = true
 categories.workspace = true
 
 [build-dependencies]
-bindgen = "0.72.1"
-cc = "1.2.56"
+cc = "1.11.0"
 
 [dependencies]
 widestring = { version = "1.2.1", default-features = false }

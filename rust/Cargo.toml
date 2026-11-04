@@ -2,7 +2,7 @@
 # SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception
 
 [workspace]
-members = ["crates/nvtx-sys"]
+members = ["crates/nvtx-sys", "crates/nvtx-sys-bindgen"]
 
 [workspace.package]
 version = "2.1.0"

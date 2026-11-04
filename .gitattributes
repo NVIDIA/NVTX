@@ -1,0 +1,2 @@
+# Pre-generated Rust bindings, see rust/crates/nvtx-sys-bindgen.
+rust/crates/nvtx-sys/src/bindings/*.rs linguist-generated=true
