@@ -38,7 +38,7 @@ env:
     ~/.cargo/registry/index/
     ~/.cargo/registry/cache/
     ~/.cargo/git/db/
-    target/
+    rust/target/
 
 jobs:
   msrv:
