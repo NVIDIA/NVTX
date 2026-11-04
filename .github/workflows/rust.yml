@@ -142,9 +142,33 @@ jobs:
           cargo check --workspace --exclude nvtx-sys-bindgen
           --target thumbv7em-none-eabi ${{ matrix.f }}
 
+  # 32-bit x86 Windows is the only target where `extern "system"` (stdcall)
+  # differs from `extern "C"`, so run the tests there to check the bindings.
+  i686-windows:
+    name: Test i686-pc-windows-msvc
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/cache@v6
+        with:
+          path: ${{ env.CARGO_CACHE_PATH }}
+          key: "\
+            ${{ runner.os }}-cargo-i686-\
+            ${{ hashFiles('**/Cargo.lock') }}"
+          restore-keys: "\
+            ${{ runner.os }}-cargo-i686-"
+      - run: rustup target add i686-pc-windows-msvc
+      - name: Test
+        run: >
+          cargo test --workspace --exclude nvtx-sys-bindgen --all-features
+          --target i686-pc-windows-msvc
+
   bindings:
     name: Bindings
-    runs-on: ubuntu-latest
+    # Pin the runner and libclang so the generated bindings are reproducible.
+    runs-on: ubuntu-24.04
+    env:
+      LIBCLANG_PATH: /usr/lib/llvm-18/lib
     steps:
       - uses: actions/checkout@v7
       - uses: actions/cache@v6
@@ -158,5 +182,5 @@ jobs:
       - run: cargo run -p nvtx-sys-bindgen
       - name: Check pre-generated bindings are up to date
         run: |
-          git status --porcelain
-          test -z "$(git status --porcelain)"
+          git add --intent-to-add --all
+          git diff --exit-code

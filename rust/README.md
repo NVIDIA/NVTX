@@ -34,7 +34,8 @@ In strict core mode, use borrowed C-string APIs such as `mark_ascii` / `mark_uni
 
 The `nvtx-sys` crate ships pre-generated bindings to the NVTX C headers, so building it needs a
 C compiler for its small C shim, but not libclang. After changing the NVTX headers, regenerate
-the bindings with `cargo run -p nvtx-sys-bindgen`, which requires libclang.
+the bindings with `cargo run -p nvtx-sys-bindgen`, which requires libclang. CI checks that the
+bindings are up to date using libclang 18 on Ubuntu 24.04.
 
 ## Compatibility
 

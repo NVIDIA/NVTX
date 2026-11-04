@@ -61,6 +61,8 @@ fn builder(sys: &Path, features: &[&str]) -> Result<bindgen::Builder, Box<dyn Er
         .header(sys.join("c/include/wrapper.h").display().to_string())
         .clang_args([
             "--target=x86_64-unknown-linux-gnu".to_owned(),
+            // only use clang's own headers, so the output does not depend on the host
+            "-ffreestanding".to_owned(),
             format!("-I{}", sys.join("c/include").display()),
         ])
         .use_core()
@@ -77,6 +79,10 @@ fn builder(sys: &Path, features: &[&str]) -> Result<bindgen::Builder, Box<dyn Er
         .sort_semantically(true)
         .translate_enum_integer_types(true)
         .wrap_unsafe_ops(true)
+        // `NVTX_API` is `__stdcall` on Windows, which matches "system". This also applies to the
+        // `NvtxFunctionPointer` placeholder, which is declared without `NVTX_API` but must be
+        // cast before use. Only use a single ABI override: bindgen picks an arbitrary one when
+        // several match.
         .override_abi(Abi::System, ".*")
         // mark any nvtx(...)_t type as required except those starting with nvtxRes
         .must_use_type("nvtx[^R][^e][^s].*_t")
